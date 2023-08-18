@@ -99,6 +99,20 @@ tmss:
 	move.l	(a1), 0xa14000
 1:	rts
 
+.global wait_vblank_start
+wait_vblank_start:
+	move.w	0xc00004, d0
+	btst.b	#4-1, d0
+	beq	wait_vblank_start
+	rts
+
+.global wait_vblank_end
+wait_vblank_end:
+	move.w	0xc00004, d0
+	btst.b	#4-1, d0
+	bne	wait_vblank_end
+	rts
+
 cpu_exception:
 	rte
 int_null:
