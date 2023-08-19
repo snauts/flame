@@ -12,6 +12,9 @@ clean:
 disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
 
+run:
+	kega-fusion $(NAME).bin
+
 $(NAME).bin: $(OBJS)
 	$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
 
