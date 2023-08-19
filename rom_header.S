@@ -72,7 +72,7 @@ rom_start:
 	dc.w	0x0000
 	.ascii	"J               "
 	dc.l	rom_start
-	dc.l	rom_end-1
+	dc.l	rom_end - 1
 	dc.l	0x00ff0000
 	dc.l	0x00ff0000 + 0x0000ffff
 	dc.l	0x00000000
@@ -121,4 +121,5 @@ int_hinterrupt:
 	rte
 int_vinterrupt:
 	rte
-rom_end:
+
+	nop
