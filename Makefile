@@ -16,12 +16,15 @@ run:
 	kega-fusion $(NAME).bin
 
 $(NAME).bin: $(OBJS) cksum.c
-	$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
+	@echo Link $(NAME).bin
+	@$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
 	gcc cksum.c -o cksum
 	./cksum $(NAME).bin
 
 %.o: %.c
-	$(PREFIX)gcc -Os -c $< -o $@
+	@echo Compile $<
+	@$(PREFIX)gcc -Os -c $< -o $@
 
 %.O: %.S
-	$(PREFIX)as $(ASFLAGS) --bitwise-or $< -o $@
+	@echo Compile $<
+	@$(PREFIX)as $(ASFLAGS) --bitwise-or $< -o $@
