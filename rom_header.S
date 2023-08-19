@@ -64,25 +64,25 @@ rom_start:
 	dc.l	int_null
 	dc.l	int_null
 
-	.ascii	"SEGA MEGA DRIVE "
-	.ascii	"Snauts          "
-	.ascii	"Flammenwerfer                                   "
-	.ascii	"Flammenwerfer                                   "
+	.ascii	"SEGA MEGA DRIVE"
+	.org	0x110
+	.ascii	"Snauts"
+	.org	0x120
+	.ascii	"Flammenwerfer"
+	.org	0x150
+	.ascii	"Flammenwerfer"
+	.org	0x180
 	.ascii	"GM 00000000-00"
 	dc.w	0x0000
-	.ascii	"J               "
+	.ascii	"J"
+	.org	0x1a0
 	dc.l	rom_start
 	dc.l	rom_end - 1
 	dc.l	0x00ff0000
 	dc.l	0x00ff0000 + 0x0000ffff
-	dc.l	0x00000000
-	dc.l	0x00000000
-	dc.l	0x00000000
-	dc.l	0x00000000
-	dc.l	0x00000000
-	dc.l	0x00000000
-	.ascii	"                                        "
-	.ascii	"JUE             "
+	.org	0x1F0
+	.ascii	"JUE"
+	.org	0x200
 
 cpu_exception:
 	rte
