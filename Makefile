@@ -13,7 +13,7 @@ $(NAME).bin: $(OBJS)
 	$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
 
 %.o: %.c
-	$(PREFIX)gcc -c $< -o $@
+	$(PREFIX)gcc -Os -c $< -o $@
 
 %.O: %.S
 	$(PREFIX)as $(ASFLAGS) --bitwise-or $< -o $@

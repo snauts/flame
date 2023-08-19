@@ -84,35 +84,6 @@ rom_start:
 	.ascii	"                                        "
 	.ascii	"JUE             "
 
-SEGA_STRING:	.ascii	"SEGA"
-
-.global _start
-_start:
-	jsr	tmss
-	jsr	c_code
-
-tmss:
-	move.b	0xa10001, d0
-	andi.b	#0x0f, d0
-	beq	1f
-	move.l	#SEGA_STRING, a1
-	move.l	(a1), 0xa14000
-1:	rts
-
-.global wait_vblank_start
-wait_vblank_start:
-	move.w	0xc00004, d0
-	btst.b	#4-1, d0
-	beq	wait_vblank_start
-	rts
-
-.global wait_vblank_end
-wait_vblank_end:
-	move.w	0xc00004, d0
-	btst.b	#4-1, d0
-	bne	wait_vblank_end
-	rts
-
 cpu_exception:
 	rte
 int_null:
@@ -121,5 +92,3 @@ int_hinterrupt:
 	rte
 int_vinterrupt:
 	rte
-
-	nop
