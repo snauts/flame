@@ -15,8 +15,10 @@ disasm:
 run:
 	kega-fusion $(NAME).bin
 
-$(NAME).bin: $(OBJS)
+$(NAME).bin: $(OBJS) cksum.c
 	$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
+	gcc cksum.c -o cksum
+	./cksum $(NAME).bin
 
 %.o: %.c
 	$(PREFIX)gcc -Os -c $< -o $@
