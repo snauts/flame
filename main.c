@@ -9,6 +9,12 @@
 #define VDP_CRAM_WRITE	0xc0000000
 #define VDP_SRAM_WRITE	0x40000010
 
+#define VRAM_TILES	0x0000
+#define VRAM_PLANE_A	0xC000
+#define VRAM_PLANE_B	0xE000
+#define VRAM_SPRITE	0xF000
+#define VRAM_SCROLL	0xFC00
+
 static void addr_VDP(u32 flags, u16 addr) {
     LONG(VDP_CTRL) = flags | ((addr & 0x3fff) << 16) | (addr >> 14);
 }
