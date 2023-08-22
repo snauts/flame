@@ -33,7 +33,7 @@ static void init_VDP(void) {
 }
 
 static u16 is_vblank(void) {
-    return WORD(VDP_CTRL) & BIT(4);
+    return WORD(VDP_CTRL) & BIT(3);
 }
 
 static void wait_for_vblank(void) {
