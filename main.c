@@ -31,9 +31,18 @@ static void init_VDP(void) {
     }
 }
 
+static int is_vblank(void) {
+    return WORD(VDP_CTRL) & BIT(4);
+}
+
+static void wait_for_vblank(void) {
+    while (!is_vblank()) { }
+}
+
 void _start(void) {
     tmss();
     init_VDP();
     for (;;) {
+	wait_for_vblank();
     }
 }
