@@ -52,10 +52,15 @@ static void update_palette(const u16 *buf, int offset, int count) {
     }
 }
 
+static void display_update(void) {
+}
+
 void _start(void) {
     tmss();
     init_VDP();
     for (;;) {
 	wait_for_vblank();
+	display_update();
+	wait_for_draw();
     }
 }
