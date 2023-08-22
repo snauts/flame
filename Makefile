@@ -7,7 +7,7 @@ OBJS	= rom_header.O main.o
 all:	$(NAME).bin
 
 clean:
-	rm -f *.o *.O $(NAME).bin
+	rm -f *.o *.O $(NAME).bin cksum
 
 disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
