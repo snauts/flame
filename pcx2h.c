@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
     }
     dprintf(out, "};\n");
 
-    dprintf(out, "const u32 %s_pixels[] = {\n", str);
+    dprintf(out, "const u32 %s_tiles[] = {\n", str);
     for (i = 0; i < (x / 8); i++) {
 	for (j = 0; j < (y / 8); j++) {
 	    save_tile(out, pixels, x, i, j);

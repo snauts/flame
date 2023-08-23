@@ -37,9 +37,30 @@ static void wait_for_draw(void) {
 
 void update_palette(const u16 *buf, int offset, int count) {
     int i;
-    addr_VDP(VDP_CRAM_WRITE, offset);
+    addr_VDP(VDP_CRAM_WRITE, 2 * offset);
     for (i = 0; i < count; i++) {
 	WORD(VDP_DATA) = buf[i];
+    }
+}
+
+void poke_VRAM(u16 addr, u16 data) {
+    addr_VDP(VDP_VRAM_WRITE, addr);
+    WORD(VDP_DATA) = data;
+}
+
+void fill_VRAM(u16 addr, u16 data, u16 count) {
+    int i;
+    addr_VDP(VDP_VRAM_WRITE, addr);
+    for (i = 0; i < count; i++) {
+	WORD(VDP_DATA) = data;
+    }
+}
+
+void update_tiles(const u32 *buf, int offset, int count) {
+    int i;
+    addr_VDP(VDP_VRAM_WRITE, 32 * offset);
+    for (i = 0; i < count; i++) {
+	LONG(VDP_DATA) = buf[i];
     }
 }
 

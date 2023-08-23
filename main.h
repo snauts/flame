@@ -25,4 +25,8 @@ typedef unsigned int u32;
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
 
+void poke_VRAM(u16 addr, u16 data);
+void fill_VRAM(u16 addr, u16 data, u16 count);
+
+void update_tiles(const u32 *buf, int offset, int count);
 void update_palette(const u16 *buf, int offset, int count);
