@@ -49,7 +49,7 @@ static void draw_horizon(void) {
     }
 }
 
-const byte cacti[] = { 97, 105, 113, 121 };
+const byte cacti[] = { 69, 77, 85, 93 };
 
 static void draw_vegetation(void) {
     int i = 0x700, j = 10, k = 0;
@@ -65,8 +65,8 @@ void display_canyon(void) {
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
     fill_VRAM(VRAM_PLANE_A + 0x000,  1, 0x300);
-    fill_VRAM(VRAM_PLANE_A + 0x680, 69, 0x3c0);
-    fill_VRAM(VRAM_PLANE_A + 0x680, 70, 0x40);
+    fill_VRAM(VRAM_PLANE_A + 0x680, 72, 0x3c0);
+    fill_VRAM(VRAM_PLANE_A + 0x680, 80, 0x40);
 
     draw_clouds();
     draw_horizon();
