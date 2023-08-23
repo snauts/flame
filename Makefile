@@ -15,11 +15,14 @@ disasm:
 run:
 	kega-fusion $(NAME).bin
 
-$(NAME).bin: $(OBJS) cksum.c
+$(NAME).bin: $(OBJS) cksum
 	@echo Link $(NAME).bin
 	@$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
-	gcc cksum.c -o cksum
-	./cksum $(NAME).bin
+	@$ ./cksum $(NAME).bin
+
+cksum: cksum.c
+	@echo Make cksum
+	@$gcc cksum.c -o cksum
 
 %.o: %.c
 	@echo Compile $<

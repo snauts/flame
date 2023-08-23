@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     while (read(fd, &word, sizeof(word)) == sizeof(word)) {
 	sum += htons(word);
     }
-    printf("SUM=0x%04x\n", sum);
+    printf("cksum[0x%04x]\n", sum);
     lseek(fd, 0x18E, SEEK_SET);
     sum = htons(sum);
     write(fd, &sum, 2);
