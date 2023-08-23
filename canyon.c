@@ -17,9 +17,9 @@ void display_canyon(void) {
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
-    fill_VRAM(VRAM_PLANE_A + 0x000, 3, 0x800);
-    paint_background( 5, 5, 9, 3, 1, 3);
-    paint_background(24, 4, 9, 3, 1, 3);
-    paint_background(20, 7, 9, 3, 4, 3);
-    paint_background(12, 2, 9, 3, 4, 3);
+    fill_VRAM(VRAM_PLANE_A + 0x000, 1, 0x800);
+    paint_background( 5, 5, 8, 2, 1, 6);
+    paint_background(24, 4, 8, 2, 3, 6);
+    paint_background(20, 7, 8, 2, 5, 6);
+    paint_background(12, 2, 8, 2, 7, 6);
 }
