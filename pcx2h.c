@@ -1,5 +1,6 @@
 #include <sys/stat.h>
 #include <stdint.h>
+#include <string.h>
 #include <unistd.h>
 #include <malloc.h>
 #include <fcntl.h>
@@ -8,6 +9,17 @@
 
 unsigned short get_u16(unsigned char *buf, int offset) {
     return * (unsigned short *) (buf + offset);
+}
+
+int scale_color(unsigned char *buf, int i, int j) {
+    return buf[(i * 3) + 16 + j] / 32;
+}
+
+unsigned short get_color(unsigned char *buf, int i) {
+    int r = scale_color(buf, i, 0);
+    int g = scale_color(buf, i, 1);
+    int b = scale_color(buf, i, 2);
+    return (b << 9) | (g << 5) | (r << 1);
 }
 
 int main(int argc, char **argv) {
@@ -43,8 +55,20 @@ int main(int argc, char **argv) {
 	}
     }
 
+    char str[strlen(argv[2])];
+    int trunc = sizeof("images/") - 1;
+    int offset = strstr(argv[2], ".h") - argv[2];
+    memcpy(str, argv[2] + trunc, offset - trunc);
+    str[offset - trunc] = 0;
+
     remove(argv[2]);
-    int out = open(argv[2], O_CREAT);
+    int out = open(argv[2], O_CREAT | O_RDWR, 0644);
+    dprintf(out, "u16 %s_palette[] = {\n", str);
+    for (i = 0; i < 16; i++) {
+	dprintf(out, "0x%04x,", get_color(buf, i));
+	if ((i & 7) == 7) dprintf(out, "\n");
+    }
+    dprintf(out, "};\n");
     close(out);
     free(buf);
     return 0;
