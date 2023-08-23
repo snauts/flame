@@ -13,7 +13,7 @@ clean:
 disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
 
-run:
+run:	$(NAME).bin
 	kega-fusion $(NAME).bin
 
 $(NAME).bin: $(PICS) $(OBJS) cksum
