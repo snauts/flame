@@ -55,6 +55,7 @@ void display_canyon(void) {
 
     fill_VRAM(VRAM_PLANE_A + 0x000,  1, 0x300);
     fill_VRAM(VRAM_PLANE_A + 0x600, 69, 0x400);
+    fill_VRAM(VRAM_PLANE_A + 0x600, 70, 0x80);
 
     draw_clouds();
     draw_horizon();
