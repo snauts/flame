@@ -58,15 +58,39 @@ static void update_palette(const u16 *buf, int offset, int count) {
     }
 }
 
+u16 counter;
+static void setup_game(void) {
+    counter = 0;
+}
+
+static void advance_game(void) {
+}
+
+static void update_too_long(void) {
+    int i;
+    addr_VDP(VDP_CRAM_WRITE, 0);
+    for (i = 0; i < 64; i++) {
+	WORD(VDP_DATA) = 0x000e;
+    }
+}
+
 static void display_update(void) {
+    counter++;
+    if (!is_vblank()) {
+	update_too_long();
+    }
+    else {
+	wait_for_draw();
+    }
 }
 
 void _start(void) {
     tmss();
     init_VDP();
+    setup_game();
     for (;;) {
+	advance_game();
 	wait_for_vblank();
 	display_update();
-	wait_for_draw();
     }
 }
