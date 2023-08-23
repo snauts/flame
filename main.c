@@ -1,20 +1,5 @@
 #include "main.h"
 
-#define HW_VER		0xa10001
-#define TMSS_ADDR	0xa14000
-#define VDP_DATA	0xc00000
-#define VDP_CTRL	0xc00004
-
-#define VDP_VRAM_WRITE	0x40000000
-#define VDP_CRAM_WRITE	0xc0000000
-#define VDP_SRAM_WRITE	0x40000010
-
-#define VRAM_TILES	0x0000
-#define VRAM_PLANE_A	0xC000
-#define VRAM_PLANE_B	0xE000
-#define VRAM_SPRITE	0xF000
-#define VRAM_SCROLL	0xFC00
-
 static void addr_VDP(u32 flags, u16 addr) {
     LONG(VDP_CTRL) = flags | ((addr & 0x3fff) << 16) | (addr >> 14);
 }
@@ -50,7 +35,7 @@ static void wait_for_draw(void) {
     while (is_vblank()) { }
 }
 
-static void update_palette(const u16 *buf, int offset, int count) {
+void update_palette(const u16 *buf, int offset, int count) {
     int i;
     addr_VDP(VDP_CRAM_WRITE, offset);
     for (i = 0; i < count; i++) {
@@ -58,15 +43,23 @@ static void update_palette(const u16 *buf, int offset, int count) {
     }
 }
 
+static void clear_zero_tile(void) {
+    int i;
+    addr_VDP(VDP_VRAM_WRITE, 0);
+    for (i = 0; i < 16; i++) {
+	WORD(VDP_DATA) = 0;
+    }
+}
+
 u16 counter;
 static void setup_game(void) {
+    void display_canyon(void);
+    display_canyon();
+    clear_zero_tile();
     counter = 0;
 }
 
-static void advance_game(void) {
-}
-
-static void update_too_long(void) {
+static void red_alert(void) {
     int i;
     addr_VDP(VDP_CRAM_WRITE, 0);
     for (i = 0; i < 64; i++) {
@@ -74,23 +67,22 @@ static void update_too_long(void) {
     }
 }
 
-static void display_update(void) {
+static void advance_game(void) {
     counter++;
-    if (!is_vblank()) {
-	update_too_long();
-    }
-    else {
-	wait_for_draw();
-    }
+    if (is_vblank()) red_alert(); else wait_for_vblank();
+}
+
+static void display_update(void) {
+    if (!is_vblank()) red_alert(); else wait_for_draw();
 }
 
 void _start(void) {
     tmss();
     init_VDP();
     setup_game();
+    wait_for_draw();
     for (;;) {
 	advance_game();
-	wait_for_vblank();
 	display_update();
     }
 }
