@@ -1,3 +1,4 @@
+#include <arpa/inet.h>
 #include <sys/stat.h>
 #include <stdint.h>
 #include <string.h>
@@ -20,6 +21,15 @@ unsigned short get_color(unsigned char *buf, int i) {
     int g = scale_color(buf, i, 1);
     int b = scale_color(buf, i, 2);
     return (b << 9) | (g << 5) | (r << 1);
+}
+
+void save_tile(int out, unsigned char *pixel, int x, int i, int j) {
+    int y;
+    for (y = 0; y < 8; y++) {
+	int offset = (i * 4) + y * (x / 2) + j * 4 * x;
+	dprintf(out, "0x%08x,\n", htonl(* (unsigned *) (pixel + offset)));
+    }
+    dprintf(out, "\n");
 }
 
 int main(int argc, char **argv) {
@@ -63,12 +73,21 @@ int main(int argc, char **argv) {
 
     remove(argv[2]);
     int out = open(argv[2], O_CREAT | O_RDWR, 0644);
-    dprintf(out, "u16 %s_palette[] = {\n", str);
+    dprintf(out, "const u16 %s_palette[] = {\n", str);
     for (i = 0; i < 16; i++) {
 	dprintf(out, "0x%04x,", get_color(buf, i));
 	if ((i & 7) == 7) dprintf(out, "\n");
     }
     dprintf(out, "};\n");
+
+    dprintf(out, "const u32 %s_pixels[] = {\n", str);
+    for (i = 0; i < (x / 8); i++) {
+	for (j = 0; j < (y / 8); j++) {
+	    save_tile(out, pixels, x, i, j);
+	}
+    }
+    dprintf(out, "};\n");
+
     close(out);
     free(buf);
     return 0;
