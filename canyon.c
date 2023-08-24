@@ -51,12 +51,18 @@ static void draw_horizon(void) {
 
 const byte cacti[] = { 69, 77, 85, 93 };
 
+const byte cacti_spacing[] = {
+    2, 10, 8, 12, 6, 6, 18, 10, 6, 28, 10, 20, 8, 10, 24, 6, 26, 8, 8, 12,
+    10, 6, 6, 18, 14, 6, 22, 6, 6, 10, 8, 10, 34, 18, 18, 12, 22, 20, 14,
+    8, 22, 16, 20, 16, 6, 10, 24, 20, 6, 16, 16, 26, 24, 6, 78, 14, 56,
+    6, 20, 38, 28, 22, 26, 30, 42, 22, 16, 56, 26, 22, 48, 114, 28,
+};
+
 static void draw_vegetation(void) {
-    int i = 0x700, j = 10, k = 0;
-    while (i < 0xd00) {
-	poke_VRAM(VRAM_PLANE_A + i, cacti[k++ & 3]);
-	i += j;
-	j += 2;
+    int i, offset = 0x700;
+    for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
+	offset += cacti_spacing[i];
+	poke_VRAM(VRAM_PLANE_A + offset, cacti[(offset >> 1) & 3]);
     }
 }
 

@@ -100,7 +100,7 @@
   (let ((map (make-array (list *w* *h*))))
     (dotimes (j *h*)
       (dotimes (i (1+ j))
-	(setf (aref map i (- 11 j)) 1)))
+	(setf (aref map (* (+ 2 (random 3)) i) (- 11 j)) 1)))
     (let ((stats (goodness map)))
       (loop (let ((new-stats (mutate map stats)))
 	      (when (not (eq stats new-stats))
