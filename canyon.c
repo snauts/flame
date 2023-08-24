@@ -58,14 +58,24 @@ static void draw_vegetation(void) {
     }
 }
 
+const byte sand[] = { 72, 80, 88, 71, 79, 87, 95, 72 };
+
+static void draw_sand(void) {
+    int i;
+    seed = 1;
+    for (i = 0x700; i < 0xe00; i += 2) {
+	poke_VRAM(VRAM_PLANE_B + i, sand[random() & 7]);
+    }
+}
+
 void display_canyon(void) {
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
     fill_VRAM(VRAM_PLANE_B + 0x000,  1, 0x300);
-    fill_VRAM(VRAM_PLANE_B + 0x700, 72, 0x380);
-    fill_VRAM(VRAM_PLANE_B + 0x680, 80, 0x40);
+    fill_VRAM(VRAM_PLANE_B + 0x680, 96, 0x40);
 
+    draw_sand();
     draw_clouds();
     draw_horizon();
     draw_vegetation();

@@ -72,6 +72,14 @@ static void clear_zero_tile(void) {
     }
 }
 
+u32 seed;
+u32 random(void) {
+    seed ^= seed << 13;
+    seed ^= seed >> 17;
+    seed ^= seed << 5;
+    return seed;
+}
+
 u16 counter;
 static void setup_game(void) {
     void display_canyon(void);
@@ -94,8 +102,8 @@ static void advance_game(void) {
 }
 
 static void display_update(void) {
-    poke_VRAM(VRAM_SCROLL, counter);
-    WORD(VDP_DATA) = -counter;
+    poke_VRAM(VRAM_SCROLL, -counter);
+    WORD(VDP_DATA) = -(counter >> 1);
     if (!is_vblank()) red_alert(); else wait_for_draw();
 }
 
