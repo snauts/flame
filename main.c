@@ -94,7 +94,8 @@ static void advance_game(void) {
 }
 
 static void display_update(void) {
-    poke_VRAM(VRAM_SCROLL, -counter);
+    poke_VRAM(VRAM_SCROLL, counter);
+    WORD(VDP_DATA) = -counter;
     if (!is_vblank()) red_alert(); else wait_for_draw();
 }
 

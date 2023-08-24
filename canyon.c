@@ -6,7 +6,7 @@ void paint_background(int x, int y, int w, int h, int i, int n) {
     int dx, dy;
     for (dx = 0; dx < w; dx++) {
 	for (dy = 0; dy < h; dy++) {
-	    poke_VRAM(VRAM_PLANE_A + ((x + dx) * 2) + ((y + dy) * 128), i);
+	    poke_VRAM(VRAM_PLANE_B + ((x + dx) * 2) + ((y + dy) * 128), i);
 	    i += 1;
 	}
 	i += n;
@@ -53,7 +53,7 @@ static void draw_vegetation(void) {
     int i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
-	poke_VRAM(VRAM_PLANE_A + offset, cacti[(tile + offset) & 7]);
+	poke_VRAM(VRAM_PLANE_B + offset, cacti[(tile + offset) & 7]);
 	tile++;
     }
 }
@@ -62,9 +62,9 @@ void display_canyon(void) {
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
-    fill_VRAM(VRAM_PLANE_A + 0x000,  1, 0x300);
-    fill_VRAM(VRAM_PLANE_A + 0x700, 72, 0x380);
-    fill_VRAM(VRAM_PLANE_A + 0x680, 80, 0x40);
+    fill_VRAM(VRAM_PLANE_B + 0x000,  1, 0x300);
+    fill_VRAM(VRAM_PLANE_B + 0x700, 72, 0x380);
+    fill_VRAM(VRAM_PLANE_B + 0x680, 80, 0x40);
 
     draw_clouds();
     draw_horizon();
