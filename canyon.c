@@ -50,10 +50,11 @@ const byte cacti_spacing[] = {
 };
 
 static void draw_vegetation(void) {
-    int i, offset = 0x700;
+    int i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
-	poke_VRAM(VRAM_PLANE_A + offset, cacti[(offset >> 1) & 7]);
+	poke_VRAM(VRAM_PLANE_A + offset, cacti[(tile + offset) & 7]);
+	tile++;
     }
 }
 
