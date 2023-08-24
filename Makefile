@@ -8,7 +8,8 @@ PICS	= images/canyon.h
 all:	$(NAME).bin
 
 clean:
-	rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h
+	@echo Clean $(NAME).bin
+	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h
 
 disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
