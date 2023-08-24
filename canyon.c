@@ -14,17 +14,8 @@ void paint_background(int x, int y, int w, int h, int i, int n) {
 }
 
 const byte cloud_data[] = {
-    3,  5, 1,
-    8,  8, 7,
-    12, 2, 3,
-    19, 7, 5,
-    24, 4, 7,
-    30, 8, 3,
-    36, 1, 1,
-    42, 6, 5,
-    47, 3, 7,
-    51, 7, 1,
-    56, 2, 3,
+    3, 5, 1, 8, 8, 7, 12, 2, 3, 19, 7, 5, 24, 4, 7, 30, 8, 3,
+    36, 1, 1, 42, 6, 5, 47, 3, 7, 51, 7, 1, 56, 2, 3,
 };
 
 static void paint_cloud(int x, int y, int i) {
@@ -71,7 +62,7 @@ void display_canyon(void) {
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
     fill_VRAM(VRAM_PLANE_A + 0x000,  1, 0x300);
-    fill_VRAM(VRAM_PLANE_A + 0x680, 72, 0x3c0);
+    fill_VRAM(VRAM_PLANE_A + 0x700, 72, 0x380);
     fill_VRAM(VRAM_PLANE_A + 0x680, 80, 0x40);
 
     draw_clouds();
