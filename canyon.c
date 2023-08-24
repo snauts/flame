@@ -40,7 +40,7 @@ static void draw_horizon(void) {
     }
 }
 
-const byte cacti[] = { 69, 77, 85, 93, 70, 69, 78, 85 };
+const byte cacti[] = { 69, 77, 85, 93, 70, 86, 78, 94 };
 
 const byte cacti_spacing[] = {
     2, 10, 8, 12, 6, 6, 18, 10, 6, 28, 10, 20, 8, 10, 24, 6, 26, 8, 8, 12,
