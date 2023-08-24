@@ -1,12 +1,14 @@
 #include "main.h"
 
 #include "images/canyon.h"
+#include "images/desert.h"
 
+u16 plane;
 void paint_background(int x, int y, int w, int h, int i, int n) {
     int dx, dy;
     for (dx = 0; dx < w; dx++) {
 	for (dy = 0; dy < h; dy++) {
-	    poke_VRAM(VRAM_PLANE_B + ((x + dx) * 2) + ((y + dy) * 128), i);
+	    poke_VRAM(plane + ((x + dx) * 2) + ((y + dy) * 128), i);
 	    i += 1;
 	}
 	i += n;
@@ -69,6 +71,7 @@ static void draw_sand(void) {
 }
 
 void display_canyon(void) {
+    plane = VRAM_PLANE_B;
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
@@ -79,4 +82,13 @@ void display_canyon(void) {
     draw_clouds();
     draw_horizon();
     draw_vegetation();
+
+    update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
+    update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
+
+    int x;
+    plane = VRAM_PLANE_A;
+    for (x = 0; x < 64; x += 8) {
+	paint_background(x, 24, 8, 4, 0x2000 | 97, 4);
+    }
 }

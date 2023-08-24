@@ -3,7 +3,7 @@ PREFIX	= m68k-elf-
 LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 OBJS	= rom_header.O main.o canyon.o
-PICS	= images/canyon.h
+PICS	= images/canyon.h images/desert.h
 
 all:	$(NAME).bin
 
