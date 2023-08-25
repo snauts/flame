@@ -89,6 +89,8 @@ void display_canyon(void) {
     int x;
     plane = VRAM_PLANE_A;
     for (x = 0; x < 64; x += 8) {
-	paint_background(x, 24, 8, 4, 0x2000 | 97, 4);
+	paint_background(x, 24, 8, 4, 0x2000 | 101, 4);
     }
+
+    paint_background(32, 22, 2, 4, 0x2000 | 97, 4);
 }
