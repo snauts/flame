@@ -94,4 +94,5 @@ void display_canyon(void) {
 
     paint_background(32, 22, 2, 4, 0x2000 | 97, 4);
     paint_background(42, 24, 6, 2, 0x2000 | 113, 6);
+    paint_background( 2, 24, 6, 2, 0x2000 | 115, 6);
 }
