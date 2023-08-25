@@ -9,7 +9,7 @@ all:	$(NAME).bin
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h
+	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h *.fasl
 
 disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
