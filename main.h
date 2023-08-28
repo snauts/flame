@@ -30,8 +30,7 @@ void fill_VRAM(u16 addr, u16 data, u16 count);
 
 void update_tiles(const u32 *buf, int offset, int count);
 void update_palette(const u16 *buf, int offset, int count);
-
-extern void (*game_frame)(void);
+void switch_frame(void (*fn)(void));
 
 u32 random(void);
 void set_seed(u32);

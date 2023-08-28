@@ -1,6 +1,6 @@
 #include "main.h"
 
-void (*game_frame)(void);
+static void (*game_frame)(void);
 
 static void addr_VDP(u32 flags, u16 addr) {
     LONG(VDP_CTRL) = flags | ((addr & 0x3fff) << 16) | (addr >> 14);
@@ -102,6 +102,11 @@ static void alert(u16 color) {
 	WORD(VDP_DATA) = color;
     }
     for (;;) { } /* hang */
+}
+
+void switch_frame(void (*fn)(void)) {
+    game_frame = fn;
+    wait_for_draw();
 }
 
 static void panic_on_vblank(void) {
