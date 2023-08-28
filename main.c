@@ -139,7 +139,7 @@ static void panic_on_draw(void) {
 }
 
 static void display_update(void) {
-    int i = 0;
+    u16 i = 0;
     while (i < vram_idx) {
 	poke_VRAM(vram_buf[i + 0], vram_buf[i + 1]);
 	i += 2;
