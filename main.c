@@ -35,6 +35,14 @@ static void wait_for_draw(void) {
     while (is_vblank()) { }
 }
 
+void skip_frames(u16 count) {
+    while (count > 0) {
+	wait_for_vblank();
+	wait_for_draw();
+	count--;
+    }
+}
+
 void update_palette(const u16 *buf, int offset, int count) {
     int i;
     addr_VDP(VDP_CRAM_WRITE, 2 * offset);
