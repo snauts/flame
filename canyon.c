@@ -71,11 +71,8 @@ static void draw_sand(void) {
 }
 
 static void update_canyon(void) {
-    int i;
-    for (i = 0; i < 64; i++) {
-	update_VRAM_word(VRAM_SCROLL + 0, -counter);
-	update_VRAM_word(VRAM_SCROLL + 2, -(counter >> 1));
-    }
+    update_VRAM_word(VRAM_SCROLL + 0, -counter);
+    update_VRAM_word(VRAM_SCROLL + 2, -(counter >> 1));
 }
 
 void display_canyon(void) {

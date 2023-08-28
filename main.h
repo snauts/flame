@@ -13,7 +13,7 @@
 #define VRAM_SPRITE	0xF000
 #define VRAM_SCROLL	0xFC00
 
-#define VRAM_BUF_SIZE	128
+#define VRAM_BUF_SIZE	256
 
 #define BIT(x) (1 << (x))
 
