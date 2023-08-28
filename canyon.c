@@ -64,7 +64,7 @@ const byte sand[] = { 72, 80, 88, 71, 79, 87, 95, 72 };
 
 static void draw_sand(void) {
     int i;
-    seed = 1;
+    set_seed(1);
     for (i = 0x700; i < 0xe00; i += 2) {
 	poke_VRAM(VRAM_PLANE_B + i, sand[random() & 7]);
     }

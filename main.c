@@ -74,7 +74,12 @@ static void clear_zero_tile(void) {
     }
 }
 
-u32 seed;
+static u32 seed;
+
+void set_seed(u32 new) {
+    seed = new;
+}
+
 u32 random(void) {
     seed ^= seed << 13;
     seed ^= seed >> 17;

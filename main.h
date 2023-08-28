@@ -34,4 +34,4 @@ void update_palette(const u16 *buf, int offset, int count);
 extern void (*game_frame)(void);
 
 u32 random(void);
-extern u32 seed;
+void set_seed(u32);
