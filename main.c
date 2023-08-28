@@ -2,8 +2,12 @@
 
 static void (*game_frame)(void);
 
+static u32 VDP_ctrl(u32 flags, u16 addr) {
+    return flags | ((addr & 0x3fff) << 16) | (addr >> 14);
+}
+
 static void addr_VDP(u32 flags, u16 addr) {
-    LONG(VDP_CTRL) = flags | ((addr & 0x3fff) << 16) | (addr >> 14);
+    LONG(VDP_CTRL) = VDP_ctrl(flags, addr);
 }
 
 static void tmss(void) {
@@ -104,13 +108,15 @@ static void alert(u16 color) {
     for (;;) { } /* hang */
 }
 
-u16 vram_idx;
-u16 vram_buf[VRAM_BUF_SIZE];
+static u16 vram_idx;
+static u32 vram_addr[VRAM_BUF_SIZE];
+static u16 vram_data[VRAM_BUF_SIZE];
 
 void update_VRAM_word(u16 addr, u16 data) {
     if (vram_idx < VRAM_BUF_SIZE) {
-	vram_buf[vram_idx++] = addr;
-	vram_buf[vram_idx++] = data;
+	vram_addr[vram_idx] = VDP_ctrl(VDP_VRAM_WRITE, addr);
+	vram_data[vram_idx] = data;
+	vram_idx++;
     }
     else {
 	alert(0x0080);
@@ -139,10 +145,11 @@ static void panic_on_draw(void) {
 }
 
 static void display_update(void) {
-    u16 i = 0;
-    while (i < vram_idx) {
-	poke_VRAM(vram_buf[i + 0], vram_buf[i + 1]);
-	i += 2;
+    u16 index = 0;
+    while (index < vram_idx) {
+	LONG(VDP_CTRL) = vram_addr[index];
+	WORD(VDP_DATA) = vram_data[index];
+	index++;
     }
     panic_on_draw();
 }
