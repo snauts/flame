@@ -31,7 +31,7 @@ pcx2h: pcx2h.c
 	@echo Make pcx2h
 	@$gcc pcx2h.c -o pcx2h
 
-%.o: %.c $(PICS)
+%.o: %.c main.h $(PICS)
 	@echo Compile $<
 	@$(PREFIX)gcc -Os -c $< -o $@
 
