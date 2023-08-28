@@ -104,6 +104,19 @@ static void alert(u16 color) {
     for (;;) { } /* hang */
 }
 
+u16 vram_idx;
+u16 vram_buf[VRAM_BUF_SIZE];
+
+void update_VRAM_word(u16 addr, u16 data) {
+    if (vram_idx < VRAM_BUF_SIZE) {
+	vram_buf[vram_idx++] = addr;
+	vram_buf[vram_idx++] = data;
+    }
+    else {
+	alert(0x0080);
+    }
+}
+
 void switch_frame(void (*fn)(void)) {
     game_frame = fn;
     wait_for_draw();
@@ -114,8 +127,9 @@ static void panic_on_vblank(void) {
 }
 
 static void advance_game(void) {
-    wait_for_draw();
     counter++;
+    vram_idx = 0;
+    wait_for_draw();
     game_frame();
     panic_on_vblank();
 }
@@ -125,8 +139,11 @@ static void panic_on_draw(void) {
 }
 
 static void display_update(void) {
-    poke_VRAM(VRAM_SCROLL, -counter);
-    WORD(VDP_DATA) = -(counter >> 1);
+    int i = 0;
+    while (i < vram_idx) {
+	poke_VRAM(vram_buf[i + 0], vram_buf[i + 1]);
+	i += 2;
+    }
     panic_on_draw();
 }
 

@@ -13,6 +13,8 @@
 #define VRAM_SPRITE	0xF000
 #define VRAM_SCROLL	0xFC00
 
+#define VRAM_BUF_SIZE	32
+
 #define BIT(x) (1 << (x))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
@@ -30,7 +32,10 @@ void fill_VRAM(u16 addr, u16 data, u16 count);
 
 void update_tiles(const u32 *buf, int offset, int count);
 void update_palette(const u16 *buf, int offset, int count);
+void update_VRAM_word(u16 addr, u16 data);
 void switch_frame(void (*fn)(void));
 
 u32 random(void);
 void set_seed(u32);
+
+extern u16 counter;
