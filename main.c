@@ -95,17 +95,17 @@ static void setup_game(void) {
     counter = 0;
 }
 
-static void red_alert(void) {
+static void alert(u16 color) {
     int i;
     addr_VDP(VDP_CRAM_WRITE, 0);
     for (i = 0; i < 64; i++) {
-	WORD(VDP_DATA) = 0x000e;
+	WORD(VDP_DATA) = color;
     }
     for (;;) { } /* hang */
 }
 
 static void panic_on_vblank(void) {
-    if (is_vblank()) red_alert(); else wait_for_vblank();
+    if (is_vblank()) alert(0x0008); else wait_for_vblank();
 }
 
 static void advance_game(void) {
@@ -116,7 +116,7 @@ static void advance_game(void) {
 }
 
 static void panic_on_draw(void) {
-    if (!is_vblank()) red_alert(); else wait_for_draw();
+    if (!is_vblank()) alert(0x000e); else wait_for_draw();
 }
 
 static void display_update(void) {
