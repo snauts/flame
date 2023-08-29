@@ -19,6 +19,9 @@ disasm:
 run:	$(NAME).bin
 	kega-fusion -eur $(NAME).bin
 
+mame:	$(NAME).bin
+	mame megadriv -cart flammenwerfer.bin
+
 $(NAME).bin: $(PICS) $(OBJS) cksum
 	@echo Link $(NAME).bin
 	@$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
