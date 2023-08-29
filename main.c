@@ -23,7 +23,7 @@ static void init_VDP(void) {
     for (i = 0; i < ARRAY_SIZE(VDP_regs); i++) {
 	WORD(VDP_CTRL) = 0x8000 | (i << 8) | VDP_regs[i];
     }
-    if (WORD(VDP_CTRL) & 0x1) WORD(VDP_CTRL) = 0x8178; /* PAL/NTSC */
+    if (WORD(VDP_CTRL) & 0x1) WORD(VDP_CTRL) = 0x817C; /* PAL/NTSC */
 }
 
 static u16 is_vblank(void) {
