@@ -105,5 +105,7 @@ void display_canyon(void) {
     paint_background(42, 24, 6, 2, 0x2000 | 113, 6);
     paint_background( 2, 24, 6, 2, 0x2000 | 115, 6);
 
+    fill_VRAM(VRAM_PLANE_A + 0xe00, 0x2001, 0x80);
+
     switch_frame(&update_canyon);
 }
