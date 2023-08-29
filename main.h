@@ -37,8 +37,8 @@ typedef unsigned int u32;
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
-void update_tiles(const u32 *buf, int offset, int count);
-void update_palette(const u16 *buf, int offset, int count);
+void update_tiles(const byte *buf, u16 offset, u16 count);
+void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
 void switch_frame(void (*fn)(void));
 

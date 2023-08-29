@@ -23,13 +23,44 @@ unsigned short get_color(unsigned char *buf, int i) {
     return (b << 9) | (g << 5) | (r << 1);
 }
 
+int total_pixels = 0;
+int pixel_amount = 0;
+unsigned char current_pixel = 0;
+
+void output_byte(int out, unsigned char byte) {
+    dprintf(out, "0x%02x,", byte);
+    if ((total_pixels++ & 0xf) == 0xf) {
+	dprintf(out, "\n");
+    }
+}
+
+void output_data(int out) {
+    if (pixel_amount > 1 || (current_pixel & 0xc0) == 0xc0) {
+	output_byte(out, pixel_amount | 0xc0);
+	output_byte(out, current_pixel);
+    }
+    else {
+	output_byte(out, current_pixel);
+    }
+    pixel_amount = 0;
+}
+
+void add_pixel(int out, unsigned char pixel) {
+    if (pixel_amount == 0x3f || (current_pixel != pixel && pixel_amount > 0)) {
+	output_data(out);
+    }
+    current_pixel = pixel;
+    pixel_amount++;
+}
+
 void save_tile(int out, unsigned char *pixel, int x, int i, int j) {
     int y;
     for (y = 0; y < 8; y++) {
 	int offset = (i * 4) + y * (x / 2) + j * 4 * x;
-	dprintf(out, "0x%08x,\n", htonl(* (unsigned *) (pixel + offset)));
+	for (int n = 0; n < 4; n++) {
+	    add_pixel(out, pixel[offset + n]);
+	}
     }
-    dprintf(out, "\n");
 }
 
 int main(int argc, char **argv) {
@@ -80,15 +111,20 @@ int main(int argc, char **argv) {
     }
     dprintf(out, "};\n");
 
-    dprintf(out, "const u32 %s_tiles[] = {\n", str);
+    dprintf(out, "const byte %s_tiles[] = {\n", str);
     for (i = 0; i < (x / 8); i++) {
 	for (j = 0; j < (y / 8); j++) {
 	    save_tile(out, pixels, x, i, j);
 	}
     }
+    output_data(out);
+    if (total_pixels & 0xf != 0) {
+	dprintf(out, "\n");
+    }
     dprintf(out, "};\n");
 
     close(out);
+    free(pixels);
     free(buf);
     return 0;
 }

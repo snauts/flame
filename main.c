@@ -38,7 +38,7 @@ static void wait_for_draw(void) {
     while (is_vblank()) { }
 }
 
-void update_palette(const u16 *buf, int offset, int count) {
+void update_palette(const u16 *buf, u16 offset, u16 count) {
     int i;
     addr_VDP(VDP_CRAM_WRITE, 2 * offset);
     for (i = 0; i < count; i++) {
@@ -59,11 +59,33 @@ void fill_VRAM(u16 addr, u16 data, u16 count) {
     }
 }
 
-void update_tiles(const u32 *buf, int offset, int count) {
-    int i;
+static void update_byte(byte octet) {
+    static byte flip;
+    static byte save;
+    if (flip) {
+	WORD(VDP_DATA) = (save << 8) | octet;
+    }
+    else {
+	save = octet;
+    }
+    flip = !flip;
+}
+
+void update_tiles(const byte *buf, u16 offset, u16 count) {
+    u16 i = 0;
     addr_VDP(VDP_VRAM_WRITE, 32 * offset);
-    for (i = 0; i < count; i++) {
-	LONG(VDP_DATA) = buf[i];
+    while (i < count) {
+	byte pixel = buf[i++];
+	if ((pixel & 0xc0) == 0xc0) {
+	    byte repeat = buf[i++];
+	    byte times = pixel & 0x3f;
+	    for (u16 j = 0; j < times; j++) {
+		update_byte(repeat);
+	    }
+	}
+	else {
+	    update_byte(pixel);
+	}
     }
 }
 
