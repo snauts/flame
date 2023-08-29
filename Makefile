@@ -2,6 +2,7 @@ NAME	= flammenwerfer
 PREFIX	= m68k-elf-
 LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
+CFLAGS	= -fomit-frame-pointer
 OBJS	= rom_header.O main.o canyon.o
 HEADS	= +canyon.h +desert.h
 PICS 	= $(subst +,images/,$(HEADS))
@@ -33,7 +34,7 @@ pcx2h: pcx2h.c
 
 %.o: %.c main.h $(PICS)
 	@echo Compile $<
-	@$(PREFIX)gcc -Os -c $< -o $@
+	@$(PREFIX)gcc $(CFLAGS) -Os -c $< -o $@
 
 %.O: %.S
 	@echo Compile $<
