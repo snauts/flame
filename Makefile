@@ -17,10 +17,10 @@ disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
 
 run:	$(NAME).bin
-	kega-fusion -eur $(NAME).bin
+	kega-fusion $(NAME).bin
 
 mame:	$(NAME).bin
-	mame megadriv -cart flammenwerfer.bin
+	mame genesis -cart flammenwerfer.bin
 
 $(NAME).bin: $(PICS) $(OBJS) cksum
 	@echo Link $(NAME).bin
