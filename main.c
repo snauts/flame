@@ -108,9 +108,9 @@ static u16 vram_idx;
 static u32 vram_addr[VRAM_BUF_SIZE];
 static u16 vram_data[VRAM_BUF_SIZE];
 
-void update_VRAM_word(u16 addr, u16 data) {
+void update_VDP_word(u32 ctrl, u16 data) {
     if (vram_idx < VRAM_BUF_SIZE) {
-	vram_addr[vram_idx] = VDP_CTRL_VALUE(VDP_VRAM_WRITE, addr);
+	vram_addr[vram_idx] = ctrl;
 	vram_data[vram_idx] = data;
 	vram_idx++;
     }

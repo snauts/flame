@@ -71,13 +71,12 @@ static void draw_sand(void) {
 }
 
 static void update_canyon(void) {
-    update_VRAM_word(VRAM_SCROLL + 0, -counter);
-    update_VRAM_word(VRAM_SCROLL + 2, -(counter >> 1));
+    UPDATE_VRAM_WORD(VRAM_SCROLL_A, -counter);
+    UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(counter >> 1));
 }
 
 static void draw_walking_path(void) {
     int x;
-    plane = VRAM_PLANE_A;
     for (x = 0; x < 64; x += 8) {
 	paint_background(x, 24, 8, 4, 0x2000 | 101, 4);
     }
@@ -96,6 +95,7 @@ void display_canyon(void) {
     draw_horizon();
     draw_vegetation();
 
+    plane = VRAM_PLANE_A;
     update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
     update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
 
