@@ -42,7 +42,7 @@ void update_palette(const u16 *buf, int offset, int count);
 void update_VDP_word(u32 ctrl, u16 data);
 void switch_frame(void (*fn)(void));
 
-u32 random(void);
-void set_seed(u32);
+u16 random(void);
+void set_seed(u16);
 
 extern u16 counter;

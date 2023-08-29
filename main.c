@@ -75,16 +75,16 @@ static void clear_zero_tile(void) {
     }
 }
 
-static u32 seed;
+static u16 seed;
 
-void set_seed(u32 new) {
+void set_seed(u16 new) {
     seed = new;
 }
 
-u32 random(void) {
-    seed ^= seed << 13;
-    seed ^= seed >> 17;
-    seed ^= seed << 5;
+u16 random(void) {
+    seed ^= seed << 7;
+    seed ^= seed >> 9;
+    seed ^= seed << 8;
     return seed;
 }
 
