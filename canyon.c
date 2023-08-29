@@ -3,6 +3,8 @@
 #include "images/canyon.h"
 #include "images/desert.h"
 
+void setup_soldier_sprites(void);
+
 u16 plane;
 void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;
@@ -106,6 +108,8 @@ void display_canyon(void) {
     paint_background( 2, 24, 6, 2, 0x2000 | 115, 6);
 
     fill_VRAM(VRAM_PLANE_A + 0xe00, 0x2001, 0x80);
+
+    setup_soldier_sprites();
 
     switch_frame(&update_canyon);
 }

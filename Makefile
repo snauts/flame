@@ -3,8 +3,8 @@ PREFIX	= m68k-elf-
 LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CFLAGS	= -fomit-frame-pointer
-OBJS	= rom_header.O main.o canyon.o
-HEADS	= +canyon.h +desert.h
+OBJS	= rom_header.O main.o canyon.o soldier.o
+HEADS	= +canyon.h +desert.h +soldier.h
 PICS 	= $(subst +,images/,$(HEADS))
 
 all:	$(NAME).bin
