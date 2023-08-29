@@ -16,7 +16,7 @@ disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
 
 run:	$(NAME).bin
-	kega-fusion $(NAME).bin
+	kega-fusion -eur $(NAME).bin
 
 $(NAME).bin: $(PICS) $(OBJS) cksum
 	@echo Link $(NAME).bin
