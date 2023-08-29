@@ -39,7 +39,7 @@ static void wait_for_draw(void) {
 }
 
 void update_palette(const u16 *buf, u16 offset, u16 count) {
-    int i;
+    u16 i;
     addr_VDP(VDP_CRAM_WRITE, 2 * offset);
     for (i = 0; i < count; i++) {
 	WORD(VDP_DATA) = buf[i];
@@ -52,7 +52,7 @@ void poke_VRAM(u16 addr, u16 data) {
 }
 
 void fill_VRAM(u16 addr, u16 data, u16 count) {
-    int i;
+    u16 i;
     addr_VDP(VDP_VRAM_WRITE, addr);
     for (i = 0; i < count; i++) {
 	WORD(VDP_DATA) = data;
@@ -90,7 +90,7 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
 }
 
 static void clear_zero_tile(void) {
-    int i;
+    u16 i;
     addr_VDP(VDP_VRAM_WRITE, 0);
     for (i = 0; i < 16; i++) {
 	WORD(VDP_DATA) = 0;
@@ -119,7 +119,7 @@ static void setup_game(void) {
 }
 
 static void alert(u16 color) {
-    int i;
+    u16 i;
     addr_VDP(VDP_CRAM_WRITE, 0);
     for (i = 0; i < 64; i++) {
 	WORD(VDP_DATA) = color;

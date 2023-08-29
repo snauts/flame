@@ -4,8 +4,8 @@
 #include "images/desert.h"
 
 u16 plane;
-void paint_background(int x, int y, int w, int h, int i, int n) {
-    int dx, dy;
+void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
+    u16 dx, dy;
     for (dx = 0; dx < w; dx++) {
 	for (dy = 0; dy < h; dy++) {
 	    poke_VRAM(plane + ((x + dx) * 2) + ((y + dy) * 128), i);
@@ -20,12 +20,12 @@ const byte cloud_data[] = {
     36, 1, 1, 42, 6, 5, 47, 3, 7, 51, 7, 1, 56, 2, 3,
 };
 
-static void paint_cloud(int x, int y, int i) {
+static void paint_cloud(u16 x, u16 y, u16 i) {
     paint_background(x, y, 8, 2, i, 6);
 }
 
 static void draw_clouds(void) {
-    int i;
+    u16 i;
     for (i = 0; i < ARRAY_SIZE(cloud_data); i += 3) {
 	paint_cloud(cloud_data[i + 0], cloud_data[i + 1], cloud_data[i + 2]);
     }
@@ -36,7 +36,7 @@ const byte horizon_data[] = {
 };
 
 static void draw_horizon(void) {
-    int x, i = 0;
+    u16 x, i = 0;
     for (x = 0; x <= 60; x += 4) {
 	paint_background(x, 12, 4, 1, horizon_data[i++], 7);
     }
@@ -52,7 +52,7 @@ const byte cacti_spacing[] = {
 };
 
 static void draw_vegetation(void) {
-    int i, offset = 0x700, tile = 0;
+    u16 i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
 	poke_VRAM(VRAM_PLANE_B + offset, cacti[(tile + offset) & 7]);
@@ -63,7 +63,7 @@ static void draw_vegetation(void) {
 const byte sand[] = { 72, 80, 88, 71, 79, 87, 95, 72 };
 
 static void draw_sand(void) {
-    int i;
+    u16 i;
     set_seed(1);
     for (i = 0x700; i < 0xe00; i += 2) {
 	poke_VRAM(VRAM_PLANE_B + i, sand[random() & 7]);
@@ -76,7 +76,7 @@ static void update_canyon(void) {
 }
 
 static void draw_walking_path(void) {
-    int x;
+    u16 x;
     for (x = 0; x < 64; x += 8) {
 	paint_background(x, 24, 8, 4, 0x2000 | 101, 4);
     }
