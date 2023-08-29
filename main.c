@@ -2,12 +2,8 @@
 
 static void (*game_frame)(void);
 
-static u32 VDP_ctrl(u32 flags, u16 addr) {
-    return flags | ((addr & 0x3fff) << 16) | (addr >> 14);
-}
-
 static void addr_VDP(u32 flags, u16 addr) {
-    LONG(VDP_CTRL) = VDP_ctrl(flags, addr);
+    LONG(VDP_CTRL) = VDP_CTRL_VALUE(flags, addr);
 }
 
 static void tmss(void) {
@@ -114,7 +110,7 @@ static u16 vram_data[VRAM_BUF_SIZE];
 
 void update_VRAM_word(u16 addr, u16 data) {
     if (vram_idx < VRAM_BUF_SIZE) {
-	vram_addr[vram_idx] = VDP_ctrl(VDP_VRAM_WRITE, addr);
+	vram_addr[vram_idx] = VDP_CTRL_VALUE(VDP_VRAM_WRITE, addr);
 	vram_data[vram_idx] = data;
 	vram_idx++;
     }

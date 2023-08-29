@@ -27,6 +27,9 @@ typedef unsigned int u32;
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
 
+#define VDP_CTRL_VALUE(flags, addr) \
+    ((flags) | (((addr) & 0x3fff) << 16) | ((addr) >> 14))
+
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
