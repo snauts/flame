@@ -3,6 +3,11 @@
 #include "images/soldier.h"
 #include "images/walk.h"
 
+void soldier_march(void) {
+    u16 frame = 6 * (((counter >> 2) % 12) + 1) + 524;
+    UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
+}
+
 static void put_soldier(u16 x, u16 y) {
     LONG(VDP_CTRL) = VDP_CTRL_VALUE(VDP_VRAM_WRITE, VRAM_SPRITE);
 
