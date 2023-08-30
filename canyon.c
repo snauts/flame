@@ -80,7 +80,7 @@ static void update_canyon(void) {
 static void draw_walking_path(void) {
     u16 x;
     for (x = 0; x < 64; x += 8) {
-	paint_background(x, 24, 8, 4, 0x2000 | 101, 4);
+	paint_background(x, 24, 8, 4, TILE(1, 101), 4);
     }
 }
 
@@ -103,11 +103,11 @@ void display_canyon(void) {
 
     draw_walking_path();
 
-    paint_background(32, 22, 2, 4, 0x2000 | 97, 4);
-    paint_background(42, 24, 6, 2, 0x2000 | 113, 6);
-    paint_background( 2, 24, 6, 2, 0x2000 | 115, 6);
+    paint_background(32, 22, 2, 4, TILE(1, 97), 4);
+    paint_background(42, 24, 6, 2, TILE(1, 113), 6);
+    paint_background( 2, 24, 6, 2, TILE(1, 115), 6);
 
-    fill_VRAM(VRAM_PLANE_A + 0xe00, 0x2001, 0x80);
+    fill_VRAM(VRAM_PLANE_A + 0xe00, TILE(1, 1), 0x80);
 
     setup_soldier_sprites();
 
