@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <sys/stat.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
@@ -63,18 +64,53 @@ void save_tile(int out, unsigned char *pixel, int x, int i, int j) {
     }
 }
 
+static char *input = NULL;
+static char *output = NULL;
+
+bool save_pallete = true;
+
+void parse_args(int argc, char **argv) {
+    int i;
+    for (i = 1; i < argc; i++) {
+	if (argv[i][0] != '-') {
+	    if (input == NULL) {
+		input = argv[i];
+	    }
+	    else if (output == NULL) {
+		output = argv[i];
+	    }
+	    else {
+		printf("ERROR: garbage arguments\n");
+	    }
+	}
+	else {
+	    for (int j = 1; j < strlen(argv[i]); j++) {
+		switch(argv[i][j]) {
+		case 'p':
+		    save_pallete = false;
+		    break;
+		default:
+		    printf("ERROR: unknown flag\n");
+		    break;
+		}
+	    }
+	}
+    }
+}
+
 int main(int argc, char **argv) {
     if (argc < 3) {
 	printf("usage: pcx2h [PCX-file] [C-header-file]\n");
 	return 0;
     }
+    parse_args(argc, argv);
     struct stat st;
-    if (stat(argv[1], &st) != 0) {
-	printf("ERROR while opening PCX-file \"%s\"\n", argv[1]);
+    if (stat(input, &st) != 0) {
+	printf("ERROR while opening PCX-file \"%s\"\n", input);
 	return -ENOENT;
     }
     unsigned char *buf = malloc(st.st_size);
-    int in = open(argv[1], O_RDONLY);
+    int in = open(input, O_RDONLY);
     read(in, buf, st.st_size);
     close(in);
 
@@ -96,20 +132,23 @@ int main(int argc, char **argv) {
 	}
     }
 
-    char str[strlen(argv[2])];
+    char str[strlen(output)];
     int trunc = sizeof("images/") - 1;
-    int offset = strstr(argv[2], ".h") - argv[2];
-    memcpy(str, argv[2] + trunc, offset - trunc);
+    int offset = strstr(output, ".h") - output;
+    memcpy(str, output + trunc, offset - trunc);
     str[offset - trunc] = 0;
 
-    remove(argv[2]);
-    int out = open(argv[2], O_CREAT | O_RDWR, 0644);
-    dprintf(out, "const u16 %s_palette[] = {\n", str);
-    for (i = 0; i < 16; i++) {
-	dprintf(out, "0x%04x,", get_color(buf, i));
-	if ((i & 7) == 7) dprintf(out, "\n");
+    remove(output);
+    int out = open(output, O_CREAT | O_RDWR, 0644);
+
+    if (save_pallete) {
+	dprintf(out, "const u16 %s_palette[] = {\n", str);
+	for (i = 0; i < 16; i++) {
+	    dprintf(out, "0x%04x,", get_color(buf, i));
+	    if ((i & 7) == 7) dprintf(out, "\n");
+	}
+	dprintf(out, "};\n");
     }
-    dprintf(out, "};\n");
 
     dprintf(out, "const byte %s_tiles[] = {\n", str);
     for (i = 0; i < (x / 8); i++) {
