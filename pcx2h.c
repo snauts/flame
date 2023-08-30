@@ -9,12 +9,18 @@
 #include <stdio.h>
 #include <errno.h>
 
+static bool is_8bit(unsigned char *buf) {
+    return (buf[3] == 8);
+}
+
 unsigned short get_u16(unsigned char *buf, int offset) {
     return * (unsigned short *) (buf + offset);
 }
 
+static int palette_offset = 16;
+
 int scale_color(unsigned char *buf, int i, int j) {
-    return buf[(i * 3) + 16 + j] / 32;
+    return buf[(i * 3) + palette_offset + j] / 32;
 }
 
 unsigned short get_color(unsigned char *buf, int i) {
@@ -54,12 +60,28 @@ void add_pixel(int out, unsigned char pixel) {
     pixel_amount++;
 }
 
-void save_tile(int out, unsigned char *pixel, int x, int i, int j) {
+void save_tile_4bit(int out, unsigned char *pixel, int x, int i, int j) {
     int y;
     for (y = 0; y < 8; y++) {
 	int offset = (i * 4) + y * (x / 2) + j * 4 * x;
 	for (int n = 0; n < 4; n++) {
 	    add_pixel(out, pixel[offset + n]);
+	}
+    }
+}
+
+void save_tile_8bit(int out, unsigned char *pixel, int x, int i, int j) {
+    int y;
+    unsigned char nibble;
+    for (y = 0; y < 8; y++) {
+	int offset = (i * 8) + y * x + j * 8 * x;
+	for (int n = 0; n < 8; n++) {
+	    if ((n & 0x1) == 0) {
+		nibble = (pixel[offset + n] & 0xf) << 4;
+	    }
+	    else {
+		add_pixel(out, nibble | (pixel[offset + n] & 0xf));
+	    }
 	}
     }
 }
@@ -116,10 +138,11 @@ int main(int argc, char **argv) {
 
     int x = get_u16(buf, 0x8) + 1;
     int y = get_u16(buf, 0xa) + 1;
-    unsigned char *pixels = malloc(x * y / 2);
+    int unpacked_size = x * y / (is_8bit(buf) ? 1 : 2);
+    unsigned char *pixels = malloc(unpacked_size);
 
     int i = 128, j = 0;
-    while (i < st.st_size) {
+    while (j < unpacked_size) {
 	if ((buf[i] & 0xc0) == 0xc0) {
 	    int count = buf[i++] & 0x3f;
 	    while (count-- > 0) {
@@ -142,6 +165,9 @@ int main(int argc, char **argv) {
     int out = open(output, O_CREAT | O_RDWR, 0644);
 
     if (save_pallete) {
+	if (is_8bit(buf)) {
+	    palette_offset = st.st_size - 768;
+	}
 	dprintf(out, "const u16 %s_palette[] = {\n", str);
 	for (i = 0; i < 16; i++) {
 	    dprintf(out, "0x%04x,", get_color(buf, i));
@@ -153,7 +179,12 @@ int main(int argc, char **argv) {
     dprintf(out, "const byte %s_tiles[] = {\n", str);
     for (i = 0; i < (x / 8); i++) {
 	for (j = 0; j < (y / 8); j++) {
-	    save_tile(out, pixels, x, i, j);
+	    if (is_8bit(buf)) {
+		save_tile_8bit(out, pixels, x, i, j);
+	    }
+	    else {
+		save_tile_4bit(out, pixels, x, i, j);
+	    }
 	}
     }
     output_data(out);
