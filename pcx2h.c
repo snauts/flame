@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
 	if (is_8bit(buf)) {
 	    palette_offset = st.st_size - 768;
 	}
-	dprintf(out, "const u16 %s_palette[] = {\n", str);
+	dprintf(out, "static const u16 %s_palette[] = {\n", str);
 	for (i = 0; i < 16; i++) {
 	    dprintf(out, "0x%04x,", get_color(buf, i));
 	    if ((i & 7) == 7) dprintf(out, "\n");
@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
 	dprintf(out, "};\n");
     }
 
-    dprintf(out, "const byte %s_tiles[] = {\n", str);
+    dprintf(out, "static const byte %s_tiles[] = {\n", str);
     for (i = 0; i < (x / 8); i++) {
 	for (j = 0; j < (y / 8); j++) {
 	    if (is_8bit(buf)) {

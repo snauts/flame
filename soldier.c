@@ -1,34 +1,27 @@
 #include "main.h"
 
-#include "images/soldier.h"
-
-void put_soldier_column(u16 x, u16 y, u16 s) {
-    static u16 next;
-    static u16 offset;
-    poke_VRAM(VRAM_SPRITE + offset + 0, y);
-    poke_VRAM(VRAM_SPRITE + offset + 2, 0x300 | ++next);
-    poke_VRAM(VRAM_SPRITE + offset + 4, 0x4000 | s);
-    poke_VRAM(VRAM_SPRITE + offset + 6, x);
-    offset += 8;
-
-    poke_VRAM(VRAM_SPRITE + offset + 0, y + 32);
-    poke_VRAM(VRAM_SPRITE + offset + 2, ++next);
-    poke_VRAM(VRAM_SPRITE + offset + 4, 0x4000 | (s + 4));
-    poke_VRAM(VRAM_SPRITE + offset + 6, x);
-    offset += 8;
-}
+#include "images/soldierT.h"
+#include "images/soldierB.h"
 
 void put_soldier(u16 x, u16 y) {
-    u16 i, s = 512;
-    for (i = 0; i < 4; i++) {
-	put_soldier_column(x, y, s);
-	x += 8;
-	s += 5;
-    }
+    LONG(VDP_CTRL) = VDP_CTRL_VALUE(VDP_VRAM_WRITE, VRAM_SPRITE);
+
+    WORD(VDP_DATA) = y;
+    WORD(VDP_DATA) = SPRITE(4, 2, 1);
+    WORD(VDP_DATA) = TILE(2, 512);
+    WORD(VDP_DATA) = x;
+
+    WORD(VDP_DATA) = y + 16;
+    WORD(VDP_DATA) = SPRITE(4, 3, 0);
+    WORD(VDP_DATA) = TILE(2, 520);
+    WORD(VDP_DATA) = x;
 }
 
 void setup_soldier_sprites(void) {
-    update_palette(soldier_palette, 32, ARRAY_SIZE(soldier_palette));
-    update_tiles(soldier_tiles, 512, ARRAY_SIZE(soldier_tiles));
+    update_palette(soldierT_palette, 32, ARRAY_SIZE(soldierT_palette));
+
+    update_tiles(soldierT_tiles, 512, ARRAY_SIZE(soldierT_tiles));
+    update_tiles(soldierB_tiles, 520, ARRAY_SIZE(soldierB_tiles));
+
     put_soldier(176, 296);
 }

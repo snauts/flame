@@ -4,7 +4,7 @@ LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CFLAGS	= -fomit-frame-pointer
 OBJS	= rom_header.O main.o canyon.o soldier.o
-HEADS	= +canyon.h +desert.h +soldier.h
+HEADS	= +canyon.h +desert.h +soldierT.h +soldierB.h
 PICS 	= $(subst +,images/,$(HEADS))
 
 all:	$(NAME).bin
@@ -46,3 +46,9 @@ pcx2h: pcx2h.c
 %.h: %.pcx pcx2h
 	@echo Convert $<
 	@./pcx2h $< $@
+
+images/soldierT.pcx: images/soldier.pcx
+	@convert $< -crop x16+0+0 $@
+
+images/soldierB.pcx: images/soldier.pcx
+	@convert $< -crop x32+0+16 $@

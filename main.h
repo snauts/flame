@@ -28,6 +28,9 @@ typedef unsigned int u32;
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
 
+#define TILE(p, i) (((p) << 13) | (i))
+#define SPRITE(x, y, n) ((((x) - 1) << 10) | (((y) - 1) << 8) | (n));
+
 #define VDP_CTRL_VALUE(flags, addr) \
     ((flags) | (((addr) & 0x3fff) << 16) | ((addr) >> 14))
 
