@@ -11,7 +11,8 @@ all:	$(NAME).bin
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h *.fasl
+	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h *.fasl \
+		images/soldierT.pcx images/soldierB.pcx
 
 disasm:
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
