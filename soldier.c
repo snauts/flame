@@ -3,7 +3,17 @@
 #include "images/soldier.h"
 #include "images/walk.h"
 
+static u16 soldier_y;
+static u16 platform_h;
 static u16 button_state;
+
+#define BUTTON_A(x) ((x) & BIT(12))
+#define BUTTON_B(x) ((x) & BIT(4))
+#define BUTTON_C(x) ((x) & BIT(5))
+
+#define BUTTON_LEFT(x) ((x) & BIT(2))
+#define BUTTON_RIGHT(x) ((x) & BIT(3))
+
 static u16 read_gamepad(void) {
     BYTE(GAMEPAD_A_DATA) = 0;
     asm("nop");
@@ -15,17 +25,28 @@ static u16 read_gamepad(void) {
     button_state = ~(button_state | BYTE(GAMEPAD_A_DATA));
 }
 
+static void update_soldier_y(void) {
+    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x00, soldier_y);
+    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x08, soldier_y + 24);
+    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x10, soldier_y + 21);
+}
+
 u16 soldier_march(void) {
     static u16 scroll;
     static short cycle;
     u16 frame, prev = scroll;
+    u16 last = button_state;
 
     read_gamepad();
-    if (button_state & BIT(3)) {
+    if (BUTTON_RIGHT(button_state)) {
 	scroll++;
     }
-    else if (button_state & BIT(2)) {
+    else if (BUTTON_LEFT(button_state)) {
 	scroll--;
+    }
+
+    if (BUTTON_C(button_state) && BUTTON_C(last) == 0) {
+	update_soldier_y();
     }
 
     if (prev == scroll) {
@@ -43,7 +64,7 @@ u16 soldier_march(void) {
 	}
     }
 
-    if (button_state & BIT(4)) {
+    if (BUTTON_B(button_state)) {
 	scroll += 4;
     }
 
@@ -77,5 +98,7 @@ void setup_soldier_sprites(void) {
     update_tiles(soldier_tiles, 512, ARRAY_SIZE(soldier_tiles));
     update_tiles(walk_tiles, 524, ARRAY_SIZE(walk_tiles));
 
-    put_soldier(176, 296);
+    platform_h = 296;
+    soldier_y = platform_h;
+    put_soldier(176, soldier_y);
 }
