@@ -129,6 +129,7 @@ u16 counter;
 static void setup_game(void) {
     void display_canyon(void);
     game_frame = &display_canyon;
+    while (!is_vblank());
     wait_vblank_done();
     fill_VRAM(0, 0, 16);
     counter = 0;

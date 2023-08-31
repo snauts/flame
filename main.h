@@ -37,7 +37,7 @@ typedef unsigned int u32;
 #define TILE(p, i) (((p) << 13) | (i))
 #define SPRITE(x, y, n) ((((x) - 1) << 10) | (((y) - 1) << 8) | (n))
 
-#define VDP_CTRL_REG(reg, val) (BIT(15) | ((reg) << 8) | val)
+#define VDP_CTRL_REG(reg, val) (BIT(15) | ((reg) << 8) | (val))
 
 #define VDP_CTRL_VALUE(flags, addr) \
     ((flags) | (((addr) & 0x3fff) << 16) | ((addr) >> 14))
