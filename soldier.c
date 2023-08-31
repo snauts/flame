@@ -59,13 +59,19 @@ u16 soldier_march(void) {
 	    cycle = (cycle == -1) ? 2 : 8; /* start walking frame */
 	}
 	if ((scroll & 3) == 1) {
-	    cycle = cycle + 1;
-	    if (cycle == 12) cycle = 0;
+	    if (scroll < prev) {
+		cycle = cycle - 1;
+		if (cycle == -1) cycle = 11;
+	    }
+	    else {
+		cycle = cycle + 1;
+		if (cycle == 12) cycle = 0;
+	    }
 	}
     }
 
     if (BUTTON_B(button_state)) {
-	scroll += BUTTON_LEFT(button_state) ? -4 : 4;
+	scroll += (scroll < prev) ? -4 : 4;
     }
 
     frame = 6 * (cycle + 2) + 524;
