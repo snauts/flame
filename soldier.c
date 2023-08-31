@@ -42,6 +42,11 @@ u16 soldier_march(void) {
 	    if (cycle == 12) cycle = 0;
 	}
     }
+
+    if (button_state & BIT(4)) {
+	scroll += 4;
+    }
+
     frame = 6 * (cycle + 2) + 524;
     UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
     return scroll;
