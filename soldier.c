@@ -31,23 +31,31 @@ static void update_soldier_y(void) {
     UPDATE_VRAM_WORD(VRAM_SPRITE + 0x10, soldier_y + 21);
 }
 
-u16 soldier_march(void) {
-    static u16 scroll;
+void soldier_jump(u16 start) {
+    static short gravity;
+    static short velocity;
+    if (start && soldier_y == platform_h) {
+	velocity = 5;
+	gravity = 0;
+    }
+
+    soldier_y -= velocity;
+    if (gravity == 0) {
+	gravity = 5;
+	velocity--;
+    }
+    gravity--;
+
+    if (soldier_y >= platform_h) {
+	soldier_y = platform_h;
+	velocity = 0;
+	gravity = 0;
+    }
+    update_soldier_y();
+}
+
+static void soldier_animate(u16 prev, u16 scroll) {
     static short cycle;
-    u16 frame, prev = scroll;
-    u16 last = button_state;
-
-    read_gamepad();
-    if (BUTTON_RIGHT(button_state)) {
-	scroll++;
-    }
-    else if (BUTTON_LEFT(button_state)) {
-	scroll--;
-    }
-
-    if (BUTTON_C(button_state) && BUTTON_C(last) == 0) {
-	update_soldier_y();
-    }
 
     if (prev == scroll) {
 	if (cycle >= 0) {
@@ -68,12 +76,30 @@ u16 soldier_march(void) {
 	}
     }
 
+    u16 frame = 6 * (cycle + 2) + 524;
+    UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
+}
+
+u16 soldier_march(void) {
+    static u16 scroll;
+    u16 prev = scroll;
+    u16 last = button_state;
+
+    read_gamepad();
+    if (BUTTON_RIGHT(button_state)) {
+	scroll++;
+    }
+    else if (BUTTON_LEFT(button_state)) {
+	scroll--;
+    }
+
+    soldier_jump(BUTTON_C(button_state) && BUTTON_C(last) == 0);
+    soldier_animate(prev, scroll);
+
     if (BUTTON_B(button_state)) {
 	scroll += (scroll < prev) ? -4 : 4;
     }
 
-    frame = 6 * (cycle + 2) + 524;
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
     return scroll;
 }
 
