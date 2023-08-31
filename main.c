@@ -15,7 +15,7 @@ static void tmss(void) {
 const byte VDP_regs[] = {
     0x14, 0x74, 0x30, 0x00, 0x07, 0x78, 0x00, 0x00,
     0x00, 0x00, 0x08, 0x00, 0x81, 0x3F, 0x00, 0x02,
-    0x01, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x80
+    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80
 };
 
 static u16 is_PAL(void) {
@@ -25,7 +25,7 @@ static u16 is_PAL(void) {
 static void init_sys(void) {
     char i;
     for (i = 0; i < ARRAY_SIZE(VDP_regs); i++) {
-	WORD(VDP_CTRL) = BIT(15) | (i << 8) | VDP_regs[i];
+	WORD(VDP_CTRL) = VDP_CTRL_REG(i, VDP_regs[i]);
     }
     if (is_PAL()) WORD(VDP_CTRL) = VDP_CTRL_REG(0x01, 0x7C); /* PAL/NTSC */
 
@@ -61,10 +61,23 @@ void poke_VRAM(u16 addr, u16 data) {
     UPDATE_VRAM_WORD(addr, data);
 }
 
+static u16 fill_addr, fill_data, fill_count;
 void fill_VRAM(u16 addr, u16 data, u16 count) {
-    u16 i;
-    for (i = 0; i < count; i++) {
-	poke_VRAM(addr + i * 2, data);
+    fill_addr = addr;
+    fill_data = data;
+    fill_count = count;
+    wait_vblank_done();
+}
+
+static void fill_using_DMA(void) {
+    if (fill_count > 0) {
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x17, BIT(7));
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x13, fill_count & 0xFF);
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x14, fill_count >> 8);
+	LONG(VDP_CTRL) = VDP_CTRL_VALUE(VDP_DMA_FILL, fill_addr);
+	WORD(VDP_DATA) = fill_data;
+	fill_count = 0;
+	while (is_DMA());
     }
 }
 
@@ -101,7 +114,6 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
 }
 
 static u16 seed;
-
 void set_seed(u16 new) {
     seed = new;
 }
@@ -117,8 +129,7 @@ u16 counter;
 static void setup_game(void) {
     void display_canyon(void);
     game_frame = &display_canyon;
-    while (!is_vblank()) { }
-    enable_interrupts();
+    wait_vblank_done();
     fill_VRAM(0, 0, 16);
     counter = 0;
 }
@@ -156,12 +167,12 @@ static void panic_on_draw(void) {
 
 void vblank_interrupt(void) {
     u16 index = 0;
+    fill_using_DMA();
     while (index < vram_idx) {
 	LONG(VDP_CTRL) = vram_addr[index];
 	WORD(VDP_DATA) = vram_data[index];
 	index++;
     }
-    while (is_DMA());
     panic_on_draw();
     vblank_done = 1;
     vram_idx = 0;
