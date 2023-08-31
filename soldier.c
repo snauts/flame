@@ -29,15 +29,20 @@ u16 soldier_march(void) {
     }
 
     if (prev == scroll) {
-	cycle = -1;
+	if (cycle >= 0) {
+	    cycle = (cycle < 6) ? -1 : -2; /* stop walking frame */
+	}
     }
     else {
+	if (cycle < 0) {
+	    cycle = (cycle == -1) ? 2 : 8; /* start walking frame */
+	}
 	if ((scroll & 3) == 1) {
 	    cycle = cycle + 1;
 	    if (cycle == 12) cycle = 0;
 	}
     }
-    frame = 6 * (cycle + 1) + 524;
+    frame = 6 * (cycle + 2) + 524;
     UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
     return scroll;
 }
