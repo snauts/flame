@@ -54,9 +54,7 @@ void soldier_jump(u16 start) {
     update_soldier_y();
 }
 
-static void soldier_animate(u16 prev, u16 scroll) {
-    static short cycle;
-
+static short animate_walking(short cycle, u16 prev, u16 scroll) {
     if (prev == scroll) {
 	if (cycle >= 0) {
 	    cycle = (cycle < 6) ? -1 : -2; /* stop walking frame */
@@ -75,9 +73,20 @@ static void soldier_animate(u16 prev, u16 scroll) {
 	    }
 	}
     }
+    return cycle;
+}
 
-    u16 frame = 6 * (cycle + 2) + 524;
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
+static void soldier_animate(u16 prev, u16 scroll) {
+    static short cycle;
+    u16 soldier_frame;
+    if (soldier_y == platform_h) {
+	cycle = animate_walking(cycle, prev, scroll);
+	soldier_frame = 6 * (cycle + 2) + 524;
+    }
+    else {
+	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
+    }
+    UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, soldier_frame));
 }
 
 u16 soldier_march(void) {
