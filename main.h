@@ -16,6 +16,11 @@
 
 #define VRAM_BUF_SIZE	128
 
+#define GAMEPAD_A_CTRL	0xA10009
+#define GAMEPAD_A_DATA	0xA10003
+#define GAMEPAD_B_CTRL	0xA1000B
+#define GAMEPAD_B_DATA	0xA10005
+
 #define BIT(x) (1 << (x))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
@@ -48,6 +53,6 @@ void switch_frame(void (*fn)(void));
 u16 random(void);
 void set_seed(u16);
 
-extern u16 counter;
+u16 soldier_march(void);
 
-void soldier_march(void);
+extern u16 counter;

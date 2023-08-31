@@ -18,12 +18,15 @@ const byte VDP_regs[] = {
     0x01, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x80
 };
 
-static void init_VDP(void) {
+static void init_sys(void) {
     char i;
     for (i = 0; i < ARRAY_SIZE(VDP_regs); i++) {
 	WORD(VDP_CTRL) = 0x8000 | (i << 8) | VDP_regs[i];
     }
     if (WORD(VDP_CTRL) & 0x1) WORD(VDP_CTRL) = 0x817C; /* PAL/NTSC */
+
+    /* init gamepad a */
+    BYTE(GAMEPAD_A_CTRL) = BIT(6);
 }
 
 static u16 is_vblank(void) {
@@ -175,7 +178,7 @@ static void display_update(void) {
 
 void _start(void) {
     tmss();
-    init_VDP();
+    init_sys();
     setup_game();
     for (;;) {
 	advance_game();

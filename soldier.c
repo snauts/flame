@@ -3,9 +3,26 @@
 #include "images/soldier.h"
 #include "images/walk.h"
 
-void soldier_march(void) {
-    u16 frame = 6 * (((counter >> 2) % 12) + 1) + 524;
+static u16 button_state;
+static u16 read_gamepad(void) {
+    BYTE(GAMEPAD_A_DATA) = 0;
+    asm("nop");
+    asm("nop");
+    button_state = BYTE(GAMEPAD_A_DATA) << 8;
+    BYTE(GAMEPAD_A_DATA) = BIT(6);
+    asm("nop");
+    asm("nop");
+    button_state = ~(button_state | BYTE(GAMEPAD_A_DATA));
+}
+
+u16 soldier_march(void) {
+    static u16 scroll;
+    read_gamepad();
+    u16 frame = 6 * (((scroll >> 2) % 12) + 1) + 524;
     UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
+    if (button_state & BIT(3)) scroll++;
+    if (button_state & BIT(2)) scroll--;
+    return scroll;
 }
 
 static void put_soldier(u16 x, u16 y) {

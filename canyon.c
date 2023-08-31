@@ -73,10 +73,10 @@ static void draw_sand(void) {
 }
 
 static void update_canyon(void) {
-    UPDATE_VRAM_WORD(VRAM_SCROLL_A, -counter);
-    UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(counter >> 1));
+    u16 scroll = soldier_march();
 
-    soldier_march();
+    UPDATE_VRAM_WORD(VRAM_SCROLL_A, -scroll);
+    UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(scroll >> 1));
 }
 
 static void draw_walking_path(void) {
