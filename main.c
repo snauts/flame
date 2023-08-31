@@ -18,12 +18,16 @@ const byte VDP_regs[] = {
     0x01, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x80
 };
 
+static u16 is_PAL(void) {
+    return WORD(VDP_CTRL) & BIT(0);
+}
+
 static void init_sys(void) {
     char i;
     for (i = 0; i < ARRAY_SIZE(VDP_regs); i++) {
-	WORD(VDP_CTRL) = 0x8000 | (i << 8) | VDP_regs[i];
+	WORD(VDP_CTRL) = BIT(15) | (i << 8) | VDP_regs[i];
     }
-    if (WORD(VDP_CTRL) & 0x1) WORD(VDP_CTRL) = 0x817C; /* PAL/NTSC */
+    if (is_PAL()) WORD(VDP_CTRL) = VDP_CTRL_REG(0x01, 0x7C); /* PAL/NTSC */
 
     /* init gamepad a */
     BYTE(GAMEPAD_A_CTRL) = BIT(6);
@@ -33,40 +37,42 @@ static u16 is_vblank(void) {
     return WORD(VDP_CTRL) & BIT(3);
 }
 
-static byte vblank_done;
+static u16 is_DMA(void) {
+    return WORD(VDP_CTRL) & BIT(1);
+}
+
+static volatile byte vblank_done;
 void wait_vblank_done(void) {
     vblank_done = 0;
-    while (!vblank_done) {
-	wait_for_interrupt();
-    }
+    enable_interrupts();
+    while (!vblank_done);
 }
 
 void update_palette(const u16 *buf, u16 offset, u16 count) {
     u16 i;
-    addr_VDP(VDP_CRAM_WRITE, 2 * offset);
+    offset = 2 * offset;
     for (i = 0; i < count; i++) {
-	WORD(VDP_DATA) = buf[i];
+	UPDATE_CRAM_WORD(offset, buf[i]);
+	offset += 2;
     }
 }
 
 void poke_VRAM(u16 addr, u16 data) {
-    addr_VDP(VDP_VRAM_WRITE, addr);
-    WORD(VDP_DATA) = data;
+    UPDATE_VRAM_WORD(addr, data);
 }
 
 void fill_VRAM(u16 addr, u16 data, u16 count) {
     u16 i;
-    addr_VDP(VDP_VRAM_WRITE, addr);
     for (i = 0; i < count; i++) {
-	WORD(VDP_DATA) = data;
+	poke_VRAM(addr + i * 2, data);
     }
 }
 
-static void update_byte(byte octet) {
+static void update_byte(byte octet, u16 offset) {
     static byte flip;
     static byte save;
     if (flip) {
-	WORD(VDP_DATA) = (save << 8) | octet;
+	UPDATE_VRAM_WORD(offset & 0xfffe, (save << 8) | octet);
     }
     else {
 	save = octet;
@@ -76,18 +82,20 @@ static void update_byte(byte octet) {
 
 void update_tiles(const byte *buf, u16 offset, u16 count) {
     u16 i = 0;
-    addr_VDP(VDP_VRAM_WRITE, 32 * offset);
+    offset = 32 * offset;
     while (i < count) {
 	byte pixel = buf[i++];
 	if ((pixel & 0xc0) == 0xc0) {
 	    byte repeat = buf[i++];
 	    byte times = pixel & 0x3f;
 	    for (u16 j = 0; j < times; j++) {
-		update_byte(repeat);
+		update_byte(repeat, offset);
+		offset += 1;
 	    }
 	}
 	else {
-	    update_byte(pixel);
+	    update_byte(pixel, offset);
+	    offset += 1;
 	}
     }
 }
@@ -109,6 +117,7 @@ u16 counter;
 static void setup_game(void) {
     void display_canyon(void);
     game_frame = &display_canyon;
+    while (!is_vblank()) { }
     enable_interrupts();
     fill_VRAM(0, 0, 16);
     counter = 0;
@@ -116,11 +125,12 @@ static void setup_game(void) {
 
 static void alert(u16 color) {
     u16 i;
-    addr_VDP(VDP_CRAM_WRITE, 0);
-    for (i = 0; i < 64; i++) {
-	WORD(VDP_DATA) = color;
+    for (;;) {
+	addr_VDP(VDP_CRAM_WRITE, 0);
+	for (i = 0; i < 64; i++) {
+	    WORD(VDP_DATA) = color;
+	}
     }
-    for (;;) { } /* hang */
 }
 
 static u16 vram_idx;
@@ -128,14 +138,12 @@ static u32 vram_addr[VRAM_BUF_SIZE];
 static u16 vram_data[VRAM_BUF_SIZE];
 
 void update_VDP_word(u32 ctrl, u16 data) {
-    if (vram_idx < VRAM_BUF_SIZE) {
-	vram_addr[vram_idx] = ctrl;
-	vram_data[vram_idx] = data;
-	vram_idx++;
+    if (vram_idx >= VRAM_BUF_SIZE) {
+	wait_vblank_done();
     }
-    else {
-	alert(7 << 5);
-    }
+    vram_addr[vram_idx] = ctrl;
+    vram_data[vram_idx] = data;
+    vram_idx++;
 }
 
 void switch_frame(void (*fn)(void)) {
@@ -153,6 +161,7 @@ void vblank_interrupt(void) {
 	WORD(VDP_DATA) = vram_data[index];
 	index++;
     }
+    while (is_DMA());
     panic_on_draw();
     vblank_done = 1;
     vram_idx = 0;

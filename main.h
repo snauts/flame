@@ -14,7 +14,7 @@
 #define VRAM_SCROLL_A	0xFC00
 #define VRAM_SCROLL_B	0xFC02
 
-#define VRAM_BUF_SIZE	128
+#define VRAM_BUF_SIZE	64
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
@@ -34,13 +34,18 @@ typedef unsigned int u32;
 #define LONG(x) (* (volatile u32 *) (x))
 
 #define TILE(p, i) (((p) << 13) | (i))
-#define SPRITE(x, y, n) ((((x) - 1) << 10) | (((y) - 1) << 8) | (n));
+#define SPRITE(x, y, n) ((((x) - 1) << 10) | (((y) - 1) << 8) | (n))
+
+#define VDP_CTRL_REG(reg, val) (BIT(15) | ((reg) << 8) | val)
 
 #define VDP_CTRL_VALUE(flags, addr) \
     ((flags) | (((addr) & 0x3fff) << 16) | ((addr) >> 14))
 
 #define UPDATE_VRAM_WORD(addr, data) \
     update_VDP_word(VDP_CTRL_VALUE(VDP_VRAM_WRITE, addr), data);
+
+#define UPDATE_CRAM_WORD(addr, data) \
+    update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
 
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);

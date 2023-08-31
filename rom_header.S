@@ -98,8 +98,3 @@ int_vinterrupt:
 enable_interrupts:
 	move.w	#0x2500, sr
 	rts
-
-.global wait_for_interrupt
-wait_for_interrupt:
-	stop	#0x2500
-	rts
