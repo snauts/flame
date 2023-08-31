@@ -13,14 +13,17 @@ clean:
 	@echo Clean $(NAME).bin
 	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h *.fasl
 
-disasm:
-	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin
+disasm:	$(NAME).bin
+	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin | less
 
 run:	$(NAME).bin
 	kega-fusion $(NAME).bin
 
 mame:	$(NAME).bin
-	mame genesis -cart flammenwerfer.bin
+	mame genesis -cart $(NAME).bin
+
+debug:	$(NAME).bin
+	rlwrap blastem -d $(NAME).bin
 
 $(NAME).bin: $(PICS) $(OBJS) cksum
 	@echo Link $(NAME).bin

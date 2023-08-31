@@ -5,12 +5,11 @@
 
 void setup_soldier_sprites(void);
 
-u16 plane;
 void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;
     for (dx = 0; dx < w; dx++) {
 	for (dy = 0; dy < h; dy++) {
-	    poke_VRAM(plane + ((x + dx) * 2) + ((y + dy) * 128), i);
+	    poke_VRAM(((x + dx) * 2) + ((y + dy) * 128), i);
 	    i += 1;
 	}
 	i += n;
@@ -57,7 +56,7 @@ static void draw_vegetation(void) {
     u16 i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
-	poke_VRAM(VRAM_PLANE_B + offset, cacti[(tile + offset) & 7]);
+	poke_VRAM(offset, cacti[(tile + offset) & 7]);
 	tile++;
     }
 }
@@ -68,7 +67,7 @@ static void draw_sand(void) {
     u16 i;
     set_seed(1);
     for (i = 0x700; i < 0xe00; i += 2) {
-	poke_VRAM(VRAM_PLANE_B + i, sand[random() & 7]);
+	poke_VRAM(i, sand[random() & 7]);
     }
 }
 
@@ -87,29 +86,33 @@ static void draw_walking_path(void) {
 }
 
 void display_canyon(void) {
-    plane = VRAM_PLANE_B;
+    /* background */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
-    fill_VRAM(VRAM_PLANE_B + 0x000,  1, 0x300);
-    fill_VRAM(VRAM_PLANE_B + 0x680, 96, 0x40);
+    fill_VRAM(0x000,  1, 0x300);
+    fill_VRAM(0x680, 96, 0x40);
 
     draw_sand();
     draw_clouds();
     draw_horizon();
     draw_vegetation();
 
-    plane = VRAM_PLANE_A;
+    copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
+
+    /* foreground */
     update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
     update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
 
+    clear_DMA_buffer(0);
     draw_walking_path();
 
     paint_background(32, 22, 2, 4, TILE(1, 97), 4);
     paint_background(42, 24, 6, 2, TILE(1, 113), 6);
     paint_background( 2, 24, 6, 2, TILE(1, 115), 6);
 
-    fill_VRAM(VRAM_PLANE_A + 0xe00, TILE(1, 1), 0x80);
+    fill_VRAM(0xe00, TILE(1, 1), 0x80);
+    copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites();
 

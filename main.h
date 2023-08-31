@@ -6,7 +6,7 @@
 #define VDP_VRAM_WRITE	0x40000000
 #define VDP_CRAM_WRITE	0xC0000000
 #define VDP_SRAM_WRITE	0x40000010
-#define VDP_DMA_FILL	0x40000080
+#define VDP_VRAM_DMA	0x40000080
 
 #define VRAM_TILES	0x0000
 #define VRAM_PLANE_A	0xC000
@@ -15,7 +15,8 @@
 #define VRAM_SCROLL_A	0xFC00
 #define VRAM_SCROLL_B	0xFC02
 
-#define VRAM_BUF_SIZE	64
+#define VRAM_BUF_SIZE	128
+#define DMA_BUF_SIZE	4096
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
@@ -55,7 +56,8 @@ void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
 void switch_frame(void (*fn)(void));
-void wait_for_interrupt(void);
+void copy_to_VRAM(u16 dst, u16 len);
+void clear_DMA_buffer(u16 data);
 void enable_interrupts(void);
 
 u16 random(void);
