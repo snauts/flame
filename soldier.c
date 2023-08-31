@@ -65,7 +65,7 @@ u16 soldier_march(void) {
     }
 
     if (BUTTON_B(button_state)) {
-	scroll += 4;
+	scroll += BUTTON_LEFT(button_state) ? -4 : 4;
     }
 
     frame = 6 * (cycle + 2) + 524;
