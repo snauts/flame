@@ -60,12 +60,10 @@ u16 soldier_march(void) {
 	}
 	if ((scroll & 3) == 1) {
 	    if (scroll < prev) {
-		cycle = cycle - 1;
-		if (cycle == -1) cycle = 11;
+		if (cycle == 0) cycle = 11; else cycle--;
 	    }
 	    else {
-		cycle = cycle + 1;
-		if (cycle == 12) cycle = 0;
+		if (cycle == 11) cycle = 0; else cycle++;
 	    }
 	}
     }
