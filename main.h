@@ -49,6 +49,8 @@ void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
 void switch_frame(void (*fn)(void));
+void wait_for_interrupt(void);
+void enable_interrupts(void);
 
 u16 random(void);
 void set_seed(u16);

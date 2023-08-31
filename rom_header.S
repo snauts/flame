@@ -91,4 +91,15 @@ int_null:
 int_hinterrupt:
 	rte
 int_vinterrupt:
+	jsr	vblank_interrupt
 	rte
+
+.global enable_interrupts
+enable_interrupts:
+	move.w	#0x2500, sr
+	rts
+
+.global wait_for_interrupt
+wait_for_interrupt:
+	stop	#0x2500
+	rts

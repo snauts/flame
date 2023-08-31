@@ -33,12 +33,12 @@ static u16 is_vblank(void) {
     return WORD(VDP_CTRL) & BIT(3);
 }
 
-static void wait_for_vblank(void) {
-    while (!is_vblank()) { }
-}
-
-static void wait_for_draw(void) {
-    while (is_vblank()) { }
+static byte vblank_done;
+void wait_vblank_done(void) {
+    vblank_done = 0;
+    while (!vblank_done) {
+	wait_for_interrupt();
+    }
 }
 
 void update_palette(const u16 *buf, u16 offset, u16 count) {
@@ -92,14 +92,6 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
     }
 }
 
-static void clear_zero_tile(void) {
-    u16 i;
-    addr_VDP(VDP_VRAM_WRITE, 0);
-    for (i = 0; i < 16; i++) {
-	WORD(VDP_DATA) = 0;
-    }
-}
-
 static u16 seed;
 
 void set_seed(u16 new) {
@@ -117,7 +109,8 @@ u16 counter;
 static void setup_game(void) {
     void display_canyon(void);
     game_frame = &display_canyon;
-    clear_zero_tile();
+    enable_interrupts();
+    fill_VRAM(0, 0, 16);
     counter = 0;
 }
 
@@ -141,32 +134,19 @@ void update_VDP_word(u32 ctrl, u16 data) {
 	vram_idx++;
     }
     else {
-	alert(0x0080);
+	alert(7 << 5);
     }
 }
 
 void switch_frame(void (*fn)(void)) {
     game_frame = fn;
-    wait_for_draw();
-}
-
-static void panic_on_vblank(void) {
-    if (is_vblank()) alert(0x0008); else wait_for_vblank();
-}
-
-static void advance_game(void) {
-    counter++;
-    vram_idx = 0;
-    wait_for_draw();
-    game_frame();
-    panic_on_vblank();
 }
 
 static void panic_on_draw(void) {
-    if (!is_vblank()) alert(0x000e); else wait_for_draw();
+    if (!is_vblank()) alert(7 << 1);
 }
 
-static void display_update(void) {
+void vblank_interrupt(void) {
     u16 index = 0;
     while (index < vram_idx) {
 	LONG(VDP_CTRL) = vram_addr[index];
@@ -174,6 +154,9 @@ static void display_update(void) {
 	index++;
     }
     panic_on_draw();
+    vblank_done = 1;
+    vram_idx = 0;
+    counter++;
 }
 
 void _start(void) {
@@ -181,7 +164,7 @@ void _start(void) {
     init_sys();
     setup_game();
     for (;;) {
-	advance_game();
-	display_update();
+	game_frame();
+	wait_vblank_done();
     }
 }
