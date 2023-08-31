@@ -17,11 +17,28 @@ static u16 read_gamepad(void) {
 
 u16 soldier_march(void) {
     static u16 scroll;
+    static short cycle;
+    u16 frame, prev = scroll;
+
     read_gamepad();
-    u16 frame = 6 * (((scroll >> 2) % 12) + 1) + 524;
+    if (button_state & BIT(3)) {
+	scroll++;
+    }
+    else if (button_state & BIT(2)) {
+	scroll--;
+    }
+
+    if (prev == scroll) {
+	cycle = -1;
+    }
+    else {
+	if ((scroll & 3) == 1) {
+	    cycle = cycle + 1;
+	    if (cycle == 12) cycle = 0;
+	}
+    }
+    frame = 6 * (cycle + 1) + 524;
     UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, frame));
-    if (button_state & BIT(3)) scroll++;
-    if (button_state & BIT(2)) scroll--;
     return scroll;
 }
 
