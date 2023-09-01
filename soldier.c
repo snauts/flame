@@ -25,10 +25,20 @@ static u16 read_gamepad(void) {
     button_state = ~(button_state | BYTE(GAMEPAD_A_DATA));
 }
 
+static void poke_sprite(u16 offset, u16 data) {
+    UPDATE_VRAM_WORD(VRAM_SPRITE + offset, data);
+}
+
+static u16 push_addr;
+static void push_VRAM(u16 data) {
+    poke_sprite(push_addr, data);
+    push_addr += 2;
+}
+
 static void update_soldier_y(void) {
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x00, soldier_y);
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x08, soldier_y + 24);
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x10, soldier_y + 21);
+    poke_sprite(0x00, soldier_y);
+    poke_sprite(0x08, soldier_y + 24);
+    poke_sprite(0x10, soldier_y + 21);
 }
 
 void soldier_jump(u16 start) {
@@ -86,7 +96,7 @@ static void soldier_animate(u16 prev, u16 scroll) {
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
     }
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 12, TILE(2, soldier_frame));
+    poke_sprite(12, TILE(2, soldier_frame));
 }
 
 u16 soldier_march(void) {
@@ -113,20 +123,22 @@ u16 soldier_march(void) {
 }
 
 static void put_soldier(u16 x, u16 y) {
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x00, y);
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x02, SPRITE(3, 3, 1));
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x04, TILE(2, 512));
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x06, x);
+    push_addr = 0;
 
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x08, y + 24);
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x0a, SPRITE(3, 2, 2));
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x0c, TILE(2, 524));
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x0e, x);
+    push_VRAM(y);
+    push_VRAM(SPRITE(3, 3, 1));
+    push_VRAM(TILE(2, 512));
+    push_VRAM(x);
 
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x10, y + 21);
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x12, SPRITE(1, 1, 0));
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x14, TILE(2, 521));
-    UPDATE_VRAM_WORD(VRAM_SPRITE + 0x16, x + 24);
+    push_VRAM(y + 24);
+    push_VRAM(SPRITE(3, 2, 2));
+    push_VRAM(TILE(2, 524));
+    push_VRAM(x);
+
+    push_VRAM(y + 21);
+    push_VRAM(SPRITE(1, 1, 0));
+    push_VRAM(TILE(2, 521));
+    push_VRAM(x + 24);
 }
 
 void setup_soldier_sprites(void) {
