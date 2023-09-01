@@ -57,10 +57,19 @@ void update_palette(const u16 *buf, u16 offset, u16 count) {
 
 static u16 dma_dst, dma_len;
 static byte dma_buf[DMA_BUF_SIZE];
-void copy_to_VRAM(u16 dst, u16 len) {
+
+void copy_to_VRAM_async(u16 dst, u16 len) {
     dma_dst = dst;
     dma_len = len;
+}
+
+void copy_to_VRAM(u16 dst, u16 len) {
+    copy_to_VRAM_async(dst, len);
     wait_vblank_done();
+}
+
+Sprite *get_sprite_buf(void) {
+    return (Sprite *) dma_buf;
 }
 
 static void copy_using_DMA(void) {

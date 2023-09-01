@@ -31,6 +31,23 @@ typedef unsigned char byte;
 typedef unsigned short u16;
 typedef unsigned int u32;
 
+typedef struct Sprite {
+    u16 y;
+
+    u16 rsv:4;
+    u16 hs:2;
+    u16 vs:2;
+    u16 next:8;
+
+    u16 pr:1;
+    u16 pl:2;
+    u16 vf:1;
+    u16 hf:1;
+    u16 gfx:11;
+
+    u16 x;
+} Sprite;
+
 #define BYTE(x) (* (volatile byte *) (x))
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
@@ -56,9 +73,11 @@ void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
 void switch_frame(void (*fn)(void));
+void copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data);
 void enable_interrupts(void);
+Sprite *get_sprite_buf(void);
 
 u16 random(void);
 void set_seed(u16);

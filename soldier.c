@@ -25,20 +25,11 @@ static u16 read_gamepad(void) {
     button_state = ~(button_state | BYTE(GAMEPAD_A_DATA));
 }
 
-static void poke_sprite(u16 offset, u16 data) {
-    UPDATE_VRAM_WORD(VRAM_SPRITE + offset, data);
-}
-
-static u16 push_addr;
-static void push_VRAM(u16 data) {
-    poke_sprite(push_addr, data);
-    push_addr += 2;
-}
-
 static void update_soldier_y(void) {
-    poke_sprite(0x00, soldier_y);
-    poke_sprite(0x08, soldier_y + 24);
-    poke_sprite(0x10, soldier_y + 21);
+    Sprite *sprite = get_sprite_buf();
+    sprite[0].y = soldier_y;
+    sprite[1].y = soldier_y + 24;
+    sprite[2].y = soldier_y + 21;
 }
 
 void soldier_jump(u16 start) {
@@ -96,7 +87,7 @@ static void soldier_animate(u16 prev, u16 scroll) {
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
     }
-    poke_sprite(12, TILE(2, soldier_frame));
+    get_sprite_buf()[1].gfx = TILE(2, soldier_frame);
 }
 
 u16 soldier_march(void) {
@@ -119,26 +110,36 @@ u16 soldier_march(void) {
 	scroll += (scroll < prev) ? -4 : 4;
     }
 
+    copy_to_VRAM_async(VRAM_SPRITE, 640);
     return scroll;
 }
 
 static void put_soldier(u16 x, u16 y) {
-    push_addr = 0;
+    Sprite *sprite = get_sprite_buf();
 
-    push_VRAM(y);
-    push_VRAM(SPRITE(3, 3, 1));
-    push_VRAM(TILE(2, 512));
-    push_VRAM(x);
+    sprite[0].x = x;
+    sprite[0].y = y;
+    sprite[0].hs = 2;
+    sprite[0].vs = 2;
+    sprite[0].next = 1;
+    sprite[0].gfx = 512;
+    sprite[0].pl = 2;
 
-    push_VRAM(y + 24);
-    push_VRAM(SPRITE(3, 2, 2));
-    push_VRAM(TILE(2, 524));
-    push_VRAM(x);
+    sprite[1].x = x;
+    sprite[1].y = y + 24;
+    sprite[1].hs = 2;
+    sprite[1].vs = 1;
+    sprite[1].next = 2;
+    sprite[1].gfx = 524;
+    sprite[1].pl = 2;
 
-    push_VRAM(y + 21);
-    push_VRAM(SPRITE(1, 1, 0));
-    push_VRAM(TILE(2, 521));
-    push_VRAM(x + 24);
+    sprite[2].x = x + 24;
+    sprite[2].y = y + 21;
+    sprite[2].hs = 0;
+    sprite[2].vs = 0;
+    sprite[2].next = 0;
+    sprite[2].gfx = 521;
+    sprite[2].pl = 2;
 }
 
 void load_soldier_tiles(void) {
