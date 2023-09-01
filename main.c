@@ -175,12 +175,12 @@ static void panic_on_draw(void) {
 
 void vblank_interrupt(void) {
     u16 index = 0;
+    copy_using_DMA();
     while (index < vram_idx) {
 	LONG(VDP_CTRL) = vram_addr[index];
 	WORD(VDP_DATA) = vram_data[index];
 	index++;
     }
-    copy_using_DMA();
     panic_on_draw();
     vblank_done = 1;
     vram_idx = 0;
