@@ -64,5 +64,6 @@ u16 random(void);
 void set_seed(u16);
 
 u16 soldier_march(void);
+void load_soldier_tiles(void);
 
 extern u16 counter;

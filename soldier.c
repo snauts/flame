@@ -141,12 +141,14 @@ static void put_soldier(u16 x, u16 y) {
     push_VRAM(x + 24);
 }
 
-void setup_soldier_sprites(void) {
+void load_soldier_tiles(void) {
     update_palette(soldier_palette, 32, ARRAY_SIZE(soldier_palette));
 
     update_tiles(soldier_tiles, 512, ARRAY_SIZE(soldier_tiles));
     update_tiles(walk_tiles, 524, ARRAY_SIZE(walk_tiles));
+}
 
+void setup_soldier_sprites(void) {
     platform_h = 296;
     soldier_y = platform_h;
     put_soldier(176, soldier_y);

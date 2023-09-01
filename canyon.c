@@ -86,10 +86,16 @@ static void draw_walking_path(void) {
 }
 
 void display_canyon(void) {
-    /* background */
+    /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
+    update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
+    update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
+
+    load_soldier_tiles();
+
+    /* background */
     fill_VRAM(0x000,  1, 0x300);
     fill_VRAM(0x680, 96, 0x40);
 
@@ -101,9 +107,6 @@ void display_canyon(void) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
-    update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
-
     clear_DMA_buffer(0);
     draw_walking_path();
 
