@@ -91,7 +91,9 @@ int_null:
 int_hinterrupt:
 	rte
 int_vinterrupt:
+	movem.l %d0-%d1/%a0-%a1,-(%sp)
 	jsr	vblank_interrupt
+	movem.l (%sp)+,%d0-%d1/%a0-%a1
 	rte
 
 .global enable_interrupts
