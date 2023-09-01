@@ -4,7 +4,7 @@ LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CFLAGS	= -fomit-frame-pointer
 OBJS	= rom_header.O main.o canyon.o soldier.o
-HEADS	= +canyon.h +desert.h +soldier.h +walk.h
+HEADS	= +canyon.h +desert.h +soldier.h +walk.h +flame.h
 PICS 	= $(subst +,images/,$(HEADS))
 
 all:	$(NAME).bin
