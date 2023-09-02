@@ -38,10 +38,14 @@ static void update_soldier_y(void) {
     sprite[2].y = soldier.y + 21;
 }
 
+static u16 on_ground(void) {
+    return soldier.y == platform_h;
+}
+
 void soldier_jump(u16 start) {
     static short gravity;
     static short velocity;
-    if (start && soldier.y == platform_h) {
+    if (start && on_ground()) {
 	velocity = 5;
 	gravity = 0;
     }
@@ -170,7 +174,7 @@ u16 soldier_march(void) {
     else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
 	soldier.x--;
     }
-    if (BUTTON_B(button_state) && cooldown == 0) {
+    if (BUTTON_B(button_state) && on_ground() && cooldown == 0) {
 	throw_flames();
 	cooldown = 8;
     }
