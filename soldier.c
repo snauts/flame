@@ -151,7 +151,7 @@ static void manage_flames(void) {
 	    tail = index;
 	    continue;
 	}
-	flame[index].x++;
+	flame[index].x += 2;
 	flame[index].next = previous;
 	previous = index + 3;
 	index = next_flame(index);
@@ -208,7 +208,7 @@ static void put_soldier(u16 x, u16 y) {
 }
 
 void load_soldier_tiles(void) {
-    update_palette(soldier_palette, 32, ARRAY_SIZE(soldier_palette));
+    update_palette(flame_palette, 32, ARRAY_SIZE(soldier_palette));
 
     update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
     update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
