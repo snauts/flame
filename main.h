@@ -33,18 +33,9 @@ typedef unsigned int u32;
 
 typedef struct Sprite {
     u16 y;
-
-    u16 rsv:4;
-    u16 hs:2;
-    u16 vs:2;
-    u16 next:8;
-
-    u16 pr:1;
-    u16 pl:2;
-    u16 vf:1;
-    u16 hf:1;
-    u16 gfx:11;
-
+    byte size;
+    byte next;
+    u16 cfg;
     u16 x;
 } Sprite;
 
@@ -53,7 +44,7 @@ typedef struct Sprite {
 #define LONG(x) (* (volatile u32 *) (x))
 
 #define TILE(p, i) (((p) << 13) | (i))
-#define SPRITE(x, y, n) ((((x) - 1) << 10) | (((y) - 1) << 8) | (n))
+#define SPRITE_SIZE(x, y) ((((x) - 1) << 2) | ((y) - 1))
 
 #define VDP_CTRL_REG(reg, val) (BIT(15) | ((reg) << 8) | (val))
 

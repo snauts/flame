@@ -87,7 +87,7 @@ static void soldier_animate(u16 prev, u16 scroll) {
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
     }
-    get_sprite_buf()[1].gfx = TILE(2, soldier_frame);
+    get_sprite_buf()[1].cfg = TILE(2, soldier_frame);
 }
 
 u16 soldier_march(void) {
@@ -119,27 +119,21 @@ static void put_soldier(u16 x, u16 y) {
 
     sprite[0].x = x;
     sprite[0].y = y;
-    sprite[0].hs = 2;
-    sprite[0].vs = 2;
+    sprite[0].cfg = TILE(2, 512);
+    sprite[0].size = SPRITE_SIZE(3, 3);
     sprite[0].next = 1;
-    sprite[0].gfx = 512;
-    sprite[0].pl = 2;
 
     sprite[1].x = x;
     sprite[1].y = y + 24;
-    sprite[1].hs = 2;
-    sprite[1].vs = 1;
+    sprite[1].cfg = TILE(2, 524);
+    sprite[1].size = SPRITE_SIZE(3, 2);
     sprite[1].next = 2;
-    sprite[1].gfx = 524;
-    sprite[1].pl = 2;
 
     sprite[2].x = x + 24;
     sprite[2].y = y + 21;
-    sprite[2].hs = 0;
-    sprite[2].vs = 0;
+    sprite[2].cfg = TILE(2, 521);
+    sprite[2].size = SPRITE_SIZE(1, 1);
     sprite[2].next = 0;
-    sprite[2].gfx = 521;
-    sprite[2].pl = 2;
 }
 
 void load_soldier_tiles(void) {
