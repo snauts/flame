@@ -104,10 +104,12 @@ static u16 next_flame(u16 index) {
     return (index + 1) & 7;
 }
 
+#define FIRE_FRAME(x) TILE(2, SOLDIER_FIRE + (2 * (x)))
+
 static void emit_flame(u16 index) {
     flame[index].x = 204;
     flame[index].y = soldier.y + 20;
-    flame[index].cfg = TILE(2, SOLDIER_FIRE);
+    flame[index].cfg = FIRE_FRAME(0);
     flame[index].size = SPRITE_SIZE(2, 1);
 }
 
@@ -119,15 +121,25 @@ static void throw_flames(void) {
 }
 
 static u16 flame_expired(u16 index) {
-    return flame[index].cfg >= TILE(2, SOLDIER_FIRE + 32);
+    return flame[index].cfg >= FIRE_FRAME(16);
+}
+
+static void flame_gravity(u16 index) {
+    if (flame[index].cfg >= FIRE_FRAME(12)) {
+	flame[index].y += 2;
+    }
+    else if (flame[index].cfg >= FIRE_FRAME(6)) {
+	flame[index].y += 1;
+    }
 }
 
 static void manage_flames(void) {
     u16 index = tail;
     byte previous = 0;
     while (flame[index].x > 0) {
-	if ((counter & 7) == 0) {
+	if ((counter & 3) == 0) {
 	    flame[index].cfg += 2;
+	    flame_gravity(index);
 	}
 	if (flame_expired(index)) {
 	    flame[index].x = 0;
