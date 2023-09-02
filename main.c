@@ -142,13 +142,17 @@ static void transparent_tile(void) {
 }
 
 u16 counter;
-static void setup_game(void) {
+static void init_variables(void) {
     void display_canyon(void);
     game_frame = &display_canyon;
+    counter = 0;
+}
+
+static void setup_game(void) {
+    init_variables();
+    transparent_tile();
     while (!is_vblank());
     wait_vblank_done();
-    transparent_tile();
-    counter = 0;
 }
 
 static void alert(u16 color) {
@@ -182,17 +186,21 @@ static void panic_on_draw(void) {
     if (!is_vblank()) alert(7 << 1);
 }
 
-void vblank_interrupt(void) {
+static void transfer_to_VRAM(void) {
     u16 index = 0;
-    copy_using_DMA();
     while (index < vram_idx) {
 	LONG(VDP_CTRL) = vram_addr[index];
 	WORD(VDP_DATA) = vram_data[index];
 	index++;
     }
+    vram_idx = 0;
+}
+
+void vblank_interrupt(void) {
+    copy_using_DMA();
+    transfer_to_VRAM();
     panic_on_draw();
     vblank_done = 1;
-    vram_idx = 0;
     counter++;
 }
 
