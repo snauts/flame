@@ -3,7 +3,7 @@
 #include "images/soldier.h"
 #include "images/walk.h"
 
-static u16 soldier_y;
+static Pos soldier;
 static u16 platform_h;
 static u16 button_state;
 
@@ -28,36 +28,36 @@ static u16 read_gamepad(void) {
 }
 
 static void update_soldier_y(void) {
-    sprite[0].y = soldier_y;
-    sprite[1].y = soldier_y + 24;
-    sprite[2].y = soldier_y + 21;
+    sprite[0].y = soldier.y;
+    sprite[1].y = soldier.y + 24;
+    sprite[2].y = soldier.y + 21;
 }
 
 void soldier_jump(u16 start) {
     static short gravity;
     static short velocity;
-    if (start && soldier_y == platform_h) {
+    if (start && soldier.y == platform_h) {
 	velocity = 5;
 	gravity = 0;
     }
 
-    soldier_y -= velocity;
+    soldier.y -= velocity;
     if (gravity == 0) {
 	gravity = 5;
 	velocity--;
     }
     gravity--;
 
-    if (soldier_y >= platform_h) {
-	soldier_y = platform_h;
+    if (soldier.y >= platform_h) {
+	soldier.y = platform_h;
 	velocity = 0;
 	gravity = 0;
     }
     update_soldier_y();
 }
 
-static short animate_walking(short cycle, u16 prev, u16 scroll) {
-    if (prev == scroll) {
+static short animate_walking(short cycle, u16 prev) {
+    if (prev == soldier.x) {
 	if (cycle >= 0) {
 	    cycle = (cycle < 6) ? -1 : -2; /* stop walking frame */
 	}
@@ -66,8 +66,8 @@ static short animate_walking(short cycle, u16 prev, u16 scroll) {
 	if (cycle < 0) {
 	    cycle = (cycle == -1) ? 2 : 8; /* start walking frame */
 	}
-	if ((scroll & 3) == 1) {
-	    if (scroll < prev) {
+	if ((soldier.x & 3) == 1) {
+	    if (soldier.x < prev) {
 		if (cycle == 0) cycle = 11; else cycle--;
 	    }
 	    else {
@@ -78,11 +78,11 @@ static short animate_walking(short cycle, u16 prev, u16 scroll) {
     return cycle;
 }
 
-static void soldier_animate(u16 prev, u16 scroll) {
+static void soldier_animate(u16 prev) {
     static short cycle;
     u16 soldier_frame;
-    if (soldier_y == platform_h) {
-	cycle = animate_walking(cycle, prev, scroll);
+    if (soldier.y == platform_h) {
+	cycle = animate_walking(cycle, prev);
 	soldier_frame = 6 * (cycle + 2) + 524;
     }
     else {
@@ -92,27 +92,26 @@ static void soldier_animate(u16 prev, u16 scroll) {
 }
 
 u16 soldier_march(void) {
-    static u16 scroll;
-    u16 prev = scroll;
+    u16 prev = soldier.x;
     u16 last = button_state;
 
     read_gamepad();
     if (BUTTON_RIGHT(button_state)) {
-	scroll++;
+	soldier.x++;
     }
     else if (BUTTON_LEFT(button_state)) {
-	scroll--;
+	soldier.x--;
     }
 
     soldier_jump(BUTTON_C(button_state) && BUTTON_C(last) == 0);
-    soldier_animate(prev, scroll);
+    soldier_animate(prev);
 
     if (BUTTON_B(button_state)) {
-	scroll += (scroll < prev) ? -4 : 4;
+	soldier.x += (soldier.x < prev) ? -4 : 4;
     }
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
-    return scroll;
+    return soldier.x;
 }
 
 static void put_soldier(u16 x, u16 y) {
@@ -144,6 +143,6 @@ void load_soldier_tiles(void) {
 
 void setup_soldier_sprites(void) {
     platform_h = 296;
-    soldier_y = platform_h;
-    put_soldier(176, soldier_y);
+    soldier.y = platform_h;
+    put_soldier(176, soldier.y);
 }

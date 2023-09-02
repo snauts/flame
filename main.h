@@ -40,6 +40,10 @@ typedef struct Sprite {
     u16 x;
 } Sprite;
 
+typedef struct Pos {
+    u16 x, y;
+} Pos;
+
 #define BYTE(x) (* (volatile byte *) (x))
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
