@@ -17,6 +17,7 @@
 
 #define VRAM_BUF_SIZE	128
 #define DMA_BUF_SIZE	4096
+#define DMA_CHUNKS	8
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
@@ -64,11 +65,11 @@ void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
 void switch_frame(void (*fn)(void));
-void copy_to_VRAM_async(u16 dst, u16 len);
+void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
+void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data);
 void enable_interrupts(void);
-Sprite *get_sprite_buf(void);
 
 u16 random(void);
 void set_seed(u16);

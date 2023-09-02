@@ -7,6 +7,8 @@ static u16 soldier_y;
 static u16 platform_h;
 static u16 button_state;
 
+static Sprite sprite[80];
+
 #define BUTTON_A(x) ((x) & BIT(12))
 #define BUTTON_B(x) ((x) & BIT(4))
 #define BUTTON_C(x) ((x) & BIT(5))
@@ -26,7 +28,6 @@ static u16 read_gamepad(void) {
 }
 
 static void update_soldier_y(void) {
-    Sprite *sprite = get_sprite_buf();
     sprite[0].y = soldier_y;
     sprite[1].y = soldier_y + 24;
     sprite[2].y = soldier_y + 21;
@@ -87,7 +88,7 @@ static void soldier_animate(u16 prev, u16 scroll) {
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
     }
-    get_sprite_buf()[1].cfg = TILE(2, soldier_frame);
+    sprite[1].cfg = TILE(2, soldier_frame);
 }
 
 u16 soldier_march(void) {
@@ -110,13 +111,11 @@ u16 soldier_march(void) {
 	scroll += (scroll < prev) ? -4 : 4;
     }
 
-    copy_to_VRAM_async(VRAM_SPRITE, 640);
+    copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
     return scroll;
 }
 
 static void put_soldier(u16 x, u16 y) {
-    Sprite *sprite = get_sprite_buf();
-
     sprite[0].x = x;
     sprite[0].y = y;
     sprite[0].cfg = TILE(2, 512);

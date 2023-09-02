@@ -55,12 +55,28 @@ void update_palette(const u16 *buf, u16 offset, u16 count) {
     }
 }
 
-static u16 dma_dst, dma_len;
-static byte dma_buf[DMA_BUF_SIZE];
+typedef struct DMA_Chunk {
+    u16 dst;
+    u16 len;
+    void *ptr;
+} DMA_Chunk;
 
-void copy_to_VRAM_async(u16 dst, u16 len) {
-    dma_dst = dst;
-    dma_len = len;
+static byte dma_buf[DMA_BUF_SIZE];
+static DMA_Chunk chunk[DMA_CHUNKS];
+static u16 chunk_idx, buf_offset;
+
+void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr) {
+    chunk[chunk_idx].dst = dst;
+    chunk[chunk_idx].len = len;
+    chunk[chunk_idx].ptr = ptr;
+    chunk_idx++;
+}
+
+void *copy_to_VRAM_async(u16 dst, u16 len) {
+    void *buf = dma_buf + buf_offset;
+    copy_to_VRAM_ptr(dst, len, buf);
+    buf_offset += len;
+    return buf;
 }
 
 void copy_to_VRAM(u16 dst, u16 len) {
@@ -68,31 +84,33 @@ void copy_to_VRAM(u16 dst, u16 len) {
     wait_vblank_done();
 }
 
-Sprite *get_sprite_buf(void) {
-    return (Sprite *) dma_buf;
-}
-
 static void copy_using_DMA(void) {
-    if (dma_len > 0) {
-	u32 dma_src = ((u32) dma_buf);
-	WORD(VDP_CTRL) = VDP_CTRL_REG(0x13, (dma_len >>  1) & 0xFF);
-	WORD(VDP_CTRL) = VDP_CTRL_REG(0x14, (dma_len >>  9));
+    for (u16 i = 0; i < chunk_idx; i++) {
+	u32 dma_src = ((u32) chunk[i].ptr);
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x13, (chunk[i].len >>  1) & 0xFF);
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x14, (chunk[i].len >>  9));
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x15, (dma_src >>  1) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x16, (dma_src >>  9) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x17, (dma_src >> 17) & 0x7F);
-	LONG(VDP_CTRL) = VDP_CTRL_VALUE(VDP_VRAM_DMA, dma_dst);
-	dma_dst += dma_len;
-	dma_len = 0;
+	LONG(VDP_CTRL) = VDP_CTRL_VALUE(VDP_VRAM_DMA, chunk[i].dst);
 	while (is_DMA());
     }
+
+    /* reset chunks */
+    buf_offset = 0;
+    chunk_idx = 0;
+}
+
+static u16 *buffer_ptr(u16 addr) {
+    return (u16 *) (dma_buf + buf_offset + addr);
 }
 
 void poke_VRAM(u16 addr, u16 data) {
-    * (u16 *) (dma_buf + addr) = data;
+    *buffer_ptr(addr) = data;
 }
 
 void fill_VRAM(u16 addr, u16 data, u16 count) {
-    u16 *ptr = (u16 *) (dma_buf + addr);
+    u16 *ptr = buffer_ptr(addr);
     for (u16 i = 0; i < count; i++) {
 	ptr[i] = data;
     }
@@ -103,8 +121,9 @@ void clear_DMA_buffer(u16 data) {
 }
 
 void update_tiles(const byte *buf, u16 offset, u16 count) {
+    byte *ptr = (byte *) buffer_ptr(0);
     u16 i = 0, n = 0;
-    dma_dst = 32 * offset;
+    offset *= 32;
     while (i < count) {
 	byte times = 1;
 	byte pixel = buf[i++];
@@ -113,14 +132,15 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
 	    pixel = buf[i++];
 	}
 	for (byte j = 0; j < times; j++) {
-	    dma_buf[n++] = pixel;
+	    ptr[n++] = pixel;
 	    if (n >= DMA_BUF_SIZE) {
-		copy_to_VRAM(dma_dst, n);
+		copy_to_VRAM(offset, n);
+		offset += n;
 		n = 0;
 	    }
 	}
     }
-    copy_to_VRAM(dma_dst, n);
+    copy_to_VRAM(offset, n);
 }
 
 static u16 seed;
