@@ -107,7 +107,7 @@ void display_canyon(void) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    clear_DMA_buffer(0);
+    clear_DMA_buffer(0, 0x1000);
     draw_walking_path();
 
     paint_background(32, 22, 2, 4, TILE(1, 97), 4);

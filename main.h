@@ -72,7 +72,7 @@ void switch_frame(void (*fn)(void));
 void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
 void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
-void clear_DMA_buffer(u16 data);
+void clear_DMA_buffer(u16 data, u16 len);
 void enable_interrupts(void);
 
 u16 random(void);
@@ -80,5 +80,6 @@ void set_seed(u16);
 
 u16 soldier_march(void);
 void load_soldier_tiles(void);
+void setup_soldier_sprites(void);
 
 extern u16 counter;

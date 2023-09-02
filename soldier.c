@@ -1,7 +1,12 @@
 #include "main.h"
 
 #include "images/soldier.h"
+#include "images/flame.h"
 #include "images/walk.h"
+
+#define SOLDIER_TOP	512
+#define SOLDIER_LEG	524
+#define SOLDIER_FIRE	620
 
 static Pos soldier;
 static u16 platform_h;
@@ -83,12 +88,63 @@ static void soldier_animate(u16 prev) {
     u16 soldier_frame;
     if (soldier.y == platform_h) {
 	cycle = animate_walking(cycle, prev);
-	soldier_frame = 6 * (cycle + 2) + 524;
+	soldier_frame = 6 * (cycle + 2) + SOLDIER_LEG;
     }
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
     }
     sprite[1].cfg = TILE(2, soldier_frame);
+}
+
+static Sprite *flame;
+static u16 head, tail;
+static u16 cooldown;
+
+static u16 next_flame(u16 index) {
+    return (index + 1) & 7;
+}
+
+static void emit_flame(u16 index) {
+    flame[index].x = 204;
+    flame[index].y = soldier.y + 20;
+    flame[index].cfg = TILE(2, SOLDIER_FIRE);
+    flame[index].size = SPRITE_SIZE(2, 1);
+}
+
+static void throw_flames(void) {
+    if (flame[head].x == 0) {
+	emit_flame(head);
+	head = next_flame(head);
+    }
+}
+
+static u16 flame_expired(u16 index) {
+    return flame[index].cfg >= TILE(2, SOLDIER_FIRE + 32);
+}
+
+static void manage_flames(void) {
+    u16 index = tail;
+    byte previous = 0;
+    while (flame[index].x > 0) {
+	if ((counter & 7) == 0) {
+	    flame[index].cfg += 2;
+	}
+	if (flame_expired(index)) {
+	    flame[index].x = 0;
+	    index = next_flame(index);
+	    tail = index;
+	    continue;
+	}
+	flame[index].x++;
+	flame[index].next = previous;
+	previous = index + 3;
+	index = next_flame(index);
+	if (index == head) break;
+    }
+    sprite[2].next = previous;
+    if (cooldown > 0) {
+	cooldown--;
+    }
 }
 
 u16 soldier_march(void) {
@@ -99,16 +155,17 @@ u16 soldier_march(void) {
     if (BUTTON_RIGHT(button_state)) {
 	soldier.x++;
     }
-    else if (BUTTON_LEFT(button_state)) {
+    else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
 	soldier.x--;
+    }
+    if (BUTTON_B(button_state) && cooldown == 0) {
+	throw_flames();
+	cooldown = 8;
     }
 
     soldier_jump(BUTTON_C(button_state) && BUTTON_C(last) == 0);
     soldier_animate(prev);
-
-    if (BUTTON_B(button_state)) {
-	soldier.x += (soldier.x < prev) ? -4 : 4;
-    }
+    manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
     return soldier.x;
@@ -117,13 +174,13 @@ u16 soldier_march(void) {
 static void put_soldier(u16 x, u16 y) {
     sprite[0].x = x;
     sprite[0].y = y;
-    sprite[0].cfg = TILE(2, 512);
+    sprite[0].cfg = TILE(2, SOLDIER_TOP);
     sprite[0].size = SPRITE_SIZE(3, 3);
     sprite[0].next = 1;
 
     sprite[1].x = x;
     sprite[1].y = y + 24;
-    sprite[1].cfg = TILE(2, 524);
+    sprite[1].cfg = TILE(2, SOLDIER_LEG);
     sprite[1].size = SPRITE_SIZE(3, 2);
     sprite[1].next = 2;
 
@@ -137,12 +194,14 @@ static void put_soldier(u16 x, u16 y) {
 void load_soldier_tiles(void) {
     update_palette(soldier_palette, 32, ARRAY_SIZE(soldier_palette));
 
-    update_tiles(soldier_tiles, 512, ARRAY_SIZE(soldier_tiles));
-    update_tiles(walk_tiles, 524, ARRAY_SIZE(walk_tiles));
+    update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
+    update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
+    update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
 }
 
 void setup_soldier_sprites(void) {
     platform_h = 296;
+    flame = sprite + 3;
     soldier.y = platform_h;
     put_soldier(176, soldier.y);
 }

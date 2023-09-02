@@ -116,8 +116,8 @@ void fill_VRAM(u16 addr, u16 data, u16 count) {
     }
 }
 
-void clear_DMA_buffer(u16 data) {
-    fill_VRAM(0, data, DMA_BUF_SIZE >> 1);
+void clear_DMA_buffer(u16 data, u16 len) {
+    fill_VRAM(0, data, len >> 1);
 }
 
 void update_tiles(const byte *buf, u16 offset, u16 count) {
