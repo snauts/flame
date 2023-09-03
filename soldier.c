@@ -129,21 +129,23 @@ static u16 flame_expired(u16 index) {
 }
 
 static void flame_gravity(u16 index) {
+    u16 pull = 0;
     if (flame[index].cfg >= FIRE_FRAME(12)) {
-	flame[index].y += 2;
+	pull = !(counter & 1);
     }
     else if (flame[index].cfg >= FIRE_FRAME(6)) {
-	flame[index].y += 1;
+	pull = !(counter & 3);
     }
+    if (pull) flame[index].y++;
 }
 
 static void manage_flames(void) {
     u16 index = tail;
     byte previous = 0;
     while (flame[index].x > 0) {
+	flame_gravity(index);
 	if ((counter & 3) == 0) {
 	    flame[index].cfg += 2;
-	    flame_gravity(index);
 	}
 	if (flame_expired(index)) {
 	    flame[index].x = 0;
