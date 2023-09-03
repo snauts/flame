@@ -161,9 +161,14 @@ static void transparent_tile(void) {
     }
 }
 
+static void setmem(byte *ptr, byte c, u32 amount) {
+    for (u32 i = 0; i < amount; i++) ptr[i] = c;
+}
+
 u16 counter;
 static void init_variables(void) {
     void display_canyon(void);
+    setmem((byte *) 0xff0000, 0, 0xd000);
     game_frame = &display_canyon;
     counter = 0;
 }
