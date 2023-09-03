@@ -165,8 +165,8 @@ static void manage_flames(void) {
     }
 }
 
-static byte soldier_face[8];
-static byte soldier_yell[8];
+static byte *soldier_face;
+static byte *soldier_yell;
 
 static void soldier_yelling(byte state) {
     static byte face;
@@ -229,8 +229,10 @@ void load_soldier_tiles(void) {
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
     update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
     update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
-    /* these mem copies should be imediatly after loading soldier tiles */
+
+    soldier_face = malloc(8);
     memcpy(soldier_face, buffer_ptr(0x08C), 8);
+    soldier_yell = malloc(8);
     memcpy(soldier_yell, buffer_ptr(0x14C), 8);
 }
 

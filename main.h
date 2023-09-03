@@ -15,6 +15,7 @@
 #define VRAM_SCROLL_A	0xFC00
 #define VRAM_SCROLL_B	0xFC02
 
+#define HEAP_SIZE	4096
 #define VRAM_BUF_SIZE	128
 #define DMA_BUF_SIZE	4096
 #define DMA_CHUNKS	8
@@ -77,6 +78,8 @@ void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
 void enable_interrupts(void);
 void *buffer_ptr(u16 addr);
+void *malloc(u16 amount);
+void reset_heap(void);
 
 u16 random(void);
 void set_seed(u16);

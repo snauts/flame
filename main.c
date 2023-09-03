@@ -161,6 +161,18 @@ static void transparent_tile(void) {
     }
 }
 
+static u16 free_mem;
+static byte heap[HEAP_SIZE];
+void *malloc(u16 amount) {
+    void *ptr = heap + free_mem;
+    free_mem += amount;
+    return ptr;
+}
+
+void reset_heap(void) {
+    free_mem = 0;
+}
+
 void memcpy(void *dst, void *src, int amount) {
     for (int i = 0; i < amount; i++) ((byte *) dst)[i] = ((byte *) src)[i];
 }
