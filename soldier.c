@@ -165,9 +165,22 @@ static void manage_flames(void) {
     }
 }
 
+static byte soldier_face[8];
+static byte soldier_yell[8];
+
+static void soldier_yelling(byte state) {
+    static byte face;
+    if (face != state) {
+	void *ptr = (state == 1) ? soldier_yell : soldier_face;
+	copy_to_VRAM_ptr(32 * SOLDIER_TOP + 0x8C, 8, ptr);
+	face = state;
+    }
+}
+
 u16 soldier_march(void) {
     u16 prev = soldier.x;
     u16 last = button_state;
+    u16 fire = BUTTON_B(button_state);
 
     read_gamepad();
     if (BUTTON_RIGHT(button_state)) {
@@ -176,7 +189,8 @@ u16 soldier_march(void) {
     else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
 	soldier.x--;
     }
-    if (BUTTON_B(button_state) && on_ground() && cooldown == 0) {
+    soldier_yelling(fire != 0);
+    if (fire && on_ground() && cooldown == 0) {
 	throw_flames();
 	cooldown = 8;
     }
@@ -212,9 +226,12 @@ static void put_soldier(u16 x, u16 y) {
 void load_soldier_tiles(void) {
     update_palette(flame_palette, 32, ARRAY_SIZE(soldier_palette));
 
-    update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
-    update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
+    update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
+    update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
+    /* these mem copies should be imediatly after loading soldier tiles */
+    memcpy(soldier_face, buffer_ptr(0x08C), 8);
+    memcpy(soldier_yell, buffer_ptr(0x14C), 8);
 }
 
 void setup_soldier_sprites(void) {

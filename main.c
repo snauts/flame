@@ -101,12 +101,12 @@ static void copy_using_DMA(void) {
     chunk_idx = 0;
 }
 
-u16 *buffer_ptr(u16 addr) {
-    return (u16 *) (dma_buf + buf_offset + addr);
+void *buffer_ptr(u16 addr) {
+    return dma_buf + buf_offset + addr;
 }
 
 void poke_VRAM(u16 addr, u16 data) {
-    *buffer_ptr(addr) = data;
+    * (u16 *) buffer_ptr(addr) = data;
 }
 
 void fill_VRAM(u16 addr, u16 data, u16 count) {
@@ -121,7 +121,7 @@ void clear_DMA_buffer(u16 data, u16 len) {
 }
 
 void update_tiles(const byte *buf, u16 offset, u16 count) {
-    byte *ptr = (byte *) buffer_ptr(0);
+    byte *ptr = buffer_ptr(0);
     u16 i = 0, n = 0;
     offset *= 32;
     while (i < count) {

@@ -76,7 +76,7 @@ void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
 void enable_interrupts(void);
-u16 *buffer_ptr(u16 addr);
+void *buffer_ptr(u16 addr);
 
 u16 random(void);
 void set_seed(u16);
