@@ -46,13 +46,13 @@ void soldier_jump(u16 start) {
     static short gravity;
     static short velocity;
     if (start && on_ground()) {
-	velocity = 5;
+	velocity = 4;
 	gravity = 0;
     }
 
     soldier.y -= velocity;
     if (gravity == 0) {
-	gravity = 5;
+	gravity = 6;
 	velocity--;
     }
     gravity--;
