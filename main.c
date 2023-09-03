@@ -101,7 +101,7 @@ static void copy_using_DMA(void) {
     chunk_idx = 0;
 }
 
-static u16 *buffer_ptr(u16 addr) {
+u16 *buffer_ptr(u16 addr) {
     return (u16 *) (dma_buf + buf_offset + addr);
 }
 
@@ -161,15 +161,19 @@ static void transparent_tile(void) {
     }
 }
 
-static void setmem(byte *ptr, byte c, u32 amount) {
-    for (u32 i = 0; i < amount; i++) ptr[i] = c;
+void memcpy(void *dst, void *src, int amount) {
+    for (int i = 0; i < amount; i++) ((byte *) dst)[i] = ((byte *) src)[i];
+}
+
+void memset(void *ptr, byte c, int amount) {
+    for (int i = 0; i < amount; i++) ((byte *) ptr)[i] = c;
 }
 
 u16 counter;
 static void init_variables(void) {
     void display_canyon(void);
     extern byte bss_start, bss_end;
-    setmem(&bss_start, 0, (u32) (&bss_end - &bss_start));
+    memset(&bss_start, 0, (u32) (&bss_end - &bss_start));
     game_frame = &display_canyon;
     counter = 0;
 }

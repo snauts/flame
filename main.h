@@ -65,6 +65,8 @@ typedef struct Pos {
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
+void memset(void *ptr, byte c, int amount);
+void memcpy(void *dst, void *src, int amount);
 void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
@@ -74,6 +76,7 @@ void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
 void enable_interrupts(void);
+u16 *buffer_ptr(u16 addr);
 
 u16 random(void);
 void set_seed(u16);
