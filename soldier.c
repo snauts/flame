@@ -125,15 +125,15 @@ static void throw_flames(void) {
 }
 
 static u16 flame_expired(u16 index) {
-    return flame[index].cfg >= FIRE_FRAME(16);
+    return flame[index].cfg >= FIRE_FRAME(32);
 }
 
 static void flame_gravity(u16 index) {
     u16 pull = 0;
-    if (flame[index].cfg >= FIRE_FRAME(12)) {
+    if (flame[index].cfg >= FIRE_FRAME(24)) {
 	pull = !(counter & 1);
     }
-    else if (flame[index].cfg >= FIRE_FRAME(6)) {
+    else if (flame[index].cfg >= FIRE_FRAME(12)) {
 	pull = !(counter & 3);
     }
     if (pull) flame[index].y++;
@@ -144,7 +144,7 @@ static void manage_flames(void) {
     byte previous = 0;
     while (flame[index].x > 0) {
 	flame_gravity(index);
-	if ((counter & 3) == 0) {
+	if ((counter & 1) == 0) {
 	    flame[index].cfg += 2;
 	}
 	if (flame_expired(index)) {
