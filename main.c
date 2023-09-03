@@ -168,7 +168,8 @@ static void setmem(byte *ptr, byte c, u32 amount) {
 u16 counter;
 static void init_variables(void) {
     void display_canyon(void);
-    setmem((byte *) 0xff0000, 0, 0xd000);
+    extern byte bss_start, bss_end;
+    setmem(&bss_start, 0, (u32) (&bss_end - &bss_start));
     game_frame = &display_canyon;
     counter = 0;
 }
