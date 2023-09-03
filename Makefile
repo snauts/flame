@@ -11,7 +11,7 @@ all:	$(NAME).bin
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(PICS) $(NAME).bin cksum pcx2h *.fasl
+	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h *.fasl
 
 disasm:	$(NAME).bin
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin | less
@@ -21,6 +21,9 @@ run:	$(NAME).bin
 
 mame:	$(NAME).bin
 	mame genesis -cart $(NAME).bin
+
+release: $(NAME).bin
+	cp $(NAME).bin $(NAME)-$(shell date +"%F").bin
 
 debug:	$(NAME).bin
 	rlwrap blastem -d $(NAME).bin
