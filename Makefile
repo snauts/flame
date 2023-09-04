@@ -11,7 +11,7 @@ all:	$(NAME).bin
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h *.fasl
+	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h *.fasl z80.rom z80.inc
 
 disasm:	$(NAME).bin
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin | less
@@ -41,7 +41,12 @@ pcx2h: pcx2h.c
 	@echo Make pcx2h
 	@$gcc pcx2h.c -o pcx2h
 
-%.o: %.c main.h $(PICS)
+z80.inc: z80.asm
+	@echo Compile z80.asm
+	@zasm -v0 -l0 z80.asm
+	@xxd -i < z80.rom > z80.inc
+
+%.o: %.c main.h z80.inc $(PICS)
 	@echo Compile $<
 	@$(PREFIX)gcc $(CFLAGS) -Os -c $< -o $@
 
