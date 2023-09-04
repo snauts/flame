@@ -33,15 +33,27 @@ static void execute_nops(u16 nops) {
     }
 }
 
-static void init_z80(void) {
+static void z80_request_bus(void) {
     WORD(Z80_BUS) = BIT(8);
-    WORD(Z80_RST) = BIT(8);
     while (WORD(Z80_BUS) & BIT(8));
-    memcpy((void *) Z80_RAM, z80, sizeof(z80));
-    WORD(Z80_RST) = 0;
+}
+
+static void z80_release_bus(void) {
     WORD(Z80_BUS) = 0;
+}
+
+static void z80_reset(byte state) {
+    WORD(Z80_RST) = state ? BIT(8) : 0;
+}
+
+static void init_z80(void) {
+    z80_reset(1);
+    z80_request_bus();
+    memcpy((void *) Z80_RAM, z80, sizeof(z80));
+    z80_release_bus();
+    z80_reset(0);
     execute_nops(80);
-    WORD(Z80_RST) = BIT(8);
+    z80_reset(1);
 }
 
 static void init_sys(void) {
