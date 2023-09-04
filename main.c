@@ -26,6 +26,24 @@ static u16 is_PAL(void) {
     return WORD(VDP_CTRL) & BIT(0);
 }
 
+static void execute_nops(u16 nops) {
+    while (nops > 0) {
+	asm("nop");
+	nops--;
+    }
+}
+
+static void init_z80(void) {
+    WORD(Z80_BUS) = BIT(8);
+    WORD(Z80_RST) = BIT(8);
+    while (WORD(Z80_BUS) & BIT(8));
+    memcpy((void *) Z80_RAM, z80, sizeof(z80));
+    WORD(Z80_RST) = 0;
+    WORD(Z80_BUS) = 0;
+    execute_nops(80);
+    WORD(Z80_RST) = BIT(8);
+}
+
 static void init_sys(void) {
     char i;
     for (i = 0; i < ARRAY_SIZE(VDP_regs); i++) {
@@ -35,6 +53,8 @@ static void init_sys(void) {
 
     /* init gamepad a */
     BYTE(GAMEPAD_A_CTRL) = BIT(6);
+
+    init_z80();
 }
 
 static u16 is_vblank(void) {
@@ -177,7 +197,7 @@ void reset_heap(void) {
     free_mem = 0;
 }
 
-void memcpy(void *dst, void *src, int amount) {
+void memcpy(void *dst, const void *src, int amount) {
     for (int i = 0; i < amount; i++) ((byte *) dst)[i] = ((byte *) src)[i];
 }
 

@@ -25,6 +25,10 @@
 #define GAMEPAD_B_CTRL	0xA1000B
 #define GAMEPAD_B_DATA	0xA10005
 
+#define Z80_RAM		0xA00000
+#define Z80_BUS		0xA11100
+#define Z80_RST		0xA11200
+
 #define BIT(x) (1 << (x))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
@@ -67,7 +71,7 @@ void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
 void memset(void *ptr, byte c, int amount);
-void memcpy(void *dst, void *src, int amount);
+void memcpy(void *dst, const void *src, int amount);
 void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
