@@ -46,6 +46,34 @@ static void z80_reset(byte state) {
     WORD(Z80_RST) = state ? BIT(8) : 0;
 }
 
+#define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
+static void ym2612_write(byte part, byte reg, byte data) {
+    part <<= 1;
+    while (YM2612(part, 0) & BIT(7));
+    YM2612(part, 0) = reg;
+    execute_nops(1);
+    YM2612(part, 1) = data;
+}
+
+const byte ym2612_reg_init[] = {
+    0x22, 0x0,
+    0x27, 0x0,
+    0x28, 0x0,
+    0x28, 0x1,
+    0x28, 0x2,
+    0x28, 0x4,
+    0x28, 0x5,
+    0x28, 0x6,
+    0x2B, 0x0,
+};
+
+static void init_ym2612(void) {
+    for (int i = 0; i < ARRAY_SIZE(ym2612_reg_init); i += 2) {
+	const byte *ptr = ym2612_reg_init + i;
+	ym2612_write(0, ptr[0], ptr[1]);
+    }
+}
+
 static void init_z80(void) {
     z80_reset(1);
     z80_request_bus();
@@ -54,6 +82,10 @@ static void init_z80(void) {
     z80_reset(0);
     execute_nops(80);
     z80_reset(1);
+
+    z80_request_bus();
+    init_ym2612();
+    z80_release_bus();
 }
 
 static void init_sys(void) {

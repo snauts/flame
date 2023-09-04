@@ -29,6 +29,8 @@
 #define Z80_BUS		0xA11100
 #define Z80_RST		0xA11200
 
+#define YM2612_REG	0xA04000
+
 #define BIT(x) (1 << (x))
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
