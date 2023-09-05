@@ -1,4 +1,5 @@
 #include "main.h"
+#include "music.inc"
 
 #define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
 void ym2612_write(byte part, byte reg, byte data) {

@@ -11,7 +11,8 @@ all:	$(NAME).bin
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h *.fasl z80.rom z80.inc
+	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h \
+		z80.rom z80.inc music.inc *.fasl
 
 disasm:	$(NAME).bin
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin | less
@@ -46,7 +47,11 @@ z80.inc: z80.asm
 	@zasm -v0 -l0 z80.asm
 	@xxd -i < z80.rom > z80.inc
 
-%.o: %.c main.h z80.inc $(PICS)
+music.inc: music.lisp
+	@echo Prepare music
+	@sbcl --noinform --load music.lisp --eval "(save-music)"
+
+%.o: %.c main.h music.inc z80.inc $(PICS)
 	@echo Compile $<
 	@$(PREFIX)gcc $(CFLAGS) -Os -c $< -o $@
 
