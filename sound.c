@@ -67,9 +67,10 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
     ym2612_write(part, 0x28, channel);
 }
 
-static void load_score(u16 offset, const byte *ptr, int size) {
-    memcpy((void *) Z80_RAM + offset, ptr, sizeof(size));
-    WORD(Z80_RAM + 0x12) = offset;
+static void load_score(u16 offset, const byte *ptr, u16 size) {
+    memcpy((void *) Z80_RAM + offset, ptr, size);
+    BYTE(Z80_RAM + 0x13) = offset >> 8;
+    BYTE(Z80_RAM + 0x12) = offset & 0xff;
     BYTE(Z80_RAM + 0x11) = 1;
     BYTE(Z80_RAM + 0x10) = 0;
 }
