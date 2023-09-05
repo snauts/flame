@@ -14,6 +14,8 @@ wait:
 	.byte	1
 next:
 	.word	0
+jump:
+	.word	0
 
 	org	0x0038
 vblank:
@@ -89,7 +91,7 @@ play_note:
 	ld	hl, (next)
 	ld	a, (hl)
 	and	a
-	ret	z		; music ends
+	call 	z, music_end
 	inc	hl
 
 	ld	b, a
@@ -124,6 +126,11 @@ play_note:
 	ld	(wait), a
 	ld	(next), hl
 
+	ret
+
+music_end:
+	ld	hl, (jump)
+	ld	a, (hl)
 	ret
 
 	align	2

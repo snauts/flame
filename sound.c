@@ -69,8 +69,12 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
 
 static void load_score(u16 offset, const byte *ptr, u16 size) {
     memcpy((void *) Z80_RAM + offset, ptr, size);
-    BYTE(Z80_RAM + 0x13) = offset >> 8;
-    BYTE(Z80_RAM + 0x12) = offset & 0xff;
+    byte hi = offset >> 8;
+    byte lo = offset & 0xff;
+    BYTE(Z80_RAM + 0x15) = hi;
+    BYTE(Z80_RAM + 0x14) = lo;
+    BYTE(Z80_RAM + 0x13) = hi;
+    BYTE(Z80_RAM + 0x12) = lo;
     BYTE(Z80_RAM + 0x11) = 1;
     BYTE(Z80_RAM + 0x10) = 0;
 }
