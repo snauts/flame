@@ -3,6 +3,9 @@
     (E  777) (F  823) (Fs 872)  (G  924)
     (Gs 979) (A 1037) (As 1099) (B 1164)))
 
+(defparameter *octave* 2)
+(defparameter *tempo* 10)
+
 (defparameter *johnny-drums*
   '((0 D  2)
     (0 G  2)
@@ -63,8 +66,42 @@
     (0 F  2)
     (0 G 10)))
 
+(defun save-bytes (out bytes)
+  (let ((count 0))
+    (dolist (b bytes)
+      (format out "0x~2,'0X, " b)
+      (when (>= (incf count) 8)
+	(format out "~%")
+	(setf count 0)))
+    (when (/= count 0)
+      (format out "~%"))))
+
+(defun save-array (out name fn)
+  (format out "const byte ~A[] = {~%" name)
+  (save-bytes out (funcall fn))
+  (format out "};~%"))
+
+(defun lookup-note (note)
+  (let ((octave (+ *octave* (first note)))
+	(duration (* *tempo* (third note)))
+	(frequency (second (assoc (second note) *notes*))))
+    (list (logior (ash frequency -8) (ash octave 3))
+	  (logand frequency #xff)
+	  duration)))
+
+(defun johnny-music ()
+  (let ((result nil))
+    (dolist (note *johnny-drums*)
+      (push 1 result)
+      (dolist (x (lookup-note note))
+	(push x result)))
+    (push 0 result)
+    (reverse result)))
+
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
-    (format out "const byte johnny[] = {~%")
-    (format out "};~%"))
+    (save-array out "johnny" #'johnny-music)))
+
+(defun save-and-quit ()
+  (save-music)
   (quit))

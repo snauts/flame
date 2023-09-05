@@ -49,7 +49,7 @@ z80.inc: z80.asm
 
 music.inc: music.lisp
 	@echo Prepare music
-	@sbcl --noinform --load music.lisp --eval "(save-music)"
+	@sbcl --noinform --load music.lisp --eval "(save-and-quit)"
 
 %.o: %.c main.h music.inc z80.inc $(PICS)
 	@echo Compile $<
