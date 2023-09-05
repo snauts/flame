@@ -26,11 +26,8 @@ static u16 is_PAL(void) {
     return WORD(VDP_CTRL) & BIT(0);
 }
 
-static void execute_nops(u16 nops) {
-    while (nops > 0) {
-	asm("nop");
-	nops--;
-    }
+void execute_nops(u32 nops) {
+    while (nops-- > 0) { asm("nop"); }
 }
 
 static void z80_request_bus(void) {
@@ -46,44 +43,16 @@ static void z80_reset(byte state) {
     WORD(Z80_RST) = state ? BIT(8) : 0;
 }
 
-void z80_poke(u16 addr, byte data) {
-    z80_request_bus();
-    BYTE(Z80_RAM + addr) = data;
-    z80_release_bus();
-}
-
 void do_z80_bus(void (*z80_bus_access)(void)) {
     z80_request_bus();
     z80_bus_access();
     z80_release_bus();
 }
 
-#define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
-void ym2612_write(byte part, byte reg, byte data) {
-    part <<= 1;
-    while (YM2612(part, 0) & BIT(7));
-    YM2612(part, 0) = reg;
-    execute_nops(1);
-    YM2612(part, 1) = data;
-}
-
-const byte ym2612_reg_init[] = {
-    0x22, 0x0,
-    0x27, 0x0,
-    0x28, 0x0,
-    0x28, 0x1,
-    0x28, 0x2,
-    0x28, 0x4,
-    0x28, 0x5,
-    0x28, 0x6,
-    0x2B, 0x0,
-};
-
-static void init_ym2612(void) {
-    for (int i = 0; i < ARRAY_SIZE(ym2612_reg_init); i += 2) {
-	const byte *ptr = ym2612_reg_init + i;
-	ym2612_write(0, ptr[0], ptr[1]);
-    }
+void z80_poke(u16 addr, byte data) {
+    z80_request_bus();
+    BYTE(Z80_RAM + addr) = data;
+    z80_release_bus();
 }
 
 static void init_z80(void) {
@@ -94,10 +63,6 @@ static void init_z80(void) {
     z80_reset(0);
     execute_nops(80);
     z80_reset(1);
-
-    z80_request_bus();
-    init_ym2612();
-    z80_release_bus();
 }
 
 static void init_sys(void) {
@@ -111,6 +76,7 @@ static void init_sys(void) {
     BYTE(GAMEPAD_A_CTRL) = BIT(6);
 
     init_z80();
+    init_ym2612();
 }
 
 static u16 is_vblank(void) {

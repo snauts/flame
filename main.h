@@ -88,9 +88,10 @@ void *buffer_ptr(u16 addr);
 void *malloc(u16 amount);
 void reset_heap(void);
 
-void ym2612_write(byte part, byte reg, byte data);
-void z80_poke(u16 addr, byte data);
+void init_ym2612(void);
+void execute_nops(u32 nops);
 void do_z80_bus(void (*)(void));
+void z80_poke(u16 addr, byte data);
 
 u16 random(void);
 void set_seed(u16);

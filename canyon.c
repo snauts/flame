@@ -118,6 +118,8 @@ void display_canyon(void) {
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites();
+    void music_johnny(void);
+    music_johnny();
 
     switch_frame(&update_canyon);
 }
