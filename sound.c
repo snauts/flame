@@ -67,12 +67,20 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
     ym2612_write(part, 0x28, channel);
 }
 
+static void load_score(u16 offset, const byte *ptr, int size) {
+    memcpy((void *) Z80_RAM + offset, ptr, sizeof(size));
+    WORD(Z80_RAM + 0x12) = offset;
+    BYTE(Z80_RAM + 0x11) = 1;
+    BYTE(Z80_RAM + 0x10) = 0;
+}
+
 static void setup_johnny_intruments(void) {
     setup_ym2612_channel(0, drums);
     for (byte i = 1; i <= 6; i++) {
 	if (i == 3) continue;
 	setup_ym2612_channel(i, guitar);
     }
+    load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 
 void music_johnny(void) {

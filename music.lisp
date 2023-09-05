@@ -100,7 +100,7 @@
 
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
-    (save-array out "johnny" #'johnny-music)))
+    (save-array out "johnny_score" #'johnny-music)))
 
 (defun save-and-quit ()
   (save-music)
