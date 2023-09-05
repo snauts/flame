@@ -68,7 +68,7 @@
     (2 (0 0 G))
     (4 (0 0 G))
     (2 (0 0 F))
-    (25(0 0 G))))
+    (10(0 0 G))))
 
 (defun save-bytes (out bytes)
   (let ((count 0))
