@@ -104,17 +104,18 @@
     (push 0 result)
     (reverse result)))
 
+(defun duplicate-note (chord i new)
+  (list (cons new (copy-list (rest (assoc i (rest chord)))))))
+
 (defun duplicate-channel (score i new)
-  (dolist (x score)
-    (when (null (assoc new (rest x)))
-      (let ((note (copy-list (assoc i (rest x)))))
-	(setf (first note) new)
-	(setf (rest (last x)) (list note))))))
+  (mapcar (lambda (chord) (append chord (duplicate-note chord i new))) score))
+
+(defun johnny-score ()
+  (duplicate-channel *johnny* 0 1))
 
 (defun save-music ()
-  (duplicate-channel *johnny* 0 1)
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
-    (save-array out "johnny_score" (save-score *johnny*))))
+    (save-array out "johnny_score" (save-score (johnny-score)))))
 
 (defun save-and-quit ()
   (save-music)
