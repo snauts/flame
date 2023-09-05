@@ -83,9 +83,14 @@ void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
 void enable_interrupts(void);
+void wait_vblank_done(void);
 void *buffer_ptr(u16 addr);
 void *malloc(u16 amount);
 void reset_heap(void);
+
+void ym2612_write(byte part, byte reg, byte data);
+void z80_poke(u16 addr, byte data);
+void do_z80_bus(void (*)(void));
 
 u16 random(void);
 void set_seed(u16);

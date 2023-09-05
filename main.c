@@ -46,8 +46,20 @@ static void z80_reset(byte state) {
     WORD(Z80_RST) = state ? BIT(8) : 0;
 }
 
+void z80_poke(u16 addr, byte data) {
+    z80_request_bus();
+    BYTE(Z80_RAM + addr) = data;
+    z80_release_bus();
+}
+
+void do_z80_bus(void (*z80_bus_access)(void)) {
+    z80_request_bus();
+    z80_bus_access();
+    z80_release_bus();
+}
+
 #define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
-static void ym2612_write(byte part, byte reg, byte data) {
+void ym2612_write(byte part, byte reg, byte data) {
     part <<= 1;
     while (YM2612(part, 0) & BIT(7));
     YM2612(part, 0) = reg;

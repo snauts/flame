@@ -3,10 +3,17 @@ start:
 	di
 	im	1
 	ld	sp, 0x2000
-	call	init
 	ei
 
 spin:	jr      spin
+
+	.org	0x0010
+stop:
+	.byte	1
+wait:
+	.byte	1
+next:
+	.word	0
 
 	org	0x0038
 vblank:
@@ -14,10 +21,15 @@ vblank:
 	ei
 	reti
 
-init:
-	ret
-
 tick:
+	ld	a, (stop)
+	and	a
+	ret	nz
+
+	ld	a, (wait)
+	dec	a
+	jp	z, play_note
+	ld	(wait), a
 	ret
 
 ym2612_write:
@@ -32,4 +44,8 @@ ym2612_write:
 	nop
 	ld	(ix+1), c
 	ret
+
+play_note:
+	ret
+
 	align	2
