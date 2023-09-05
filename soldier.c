@@ -180,9 +180,10 @@ static void soldier_yelling(byte state) {
 u16 soldier_march(void) {
     u16 prev = soldier.x;
     u16 last = button_state;
-    u16 fire = BUTTON_B(button_state);
 
     read_gamepad();
+
+    u16 fire = BUTTON_B(button_state);
     if (BUTTON_RIGHT(button_state)) {
 	soldier.x++;
     }
