@@ -77,10 +77,7 @@ static void load_score(u16 offset, const byte *ptr, u16 size) {
 
 static void setup_johnny_intruments(void) {
     setup_ym2612_channel(0, drums);
-    for (byte i = 1; i <= 6; i++) {
-	if (i == 3) continue;
-	setup_ym2612_channel(i, guitar);
-    }
+    setup_ym2612_channel(1, guitar);
     load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 
