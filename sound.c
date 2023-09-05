@@ -55,6 +55,17 @@ const byte guitar[] = {
     0x00, 0x00, 0x00, 0x00,
 };
 
+const byte bong[] = {
+    0x12, 0xc0,
+    0x72, 0x72, 0x72, 0x72,
+    0x10, 0x10, 0x10, 0x10,
+    0x8f, 0x8f, 0x8f, 0x8f,
+    0x18, 0x18, 0x18, 0x18,
+    0x08, 0x08, 0x08, 0x08,
+    0x11, 0x11, 0x11, 0x11,
+    0x00, 0x00, 0x00, 0x00,
+};
+
 static void setup_ym2612_channel(byte channel, const byte *instrument) {
     u16 i = 0;
     byte part = channel >> 2;
@@ -81,7 +92,10 @@ static void load_score(u16 offset, const byte *ptr, u16 size) {
 
 static void setup_johnny_intruments(void) {
     setup_ym2612_channel(0, drums);
-    setup_ym2612_channel(4, guitar);
+    setup_ym2612_channel(1, guitar);
+    for (byte i = 4; i <= 6; i++) {
+	setup_ym2612_channel(i, bong);
+    }
     load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 
