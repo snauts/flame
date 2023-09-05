@@ -97,11 +97,14 @@
     (list (logior (ash frequency -8) (ash octave 3))
 	  (logand frequency #xff))))
 
+(defun sort-chord (chord)
+  (sort (copy-list chord) #'< :key #'first))
+
 (defun save-score (score)
   (let ((result nil))
     (dolist (chord score)
       (push (select-channels chord) result)
-      (dolist (note (rest chord))
+      (dolist (note (sort-chord (rest chord)))
 	(dolist (x (lookup-note note))
 	  (push x result)))
       (push (* (first chord) *tempo*) result))
@@ -112,11 +115,8 @@
   (let ((note (assoc i (rest chord))))
     (and note (list (cons new (copy-list (rest note)))))))
 
-(defun update-chord (chord note)
-  (cons (first chord) (sort (append (rest chord) note) #'< :key #'first)))
-
 (defun duplicate-channel (score i new)
-  (mapcar (lambda (chord) (update-chord chord (add-note chord i new))) score))
+  (mapcar (lambda (chord) (append chord (add-note chord i new))) score))
 
 (defun johnny-score ()
   (duplicate-channel *johnny* 0 1))
