@@ -54,5 +54,26 @@ const byte guitar[] = {
     0x00, 0x00, 0x00, 0x00,
 };
 
+static void setup_ym2612_channel(byte channel, const byte *instrument) {
+    u16 i = 0;
+    byte part = channel >> 2;
+    byte offset = channel & 3;
+    ym2612_write(part, 0xb0 + offset, instrument[i++]);
+    ym2612_write(part, 0xb4 + offset, instrument[i++]);
+    for (byte reg = 0x30; reg < 0xa0; reg += 0x4) {
+	ym2612_write(part, reg + offset, instrument[i++]);
+    }
+    ym2612_write(part, 0x28, channel);
+}
+
+static void setup_johnny_intruments(void) {
+    setup_ym2612_channel(0, drums);
+    for (byte i = 1; i <= 6; i++) {
+	if (i == 3) continue;
+	setup_ym2612_channel(i, guitar);
+    }
+}
+
 void music_johnny(void) {
+    do_z80_bus(&setup_johnny_intruments);
 }
