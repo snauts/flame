@@ -3,7 +3,7 @@
     (E  777) (F  823) (Fs 872)  (G  924)
     (Gs 979) (A 1037) (As 1099) (B 1164)))
 
-(defparameter *octaves* '(0 1 * x 0 0 0))
+(defparameter *octaves* '(0 1 4 x 0 0 0))
 (defparameter *tempo* 10)
 
 (defparameter *johnny*
@@ -119,7 +119,7 @@
   (mapcar (lambda (chord) (append chord (add-note chord i new))) score))
 
 (defun johnny-score ()
-  (duplicate-channel *johnny* 0 1))
+  (duplicate-channel (duplicate-channel *johnny* 0 1) 0 2))
 
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
