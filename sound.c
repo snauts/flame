@@ -64,7 +64,7 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
     for (byte reg = 0x30; reg < 0xa0; reg += 0x4) {
 	ym2612_write(part, reg + offset, instrument[i++]);
     }
-    ym2612_write(part, 0x28, channel);
+    ym2612_write(0, 0x28, channel);
 }
 
 static void load_score(u16 offset, const byte *ptr, u16 size) {
@@ -77,7 +77,7 @@ static void load_score(u16 offset, const byte *ptr, u16 size) {
 
 static void setup_johnny_intruments(void) {
     setup_ym2612_channel(0, drums);
-    setup_ym2612_channel(1, guitar);
+    setup_ym2612_channel(4, guitar);
     load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 

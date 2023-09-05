@@ -36,7 +36,6 @@ ym2612_write:
 	;; a - part, b - addr, c - data
 	push	af
 	sla	a
-	sla	a
 	ld	ixl, a
 	ld	ixh, 0x40
 1$:	ld	a, (ix)
@@ -50,36 +49,40 @@ ym2612_write:
 
 ym2612_note:
 	;; a - channel, de - note
-	push	af
-	ld	c, a
+	push	hl
+	ld	h, a
 	sra	a
 	sra	a
+	ld	l, a
+
+	ld	a, 0
 	ld	b, 0x28
+	ld	c, h
 	call	ym2612_write
 
-	push	af
-	ld	a, c
+	ld	a, h
 	and	a, 3
 	add	a, 0xa4
 	ld	b, a
-	pop	af
 	ld	c, e
+	ld	a, l
 	call	ym2612_write
 
-	push	af
 	ld	a, b
 	sub	a, 4
 	ld	b, a
-	pop	af
 	ld	c, d
+	ld	a, l
 	call	ym2612_write
 
-	pop	af
-	and	a, 3
+	ld	a, h
 	or	a, 0xf0
 	ld	c, a
+	ld	a, 0
 	ld	b, 0x28
 	call	ym2612_write
+
+	pop	hl
 	ret
 
 play_note:
