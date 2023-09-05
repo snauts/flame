@@ -86,14 +86,34 @@ play_note:
 	ld	hl, (next)
 	ld	a, (hl)
 	and	a
-	ret	z
+	ret	z		; music ends
 	inc	hl
 
+	ld	b, a
+	ld	c, 0
+	ld	a, 1
+1$:
+	push	af
+	and	b
+	jp	z, 2$
+
+	push	af
+	push	bc
+
+	ld	a, c
 	ld	de, (hl)
 	inc	hl
 	inc 	hl
 
 	call	ym2612_note
+
+	pop	bc
+	pop	af
+2$:
+	inc	c
+	pop	af
+	sla	a
+	jp	nz, 1$
 
 	ld	a, (hl)
 	inc	hl
