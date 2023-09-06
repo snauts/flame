@@ -119,7 +119,8 @@
   (mapcar (lambda (chord) (append chord (add-note chord i new))) score))
 
 (defun johnny-score ()
-  (duplicate-channel (duplicate-channel *johnny* 0 1) 0 2))
+  (let ((pass1 (duplicate-channel *johnny* 0 1)))
+    (duplicate-channel pass1 0 2)))
 
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
