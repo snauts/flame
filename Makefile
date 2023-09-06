@@ -18,7 +18,7 @@ disasm:	$(NAME).bin
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin | less
 
 run:	$(NAME).bin
-	kega-fusion $(NAME).bin
+	blastem $(NAME).bin
 
 mame:	$(NAME).bin
 	mame genesis -cart $(NAME).bin
