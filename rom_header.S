@@ -96,7 +96,7 @@ int_vinterrupt:
 	movem.l (%sp)+,%d0-%d1/%a0-%a1
 	rte
 
-.global enable_interrupts
-enable_interrupts:
-	move.w	#0x2500, sr
+.global wait_for_interrupt
+wait_for_interrupt:
+	stop	#0x2500
 	rts

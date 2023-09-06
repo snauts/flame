@@ -90,8 +90,9 @@ static u16 is_DMA(void) {
 static volatile byte vblank_done;
 void wait_vblank_done(void) {
     vblank_done = 0;
-    enable_interrupts();
-    while (!vblank_done);
+    do {
+	wait_for_interrupt();
+    } while (!vblank_done);
 }
 
 void update_palette(const u16 *buf, u16 offset, u16 count) {
