@@ -104,6 +104,7 @@ void display_canyon(void) {
     draw_horizon();
     draw_vegetation();
 
+    fill_VRAM(0xd00, TILE(1, 1), 0x80);
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
