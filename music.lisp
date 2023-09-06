@@ -4,7 +4,7 @@
     (Gs 979) (A 1037) (As 1099) (B 1164)))
 
 (defparameter *octaves* '(0 1 4 x 0 0 0))
-(defparameter *tempo* 10)
+(defparameter *tempo* 5)
 
 (defparameter *johnny*
   '((2 (0 0 D))

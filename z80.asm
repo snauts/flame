@@ -5,7 +5,7 @@ start:
 	ld	sp, 0x2000
 	ei
 
-spin:	jr      spin
+	jp      main_loop
 
 	.org	0x0010
 stop:
@@ -16,23 +16,45 @@ next:
 	.word	0
 jump:
 	.word	0
+tick:
+	.byte	0
+last:
+	.byte	0
 
 	org	0x0038
 vblank:
-	call	tick
+	push	af
+	ld	a, (tick)
+	inc	a
+	ld	(tick), a
+	pop	af
 	ei
 	reti
 
-tick:
+halt:
+	halt
+	;; falls through to main_loop
+
+main_loop:
 	ld	a, (stop)
-	and	a
-	ret	nz
+	cp	a
+	jp	nz, halt
+
+	ld	a, (tick)
+	ld	b, a
+	ld	a, (last)
+	cp	b
+	jp	z, halt
+
+	ld	a, b
+	ld	(last), a
 
 	ld	a, (wait)
 	dec	a
-	jp	z, play_note
+	call	z, play_note
 	ld	(wait), a
-	ret
+
+	jp	halt
 
 ym2612_write:
 	;; a - part, b - addr, c - data
@@ -88,6 +110,7 @@ ym2612_note:
 	ret
 
 play_note:
+	;; should return time to wait for next note in a
 	ld	hl, (next)
 	ld	a, (hl)
 	and	a
@@ -123,7 +146,6 @@ play_note:
 	ld	a, (hl)
 	inc	hl
 
-	ld	(wait), a
 	ld	(next), hl
 
 	ret
@@ -133,4 +155,4 @@ music_end:
 	ld	a, (hl)
 	ret
 
-	align	2
+	align	2		; this sould be at the end
