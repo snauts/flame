@@ -3,7 +3,7 @@
     (E  777) (F  823) (Fs 872)  (G  924)
     (Gs 979) (A 1037) (As 1099) (B 1164)))
 
-(defparameter *octaves* '(0 1 4 x 0 0 0))
+(defparameter *octaves* '(0 1 2 x 0 0 0))
 (defparameter *tempo* 5)
 
 (defparameter *johnny*
