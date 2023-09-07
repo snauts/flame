@@ -165,6 +165,8 @@
 	  ((= 0 period)
 	   (attach chord note))
 	  ((>= period duration)
+	   (when (find-note (first note) (first (rest score)))
+	     (error "channel ~A has same note sooner" (first note)))
 	   (position-key-off (rest score) (- period duration) note))
 	  ((< period duration)
 	   (let ((tail (rest score)))
