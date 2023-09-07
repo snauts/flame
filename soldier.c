@@ -8,7 +8,11 @@
 #define SOLDIER_LEG	524
 #define SOLDIER_FIRE	620
 
+#define SOLDIER_MIN_X	150
+#define SOLDIER_MAX_X	250
+
 static Pos soldier;
+static u16 window;
 static u16 platform_h;
 static u16 button_state;
 
@@ -32,9 +36,13 @@ static u16 read_gamepad(void) {
     button_state = ~(button_state | BYTE(GAMEPAD_A_DATA));
 }
 
-static void update_soldier_y(void) {
+static void soldier_sprite_update(void) {
     sprite[0].y = soldier.y;
+
+    sprite[1].x = sprite[0].x;
     sprite[1].y = soldier.y + 24;
+
+    sprite[2].x = sprite[0].x + 24;
     sprite[2].y = soldier.y + 21;
 }
 
@@ -62,7 +70,6 @@ void soldier_jump(u16 start) {
 	velocity = 0;
 	gravity = 0;
     }
-    update_soldier_y();
 }
 
 static short animate_walking(short cycle, u16 prev) {
@@ -178,6 +185,23 @@ static void soldier_yelling(byte state) {
     }
 }
 
+static void move_forward(void) {
+    if (sprite[0].x < SOLDIER_MAX_X) {
+	sprite[0].x++;
+    }
+    else {
+	window++;
+    }
+    soldier.x++;
+}
+
+static void move_backward(void) {
+    if (sprite[0].x > SOLDIER_MIN_X) {
+	sprite[0].x--;
+	soldier.x--;
+    }
+}
+
 u16 soldier_march(void) {
     u16 prev = soldier.x;
     u16 last = button_state;
@@ -186,10 +210,10 @@ u16 soldier_march(void) {
 
     u16 fire = BUTTON_B(button_state);
     if (BUTTON_RIGHT(button_state)) {
-	soldier.x++;
+	move_forward();
     }
     else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
-	soldier.x--;
+	move_backward();
     }
     soldier_yelling(fire != 0);
     if (fire && on_ground() && cooldown == 0) {
@@ -198,11 +222,12 @@ u16 soldier_march(void) {
     }
 
     soldier_jump(BUTTON_C(button_state) && BUTTON_C(last) == 0);
+    soldier_sprite_update();
     soldier_animate(prev);
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
-    return soldier.x;
+    return window;
 }
 
 static void put_soldier(u16 x, u16 y) {
@@ -242,5 +267,5 @@ void setup_soldier_sprites(void) {
     platform_h = 296;
     flame = sprite + 3;
     soldier.y = platform_h;
-    put_soldier(176, soldier.y);
+    put_soldier(SOLDIER_MIN_X, soldier.y);
 }
