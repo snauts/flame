@@ -4,7 +4,6 @@
     (Gs 979) (A 1037) (As 1099) (B 1164) (X -1)))
 
 (defparameter *octaves* '(0 1 2 x 0 0 0))
-(defparameter *tempo* 5)
 
 (defparameter *johnny*
   '((2 (0 0 D))
@@ -109,7 +108,7 @@
       (dolist (note (sort-chord (rest chord)))
 	(dolist (x (lookup-note note))
 	  (push x result)))
-      (push (* (first chord) *tempo*) result))
+      (push (first chord) result))
     (push 0 result)
     (reverse result)))
 
@@ -127,10 +126,17 @@
 (defun duplicate-channel (score old new)
   (mapc (lambda (chord) (add-note chord old new)) score))
 
+(defun scale-chord (chord amount)
+  (setf (first chord) (* amount (first chord))))
+
+(defun scale-tempo (score amount)
+  (mapc (lambda (chord) (scale-chord chord amount)) score))
+
 (defun johnny-score ()
   (let ((score (copy-tree *johnny*)))
     (duplicate-channel score 0 1)
     (duplicate-channel score 0 2)
+    (scale-tempo score 5)
     score))
 
 (defun save-music ()
