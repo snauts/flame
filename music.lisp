@@ -197,6 +197,7 @@
     (duplicate-channel score 0 2)
     (adjust-octaves score '(1 2 0 x 0 0 0))
     (replace-frequencies score *notes*)
+    (channel-key-off score 2 1)
     (scale-tempo score 5)
     score))
 
