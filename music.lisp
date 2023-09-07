@@ -192,7 +192,7 @@
   (let ((score (copy-tree *johnny*)))
     (duplicate-channel score 0 1)
     (duplicate-channel score 0 2)
-    (adjust-octaves score '(0 1 2 x 0 0 0))
+    (adjust-octaves score '(1 2 0 x 0 0 0))
     (replace-frequencies score *notes*)
     (scale-tempo score 5)
     score))
