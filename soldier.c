@@ -37,6 +37,7 @@ static u16 read_gamepad(void) {
 }
 
 static void soldier_sprite_update(void) {
+    sprite[0].x = soldier.x - window + SOLDIER_MAX_X;
     sprite[0].y = soldier.y;
 
     sprite[1].x = sprite[0].x;
@@ -186,10 +187,7 @@ static void soldier_yelling(byte state) {
 }
 
 static void move_forward(void) {
-    if (sprite[0].x < SOLDIER_MAX_X) {
-	sprite[0].x++;
-    }
-    else {
+    if (sprite[0].x >= SOLDIER_MAX_X) {
 	window++;
     }
     soldier.x++;
@@ -197,7 +195,6 @@ static void move_forward(void) {
 
 static void move_backward(void) {
     if (sprite[0].x > SOLDIER_MIN_X) {
-	sprite[0].x--;
 	soldier.x--;
     }
 }
@@ -231,23 +228,22 @@ u16 soldier_march(void) {
 }
 
 static void put_soldier(u16 x, u16 y) {
-    sprite[0].x = x;
-    sprite[0].y = y;
+    soldier.x = x;
+    soldier.y = y;
+
     sprite[0].cfg = TILE(2, SOLDIER_TOP);
     sprite[0].size = SPRITE_SIZE(3, 3);
     sprite[0].next = 1;
 
-    sprite[1].x = x;
-    sprite[1].y = y + 24;
     sprite[1].cfg = TILE(2, SOLDIER_LEG);
     sprite[1].size = SPRITE_SIZE(3, 2);
     sprite[1].next = 2;
 
-    sprite[2].x = x + 24;
-    sprite[2].y = y + 21;
     sprite[2].cfg = TILE(2, 521);
     sprite[2].size = SPRITE_SIZE(1, 1);
     sprite[2].next = 0;
+
+    soldier_sprite_update();
 }
 
 void load_soldier_tiles(void) {
@@ -266,6 +262,5 @@ void load_soldier_tiles(void) {
 void setup_soldier_sprites(void) {
     platform_h = 296;
     flame = sprite + 3;
-    soldier.y = platform_h;
-    put_soldier(SOLDIER_MIN_X, soldier.y);
+    put_soldier(0, platform_h);
 }
