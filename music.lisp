@@ -96,7 +96,13 @@
 	(list (logior (ash frequency -8) (ash octave 3))
 	      (logand frequency #xff)))))
 
+(defun is-inconsistent (chord)
+  (let ((notes (rest chord)))
+    (/= (length notes) (length (remove-duplicates notes :key #'first)))))
+
 (defun sort-chord (chord)
+  (when (is-inconsistent chord)
+    (error "chord inconsistentcy~%~A" chord))
   (sort (copy-list chord) #'< :key #'first))
 
 (defun save-score (score)
@@ -163,7 +169,7 @@
   (let* ((chord (first score))
 	 (duration (first chord)))
     (cond ((null score)
-	   (error "ERROR: key-off past end of score "))
+	   (error "key-off past end of score "))
 	  ((= 0 period)
 	   (attach chord (key-off num)))
 	  ((>= period duration)
