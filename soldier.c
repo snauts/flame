@@ -5,8 +5,8 @@
 #include "images/walk.h"
 
 #define SOLDIER_TOP	512
-#define SOLDIER_LEG	524
-#define SOLDIER_FIRE	620
+#define SOLDIER_LEG	536
+#define SOLDIER_FIRE	640
 
 #define SOLDIER_MIN_X	150
 #define SOLDIER_MAX_X	250
@@ -103,7 +103,9 @@ static void soldier_animate(u16 prev) {
 	soldier_frame = 6 * (cycle + 2) + SOLDIER_LEG;
     }
     else {
-	soldier_frame = (cycle >= 6 || cycle == -2) ? 608 : 614;
+	soldier_frame = (cycle >= 6 || cycle == -2)
+	    ? (SOLDIER_LEG + 84)
+	    : (SOLDIER_LEG + 90);
     }
     sprite[1].cfg = TILE(2, soldier_frame);
 }
