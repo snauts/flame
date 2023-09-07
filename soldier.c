@@ -37,7 +37,7 @@ static u16 read_gamepad(void) {
 }
 
 static void soldier_sprite_update(void) {
-    sprite[0].x = soldier.x - window + SOLDIER_MAX_X;
+    sprite[0].x = soldier.x - window + SOLDIER_MIN_X;
     sprite[0].y = soldier.y;
 
     sprite[1].x = sprite[0].x;
