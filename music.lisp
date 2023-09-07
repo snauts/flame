@@ -125,14 +125,6 @@
 (defun attach (list item)
   (setf (rest (last list)) (list item)))
 
-(defun add-note (chord old new)
-  (let ((note (find-note old chord)))
-    (when (and note (null (find-note new chord)))
-      (attach chord (new-note new note)))))
-
-(defun duplicate-channel (score old new)
-  (mapc (lambda (chord) (add-note chord old new)) score))
-
 (defun scale-chord (chord amount)
   (setf (first chord) (* amount (first chord))))
 
@@ -187,6 +179,15 @@
       (when (and note (not (is-key-off note)))
 	(position-key-off score period (key-off num))))
     (channel-key-off (rest score) num period)))
+
+(defun duplicate-offset (score old new period)
+  (unless (null score)
+    (let ((note (find-note old (first score))))
+      (when note (position-key-off score period (new-note new note))))
+    (duplicate-offset (rest score) old new period)))
+
+(defun duplicate-channel (score old new)
+  (duplicate-offset score old new 0))
 
 (defun johnny-score ()
   (let ((score (copy-tree *johnny*)))
