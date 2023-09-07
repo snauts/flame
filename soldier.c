@@ -111,8 +111,8 @@ static u16 next_flame(u16 index) {
 #define FIRE_FRAME(x) TILE(2, SOLDIER_FIRE + (2 * (x)))
 
 static void emit_flame(u16 index) {
-    flame[index].x = 204;
-    flame[index].y = soldier.y + 20;
+    flame[index].x = sprite[0].x + 28;
+    flame[index].y = sprite[0].y + 20;
     flame[index].cfg = FIRE_FRAME(0);
     flame[index].size = SPRITE_SIZE(2, 1);
 }
