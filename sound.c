@@ -114,3 +114,8 @@ static void setup_johnny_intruments(void) {
 void music_johnny(void) {
     do_z80_bus(&setup_johnny_intruments);
 }
+
+void psg_noise(byte type, byte vol) {
+    BYTE(PSG_ADDR) = 0xf0 | vol;
+    BYTE(PSG_ADDR) = 0xe0 | type;
+}

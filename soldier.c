@@ -171,6 +171,7 @@ static byte *soldier_yell;
 static void soldier_yelling(byte state) {
     static byte face;
     if (face != state) {
+	psg_noise(7, state ? 0x0 : 0xf);
 	void *ptr = (state == 1) ? soldier_yell : soldier_face;
 	copy_to_VRAM_ptr(32 * SOLDIER_TOP + 0x8C, 8, ptr);
 	face = state;

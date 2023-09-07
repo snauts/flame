@@ -2,6 +2,7 @@
 #define TMSS_ADDR	0xA14000
 #define VDP_DATA	0xC00000
 #define VDP_CTRL	0xC00004
+#define PSG_ADDR	0xC00011
 
 #define VDP_VRAM_WRITE	0x40000000
 #define VDP_CRAM_WRITE	0xC0000000
@@ -92,6 +93,7 @@ void init_ym2612(void);
 void execute_nops(u32 nops);
 void do_z80_bus(void (*)(void));
 void z80_poke(u16 addr, byte data);
+void psg_noise(byte type, byte vol);
 
 u16 random(void);
 void set_seed(u16);
