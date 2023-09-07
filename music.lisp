@@ -116,10 +116,13 @@
 (defun find-note (channel chord)
   (assoc channel (rest chord)))
 
+(defun attach (list item)
+  (setf (rest (last list)) (list item)))
+
 (defun add-note (chord old new)
   (let ((note (find-note old chord)))
     (when (and note (null (find-note new chord)))
-      (setf (rest (last chord)) (list (new-note new note))))))
+      (attach chord (new-note new note)))))
 
 (defun duplicate-channel (score old new)
   (mapc (lambda (chord) (add-note chord old new)) score))
@@ -141,11 +144,43 @@
 (defun adjust-octaves (score octaves)
   (adjust-note score octaves #'adjust-note-octaves))
 
+(defun get-frequency (sym frequencies)
+  (or (second (assoc sym frequencies)) sym))
+
 (defun adjust-note-frequency (note frequencies)
-  (setf (third note) (second (assoc (third note) frequencies))))
+  (setf (third note) (get-frequency (third note) frequencies)))
 
 (defun replace-frequencies (score frequencies)
   (adjust-note score frequencies #'adjust-note-frequency))
+
+(defun key-off (num)
+  (list num 0 -1))
+
+(defun is-key-off (note)
+  (member (third note) '(-1 X)))
+
+(defun position-key-off (score num period)
+  (let* ((chord (first score))
+	 (duration (first chord)))
+    (cond ((null score)
+	   (error "ERROR: key-off past end of score "))
+	  ((= 0 period)
+	   (attach chord (key-off num)))
+	  ((>= period duration)
+	   (position-key-off (rest score) num (- period duration)))
+	  ((< period duration)
+	   (let ((tail (rest score)))
+	     (setf (rest score) nil)
+	     (setf (first chord) period)
+	     (attach score (list (- duration period) (key-off num)))
+	     (unless (null tail) (setf (rest (last score)) tail)))))))
+
+(defun channel-key-off (score num period)
+  (unless (null score)
+    (let ((note (find-note num (first score))))
+      (when (and note (not (is-key-off note)))
+	(position-key-off score num period)))
+    (channel-key-off (rest score) num period)))
 
 (defun johnny-score ()
   (let ((score (copy-tree *johnny*)))
@@ -161,5 +196,6 @@
     (save-array out "johnny_score" (save-score (johnny-score)))))
 
 (defun save-and-quit ()
-  (save-music)
+  (handler-case (save-music)
+    (condition (var) (format t "ERROR: ~A~%" var)))
   (quit))
