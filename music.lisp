@@ -3,8 +3,6 @@
     (E  777) (F  823) (Fs 872)  (G  924)
     (Gs 979) (A 1037) (As 1099) (B 1164) (X -1)))
 
-(defparameter *octaves* '(0 1 2 x 0 0 0))
-
 (defparameter *johnny*
   '((2 (0 0 D))
     (2 (0 0 G)  (4 0 D) (5 0 G) (6 0 As))
@@ -91,7 +89,7 @@
   (reduce #'logior (mapcar #'bit-n (mapcar #'first (rest chord)))))
 
 (defun lookup-note (note)
-  (let ((octave (+ (elt *octaves* (first note)) (second note)))
+  (let ((octave (second note))
 	(frequency (second (assoc (third note) *notes*))))
     (if (< frequency 0)
 	(list (bit-n 7) 0)
@@ -132,10 +130,20 @@
 (defun scale-tempo (score amount)
   (mapc (lambda (chord) (scale-chord chord amount)) score))
 
+(defun adjust-note-octaves (note octaves)
+  (setf (second note) (+ (second note) (elt octaves (first note)))))
+
+(defun adjust-chord-octaves (chrod octaves)
+  (mapc (lambda (note) (adjust-note-octaves note octaves)) (rest chrod)))
+
+(defun adjust-octaves (score octaves)
+  (mapc (lambda (chord) (adjust-chord-octaves chord octaves)) score))
+
 (defun johnny-score ()
   (let ((score (copy-tree *johnny*)))
     (duplicate-channel score 0 1)
     (duplicate-channel score 0 2)
+    (adjust-octaves score '(0 1 2 x 0 0 0))
     (scale-tempo score 5)
     score))
 
