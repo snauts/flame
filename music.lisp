@@ -89,8 +89,8 @@
   (reduce #'logior (mapcar #'bit-n (mapcar #'first (rest chord)))))
 
 (defun lookup-note (note)
-  (let ((octave (second note))
-	(frequency (second (assoc (third note) *notes*))))
+  (destructuring-bind (channel octave frequency) note
+    (declare (ignore channel))
     (if (< frequency 0)
 	(list (bit-n 7) 0)
 	(list (logior (ash frequency -8) (ash octave 3))
@@ -130,20 +130,29 @@
 (defun scale-tempo (score amount)
   (mapc (lambda (chord) (scale-chord chord amount)) score))
 
+(defun adjust-note (score data adjust-fn)
+  (dolist (chord score)
+    (dolist (note (rest chord))
+      (funcall adjust-fn note data))))
+
 (defun adjust-note-octaves (note octaves)
   (setf (second note) (+ (second note) (elt octaves (first note)))))
 
-(defun adjust-chord-octaves (chrod octaves)
-  (mapc (lambda (note) (adjust-note-octaves note octaves)) (rest chrod)))
-
 (defun adjust-octaves (score octaves)
-  (mapc (lambda (chord) (adjust-chord-octaves chord octaves)) score))
+  (adjust-note score octaves #'adjust-note-octaves))
+
+(defun adjust-note-frequency (note frequencies)
+  (setf (third note) (second (assoc (third note) frequencies))))
+
+(defun replace-frequencies (score frequencies)
+  (adjust-note score frequencies #'adjust-note-frequency))
 
 (defun johnny-score ()
   (let ((score (copy-tree *johnny*)))
     (duplicate-channel score 0 1)
     (duplicate-channel score 0 2)
     (adjust-octaves score '(0 1 2 x 0 0 0))
+    (replace-frequencies score *notes*)
     (scale-tempo score 5)
     score))
 
