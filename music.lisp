@@ -1,7 +1,7 @@
 (defparameter *notes*
   '((C  617) (Cs 653) (D  692)  (Ds 733)
     (E  777) (F  823) (Fs 872)  (G  924)
-    (Gs 979) (A 1037) (As 1099) (B 1164)))
+    (Gs 979) (A 1037) (As 1099) (B 1164) (X -1)))
 
 (defparameter *octaves* '(0 1 2 x 0 0 0))
 (defparameter *tempo* 5)
@@ -94,8 +94,10 @@
 (defun lookup-note (note)
   (let ((octave (+ (elt *octaves* (first note)) (second note)))
 	(frequency (second (assoc (third note) *notes*))))
-    (list (logior (ash frequency -8) (ash octave 3))
-	  (logand frequency #xff))))
+    (if (< frequency 0)
+	(list (bit-n 7) 0)
+	(list (logior (ash frequency -8) (ash octave 3))
+	      (logand frequency #xff)))))
 
 (defun sort-chord (chord)
   (sort (copy-list chord) #'< :key #'first))
