@@ -163,6 +163,9 @@
 (defun isolate-channel (score channel)
   (mapc (lambda (chord) (remove-channel chord channel :test #'/=)) score))
 
+(defun key-off-score (score)
+  (adjust-note score 'X (lambda (note data) (setf (third note) data))))
+
 (defun key-off (num)
   (list num 0 'X))
 
