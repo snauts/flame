@@ -1,7 +1,7 @@
 (defparameter *notes*
-  '((C  617) (Cs 653) (D  692)  (Ds 733)
-    (E  777) (F  823) (Fs 872)  (G  924)
-    (Gs 979) (A 1037) (As 1099) (B 1164) (X -1)))
+  '((C  0) (Cs 1) (D  2)  (Ds 3)
+    (E  4) (F  5) (Fs 6)  (G  7)
+    (Gs 8) (A  9) (As 10) (B 10) (X -1)))
 
 (defparameter *johnny*
   '((2 (0 0 D))
@@ -88,13 +88,13 @@
 (defun select-channels (chord)
   (reduce #'logior (mapcar #'bit-n (mapcar #'first (rest chord)))))
 
+(defun note-to-byte (note)
+  (logior (third note) (ash (second note) 4)))
+
 (defun lookup-note (note)
-  (destructuring-bind (channel octave frequency) note
-    (declare (ignore channel))
-    (if (< frequency 0)
-	(list (bit-n 7) 0)
-	(list (logior (ash frequency -8) (ash octave 3))
-	      (logand frequency #xff)))))
+  (if (>= (third note) 0)
+      (note-to-byte note)
+      (bit-n 7)))
 
 (defun is-inconsistent (chord)
   (let ((notes (rest chord)))
@@ -110,8 +110,7 @@
     (dolist (chord score)
       (push (select-channels chord) result)
       (dolist (note (sort-chord (rest chord)))
-	(dolist (x (lookup-note note))
-	  (push x result)))
+	(push (lookup-note note) result))
       (push (first chord) result))
     (push 0 result)
     (reverse result)))
