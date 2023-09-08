@@ -120,7 +120,7 @@ write_frequency:
 	sra	a
 	sra	a
 
-	ld	c, e
+	ld	c, d
 
 	call	ym2612_write
 
@@ -130,16 +130,18 @@ write_frequency:
 	ret
 
 ym2612_note:
-	;; c - channel, de - note
+	;; c - channel, e - note
 	push	bc
 	push	de
 
 	call	key_off
 
+	call	fetch_note
+
 	ld	b, 0xa4
 	call	write_frequency
 
-	ld	e, d
+	ld	d, e
 	ld	b, 0xa0
 	call	write_frequency
 
@@ -147,6 +149,49 @@ ym2612_note:
 
 	pop	de
 	pop	bc
+	ret
+
+frequency_table:
+	.word	617
+	.word	653
+	.word	692
+	.word	733
+	.word	777
+	.word	823
+	.word	872
+	.word	924
+	.word	979
+	.word	1037
+	.word	1099
+	.word	1164
+
+fetch_note:
+	;; e - note, de - return frequency
+	push	af
+	push	bc
+	push	hl
+
+	ld	a, e
+	and	0xf
+	sla	a
+	ld	b, 0
+	ld	c, a
+
+	ld	hl, frequency_table
+	add	hl, bc
+
+	ld	a, e
+	and	0x70
+	sra	a
+
+	ld	de, (hl)
+
+	or	a, d
+	ld	d, a
+
+	pop	hl
+	pop	bc
+	pop	af
 	ret
 
 play_note:
@@ -169,8 +214,7 @@ play_note:
 	and	b
 	jp	z, 2$
 
-	ld	de, (hl)
-	inc	hl
+	ld	e, (hl)
 	inc 	hl
 
 	ld	a, e
