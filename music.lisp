@@ -148,7 +148,7 @@
 (defun isolate-channel (score channel)
   (mapc (lambda (chord) (remove-channel chord channel :test #'/=)) score))
 
-(defun key-off-score (score)
+(defun key-off-all-score (score)
   (adjust-note score 'X (lambda (note data) (setf (third note) data))))
 
 (defun rename-channels (score channel)
@@ -195,11 +195,18 @@
     (rename-channels tmp dst)
     (merge-into score tmp)))
 
+(defun channel-key-off (score channel interval)
+  (let ((tmp (copy-score score)))
+    (isolate-channel tmp channel)
+    (offset-score tmp interval)
+    (key-off-all-score tmp)
+    (merge-into score tmp)))
+
 (defun johnny-score ()
   (let ((score (copy-score *johnny*)))
     (copy-channel score 0 1)
     (copy-channel score 0 2)
-;    (channel-key-off score 2 1)
+    (channel-key-off score 2 1)
     (adjust-octaves score '(1 2 0 x 0 0 0))
     (scale-tempo score 5)
     (clean-up-score score)
