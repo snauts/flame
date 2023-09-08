@@ -145,6 +145,15 @@
 (defun adjust-octaves (score octaves)
   (adjust-note score octaves #'adjust-note-octaves))
 
+(defun clean-up-score (score &optional prev)
+  (unless (null score)
+    (let ((head (first score)))
+      (cond ((and prev (null (rest head)))
+	     (incf (first (first prev)) (first head))
+	     (setf (rest prev) (rest score))
+	     (clean-up-score (rest score) prev))
+	    (t (clean-up-score (rest score) score))))))
+
 (defun key-off (num)
   (list num 0 'X))
 
