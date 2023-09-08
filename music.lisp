@@ -166,6 +166,10 @@
 (defun key-off-score (score)
   (adjust-note score 'X (lambda (note data) (setf (third note) data))))
 
+(defun offset-score (score offset)
+  (setf (rest score) (cons (first score) (rest score)))
+  (setf (first score) (list offset)))
+
 (defun key-off (num)
   (list num 0 'X))
 
