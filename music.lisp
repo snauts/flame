@@ -154,6 +154,15 @@
 	     (clean-up-score (rest score) prev))
 	    (t (clean-up-score (rest score) score))))))
 
+(defun copy-score (score)
+  (copy-tree score))
+
+(defun remove-channel (chord channel &key (test #'=))
+  (setf (rest chord) (remove channel (rest chord) :key #'first :test test)))
+
+(defun isolate-channel (score channel)
+  (mapc (lambda (chord) (remove-channel chord channel :test #'/=)) score))
+
 (defun key-off (num)
   (list num 0 'X))
 
@@ -192,7 +201,7 @@
   (duplicate-offset score old new 0))
 
 (defun johnny-score ()
-  (let ((score (copy-tree *johnny*)))
+  (let ((score (copy-score *johnny*)))
     (duplicate-channel score 0 1)
     (duplicate-channel score 0 2)
     (adjust-octaves score '(1 2 0 x 0 0 0))
