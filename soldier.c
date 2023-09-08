@@ -5,8 +5,8 @@
 #include "images/walk.h"
 
 #define SOLDIER_TOP	512
-#define SOLDIER_LEG	536
-#define SOLDIER_FIRE	640
+#define SOLDIER_LEG	534
+#define SOLDIER_FIRE	642
 
 #define SOLDIER_MIN_X	150
 #define SOLDIER_MAX_X	250
