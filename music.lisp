@@ -1,7 +1,7 @@
 (defparameter *notes*
   '((C  0) (Cs 1) (D  2)  (Ds 3)
     (E  4) (F  5) (Fs 6)  (G  7)
-    (Gs 8) (A  9) (As 10) (B 10) (X -1)))
+    (Gs 8) (A  9) (As 10) (B 10)))
 
 (defparameter *johnny*
   '((2 (0 0 D))
@@ -89,10 +89,14 @@
   (reduce #'logior (mapcar #'bit-n (mapcar #'first (rest chord)))))
 
 (defun note-to-byte (note)
-  (logior (third note) (ash (second note) 4)))
+  (logior (second (assoc (third note) *notes*))
+	  (ash (second note) 4)))
+
+(defun is-key-off (note)
+  (eq 'X (third note)))
 
 (defun lookup-note (note)
-  (if (>= (third note) 0)
+  (if (not (is-key-off note))
       (note-to-byte note)
       (bit-n 7)))
 
@@ -141,20 +145,8 @@
 (defun adjust-octaves (score octaves)
   (adjust-note score octaves #'adjust-note-octaves))
 
-(defun get-frequency (sym frequencies)
-  (or (second (assoc sym frequencies)) sym))
-
-(defun adjust-note-frequency (note frequencies)
-  (setf (third note) (get-frequency (third note) frequencies)))
-
-(defun replace-frequencies (score frequencies)
-  (adjust-note score frequencies #'adjust-note-frequency))
-
 (defun key-off (num)
-  (list num 0 -1))
-
-(defun is-key-off (note)
-  (member (third note) '(-1 X)))
+  (list num 0 'X))
 
 (defun position-key-off (score period note)
   (let* ((chord (first score))
@@ -195,7 +187,6 @@
     (duplicate-channel score 0 1)
     (duplicate-channel score 0 2)
     (adjust-octaves score '(1 2 0 x 0 0 0))
-    (replace-frequencies score *notes*)
     (channel-key-off score 2 1)
     (scale-tempo score 5)
     score))
