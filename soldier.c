@@ -211,15 +211,16 @@ u16 soldier_march(void) {
 
     read_gamepad();
 
-    u16 fire = BUTTON_B(button_state);
     if (BUTTON_RIGHT(button_state) && soldier.x < level_width) {
 	move_forward();
     }
     else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
 	move_backward();
     }
-    soldier_yelling(fire != 0);
-    if (fire && on_ground() && cooldown == 0) {
+
+    u16 fire = BUTTON_B(button_state) && on_ground();
+    soldier_yelling(fire);
+    if (fire && cooldown == 0) {
 	throw_flames();
 	cooldown = 8;
     }
