@@ -21,7 +21,7 @@ run:	$(NAME).bin
 	blastem $(NAME).bin
 
 mame:	$(NAME).bin
-	mame genesis -cart $(NAME).bin
+	mame -w -r 640x480 genesis -cart $(NAME).bin
 
 release: $(NAME).bin
 	cp $(NAME).bin $(NAME)-$(shell date +"%F").bin
