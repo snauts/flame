@@ -217,6 +217,7 @@
     (rename-channels flute 1)
     (isolate-channel drums 5)
     (rename-channels drums 2)
+    (adjust-octaves drums '(x x 2))
     (merge-into flute drums)
     (insert-at-start flute *mute*)
     flute))
