@@ -33,8 +33,9 @@ int main(int argc, char **argv) {
 	case 0x62:
 	    break;
 	default:
-	    printf("ERROR: unknown CMD (0x%02x)\n", c);	    
-	    break;
+	    printf("ERROR: unknown CMD (0x%02x)\n", c);
+	    close(in);
+	    return -EINVAL;
 	}
     }
     while (c != 0x62);
