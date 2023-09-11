@@ -3,7 +3,7 @@
 static void (*game_frame)(void);
 
 static const byte z80[] = {
-#include "z80.inc"
+#include "z80.hex"
 };
 
 static void addr_VDP(u32 flags, u16 addr) {
