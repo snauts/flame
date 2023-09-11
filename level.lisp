@@ -1,0 +1,23 @@
+(defun save-words (out words)
+  (let ((count 0))
+    (dolist (w words)
+      (format out "0x~4,'0X, " w)
+      (when (>= (incf count) 8)
+	(format out "~%")
+	(setf count 0)))
+    (when (/= count 0)
+      (format out "~%"))))
+
+(defun save-array (out name words)
+  (format out "const u16 ~A[] = {~%" name)
+  (save-words out words)
+  (format out "};~%"))
+
+(defun save-level ()
+  (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
+    (save-array out "desert_level" nil)))
+
+(defun save-and-quit ()
+  (handler-case (save-level)
+    (condition (var) (format t "ERROR: ~A~%" var)))
+  (quit))
