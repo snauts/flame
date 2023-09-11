@@ -11,6 +11,9 @@
 #define SOLDIER_MIN_X	150
 #define SOLDIER_MAX_X	250
 
+#define FLAME_OFFSET	4
+#define SOLDIER_BASE	1
+
 static Pos soldier;
 static u16 window;
 static u16 platform_h;
@@ -37,14 +40,17 @@ static u16 read_gamepad(void) {
 }
 
 static void soldier_sprite_update(void) {
-    sprite[0].x = soldier.x - window + SOLDIER_MIN_X;
-    sprite[0].y = soldier.y;
+    sprite[1].x = soldier.x - window + SOLDIER_MIN_X;
+    sprite[1].y = soldier.y;
 
-    sprite[1].x = sprite[0].x;
-    sprite[1].y = soldier.y + 24;
+    sprite[0].x = sprite[1].x + 8;
+    sprite[0].y = soldier.y + 8;
 
-    sprite[2].x = sprite[0].x + 24;
-    sprite[2].y = soldier.y + 21;
+    sprite[2].x = sprite[1].x;
+    sprite[2].y = soldier.y + 24;
+
+    sprite[3].x = sprite[1].x + 24;
+    sprite[3].y = soldier.y + 21;
 }
 
 static u16 on_ground(void) {
@@ -107,7 +113,7 @@ static void soldier_animate(u16 prev) {
 	    ? (SOLDIER_LEG + 84)
 	    : (SOLDIER_LEG + 90);
     }
-    sprite[1].cfg = TILE(2, soldier_frame);
+    sprite[SOLDIER_BASE + 1].cfg = TILE(2, soldier_frame);
 }
 
 static Sprite *flame;
@@ -121,8 +127,8 @@ static u16 next_flame(u16 index) {
 #define FIRE_FRAME(x) TILE(2, SOLDIER_FIRE + (2 * (x)))
 
 static void emit_flame(u16 index) {
-    flame[index].x = sprite[0].x + 24;
-    flame[index].y = sprite[0].y + 20;
+    flame[index].x = sprite[SOLDIER_BASE].x + 24;
+    flame[index].y = sprite[SOLDIER_BASE].y + 20;
     flame[index].cfg = FIRE_FRAME(0);
     flame[index].size = SPRITE_SIZE(2, 1);
 }
@@ -165,38 +171,34 @@ static void manage_flames(void) {
 	}
 	flame[index].x += 2;
 	flame[index].next = previous;
-	previous = index + 3;
+	previous = index + FLAME_OFFSET;
 	index = next_flame(index);
 	if (index == head) break;
     }
-    sprite[2].next = previous;
+    sprite[FLAME_OFFSET - 1].next = previous;
     if (cooldown > 0) {
 	cooldown--;
     }
 }
 
-static byte *soldier_face;
-static byte *soldier_yell;
-
 static void soldier_yelling(byte state) {
     static byte face;
     if (face != state) {
 	psg_noise(7, state ? 0x0 : 0xf);
-	void *ptr = (state == 1) ? soldier_yell : soldier_face;
-	copy_to_VRAM_ptr(32 * SOLDIER_TOP + 0x8C, 8, ptr);
+	sprite[0].cfg = TILE(2, state ? SOLDIER_TOP + 10 : 0);
 	face = state;
     }
 }
 
 static void move_forward(void) {
-    if (sprite[0].x >= SOLDIER_MAX_X) {
+    if (sprite[SOLDIER_BASE].x >= SOLDIER_MAX_X) {
 	window++;
     }
     soldier.x++;
 }
 
 static void move_backward(void) {
-    if (sprite[0].x > SOLDIER_MIN_X) {
+    if (sprite[SOLDIER_BASE].x > SOLDIER_MIN_X) {
 	soldier.x--;
     }
 }
@@ -233,17 +235,21 @@ static void put_soldier(u16 x, u16 y) {
     soldier.x = x;
     soldier.y = y;
 
-    sprite[0].cfg = TILE(2, SOLDIER_TOP);
-    sprite[0].size = SPRITE_SIZE(3, 3);
+    sprite[0].cfg = TILE(2, 0);
+    sprite[0].size = SPRITE_SIZE(1, 1);
     sprite[0].next = 1;
 
-    sprite[1].cfg = TILE(2, SOLDIER_LEG);
-    sprite[1].size = SPRITE_SIZE(3, 2);
+    sprite[1].cfg = TILE(2, SOLDIER_TOP);
+    sprite[1].size = SPRITE_SIZE(3, 3);
     sprite[1].next = 2;
 
-    sprite[2].cfg = TILE(2, 521);
-    sprite[2].size = SPRITE_SIZE(1, 1);
-    sprite[2].next = 0;
+    sprite[2].cfg = TILE(2, SOLDIER_LEG);
+    sprite[2].size = SPRITE_SIZE(3, 2);
+    sprite[2].next = 3;
+
+    sprite[3].cfg = TILE(2, SOLDIER_TOP + 9);
+    sprite[3].size = SPRITE_SIZE(1, 1);
+    sprite[3].next = 0;
 
     soldier_sprite_update();
 }
@@ -254,15 +260,10 @@ void load_soldier_tiles(void) {
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
     update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
     update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
-
-    soldier_face = malloc(8);
-    memcpy(soldier_face, buffer_ptr(0x08C), 8);
-    soldier_yell = malloc(8);
-    memcpy(soldier_yell, buffer_ptr(0x14C), 8);
 }
 
 void setup_soldier_sprites(void) {
     platform_h = 296;
-    flame = sprite + 3;
+    flame = sprite + FLAME_OFFSET;
     put_soldier(0, platform_h);
 }

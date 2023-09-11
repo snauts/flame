@@ -269,6 +269,7 @@ void update_VDP_word(u32 ctrl, u16 data) {
 
 void switch_frame(void (*fn)(void)) {
     game_frame = fn;
+    reset_heap();
 }
 
 static void panic_on_draw(void) {
