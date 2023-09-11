@@ -1,3 +1,26 @@
+(defun display-id (id)
+  (if (< id 0)
+      (format t "   .")
+      (format t "~4,' d" id)))
+
+(defun display (rectangle)
+  (dolist (row rectangle)
+    (mapc #'display-id row)
+    (format t "~%")))
+
+(defun integers (n &optional (i 0))
+  (unless (= i n) (cons i (integers n (1+ i)))))
+
+(defun make-rectangle (x y tile)
+  (let ((result nil))
+    (dotimes (i y (reverse result))
+      (labels ((numbers (n) (+ tile (* n y) i)))
+	(push (mapcar #'numbers (integers x)) result)))))
+
+(defun crop (x y w h rectangle)
+  (labels ((crop-row (row) (subseq row x (+ x w))))
+    (mapcar #'crop-row (subseq rectangle y (+ y h)))))
+
 (defun save-words (out words)
   (let ((count 0))
     (dolist (w words)
