@@ -18,6 +18,7 @@ static Pos soldier;
 static u16 window;
 static u16 platform_h;
 static u16 button_state;
+static u16 level_width;
 
 static Sprite sprite[80];
 
@@ -211,7 +212,7 @@ u16 soldier_march(void) {
     read_gamepad();
 
     u16 fire = BUTTON_B(button_state);
-    if (BUTTON_RIGHT(button_state)) {
+    if (BUTTON_RIGHT(button_state) && soldier.x < level_width) {
 	move_forward();
     }
     else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
@@ -263,8 +264,9 @@ void load_soldier_tiles(void) {
     update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
 }
 
-void setup_soldier_sprites(void) {
+void setup_soldier_sprites(u16 width) {
     platform_h = 296;
+    level_width = width;
     flame = sprite + FLAME_OFFSET;
     put_soldier(0, platform_h);
 }

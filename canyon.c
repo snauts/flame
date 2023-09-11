@@ -3,8 +3,6 @@
 #include "images/canyon.h"
 #include "images/desert.h"
 
-void setup_soldier_sprites(void);
-
 void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;
     for (dx = 0; dx < w; dx++) {
@@ -118,7 +116,7 @@ void display_canyon(void) {
     fill_VRAM(0xe00, TILE(1, 1), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
-    setup_soldier_sprites();
+    setup_soldier_sprites(640);
     void music_johnny(void);
     music_johnny();
 

@@ -100,6 +100,6 @@ void set_seed(u16);
 
 u16 soldier_march(void);
 void load_soldier_tiles(void);
-void setup_soldier_sprites(void);
+void setup_soldier_sprites(u16 width);
 
 extern u16 counter;
