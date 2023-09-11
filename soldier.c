@@ -198,9 +198,10 @@ static void move_forward(void) {
 }
 
 static void move_backward(void) {
-    if (sprite[SOLDIER_BASE].x > SOLDIER_MIN_X) {
-	soldier.x--;
+    if (sprite[SOLDIER_BASE].x <= SOLDIER_MIN_X) {
+	window--;
     }
+    soldier.x--;
 }
 
 u16 soldier_march(void) {
