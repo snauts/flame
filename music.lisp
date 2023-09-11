@@ -202,6 +202,9 @@
     (key-off-all-score tmp)
     (merge-into score tmp)))
 
+(defun attach-at-end (score chord)
+  (setf (rest (last score)) (list chord)))
+
 (defun johnny-mk1 ()
   (let ((drums (copy-score *johnny*))
 	(flute (copy-score *johnny*)))
@@ -217,6 +220,7 @@
     (copy-channel score 0 1)
     (copy-channel score 0 2)
     (channel-key-off score 2 1)
+    (attach-at-end score '(2 (0 0 X) (4 0 X) (5 0 X) (6 0 X)))
     score))
 
 (defun johnny-score ()
