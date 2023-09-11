@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 	}
     }
     while (c != 0x62);
-    printf("    0x%02x, 0x%02x\n", ym2612[0][0xb0], ym2612[0][0xb4]);
+    printf("    0x%02x, 0x%02x,\n", ym2612[0][0xb0], ym2612[0][0xb4]);
     close(in);
 
     for (r = 0x30; r < 0xa0; r += 0x4) {
