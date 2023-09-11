@@ -1,5 +1,11 @@
+(defun is-negative (x)
+  (< x 0))
+
+(defun tile (palette id)
+  (logior (ash palette 13) id))
+
 (defun display-id (id)
-  (if (< id 0)
+  (if (is-negative id)
       (format t "   .")
       (format t "~4,' d" id)))
 
@@ -21,6 +27,40 @@
   (labels ((crop-row (row) (subseq row x (+ x w))))
     (mapcar #'crop-row (subseq rectangle y (+ y h)))))
 
+(defun multiply-row (row n &optional result)
+  (if (<= n 0) result (multiply-row row (1- n) (append result row))))
+
+(defun multiply-rectange (rectangle n)
+  (mapcar (lambda (row) (multiply-row row n)) rectangle))
+
+(defun regular-ground ()
+  (crop 0 4 8 4 (make-rectangle 8 8 (tile 1 97))))
+
+(defun save-heads (&rest rest)
+  (let ((save (remove-if #'is-negative rest)))
+    (cons (length save) save)))
+
+(defun index-pair (columns prev)
+  (logior (or (first (first columns)) 0)
+	  (ash (or (first prev) 0) 8)))
+
+(defun reverse-tiles (columns)
+  (reverse (rest (first columns))))
+
+(defun flatten-columns (columns &optional prev flat)
+  (labels ((add-to-flat (x) (push x flat)))
+    (add-to-flat (index-pair columns prev))
+    (mapc #'add-to-flat (reverse-tiles columns))
+    (if (null columns)
+	(reverse flat)
+	(flatten-columns (rest columns) (first columns) flat))))
+
+(defun serialize-level (rectangle)
+  (flatten-columns (apply #'mapcar (cons #'save-heads rectangle))))
+
+(defun desert-level ()
+  (serialize-level (multiply-rectange (regular-ground) 16)))
+
 (defun save-words (out words)
   (let ((count 0))
     (dolist (w words)
@@ -38,7 +78,7 @@
 
 (defun save-level ()
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
-    (save-array out "desert_level" nil)))
+    (save-array out "desert_level" (desert-level))))
 
 (defun save-and-quit ()
   (handler-case (save-level)
