@@ -102,4 +102,7 @@ u16 soldier_march(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(u16 width);
 
+extern const u16 desert_level[];
+void fill_level(const u16 *level);
+
 extern u16 counter;

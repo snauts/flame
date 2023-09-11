@@ -76,13 +76,6 @@ static void update_canyon(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(scroll >> 1));
 }
 
-static void draw_walking_path(void) {
-    u16 x;
-    for (x = 0; x < 64; x += 8) {
-	paint_background(x, 24, 8, 4, TILE(1, 101), 4);
-    }
-}
-
 void display_canyon(void) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
@@ -107,11 +100,8 @@ void display_canyon(void) {
 
     /* foreground */
     clear_DMA_buffer(0, 0x1000);
-    draw_walking_path();
 
-    paint_background(32, 22, 2, 4, TILE(1, 97), 4);
-    paint_background(42, 24, 6, 2, TILE(1, 113), 6);
-    paint_background( 2, 24, 6, 2, TILE(1, 115), 6);
+    fill_level(desert_level);
 
     fill_VRAM(0xe00, TILE(1, 1), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
