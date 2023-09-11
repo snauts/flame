@@ -8,29 +8,33 @@ OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 HEADS	= +canyon.h +desert.h +soldier.h +walk.h +flame.h
 PICS 	= $(subst +,images/,$(HEADS))
 
-all:	$(NAME).bin
+all:	build
+
+build:
+	@$(PREFIX)gcc $(CFLAGS) $(CSRC) -MM -MG > dep.inc
+	@make -s $(NAME).bin
 
 clean:
 	@echo Clean $(NAME).bin
 	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h \
 		z80.rom z80.hex *.inc *.fasl
 
-disasm:	$(NAME).bin
+disasm: build
 	$(PREFIX)objdump -D -b binary -m 68000 $(NAME).bin | less
 
-run:	$(NAME).bin
+run:	build
 	blastem $(NAME).bin
 
-mame:	$(NAME).bin
+mame:	build
 	mame -w -r 640x480 genesis -cart $(NAME).bin
 
-release: $(NAME).bin
+release: build
 	cp $(NAME).bin $(NAME)-$(shell date +"%F").bin
 
-debug:	$(NAME).bin
+debug:	build
 	rlwrap blastem -d $(NAME).bin
 
-$(NAME).bin: $(PICS) $(OBJS) cksum
+$(NAME).bin: $(OBJS) cksum
 	@echo Link $(NAME).bin
 	@$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
 	@./cksum $(NAME).bin
@@ -48,11 +52,11 @@ z80.hex: z80.asm
 	@zasm -v0 -l0 $<
 	@xxd -i < z80.rom > $@
 
-music.inc: music.lisp
-	@echo Prepare music
-	@sbcl --noinform --load music.lisp --eval "(save-and-quit)"
+%.inc: %.lisp
+	@echo Prepare $@
+	@sbcl --noinform --load $< --eval "(save-and-quit)"
 
-%.o: %.c main.h music.inc z80.hex $(PICS)
+%.o: %.c
 	@echo Compile $<
 	@$(PREFIX)gcc $(CFLAGS) -Os -c $< -o $@
 
@@ -63,3 +67,5 @@ music.inc: music.lisp
 %.h: %.pcx pcx2h
 	@echo Convert $<
 	@./pcx2h $< $@
+
+-include dep.inc
