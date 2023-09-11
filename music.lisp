@@ -154,9 +154,12 @@
 (defun rename-channels (score channel)
   (adjust-note score channel (lambda (note data) (setf (first note) data))))
 
-(defun offset-score (score offset)
+(defun insert-at-start (score chord)
   (setf (rest score) (cons (first score) (rest score)))
-  (setf (first score) (list offset)))
+  (setf (first score) chord))
+
+(defun offset-score (score offset)
+  (insert-at-start score (list offset)))
 
 (defun divide-interval (score offset)
   (let ((interval (first (first score))))
@@ -202,6 +205,8 @@
     (key-off-all-score tmp)
     (merge-into score tmp)))
 
+(defparameter *mute* '(2 (0 0 X) (4 0 X) (5 0 X) (6 0 X)))
+
 (defun attach-at-end (score chord)
   (setf (rest (last score)) (list chord)))
 
@@ -213,6 +218,7 @@
     (isolate-channel drums 5)
     (rename-channels drums 2)
     (merge-into flute drums)
+    (insert-at-start flute *mute*)
     flute))
 
 (defun johnny-mk2 ()
@@ -220,7 +226,6 @@
     (copy-channel score 0 1)
     (copy-channel score 0 2)
     (channel-key-off score 2 1)
-    (attach-at-end score '(2 (0 0 X) (4 0 X) (5 0 X) (6 0 X)))
     score))
 
 (defun johnny-score ()
