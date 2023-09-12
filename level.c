@@ -20,7 +20,7 @@ static void fill_column(void (*poke)(u16, u16)) {
 }
 
 static void update_VRAM(u16 addr, u16 data) {
-    UPDATE_VRAM_WORD(addr, data);
+    UPDATE_VRAM_WORD(VRAM_PLANE_A + addr, data);
 }
 
 void update_column_forward(void) {
