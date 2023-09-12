@@ -75,22 +75,18 @@
      (2 (2 0 G))
      (2 (2 0 G))
      (20 (2 0 G))
-     (10 (2 0 G))
-     (20 (2 0 G)))))
+     (10 (2 0 G) (5 0 C))
+     (20 (2 0 G) (5 0 C)))))
 
 (defun drum-beat ()
   (copy-tree
    '((10 (2 0 G))
      (20 (2 0 G))
-     (10 (2 0 G))
-     (20 (2 0 G)))))
-
-(defun drum-delay ()
-  (copy-tree '((10 (2 0 X)))))
+     (10 (2 0 G) (5 0 C))
+     (20 (2 0 G) (5 0 C)))))
 
 (defun drum-score ()
   (append
-   (drum-delay)
    (drum-roll)
    (drum-roll)
    (drum-beat)
@@ -107,6 +103,9 @@
    (drum-beat)
    (drum-roll)
    (drum-beat)))
+
+(defun drum-delay ()
+  (copy-tree '((10))))
 
 (defun save-bytes (out bytes)
   (let ((count 0))
@@ -257,17 +256,20 @@
     (rename-channels flute 1)
     (insert-at-start flute *mute*)
     (scale-tempo flute 5)
-    (let ((drums (drum-score)))
-      (adjust-octaves drums '(x x 2))
+    (let ((drums (append (drum-delay) (drum-score))))
+      (adjust-octaves drums '(x x 2 x x 0))
+      (channel-key-off drums 5 1)
       (merge-into flute drums))
     flute))
 
 (defun johnny-mk2 ()
   (let ((score (copy-score *johnny*)))
     (copy-channel score 0 1)
-    (copy-channel score 0 2)
     (channel-key-off score 2 1)
     (scale-tempo score 5)
+    (let ((drums (drum-score)))
+      (isolate-channel drums 2)
+      (merge-into score drums))
     score))
 
 (defun johnny-score ()
