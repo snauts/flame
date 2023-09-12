@@ -1,13 +1,28 @@
 (defun desert ()
   (fill-box 8 8 (tile 97 :pl 1)))
 
-(defun cacti ()
-  (let ((cacti (crop 0 4 2 8 (desert)))
-	(under (crop 0 0 2 2 (desert))))
-    (place 0 2 under cacti)))
+(defun plant (x y w h)
+  (let ((plant (crop x y (+ x w) (+ y h) (desert)))
+	(under (crop x 0 (+ x w) 2 (desert))))
+    (place 0 2 under plant)))
 
-(defun ground ()
-  (crop 0 0 8 4 (desert)))
+(defun bush ()
+  (plant 2 4 6 2))
+
+(defun aloe ()
+  (plant 2 6 6 2))
+
+(defun cacti ()
+  (plant 0 4 2 4))
+
+(defun ground (&key (x1 0) (x2 8))
+  (crop x1 0 x2 4 (desert)))
 
 (defun desert-level ()
-  (serialize (join (cacti) (multiply (ground) 16))))
+  (serialize (join (cacti)
+		   (multiply (ground) 7)
+		   (ground :x2 4)
+		   (aloe)
+		   (ground)
+		   (bush)
+		   (multiply (ground) 4))))
