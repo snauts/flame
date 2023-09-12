@@ -4,7 +4,7 @@
      pipe))
 
 (defun tile (id &key (pr 0) (pl 0) (v 0) (h 0))
-  (logior (ash pl 13) (ash pr 15) (ash v 12) (ash h 11) id))
+  (logxor (ash pr 15) (ash v 12) (ash h 11) (logior (ash pl 13) id)))
 
 (defun display-id (id)
   (cond ((null id) (format t "  .  "))
@@ -35,10 +35,10 @@
       (push (reverse (integers y tile)) result)
       (incf tile y))))
 
-(defun make (x y)
+(defun make (x y &key e)
   (let ((result nil))
     (dotimes (i x result)
-      (push (make-list y) result))))
+      (push (make-list y :initial-element e) result))))
 
 (defun poke (box x y tile)
   (setf (elt (elt box x) y) tile))
