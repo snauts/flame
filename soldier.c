@@ -192,17 +192,23 @@ static void soldier_yelling(byte state) {
 }
 
 static void move_forward(void) {
-    if (sprite[SOLDIER_BASE].x >= SOLDIER_MAX_X) {
+    if (sprite[SOLDIER_BASE].x >= SOLDIER_MAX_X && !is_rightmost()) {
 	update_window(1);
+	soldier.x++;
     }
-    soldier.x++;
+    else if (sprite[SOLDIER_BASE].x < SOLDIER_MAX_X) {
+	soldier.x++;
+    }
 }
 
 static void move_backward(void) {
-    if (sprite[SOLDIER_BASE].x <= SOLDIER_MIN_X) {
+    if (sprite[SOLDIER_BASE].x <= SOLDIER_MIN_X && !is_leftmost()) {
 	update_window(-1);
+	soldier.x--;
     }
-    soldier.x--;
+    else if (sprite[SOLDIER_BASE].x > SOLDIER_MIN_X) {
+	soldier.x--;
+    }
 }
 
 void soldier_march(void) {
@@ -211,10 +217,10 @@ void soldier_march(void) {
 
     read_gamepad();
 
-    if (BUTTON_RIGHT(button_state) && !is_rightmost()) {
+    if (BUTTON_RIGHT(button_state)) {
 	move_forward();
     }
-    else if (BUTTON_LEFT(button_state) && !is_leftmost()) {
+    else if (BUTTON_LEFT(button_state)) {
 	move_backward();
     }
 

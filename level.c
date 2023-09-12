@@ -1,16 +1,25 @@
 #include "main.h"
 #include "level.inc"
 
+#define WINDOW_MIN	64
+
 u16 window;
 
-static u16 column;
-static const u16 *ptr;
+static short column;
+static const u16 *back;
+static const u16 *front;
 
-static u16 next_column(u16 x) {
-    return (x + 2) & 0x7f;
+static const u16 *advance(const u16 *ptr) {
+    short count = *ptr & 0xff;
+    return ptr + count + 1;
 }
 
-static void fill_column(void (*poke)(u16, u16)) {
+static const u16 *recede(const u16 *ptr) {
+    short count = *ptr >> 8;
+    return ptr - count - 1;
+}
+
+static const u16 *fill_column(const u16 *ptr, void (*poke)(u16, u16)) {
     u16 addr = 0xd80 + column;
     short count = *(ptr++) & 0xff;
     while (addr > 0x80) {
@@ -18,31 +27,41 @@ static void fill_column(void (*poke)(u16, u16)) {
 	addr = addr - 0x80;
 	count--;
     }
-    column = next_column(column);
+    return ptr;
 }
 
 static void update_VRAM(u16 addr, u16 data) {
     UPDATE_VRAM_WORD(VRAM_PLANE_A + addr, data);
 }
 
-void update_column_forward(void) {
-    fill_column(&update_VRAM);
+static void update_column_forward(void (*poke)(u16, u16)) {
+    front = fill_column(front, poke);
+    column = (column + 2) & 0x7f;
+    back = advance(back);
+}
+
+static void update_column_backward(void) {
+    back = recede(back);
+    column = (column - 2) & 0x7f;
+    fill_column(back, &update_VRAM);
+    front = recede(front);
 }
 
 u16 is_rightmost(void) {
-    return (*ptr & 0xff) == 0;
+    return (*front & 0xff) == 0;
 }
 
 u16 is_leftmost(void) {
-    return (*ptr >> 8) == 0;
+    return (*back >> 8) == 0 && (window <= WINDOW_MIN);
 }
 
 void fill_level(const u16 *level) {
     column = 0;
-    ptr = level;
+    front = level;
     for (u16 x = 0; x < 64; x++) {
-	fill_column(&poke_VRAM);
+	update_column_forward(&poke_VRAM);
     }
+    back = level; /* reset back */
 }
 
 void level_scroll(void) {
@@ -51,14 +70,23 @@ void level_scroll(void) {
 }
 
 void reset_window(void) {
-    window = 64;
+    window = WINDOW_MIN;
     level_scroll();
 }
 
-void update_window(short dir) {
-    u16 last = window & ~0x7;
-    window += dir;
-    if ((window & ~0x7) > last) {
-	update_column_forward();
+static u16 boundary(u16 x) {
+    return x & ~0x7;
+}
+
+void update_window(short direction) {
+    u16 next, prev;
+    prev = boundary(window);
+    window += direction;
+    next = boundary(window);
+    if (next > prev) {
+	update_column_forward(&update_VRAM);
+    }
+    if (prev > next) {
+	update_column_backward();
     }
 }

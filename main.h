@@ -104,8 +104,7 @@ void setup_soldier_sprites(u16 width);
 
 extern const u16 desert_level[];
 void fill_level(const u16 *level);
-void update_column_forward(void);
-void update_window(short dir);
+void update_window(short direction);
 void reset_window(void);
 void level_scroll(void);
 u16 is_rightmost(void);
