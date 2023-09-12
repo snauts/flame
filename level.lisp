@@ -1,3 +1,8 @@
+(defmacro box-pipe (&rest forms)
+  `(let ((pipe ,(first forms)))
+     ,@(mapcar (lambda (x) `(setf pipe ,x)) (rest forms))
+     pipe))
+
 (defun tile (id &key (pr 0) (pl 0) (v 0) (h 0))
   (logior (ash pl 13) (ash pr 15) (ash v 12) (ash h 11) id))
 
@@ -45,7 +50,7 @@
   (labels ((manipulate (x) (unless (null x) (funcall fn x))))
     (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
 
-(defun flip-h (box)
+(defun flip-horizontally (box)
   (for-all (reverse box) (lambda (x) (logior x (ash 1 11)))))
 
 (defun place-in (a b i &optional result)
@@ -106,9 +111,9 @@
     (when (/= count 0)
       (format out "~%"))))
 
-(defun save-array (out name words)
+(defun save-array (out name level)
   (format out "const u16 ~A[] = {~%" name)
-  (save-words out words)
+  (save-words out (serialize level))
   (format out "};~%"))
 
 (load "desert.lisp")
