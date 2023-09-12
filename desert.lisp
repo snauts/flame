@@ -27,19 +27,15 @@
 
 (defparameter *decorations*
   (list (tile 225 :pl 1)
-	(tile 225 :pl 1 :v 1)
 	(tile 228 :pl 1)
-	(tile 228 :pl 1 :v 1)
 	(tile 229 :pl 1)
-	(tile 229 :pl 1 :v 1)
-	(tile 232 :pl 1)
-	(tile 232 :pl 1 :v 1)))
+	(tile 232 :pl 1)))
 
 (defun random-elt (list)
   (elt list (random (length list))))
 
 (defun decorate-column (pipe x y &key flip)
-  (poke pipe x (+ y 4) (tile (random-elt *decorations*) :h flip)))
+  (poke pipe x (+ y 4) (tile (random-elt *decorations*) :h flip :v flip)))
 
 (defun decorate-sides (pipe h)
   (dotimes (y h)
@@ -55,7 +51,7 @@
    (place 0 (+ h 5) pipe (platform-edge :type 0 :flip t))
    (place 9 0 pipe (ground :x1 7))
    (place 9 (+ h 5) pipe (platform-edge :type 1))
-   (place 2 4 pipe (make 6 h :e (tile 1 :pl 1)))
+   (place 2 4 pipe (make 6 h :e (tile 234 :pl 1)))
    (decorate-sides pipe h)))
 
 (defun desert-level ()
