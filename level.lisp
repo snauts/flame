@@ -12,6 +12,9 @@
 (defun height (box)
   (reduce #'max (mapcar #'length box)))
 
+(defun empty (width)
+  (make-list width :initial-element (list nil)))
+
 (defun display (box)
   (loop for i from (1- (height box)) downto 0 do
     (dolist (column box)
