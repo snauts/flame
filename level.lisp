@@ -40,6 +40,9 @@
     (dotimes (i x result)
       (push (make-list y :initial-element e) result))))
 
+(defun singleton (&rest rest)
+  (make 1 1 :e (apply #'tile rest)))
+
 (defun poke (box x y tile)
   (setf (elt (elt box x) y) tile))
 
