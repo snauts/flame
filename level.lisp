@@ -2,9 +2,9 @@
   (logior (ash pl 13) (ash pr 15) (ash v 12) (ash h 11) id))
 
 (defun display-id (id)
-  (if (null id)
-      (format t "   .")
-      (format t "~4,' d" (logand id #x7ff))))
+  (cond ((null id) (format t "  .  "))
+	((atom id) (format t "~4,' d " (logand id #x7ff)))
+	(t (format t "~4,' d*" (logand (first id) #x7ff)))))
 
 (defun width (box)
   (length box))
@@ -34,6 +34,9 @@
   (let ((result nil))
     (dotimes (i x result)
       (push (make-list y) result))))
+
+(defun poke (box x y tile)
+  (setf (elt (elt box x) y) tile))
 
 (defun join (&rest rest)
   (apply #'append rest))
@@ -75,8 +78,11 @@
     (dotimes (i n result)
       (setf result (append box result)))))
 
+(defun remove-meta (tile)
+  (if (consp tile) (first tile) tile))
+
 (defun zero-first (box)
-  (substitute 0 nil (first box)))
+  (mapcar #'remove-meta (substitute 0 nil (first box))))
 
 (defun index-pair (columns prev)
   (logior (or (length (first columns)) 0)
