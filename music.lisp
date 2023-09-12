@@ -104,9 +104,6 @@
    (drum-roll)
    (drum-beat)))
 
-(defun drum-delay ()
-  (copy-tree '((10))))
-
 (defun save-bytes (out bytes)
   (let ((count 0))
     (dolist (b bytes)
@@ -245,21 +242,27 @@
     (key-off-all-score tmp)
     (merge-into score tmp)))
 
-(defparameter *mute* '(2 (0 0 X) (4 0 X) (5 0 X) (6 0 X)))
+(defparameter *mute* '((0 0 X) (4 0 X) (5 0 X) (6 0 X)))
+
+(defun append-to-start (score notes)
+  (setf (first score) (append (first score) notes)))
 
 (defun attach-at-end (score chord)
   (setf (rest (last score)) (list chord)))
+
+(defun score-length (score)
+  (reduce #'+ (mapcar #'first score)))
 
 (defun johnny-mk1 ()
   (let ((flute (copy-score *johnny*)))
     (isolate-channel flute 0)
     (rename-channels flute 1)
-    (insert-at-start flute *mute*)
     (scale-tempo flute 5)
-    (let ((drums (append (drum-delay) (drum-score))))
+    (let ((drums (drum-score)))
       (adjust-octaves drums '(x x 2 x x 0))
       (channel-key-off drums 5 1)
       (merge-into flute drums))
+    (append-to-start flute *mute*)
     flute))
 
 (defun johnny-mk2 ()
