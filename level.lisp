@@ -32,6 +32,28 @@
     (dotimes (i x result)
       (push (make-list y) result))))
 
+(defun join (&rest rest)
+  (apply #'append rest))
+
+(defun place-in (a b i &optional result)
+  (cond ((and (null a) (null b)) (reverse result))
+	((> i 0) (place-in (rest a) b (1- i) (cons (first a) result)))
+	(t (push (or (first b) (first a)) result)
+	   (place-in (rest a) (rest b) 0 result))))
+
+(defun place-one (x y a b result)
+  (let ((aa (and (>= x 0) (first a)))
+	(bb (and (<= x 0) (first b))))
+    (cons (place-in aa bb y) result)))
+
+(defun place (x y a b &optional result)
+  (if (and (null a) (null b))
+      (reverse result)
+      (place (- x (signum x)) y
+	     (if (< x 0) a (rest a))
+	     (if (> x 0) b (rest b))
+	     (place-one x y a b result))))
+
 (defun cut (list a b)
   (butlast (nthcdr a list) (max 0 (- (length list) b))))
 
@@ -43,6 +65,9 @@
     (dotimes (i n result)
       (setf result (append box result)))))
 
+(defun zero-first (box)
+  (substitute 0 nil (first box)))
+
 (defun index-pair (columns prev)
   (logior (or (length (first columns)) 0)
 	  (ash (or (length prev) 0) 8)))
@@ -50,7 +75,7 @@
 (defun serialize (box &optional prev flat)
   (labels ((add (x) (push x flat)))
     (add (index-pair box prev))
-    (mapc #'add (first box))
+    (mapc #'add (zero-first box))
     (if (null box)
 	(reverse flat)
 	(serialize (rest box) (first box) flat))))

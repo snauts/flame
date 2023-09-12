@@ -69,3 +69,5 @@ z80.hex: z80.asm
 	@./pcx2h $< $@
 
 -include dep.inc
+
+level.inc: desert.lisp
