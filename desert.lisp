@@ -1,5 +1,5 @@
 (defun regular-ground ()
-  (crop 0 4 8 4 (make-rectangle 8 8 (tile 1 97))))
+  (crop 0 0 8 4 (fill-box 8 8 (tile 97 :pl 1))))
 
 (defun desert-level ()
-  (serialize-level (multiply-rectange (regular-ground) 16)))
+  (serialize (multiply (regular-ground) 16)))
