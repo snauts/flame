@@ -33,9 +33,6 @@
 (defun multiply-rectange (rectangle n)
   (mapcar (lambda (row) (multiply-row row n)) rectangle))
 
-(defun regular-ground ()
-  (crop 0 4 8 4 (make-rectangle 8 8 (tile 1 97))))
-
 (defun save-heads (&rest rest)
   (let ((save (remove-if #'is-negative rest)))
     (cons (length save) save)))
@@ -58,9 +55,6 @@
 (defun serialize-level (rectangle)
   (flatten-columns (apply #'mapcar (cons #'save-heads rectangle))))
 
-(defun desert-level ()
-  (serialize-level (multiply-rectange (regular-ground) 16)))
-
 (defun save-words (out words)
   (let ((count 0))
     (dolist (w words)
@@ -75,6 +69,8 @@
   (format out "const u16 ~A[] = {~%" name)
   (save-words out words)
   (format out "};~%"))
+
+(load "desert.lisp")
 
 (defun save-level ()
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
