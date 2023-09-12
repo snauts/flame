@@ -2,6 +2,7 @@
 
 #include "images/canyon.h"
 #include "images/desert.h"
+#include "images/cliffs.h"
 
 void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;

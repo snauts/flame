@@ -5,8 +5,6 @@ ASFLAGS = -m68000 --register-prefix-optional
 CFLAGS	= -fomit-frame-pointer -fno-builtin
 CSRC	= main.c canyon.c soldier.c sound.c level.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
-HEADS	= +canyon.h +desert.h +soldier.h +walk.h +flame.h
-PICS 	= $(subst +,images/,$(HEADS))
 
 all:	build
 
@@ -16,7 +14,7 @@ build:
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(PICS) $(NAME)*.bin cksum pcx2h \
+	@rm -f $(OBJS) $(NAME)*.bin cksum pcx2h images/*.h \
 		z80.rom z80.hex *.inc *.fasl
 
 disasm: build
