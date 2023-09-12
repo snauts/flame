@@ -10,9 +10,9 @@ static u16 next_column(u16 x) {
 
 static void fill_column(void (*poke)(u16, u16)) {
     u16 addr = 0xd80 + column;
-    u16 count = *(ptr++) & 0xff;
-    while (count > 0) {
-	poke(addr, *(ptr++));
+    short count = *(ptr++) & 0xff;
+    while (addr > 0x80) {
+	poke(addr, count > 0 ? *(ptr++) : 0);
 	addr = addr - 0x80;
 	count--;
     }
