@@ -51,7 +51,7 @@
     (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
 
 (defun flip-horizontally (box)
-  (for-all (reverse box) (lambda (x) (logior x (ash 1 11)))))
+  (for-all (reverse box) (lambda (x) (logxor x (ash 1 11)))))
 
 (defun place-in (a b i &optional result)
   (cond ((and (null a) (null b)) (reverse result))
