@@ -2,7 +2,7 @@
   (fill-box 8 8 (tile 97 :pl 1)))
 
 (defun cliffs ()
-  (fill-box 9 8 (tile 161 :pl 1)))
+  (fill-box 10 8 (tile 161 :pl 1)))
 
 (defun plant (x y w h)
   (let ((plant (crop x y (+ x w) (+ y h) (desert)))
@@ -28,7 +28,10 @@
 (defun platform ()
   (box-pipe
    (place 0 4 (crop 0 0 8 4 (cliffs)) (ground))
-   (place -1 5 pipe (platform-edge :type 0 :flip t))
+   (place -1 0 pipe (ground :x1 7))
+   (place 0 2 pipe (crop 9 7 10 8 (cliffs)))
+   (place 0 5 pipe (platform-edge :type 0 :flip t))
+   (place 9 0 pipe (ground :x1 7))
    (place 9 5 pipe (platform-edge :type 1))))
 
 (defun desert-level ()
