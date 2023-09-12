@@ -82,6 +82,7 @@ void display_canyon(void) {
 
     update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
     update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
+    update_tiles(cliffs_tiles, 161, ARRAY_SIZE(cliffs_tiles));
 
     load_soldier_tiles();
     reset_window();

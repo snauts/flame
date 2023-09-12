@@ -38,6 +38,13 @@
 (defun join (&rest rest)
   (apply #'append rest))
 
+(defun for-all (box fn)
+  (labels ((manipulate (x) (unless (null x) (funcall fn x))))
+    (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
+
+(defun flip-h (box)
+  (for-all (reverse box) (lambda (x) (logior x (ash 1 11)))))
+
 (defun place-in (a b i &optional result)
   (cond ((and (null a) (null b)) (reverse result))
 	((> i 0) (place-in (rest a) b (1- i) (cons (first a) result)))
