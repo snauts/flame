@@ -1,6 +1,8 @@
 #include "main.h"
 #include "level.inc"
 
+u16 window;
+
 static u16 column;
 static const u16 *ptr;
 
@@ -40,5 +42,23 @@ void fill_level(const u16 *level) {
     ptr = level;
     for (u16 x = 0; x < 64; x++) {
 	fill_column(&poke_VRAM);
+    }
+}
+
+void level_scroll(void) {
+    UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
+    UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(window >> 1));
+}
+
+void reset_window(void) {
+    window = 64;
+    level_scroll();
+}
+
+void update_window(short dir) {
+    u16 last = window & ~0x7;
+    window += dir;
+    if ((window & ~0x7) > last) {
+	update_column_forward();
     }
 }

@@ -14,8 +14,8 @@
 #define FLAME_OFFSET	4
 #define SOLDIER_BASE	1
 
+extern u16 window;
 static Pos soldier;
-static u16 window;
 static u16 platform_h;
 static u16 button_state;
 static u16 level_width;
@@ -193,28 +193,28 @@ static void soldier_yelling(byte state) {
 
 static void move_forward(void) {
     if (sprite[SOLDIER_BASE].x >= SOLDIER_MAX_X) {
-	window++;
+	update_window(1);
     }
     soldier.x++;
 }
 
 static void move_backward(void) {
     if (sprite[SOLDIER_BASE].x <= SOLDIER_MIN_X) {
-	window--;
+	update_window(-1);
     }
     soldier.x--;
 }
 
-u16 soldier_march(void) {
+void soldier_march(void) {
     u16 prev = soldier.x;
     u16 last = button_state;
 
     read_gamepad();
 
-    if (BUTTON_RIGHT(button_state) && soldier.x < level_width) {
+    if (BUTTON_RIGHT(button_state) && !is_rightmost()) {
 	move_forward();
     }
-    else if (BUTTON_LEFT(button_state) && soldier.x > 0) {
+    else if (BUTTON_LEFT(button_state) && !is_leftmost()) {
 	move_backward();
     }
 
@@ -231,11 +231,10 @@ u16 soldier_march(void) {
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
-    return window;
 }
 
 static void put_soldier(u16 x, u16 y) {
-    soldier.x = x;
+    soldier.x = window + x;
     soldier.y = y;
 
     sprite[0].cfg = TILE(2, 0);

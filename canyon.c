@@ -70,10 +70,8 @@ static void draw_sand(void) {
 }
 
 static void update_canyon(void) {
-    u16 scroll = soldier_march();
-
-    UPDATE_VRAM_WORD(VRAM_SCROLL_A, -scroll);
-    UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(scroll >> 1));
+    soldier_march();
+    level_scroll();
 }
 
 void display_canyon(void) {
@@ -85,6 +83,7 @@ void display_canyon(void) {
     update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
 
     load_soldier_tiles();
+    reset_window();
 
     /* background */
     fill_VRAM(0x000,  1, 0x300);
