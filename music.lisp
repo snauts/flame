@@ -258,6 +258,7 @@
     (insert-at-start flute *mute*)
     (scale-tempo flute 5)
     (let ((drums (drum-score)))
+      (adjust-octaves drums '(x x 2))
       (merge-into flute drums))
     flute))
 
