@@ -105,7 +105,7 @@ static short animate_walking(short cycle, u16 prev) {
 static void soldier_animate(u16 prev) {
     static short cycle;
     u16 soldier_frame;
-    if (soldier.y == platform_h) {
+    if (on_ground()) {
 	cycle = animate_walking(cycle, prev);
 	soldier_frame = 6 * (cycle + 2) + SOLDIER_LEG;
     }
