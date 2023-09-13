@@ -118,16 +118,24 @@
 (defun should-new-entry (raw head)
   (or (null head)
       (<= 255 (first head))
-      (not (equal (first raw) (second head)))))
+      (not (equal (first raw) (rest head)))))
 
 (defun compact (raw compacted)
   (cond ((null raw) (reverse compacted))
 	((should-new-entry raw (first compacted))
-	 (compact (rest raw) (cons (list 1 (first raw)) compacted)))
+	 (compact (rest raw) (cons (cons 1 (first raw)) compacted)))
 	(t (compact (rest raw) (inc-distance compacted)))))
 
-(defun level-height (box walkable)
-  (compact (height-map box walkable) nil))
+(defun encode-map (map &optional flat (prev 0))
+  (let ((size (length (first map))))
+    (push (logior size (ash prev 4)) flat)
+    (mapc (lambda (x) (push x flat)) (first map))
+    (if (null map)
+	(reverse flat)
+	(encode-map (rest map) flat size))))
+
+(defun encode-height (level walkable)
+  (encode-map (compact (height-map level walkable) nil)))
 
 (defun out-format (n)
   (concatenate 'string "0x~" (format nil "~d" n) ",'0X, "))
@@ -142,7 +150,10 @@
     (when (/= count 0)
       (format out "~%"))))
 
-(defun save-array (out name level)
+(defun save-array (out name level walkable)
+  (format out "const byte ~A_height[] = {~%" name)
+  (save-hex out (encode-height level walkable) 2)
+  (format out "};~%")
   (format out "const u16 ~A[] = {~%" name)
   (save-hex out (serialize level))
   (format out "};~%"))
@@ -151,7 +162,7 @@
 
 (defun save-level ()
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
-    (save-array out "desert_level" (desert-level))))
+    (save-array out "desert_level" (desert-level) *desert-walkable*)))
 
 (defun save-and-quit ()
   (handler-case (save-level)
