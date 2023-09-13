@@ -41,16 +41,16 @@ static u16 read_gamepad(void) {
 
 static void soldier_sprite_update(void) {
     sprite[1].x = soldier.x - window + SOLDIER_MIN_X;
-    sprite[1].y = soldier.y;
+    sprite[1].y = soldier.y + 128 - 40;
 
     sprite[0].x = sprite[1].x + 8;
-    sprite[0].y = soldier.y + 8;
+    sprite[0].y = sprite[1].y + 8;
 
     sprite[2].x = sprite[1].x;
-    sprite[2].y = soldier.y + 24;
+    sprite[2].y = sprite[1].y + 24;
 
     sprite[3].x = sprite[1].x + 24;
-    sprite[3].y = soldier.y + 21;
+    sprite[3].y = sprite[1].y + 21;
 }
 
 static u16 on_ground(void) {
