@@ -61,8 +61,8 @@ u16 is_leftmost(void) {
     return (*back >> 8) == 0 && (window <= WINDOW_MIN);
 }
 
-u16 platform_bottom(void) {
-    return height[1 + platform_count];
+byte platform_bottom(void) {
+    return platform_count > 0 ? height[1 + platform_count] : 0;
 }
 
 static void forward_platform(void) {

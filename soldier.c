@@ -84,7 +84,7 @@ void soldier_jump(u16 start, u16 down) {
     }
 
     previous = soldier.y;
-    soldier.y -= velocity;
+    soldier.y = (soldier.y - velocity) & 0xff;
     if (gravity == 0) {
 	gravity = 6;
 	velocity--;

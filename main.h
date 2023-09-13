@@ -102,7 +102,7 @@ void soldier_march(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
 
-u16 platform_bottom(void);
+byte platform_bottom(void);
 void prepare_desert_level(void);
 void update_height_map(u16 pos_x);
 void update_window(short direction);
