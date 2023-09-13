@@ -65,7 +65,7 @@ static u16 on_ground(void) {
     return what;
 }
 
-void soldier_jump(u16 start, u16 down) {
+static void soldier_jump(u16 start, u16 down) {
     static short gravity;
     static short velocity;
     u16 previous, snap;
