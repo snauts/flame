@@ -1,3 +1,8 @@
+(defparameter *desert-walkable*
+  '((103 111 119 127 135 143 151 159
+     167 175 183 191 199 207 215 223
+     163 171 179 187 195 203 211 219)))
+
 (defun desert-tile (id)
   (tile id :pl 1))
 
