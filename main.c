@@ -187,7 +187,7 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
 	    }
 	}
     }
-    copy_to_VRAM(offset, n);
+    if (n > 0) copy_to_VRAM(offset, n);
 }
 
 static u16 seed;
