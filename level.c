@@ -9,6 +9,11 @@ static short column;
 static const u16 *back;
 static const u16 *front;
 
+static u16 next_platform;
+static u16 prev_platform;
+static u16 platform_count;
+static const byte *height;
+
 static const u16 *advance(const u16 *ptr) {
     short count = *ptr & 0xff;
     return ptr + count + 1;
@@ -55,13 +60,21 @@ u16 is_leftmost(void) {
     return (*back >> 8) == 0 && (window <= WINDOW_MIN);
 }
 
-void fill_level(const u16 *level) {
+static void prepare_level(const u16 *level, const byte *map) {
     column = 0;
+    height = map;
     front = level;
     for (u16 x = 0; x < 64; x++) {
 	update_column_forward(&poke_VRAM);
     }
     back = level; /* reset back */
+    platform_count = (map[0] & 0xf) - 1;
+    next_platform = 8 * map[1];
+    prev_platform = 0;
+}
+
+void prepare_desert_level(void) {
+    prepare_level(desert_level, desert_level_height);
 }
 
 void level_scroll(void) {

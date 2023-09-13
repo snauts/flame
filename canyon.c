@@ -101,7 +101,7 @@ void display_canyon(void) {
     /* foreground */
     clear_DMA_buffer(0, 0x1000);
 
-    fill_level(desert_level);
+    prepare_desert_level();
 
     fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
