@@ -34,7 +34,7 @@
     (2 (crop 9 4 10 6 (cliffs)))))
 
 (defun platform-edge (&key (type 0) flip)
-  (funcall (if (null flip) #'identity #'flip-horizontally) (edge type)))
+  (funcall (if (null flip) #'identity #'flip) (edge type)))
 
 (defparameter *decorations*
   (mapcar #'desert-tile '(225 228 229 232)))

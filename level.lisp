@@ -40,9 +40,6 @@
     (dotimes (i x result)
       (push (make-list y :initial-element e) result))))
 
-(defun singleton (&rest rest)
-  (make 1 1 :e (apply #'tile rest)))
-
 (defun poke (box x y tile)
   (setf (elt (elt box x) y) tile))
 
@@ -53,7 +50,7 @@
   (labels ((manipulate (x) (unless (null x) (funcall fn x))))
     (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
 
-(defun flip-horizontally (box)
+(defun flip (box)
   (for-all (reverse box) (lambda (x) (logxor x (ash 1 11)))))
 
 (defun place-in (a b i &optional result)
@@ -86,11 +83,8 @@
     (dotimes (i n result)
       (setf result (append box result)))))
 
-(defun remove-meta (tile)
-  (if (consp tile) (first tile) tile))
-
 (defun zero-first (box)
-  (mapcar #'remove-meta (substitute 0 nil (first box))))
+  (substitute 0 nil (first box)))
 
 (defun index-pair (columns prev)
   (logior (or (length (first columns)) 0)
