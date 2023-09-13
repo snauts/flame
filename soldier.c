@@ -25,6 +25,8 @@ static Sprite sprite[80];
 #define BUTTON_B(x) ((x) & BIT(4))
 #define BUTTON_C(x) ((x) & BIT(5))
 
+#define BUTTON_UP(x) ((x) & BIT(0))
+#define BUTTON_DOWN(x) ((x) & BIT(1))
 #define BUTTON_LEFT(x) ((x) & BIT(2))
 #define BUTTON_RIGHT(x) ((x) & BIT(3))
 
@@ -63,13 +65,22 @@ static u16 on_ground(void) {
     return what;
 }
 
-void soldier_jump(u16 start) {
+void soldier_jump(u16 start, u16 down) {
     static short gravity;
     static short velocity;
     u16 previous, snap;
     if (start && on_ground()) {
-	velocity = 4;
-	gravity = 0;
+	if (down) {
+	    if (soldier.y < platform_bottom()) {
+		soldier.y++;
+		velocity = 0;
+		gravity = 0;
+	    }
+	}
+	else {
+	    velocity = 4;
+	    gravity = 0;
+	}
     }
 
     previous = soldier.y;
@@ -240,7 +251,8 @@ void soldier_march(void) {
 	cooldown = 8;
     }
 
-    soldier_jump(BUTTON_C(button_state) && BUTTON_C(last) == 0);
+    u16 jump = BUTTON_C(button_state) && BUTTON_C(last) == 0;
+    soldier_jump(jump, BUTTON_DOWN(button_state));
     soldier_sprite_update();
     soldier_animate(prev);
     manage_flames();
@@ -281,5 +293,5 @@ void load_soldier_tiles(void) {
 
 void setup_soldier_sprites(void) {
     flame = sprite + FLAME_OFFSET;
-    put_soldier(0, get_next_height());
+    put_soldier(0, platform_bottom());
 }
