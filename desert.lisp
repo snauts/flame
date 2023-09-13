@@ -1,7 +1,7 @@
 (defparameter *desert-walkable*
-  '((103 111 119 127 135 143 151 159
-     167 175 183 191 199 207 215 223
-     163 171 179 187 195 203 211 219)))
+  '(103 111 119 127 135 143 151 159
+    167 175 183 191 199 207 215 223
+    163 171 179 187 195 203 211 219))
 
 (defun desert-tile (id)
   (tile id :pl 1))
@@ -111,9 +111,9 @@
    (place 0 1 pipe (platform-edge :type 1))
    (place 0 0 pipe (desert-cell (tile 281 :pr 1)))
    (place 1 0 pipe (desert-cell (tile 282 :pr 1)))
-   (place width 0 pipe (desert-cell (tile 281 :pr 1 :h 1)))
-   (place (1- width) 0 pipe (desert-cell (tile 282 :pr 1 :h 1)))
-   (place width 1 pipe (platform-edge :type 1 :flip t))))
+   (place (1- width) 0 pipe (desert-cell (tile 281 :pr 1 :h 1)))
+   (place (- width 2) 0 pipe (desert-cell (tile 282 :pr 1 :h 1)))
+   (place (1- width) 1 pipe (platform-edge :type 1 :flip t))))
 
 (defun desert-level ()
   (join (aloe)
