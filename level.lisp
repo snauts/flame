@@ -6,10 +6,13 @@
 (defun tile (id &key (pr 0) (pl 0) (v 0) (h 0))
   (logxor (ash pr 15) (ash v 12) (ash h 11) (logior (ash pl 13) id)))
 
-(defun display-id (id)
-  (if (null id)
+(defun idx (tile)
+  (if tile (logand tile #x7ff) 0))
+
+(defun display-id (tile)
+  (if (null tile)
       (format t "  .  ")
-      (format t "~4,' d " (logand id #x7ff))))
+      (format t "~4,' d " (idx tile))))
 
 (defun width (box)
   (length box))
@@ -97,6 +100,30 @@
     (if (null box)
 	(reverse flat)
 	(serialize (rest box) (first box) flat))))
+
+(defun column-height (column walkable &optional result (height 224))
+  (decf height 8)
+  (cond ((null column) result)
+	((member (idx (first column)) walkable)
+	 (column-height (rest column) walkable (cons height result) height))
+	(t (column-height (rest column) walkable result height))))
+
+(defun height-map (box walkable)
+  (mapcar (lambda (column) (column-height column walkable)) box))
+
+(defun inc-distance (compacted)
+  (incf (first (first compacted)) 8)
+  compacted)
+
+(defun compact (raw compacted)
+  (let ((head (first compacted)))
+    (cond ((null raw) (reverse compacted))
+	  ((or (null head) (not (equal (first raw) (second head))))
+	   (compact (rest raw) (cons (list 8 (first raw)) compacted)))
+	  (t (compact (rest raw) (inc-distance compacted))))))
+
+(defun level-height (box walkable)
+  (compact (height-map box walkable) nil))
 
 (defun out-format (n)
   (concatenate 'string "0x~" (format nil "~d" n) ",'0X, "))
