@@ -65,6 +65,29 @@ u16 get_next_height(void) {
     return height[1 + platform_count];
 }
 
+static void forward_platform(void) {
+    platform_count = (height[0] & 0xf) - 1;
+    prev_platform = next_platform;
+    next_platform += 8 * height[1];
+}
+
+static void backward_platform(void) {
+    platform_count = (height[0] & 0xf) - 1;
+    next_platform = prev_platform;
+    prev_platform -= 8 * height[1];
+}
+
+void update_height_map(u16 pos_x) {
+    if (pos_x >= next_platform) {
+	height += (*height & 0xf) + 1;
+	forward_platform();
+    }
+    else if (pos_x < prev_platform) {
+	height -= (*height >> 4) + 1;
+	backward_platform();
+    }
+}
+
 static void prepare_level(const u16 *level, const byte *map) {
     column = 0;
     height = map;
@@ -73,9 +96,8 @@ static void prepare_level(const u16 *level, const byte *map) {
 	update_column_forward(&poke_VRAM);
     }
     back = level; /* reset back */
-    platform_count = (map[0] & 0xf) - 1;
-    next_platform = 8 * map[1];
-    prev_platform = 0;
+    next_platform = 0;
+    forward_platform();
 }
 
 void prepare_desert_level(void) {
@@ -109,9 +131,12 @@ void update_window(short direction) {
     }
 }
 
-byte is_in_height_map(byte pos) {
-    for (byte i = 0; i < platform_count; i++) {
-	if (height[HEIGHT_DATA + i] == pos) return 1;
+byte get_snap(byte prev, byte next) {
+    for (u16 i = 0; i < platform_count; i++) {
+	byte snap = height[HEIGHT_DATA + i];
+	if (prev <= snap && snap <= next) {
+	    return snap;
+	}
     }
     return 0;
 }

@@ -10,13 +10,13 @@
 
 #define SOLDIER_MIN_X	150
 #define SOLDIER_MAX_X	250
+#define SOLDIER_AHEAD	32
 
 #define FLAME_OFFSET	4
 #define SOLDIER_BASE	1
 
 extern u16 window;
 static Pos soldier;
-static u16 platform_h;
 static u16 button_state;
 
 static Sprite sprite[80];
@@ -57,7 +57,7 @@ static u16 on_ground(void) {
     static u16 when;
     static u16 what;
     if (counter != when) {
-	what = is_in_height_map(soldier.y);
+	what = get_snap(soldier.y, soldier.y);
 	when = counter;
     }
     return what;
@@ -66,11 +66,13 @@ static u16 on_ground(void) {
 void soldier_jump(u16 start) {
     static short gravity;
     static short velocity;
+    u16 previous, snap;
     if (start && on_ground()) {
 	velocity = 4;
 	gravity = 0;
     }
 
+    previous = soldier.y;
     soldier.y -= velocity;
     if (gravity == 0) {
 	gravity = 6;
@@ -78,8 +80,9 @@ void soldier_jump(u16 start) {
     }
     gravity--;
 
-    if (soldier.y >= platform_h) {
-	soldier.y = platform_h;
+    snap = get_snap(previous, soldier.y);
+    if (snap != 0) {
+	soldier.y = snap;
 	velocity = 0;
 	gravity = 0;
     }
@@ -228,6 +231,7 @@ void soldier_march(void) {
     else if (BUTTON_LEFT(button_state)) {
 	move_backward();
     }
+    update_height_map(soldier.x + SOLDIER_AHEAD);
 
     u16 fire = BUTTON_B(button_state) && on_ground();
     soldier_yelling(fire);
@@ -276,7 +280,6 @@ void load_soldier_tiles(void) {
 }
 
 void setup_soldier_sprites(void) {
-    platform_h = get_next_height();
     flame = sprite + FLAME_OFFSET;
-    put_soldier(0, platform_h);
+    put_soldier(0, get_next_height());
 }
