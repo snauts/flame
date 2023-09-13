@@ -86,6 +86,12 @@
    (place 13 3 pipe (desert-cell 0))
    (decorate-side pipe 12 h :flip 1)))
 
+(defun sandwich-platform (&key (h 0) (n 0))
+  (box-pipe
+   (platform :h (+ h n 4))
+   (place 0 0 pipe (platform :h h))
+   (place 1 (+ h 4) pipe (shaded-ground :type 0))))
+
 (defun desert-level ()
   (join (aloe)
 	(ground :x2 2)
