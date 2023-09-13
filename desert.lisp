@@ -27,6 +27,12 @@
 (defun ground (&key (x1 0) (x2 8) (n 1))
   (multiply (crop x1 0 x2 4 (desert)) n))
 
+(defun top-ground (&key (x1 0) (x2 8))
+  (place 0 0 (ground :x1 x1 :x2 x2) (crop x1 0 x2 1 (cliffs))))
+
+(defun crust (&key (x1 0) (x2 8))
+  (crop x1 0 x2 1 (desert)))
+
 (defun edge (type)
   (case type
     (0 (crop 14 6 15 8 (cliffs)))
@@ -58,7 +64,8 @@
 (defun platform (&key (h 0))
   (box-pipe
    (shaded-ground :type 0)
-   (place 0 (+ h 4) pipe (ground))
+   (place 0 0 pipe (crust))
+   (place 0 (+ h 4) pipe (top-ground))
    (place -1 0 pipe (ground :x1 7))
    (place 9 0 pipe (ground :x1 7))
    (place 0 2 pipe (desert-cell 233))
@@ -72,7 +79,7 @@
   (box-pipe
    (platform :h (+ h n 4))
    (place 5 0 pipe (shaded-ground :type 0))
-   (place 9 (+ h 4) pipe (ground :x1 4 :x2 8))
+   (place 9 (+ h 4) pipe (top-ground :x1 4 :x2 8))
    (place 5 (+ h 4) pipe (shaded-ground :type 1))
    (place 1 0 pipe (shaded-ground :type 2))
    (place 4 (+ h 5) pipe (platform-edge :type 2))
@@ -84,7 +91,9 @@
    (place 0 3 pipe (desert-cell 0))
    (place 13 2 pipe (desert-cell 242))
    (place 13 3 pipe (desert-cell 0))
-   (decorate-side pipe 12 h :flip 1)))
+   (decorate-side pipe 12 h :flip 1)
+   (place 1 0 pipe (crust :x2 4))
+   (place 5 0 pipe (crust))))
 
 (defun sandwich-platform (&key (h 0) (n 0))
   (box-pipe
