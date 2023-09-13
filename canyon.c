@@ -106,7 +106,7 @@ void display_canyon(void) {
     fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
-    setup_soldier_sprites(640);
+    setup_soldier_sprites();
     void music_johnny(void);
     music_johnny();
 

@@ -100,7 +100,7 @@ void set_seed(u16);
 
 void soldier_march(void);
 void load_soldier_tiles(void);
-void setup_soldier_sprites(u16 width);
+void setup_soldier_sprites(void);
 
 void prepare_desert_level(void);
 void update_window(short direction);
