@@ -65,7 +65,7 @@ const byte sand[] = { 72, 80, 88, 71, 79, 87, 95, 72 };
 static void draw_sand(void) {
     u16 i;
     set_seed(1);
-    for (i = 0x700; i < 0xe00; i += 2) {
+    for (i = 0x700; i < 0xf00; i += 2) {
 	poke_VRAM(i, sand[random() & 7]);
     }
 }
@@ -96,7 +96,6 @@ void display_canyon(void) {
     draw_horizon();
     draw_vegetation();
 
-    fill_VRAM(0xd00, TILE(1, 1), 0x80);
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
@@ -104,7 +103,7 @@ void display_canyon(void) {
 
     fill_level(desert_level);
 
-    fill_VRAM(0xe00, TILE(1, 1), 0x80);
+    fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites(640);

@@ -101,12 +101,22 @@
    (place 0 0 (platform :h (+ h n 4)) (platform :h h))
    (place 1 (+ h 4) pipe (shaded-ground :type 0))))
 
+(defun hole (width)
+  (box-pipe
+   (place 0 1 pipe (platform-edge :type 1))
+   (place 0 0 pipe (desert-cell (tile 281 :pr 1)))
+   (place 1 0 pipe (desert-cell (tile 282 :pr 1)))
+   (place width 0 pipe (desert-cell (tile 281 :pr 1 :h 1)))
+   (place (1- width) 0 pipe (desert-cell (tile 282 :pr 1 :h 1)))
+   (place width 1 pipe (platform-edge :type 1 :flip t))))
+
 (defun desert-level ()
   (join (aloe)
 	(ground :x2 2)
 	(cacti)
 	(ground :x2 4)
 	(platform :h 3)
+	(hole 4)
 	(ground)
 	(double-platform :h 5 :n 3)
 	(ground :n 3)
