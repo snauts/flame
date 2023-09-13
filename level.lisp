@@ -7,9 +7,9 @@
   (logxor (ash pr 15) (ash v 12) (ash h 11) (logior (ash pl 13) id)))
 
 (defun display-id (id)
-  (cond ((null id) (format t "  .  "))
-	((atom id) (format t "~4,' d " (logand id #x7ff)))
-	(t (format t "~4,' d*" (logand (first id) #x7ff)))))
+  (if (null id)
+      (format t "  .  ")
+      (format t "~4,' d " (logand id #x7ff))))
 
 (defun width (box)
   (length box))
@@ -98,10 +98,13 @@
 	(reverse flat)
 	(serialize (rest box) (first box) flat))))
 
-(defun save-words (out words)
+(defun out-format (n)
+  (concatenate 'string "0x~" (format nil "~d" n) ",'0X, "))
+
+(defun save-hex (out data &optional (n 4))
   (let ((count 0))
-    (dolist (w words)
-      (format out "0x~4,'0X, " w)
+    (dolist (d data)
+      (format out (out-format n) d)
       (when (>= (incf count) 8)
 	(format out "~%")
 	(setf count 0)))
@@ -110,7 +113,7 @@
 
 (defun save-array (out name level)
   (format out "const u16 ~A[] = {~%" name)
-  (save-words out (serialize level))
+  (save-hex out (serialize level))
   (format out "};~%"))
 
 (load "desert.lisp")
