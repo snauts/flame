@@ -270,7 +270,7 @@ void load_soldier_tiles(void) {
 }
 
 void setup_soldier_sprites(void) {
-    platform_h = 296;
+    platform_h = get_next_height();
     flame = sprite + FLAME_OFFSET;
     put_soldier(0, platform_h);
 }

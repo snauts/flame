@@ -60,6 +60,10 @@ u16 is_leftmost(void) {
     return (*back >> 8) == 0 && (window <= WINDOW_MIN);
 }
 
+u16 get_next_height(void) {
+    return height[1 + platform_count] + 128 - 40;
+}
+
 static void prepare_level(const u16 *level, const byte *map) {
     column = 0;
     height = map;
