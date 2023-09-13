@@ -88,8 +88,7 @@
 
 (defun sandwich-platform (&key (h 0) (n 0))
   (box-pipe
-   (platform :h (+ h n 4))
-   (place 0 0 pipe (platform :h h))
+   (place 0 0 (platform :h (+ h n 4)) (platform :h h))
    (place 1 (+ h 4) pipe (shaded-ground :type 0))))
 
 (defun desert-level ()
