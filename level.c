@@ -2,6 +2,7 @@
 #include "level.inc"
 
 #define WINDOW_MIN	64
+#define HEIGHT_DATA	2
 
 u16 window;
 
@@ -41,13 +42,13 @@ static void update_VRAM(u16 addr, u16 data) {
 
 static void update_column_forward(void (*poke)(u16, u16)) {
     front = fill_column(front, poke);
-    column = (column + 2) & 0x7f;
+    column = (column + sizeof(u16)) & 0x7f;
     back = advance(back);
 }
 
 static void update_column_backward(void) {
     back = recede(back);
-    column = (column - 2) & 0x7f;
+    column = (column - sizeof(u16)) & 0x7f;
     fill_column(back, &update_VRAM);
     front = recede(front);
 }
@@ -106,4 +107,11 @@ void update_window(short direction) {
     if (prev > next) {
 	update_column_backward();
     }
+}
+
+byte is_in_height_map(byte pos) {
+    for (byte i = 0; i < platform_count; i++) {
+	if (height[HEIGHT_DATA + i] == pos) return 1;
+    }
+    return 0;
 }

@@ -104,6 +104,7 @@ void setup_soldier_sprites(void);
 
 u16 get_next_height(void);
 void prepare_desert_level(void);
+byte is_in_height_map(byte pos);
 void update_window(short direction);
 void reset_window(void);
 void level_scroll(void);

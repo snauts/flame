@@ -54,7 +54,13 @@ static void soldier_sprite_update(void) {
 }
 
 static u16 on_ground(void) {
-    return soldier.y == platform_h;
+    static u16 when;
+    static u16 what;
+    if (counter != when) {
+	what = is_in_height_map(soldier.y);
+	when = counter;
+    }
+    return what;
 }
 
 void soldier_jump(u16 start) {
