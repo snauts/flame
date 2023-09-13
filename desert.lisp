@@ -48,12 +48,13 @@
 (defun random-elt (list)
   (elt list (random (length list))))
 
-(defun decorate-column (pipe x y &key flip)
-  (poke pipe x (+ y 4) (tile (random-elt *decorations*) :h flip :v flip)))
+(defun random-decoration (flip)
+  (tile (random-elt *decorations*) :h flip :v flip))
 
-(defun decorate-side (pipe x height &key (move 0) (flip 0))
-  (dotimes (y height pipe)
-    (decorate-column pipe x (+ y move) :flip flip)))
+(defun decorate-side (pipe x count &key (move 3) (flip 0))
+  (cond ((= count 0) pipe)
+	(t (let ((done (poke pipe x (+ move count) (random-decoration flip))))
+	     (decorate-side done  x (1- count) :move move :flip flip)))))
 
 (defun shaded-ground (&key type)
   (case type

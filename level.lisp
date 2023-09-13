@@ -1,6 +1,6 @@
 (defmacro box-pipe (&rest forms)
-  `(let ((pipe ,(first forms)))
-     ,@(mapcar (lambda (x) `(setf pipe ,x)) (rest forms))
+  `(let ((pipe (empty 1)))
+     ,@(mapcar (lambda (x) `(setf pipe ,x)) forms)
      pipe))
 
 (defun tile (id &key (pr 0) (pl 0) (v 0) (h 0))
@@ -40,9 +40,6 @@
     (dotimes (i x result)
       (push (make-list y :initial-element e) result))))
 
-(defun poke (box x y tile)
-  (setf (elt (elt box x) y) tile))
-
 (defun join (&rest rest)
   (apply #'append rest))
 
@@ -71,6 +68,9 @@
 	     (if (< x 0) a (rest a))
 	     (if (> x 0) b (rest b))
 	     (place-one x y a b result))))
+
+(defun poke (box x y tile)
+  (place x y box (make 1 1 :e tile)))
 
 (defun cut (list a b)
   (butlast (nthcdr a list) (max 0 (- (length list) b))))
