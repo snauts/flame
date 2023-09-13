@@ -8,7 +8,7 @@
   (fill-box 8 8 (desert-tile 97)))
 
 (defun cliffs ()
-  (fill-box 10 8 (desert-tile 161)))
+  (fill-box 16 8 (desert-tile 161)))
 
 (defun plant (x y w h)
   (let ((plant (crop x y (+ x w) (+ y h) (desert)))
@@ -29,15 +29,15 @@
 
 (defun edge (type)
   (case type
-    (0 (crop 8 1 9 3 (cliffs)))
-    (1 (crop 8 5 9 7 (cliffs)))
-    (2 (crop 9 4 10 6 (cliffs)))))
+    (0 (crop 14 6 15 8 (cliffs)))
+    (1 (crop 13 6 14 8 (cliffs)))
+    (2 (crop 12 6 13 8 (cliffs)))))
 
 (defun platform-edge (&key (type 0) flip)
   (funcall (if (null flip) #'identity #'flip) (edge type)))
 
 (defparameter *decorations*
-  (mapcar #'desert-tile '(225 228 229 232)))
+  (mapcar #'desert-tile '(225 226 249 250)))
 
 (defun random-elt (list)
   (elt list (random (length list))))
@@ -79,10 +79,10 @@
    (place 13 (+ h 5) pipe (platform-edge :type 1))
    (place 6 4 pipe (make 6 h :e (desert-tile 234)))
    (place 13 0 pipe (ground :x1 7))
-   (place 5 3 pipe (desert-cell 237))
-   (place 0 2 pipe (desert-cell 238))
+   (place 5 3 pipe (desert-cell 241))
+   (place 0 2 pipe (desert-cell 242))
    (place 0 3 pipe (desert-cell 0))
-   (place 13 2 pipe (desert-cell 238))
+   (place 13 2 pipe (desert-cell 242))
    (place 13 3 pipe (desert-cell 0))
    (decorate-side pipe 12 h :flip 1)))
 
