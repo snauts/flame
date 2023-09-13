@@ -112,15 +112,19 @@
   (mapcar (lambda (column) (column-height column walkable)) box))
 
 (defun inc-distance (compacted)
-  (incf (first (first compacted)) 8)
+  (incf (first (first compacted)))
   compacted)
 
+(defun should-new-entry (raw head)
+  (or (null head)
+      (<= 255 (first head))
+      (not (equal (first raw) (second head)))))
+
 (defun compact (raw compacted)
-  (let ((head (first compacted)))
-    (cond ((null raw) (reverse compacted))
-	  ((or (null head) (not (equal (first raw) (second head))))
-	   (compact (rest raw) (cons (list 8 (first raw)) compacted)))
-	  (t (compact (rest raw) (inc-distance compacted))))))
+  (cond ((null raw) (reverse compacted))
+	((should-new-entry raw (first compacted))
+	 (compact (rest raw) (cons (list 1 (first raw)) compacted)))
+	(t (compact (rest raw) (inc-distance compacted)))))
 
 (defun level-height (box walkable)
   (compact (height-map box walkable) nil))
