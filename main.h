@@ -102,11 +102,11 @@ void soldier_march(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
 
-byte platform_bottom(void);
+u16 platform_bottom(void);
 void prepare_desert_level(void);
 void update_height_map(u16 pos_x);
 void update_window(short direction);
-byte get_snap(byte prev, byte next);
+u16 get_snap(u16 prev, u16 next);
 void reset_window(void);
 void level_scroll(void);
 u16 is_rightmost(void);

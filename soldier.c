@@ -65,38 +65,44 @@ static u16 on_ground(void) {
     return what;
 }
 
-static void soldier_jump(u16 start, u16 down) {
-    static short gravity;
-    static short velocity;
-    u16 previous, snap;
-    if (start && on_ground()) {
-	if (down) {
-	    if (soldier.y < platform_bottom()) {
-		soldier.y++;
-		velocity = 0;
-		gravity = 0;
-	    }
-	}
-	else {
-	    velocity = 4;
-	    gravity = 0;
-	}
-    }
+static short gravity;
+static short velocity;
 
-    previous = soldier.y;
-    soldier.y = (soldier.y - velocity) & 0xff;
+static void initiate_jump(u16 down) {
+    gravity = 0;
+    velocity = 4;
+    if (!down) {
+	velocity = 4;
+    }
+    else if (soldier.y < platform_bottom()) {
+	soldier.y++;
+    }
+}
+
+static void advance_soldier_position(void) {
+    soldier.y = (soldier.y - velocity) & 0x1ff;
     if (gravity == 0) {
 	gravity = 6;
 	velocity--;
     }
     gravity--;
+}
 
-    snap = get_snap(previous, soldier.y);
+static void snap_jump(u16 snap) {
     if (snap != 0) {
 	soldier.y = snap;
 	velocity = 0;
 	gravity = 0;
     }
+}
+
+static void soldier_jump(u16 start, u16 down) {
+    if (start && on_ground()) {
+	initiate_jump(down);
+    }
+    u16 prev = soldier.y;
+    advance_soldier_position();
+    snap_jump(get_snap(prev, soldier.y));
 }
 
 static short animate_walking(short cycle, u16 prev) {
