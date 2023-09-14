@@ -53,6 +53,8 @@ static void soldier_sprite_update(void) {
 
     sprite[3].x = sprite[1].x + 24;
     sprite[3].y = sprite[1].y + 21;
+
+    if (sprite[1].y >= 240 + 128) soldier.y = 0;
 }
 
 static u16 on_ground(void) {
