@@ -82,7 +82,6 @@ static void advance_position(Object *obj, char gravity) {
 	obj->velocity--;
     }
     obj->gravity--;
-    obj->y &= (0xffff >> (7 - Y_FACTOR));
 }
 
 static void snap_jump(u16 snap) {
@@ -154,6 +153,7 @@ static void soldier_animate(u16 prev, u16 aim_up) {
 static Sprite *flame;
 static u16 head, tail;
 static u16 cooldown;
+static Object f_obj[8];
 
 static u16 next_flame(u16 index) {
     return (index + 1) & 7;
@@ -166,6 +166,9 @@ static void emit_flame(u16 index) {
     flame[index].y = sprite[SOLDIER_BASE].y + 20;
     flame[index].cfg = FIRE_FRAME(0);
     flame[index].size = SPRITE_SIZE(2, 1);
+    f_obj[index].y = flame[index].y << 4;
+    f_obj[index].velocity = 0;
+    f_obj[index].gravity = 4;
 }
 
 static void throw_flames(void) {
@@ -180,14 +183,8 @@ static u16 flame_expired(u16 index) {
 }
 
 static void flame_gravity(u16 index) {
-    u16 pull = 0;
-    if (flame[index].cfg >= FIRE_FRAME(24)) {
-	pull = !(counter & 1);
-    }
-    else if (flame[index].cfg >= FIRE_FRAME(12)) {
-	pull = !(counter & 3);
-    }
-    if (pull) flame[index].y++;
+    advance_position(f_obj + index, 8);
+    flame[index].y = f_obj[index].y >> 4;
 }
 
 static void manage_flames(void) {
