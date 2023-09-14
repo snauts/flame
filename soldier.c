@@ -161,19 +161,21 @@ static u16 next_flame(u16 index) {
 
 #define FIRE_FRAME(x) TILE(2, SOLDIER_FIRE + (2 * (x)))
 
-static void emit_flame(u16 index) {
+static void emit_flame(u16 index, u16 aim_up) {
     flame[index].x = sprite[SOLDIER_BASE].x + 24;
     flame[index].y = sprite[SOLDIER_BASE].y + 20;
     flame[index].cfg = FIRE_FRAME(0);
     flame[index].size = SPRITE_SIZE(2, 1);
+
+    f_obj[index].x = aim_up;
     f_obj[index].y = flame[index].y << 4;
     f_obj[index].velocity = 0;
     f_obj[index].gravity = 4;
 }
 
-static void throw_flames(void) {
+static void throw_flames(u16 aim_up) {
     if (flame[head].x == 0) {
-	emit_flame(head);
+	emit_flame(head, aim_up);
 	head = next_flame(head);
     }
 }
@@ -277,7 +279,7 @@ void soldier_march(void) {
     u16 fire = BUTTON_B(button_state) && on_ground();
     soldier_yelling(fire);
     if (fire && cooldown == 0) {
-	throw_flames();
+	throw_flames(aim_up);
 	cooldown = 8;
     }
 
