@@ -48,6 +48,7 @@ typedef struct Sprite {
     u16 x;
 } Sprite;
 
+#define Y_FACTOR 0
 typedef struct Object {
     u16 x, y;
     char gravity;

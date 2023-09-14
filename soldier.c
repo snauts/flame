@@ -43,7 +43,7 @@ static u16 read_gamepad(void) {
 
 static void soldier_sprite_update(void) {
     sprite[1].x = soldier.x - window + SOLDIER_MIN_X;
-    sprite[1].y = (soldier.y >> 1) + 128 - 40;
+    sprite[1].y = (soldier.y >> Y_FACTOR) + 128 - 40;
 
     sprite[0].x = sprite[1].x + 8;
     sprite[0].y = sprite[1].y + 8;
@@ -65,24 +65,24 @@ static u16 on_ground(void) {
     return what;
 }
 
-static void initiate_jump(u16 down) {
+static void initiate_jump(u16 down, char velocity) {
     soldier.gravity = 0;
     if (!down) {
-	soldier.velocity = 8;
+	soldier.velocity = velocity;
     }
     else if (soldier.y < platform_bottom()) {
 	soldier.y++;
     }
 }
 
-static void advance_position(Object *obj) {
+static void advance_position(Object *obj, char gravity) {
     obj->y -= obj->velocity;
     if (obj->gravity == 0) {
-	obj->gravity = 3;
+	obj->gravity = gravity;
 	obj->velocity--;
     }
     obj->gravity--;
-    obj->y &= 0x3ff;
+    obj->y &= (0xffff >> (7 - Y_FACTOR));
 }
 
 static void snap_jump(u16 snap) {
@@ -95,10 +95,10 @@ static void snap_jump(u16 snap) {
 
 static void soldier_jump(u16 start, u16 down) {
     if (start && on_ground()) {
-	initiate_jump(down);
+	initiate_jump(down, 4);
     }
     u16 prev = soldier.y;
-    advance_position(&soldier);
+    advance_position(&soldier, 6);
     snap_jump(get_snap(prev, soldier.y));
 }
 
