@@ -219,12 +219,22 @@ static void manage_flames(void) {
     }
 }
 
+static void soldier_flicker(u16 deviate) {
+    const u16 index = 7;
+    u16 color = soldier_palette[index] + deviate;
+    UPDATE_CRAM_WORD(2 * (32 + index), color);
+}
+
 static void soldier_yelling(byte state) {
     static byte face;
     if (face != state) {
 	psg_noise(7, state ? 0x0 : 0xf);
 	sprite[0].cfg = TILE(2, state ? SOLDIER_TOP + 10 : 0);
+	soldier_flicker(0);
 	face = state;
+    }
+    if (state) {
+	soldier_flicker(counter & 2);
     }
 }
 
