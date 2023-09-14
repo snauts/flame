@@ -48,9 +48,11 @@ typedef struct Sprite {
     u16 x;
 } Sprite;
 
-typedef struct Pos {
+typedef struct Object {
     u16 x, y;
-} Pos;
+    char gravity;
+    char velocity;
+} Object;
 
 #define BYTE(x) (* (volatile byte *) (x))
 #define WORD(x) (* (volatile u16 *) (x))

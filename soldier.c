@@ -16,7 +16,7 @@
 #define SOLDIER_BASE	1
 
 extern u16 window;
-static Pos soldier;
+static Object soldier;
 static u16 button_state;
 
 static Sprite sprite[80];
@@ -65,33 +65,31 @@ static u16 on_ground(void) {
     return what;
 }
 
-static short gravity;
-static short velocity;
-
 static void initiate_jump(u16 down) {
-    gravity = 0;
+    soldier.gravity = 0;
     if (!down) {
-	velocity = 4;
+	soldier.velocity = 4;
     }
     else if (soldier.y < platform_bottom()) {
 	soldier.y++;
     }
 }
 
-static void advance_soldier_position(void) {
-    soldier.y = (soldier.y - velocity) & 0x1ff;
-    if (gravity == 0) {
-	gravity = 6;
-	velocity--;
+static void advance_position(Object *obj) {
+    obj->y -= obj->velocity;
+    if (obj->gravity == 0) {
+	obj->gravity = 6;
+	obj->velocity--;
     }
-    gravity--;
+    obj->gravity--;
+    obj->y &= 0x1ff;
 }
 
 static void snap_jump(u16 snap) {
     if (snap != 0) {
 	soldier.y = snap;
-	velocity = 0;
-	gravity = 0;
+	soldier.velocity = 0;
+	soldier.gravity = 0;
     }
 }
 
@@ -100,7 +98,7 @@ static void soldier_jump(u16 start, u16 down) {
 	initiate_jump(down);
     }
     u16 prev = soldier.y;
-    advance_soldier_position();
+    advance_position(&soldier);
     snap_jump(get_snap(prev, soldier.y));
 }
 
