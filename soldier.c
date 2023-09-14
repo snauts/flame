@@ -10,7 +10,7 @@
 
 #define SOLDIER_MIN_X	150
 #define SOLDIER_MAX_X	250
-#define SOLDIER_AHEAD	32
+#define SOLDIER_AHEAD	34
 
 #define FLAME_OFFSET	4
 #define SOLDIER_BASE	1
