@@ -70,7 +70,6 @@ static short velocity;
 
 static void initiate_jump(u16 down) {
     gravity = 0;
-    velocity = 4;
     if (!down) {
 	velocity = 4;
     }
