@@ -61,8 +61,12 @@ u16 is_leftmost(void) {
     return (*back >> 8) == 0 && (window <= WINDOW_MIN);
 }
 
+static u16 get_height(byte offset) {
+    return height[offset] << 1;
+}
+
 u16 platform_bottom(void) {
-    return platform_count > 0 ? height[1 + platform_count] : 0;
+    return platform_count > 0 ? get_height(1 + platform_count) : 0;
 }
 
 static void forward_platform(void) {
@@ -133,7 +137,7 @@ void update_window(short direction) {
 
 u16 get_snap(u16 prev, u16 next) {
     for (u16 i = 0; i < platform_count; i++) {
-	u16 snap = height[HEIGHT_DATA + i];
+	u16 snap = get_height(HEIGHT_DATA + i);
 	if (prev <= snap && snap <= next) {
 	    return snap;
 	}

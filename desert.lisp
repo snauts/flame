@@ -124,7 +124,7 @@
 	(platform :h 3)
 	(hole 4)
 	(ground)
-	(double-platform :h 4 :n 2)
+	(double-platform :h 4 :n 3)
 	(sandwich-platform :h 1 :n 2)
 	(ground :n 3)
 	(bush)
