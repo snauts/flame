@@ -219,10 +219,14 @@ static void manage_flames(void) {
     }
 }
 
-static void soldier_flicker(u16 deviate) {
-    const u16 index = 7;
+static void flicker_color(u16 index, u16 deviate) {
     u16 color = soldier_palette[index] + deviate;
     UPDATE_CRAM_WORD(2 * (32 + index), color);
+}
+
+static void soldier_flicker(u16 deviate) {
+    flicker_color(6, deviate);
+    flicker_color(7, deviate);
 }
 
 static void soldier_yelling(byte state) {
