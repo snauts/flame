@@ -127,18 +127,30 @@ static short animate_walking(short cycle, u16 prev) {
     return cycle;
 }
 
-static void soldier_animate(u16 prev) {
-    static short cycle;
-    u16 soldier_frame;
-    if (on_ground()) {
-	cycle = animate_walking(cycle, prev);
-	soldier_frame = 6 * (cycle + 2) + SOLDIER_LEG;
+static void select_torso(u16 aim_up) {
+    if (aim_up) {
+	sprite[SOLDIER_BASE + 0].cfg = TILE(2, SOLDIER_TOP + 12);
+	sprite[SOLDIER_BASE + 2].cfg = TILE(2, 0);
     }
     else {
-	soldier_frame = (cycle >= 6 || cycle == -2)
-	    ? (SOLDIER_LEG + 84)
-	    : (SOLDIER_LEG + 90);
+	sprite[SOLDIER_BASE + 0].cfg = TILE(2, SOLDIER_TOP);
+	sprite[SOLDIER_BASE + 2].cfg = TILE(2, SOLDIER_TOP + 9);
     }
+}
+
+static void soldier_animate(u16 prev, u16 aim_up) {
+    static short cycle;
+    u16 soldier_frame;
+
+    select_torso(aim_up);
+    if (on_ground()) {
+	cycle = animate_walking(cycle, prev);
+	soldier_frame = aim_up ? 18 + cycle : cycle + 2;
+    }
+    else {
+	soldier_frame = (cycle >= 6 || cycle == -2) ? 14 : 15;
+    }
+    soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     sprite[SOLDIER_BASE + 1].cfg = TILE(2, soldier_frame);
 }
 
@@ -242,7 +254,11 @@ void soldier_march(void) {
 
     read_gamepad();
 
-    if (BUTTON_RIGHT(button_state)) {
+    u16 aim_up = 0;
+    if (BUTTON_UP(button_state) && on_ground()) {
+	// aim_up = 1;
+    }
+    else if (BUTTON_RIGHT(button_state)) {
 	move_forward();
     }
     else if (BUTTON_LEFT(button_state)) {
@@ -259,8 +275,8 @@ void soldier_march(void) {
 
     u16 jump = BUTTON_C(button_state) && BUTTON_C(last) == 0;
     soldier_jump(jump, BUTTON_DOWN(button_state));
+    soldier_animate(prev, aim_up);
     soldier_sprite_update();
-    soldier_animate(prev);
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
