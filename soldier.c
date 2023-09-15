@@ -167,18 +167,31 @@ static u16 next_flame(u16 index) {
 #define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
 
 static void update_flame_sprite(u16 index) {
-    flame[index].cfg = TILE(2, FLAME + (f_obj[index].stats & 0xfe));
-    flame[index].x = f_obj[index].x - window + 128 + 48;
+    u16 animation = f_obj[index].life & 0xFE;
+    flame[index].cfg = TILE(2, f_obj[index].frame + animation);
+    flame[index].x = f_obj[index].x - window + 128;
     flame[index].y = f_obj[index].y >> 4;
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
-    u16 flame_y = sprite[SOLDIER_BASE].y + 20;
-    f_obj[index].x = soldier.x;
-    f_obj[index].y = flame_y << 4;
-    f_obj[index].stats = aim_up << 8;
-    f_obj[index].velocity = 0;
+    u16 offset_y, offset_x;
+    if (!aim_up) {
+	offset_x = 48;
+	offset_y = 20;
+	f_obj[index].velocity = 0;
+	f_obj[index].frame = FLAME;
+    }
+    else {
+	offset_x = 42;
+	offset_y = 3;
+	f_obj[index].velocity = 16;
+	f_obj[index].frame = FLAME_UP;
+    }
+
+    f_obj[index].x = soldier.x + offset_x;
+    f_obj[index].y = (sprite[SOLDIER_BASE].y + offset_y) << 4;
     f_obj[index].gravity = 4;
+    f_obj[index].life = 0;
 
     update_flame_sprite(index);
     flame[index].size = SPRITE_SIZE(2, 1);
@@ -192,22 +205,32 @@ static void throw_flames(u16 aim_up) {
 }
 
 static u16 flame_expired(u16 index) {
-    return (f_obj[index].stats & 0xff) >= 64;
+    return f_obj[index].life >= 64;
+}
+
+static void advance_flame(u16 index) {
+    if (f_obj[index].frame == FLAME) {
+	f_obj[index].x += 2;
+	advance_y(f_obj + index, 8);
+    }
+    else {
+	f_obj[index].x += 1;
+	advance_y(f_obj + index, 4);
+    }
 }
 
 static void manage_flames(void) {
     u16 index = tail;
     byte previous = 0;
     while (flame[index].x > 0) {
-	f_obj[index].stats++;
+	f_obj[index].life++;
 	if (flame_expired(index)) {
 	    flame[index].x = 0;
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
 	}
-	f_obj[index].x += 2;
-	advance_y(f_obj + index, 8);
+	advance_flame(index);
 	update_flame_sprite(index);
 	flame[index].next = previous;
 	previous = index + FLAME_OFFSET;

@@ -53,7 +53,8 @@ typedef struct Object {
     u16 x, y;
     char gravity;
     char velocity;
-    u16 stats;
+    u16 frame;
+    byte life;
 } Object;
 
 #define BYTE(x) (* (volatile byte *) (x))
