@@ -344,7 +344,7 @@ static void put_soldier(u16 x, u16 y) {
 }
 
 void load_soldier_tiles(void) {
-    update_palette(flame_palette, 32, ARRAY_SIZE(flame_palette));
+    update_palette(soldier_palette, 32, ARRAY_SIZE(soldier_palette));
 
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
     update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
