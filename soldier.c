@@ -211,7 +211,7 @@ static u16 flame_expired(u16 index) {
 
 static void advance_flame(u16 index) {
     if (f_obj[index].frame == FLAME) {
-	f_obj[index].x += 32;
+	f_obj[index].x += 22;
 	advance_y(f_obj + index, 8);
     }
     else {
