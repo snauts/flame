@@ -169,8 +169,8 @@ static u16 next_flame(u16 index) {
 static void update_flame_sprite(u16 index) {
     u16 animation = f_obj[index].life & 0xFE;
     flame[index].cfg = TILE(2, f_obj[index].frame + animation);
-    flame[index].x = f_obj[index].x - window + 128;
-    flame[index].y = f_obj[index].y >> 4;
+    flame[index].x = (f_obj[index].x >> 4) - window + 128;
+    flame[index].y = (f_obj[index].y >> 4);
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
@@ -188,7 +188,7 @@ static void emit_flame(u16 index, u16 aim_up) {
 	f_obj[index].frame = FLAME_UP;
     }
 
-    f_obj[index].x = soldier.x + offset_x;
+    f_obj[index].x = (soldier.x + offset_x) << 4;
     f_obj[index].y = (sprite[SOLDIER_BASE].y + offset_y) << 4;
     f_obj[index].gravity = 4;
     f_obj[index].life = 0;
@@ -210,11 +210,11 @@ static u16 flame_expired(u16 index) {
 
 static void advance_flame(u16 index) {
     if (f_obj[index].frame == FLAME) {
-	f_obj[index].x += 2;
+	f_obj[index].x += 32;
 	advance_y(f_obj + index, 8);
     }
     else {
-	f_obj[index].x += 1;
+	f_obj[index].x += 16;
 	advance_y(f_obj + index, 4);
     }
 }
