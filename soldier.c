@@ -293,14 +293,14 @@ void soldier_march(void) {
     read_gamepad();
 
     u16 aim_up = 0;
-    if (BUTTON_UP(button_state) && on_ground()) {
-	aim_up = 1;
-    }
-    else if (BUTTON_RIGHT(button_state)) {
+    if (BUTTON_RIGHT(button_state)) {
 	move_forward();
     }
     else if (BUTTON_LEFT(button_state)) {
 	move_backward();
+    }
+    else if (BUTTON_UP(button_state) && on_ground()) {
+	aim_up = 1;
     }
     update_height_map(soldier.x + SOLDIER_AHEAD);
 
