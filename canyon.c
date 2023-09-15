@@ -55,12 +55,14 @@ static void draw_vegetation(void) {
     u16 i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
-	poke_VRAM(offset, cacti[(tile + offset) & 7]);
+	u16 tile = cacti[(tile + offset) & 7];
+	if (i == 60 || i == 40 || i == 20) tile = 95;
+	poke_VRAM(offset, tile);
 	tile++;
     }
 }
 
-const byte sand[] = { 72, 80, 88, 71, 79, 87, 95, 72 };
+const byte sand[] = { 72, 80, 88, 71, 79, 87, 71, 72 };
 
 static void draw_sand(void) {
     u16 i;
