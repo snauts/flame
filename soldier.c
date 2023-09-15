@@ -1,12 +1,15 @@
 #include "main.h"
 
 #include "images/soldier.h"
+#include "images/flame_up.h"
 #include "images/flame.h"
 #include "images/walk.h"
 
 #define SOLDIER_TOP	512
 #define SOLDIER_LEG	534
-#define SOLDIER_FIRE	642
+
+#define FLAME		642
+#define FLAME_UP	706
 
 #define SOLDIER_MIN_X	150
 #define SOLDIER_MAX_X	250
@@ -77,7 +80,7 @@ static void initiate_jump(u16 down, char velocity) {
     }
 }
 
-static void advance_position(Object *obj, char gravity) {
+static void advance_y(Object *obj, char gravity) {
     obj->y -= obj->velocity;
     if (obj->gravity == 0) {
 	obj->gravity = gravity;
@@ -99,7 +102,7 @@ static void soldier_jump(u16 start, u16 down) {
 	initiate_jump(down, 4);
     }
     u16 prev = soldier.y;
-    advance_position(&soldier, 6);
+    advance_y(&soldier, 6);
     snap_jump(get_snap(prev, soldier.y));
 }
 
@@ -161,18 +164,24 @@ static u16 next_flame(u16 index) {
     return (index + 1) & 7;
 }
 
-#define FIRE_FRAME(x) TILE(2, SOLDIER_FIRE + (2 * (x)))
+#define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
+
+static void update_flame_sprite(u16 index) {
+    flame[index].cfg = TILE(2, FLAME + (f_obj[index].stats & 0xfe));
+    flame[index].x = f_obj[index].x - window + 128 + 48;
+    flame[index].y = f_obj[index].y >> 4;
+}
 
 static void emit_flame(u16 index, u16 aim_up) {
-    flame[index].x = sprite[SOLDIER_BASE].x + 24;
-    flame[index].y = sprite[SOLDIER_BASE].y + 20;
-    flame[index].cfg = FIRE_FRAME(0);
-    flame[index].size = SPRITE_SIZE(2, 1);
-
-    f_obj[index].x = aim_up;
-    f_obj[index].y = flame[index].y << 4;
+    u16 flame_y = sprite[SOLDIER_BASE].y + 20;
+    f_obj[index].x = soldier.x;
+    f_obj[index].y = flame_y << 4;
+    f_obj[index].stats = aim_up << 8;
     f_obj[index].velocity = 0;
     f_obj[index].gravity = 4;
+
+    update_flame_sprite(index);
+    flame[index].size = SPRITE_SIZE(2, 1);
 }
 
 static void throw_flames(u16 aim_up) {
@@ -183,29 +192,23 @@ static void throw_flames(u16 aim_up) {
 }
 
 static u16 flame_expired(u16 index) {
-    return flame[index].cfg >= FIRE_FRAME(32);
-}
-
-static void flame_gravity(u16 index) {
-    advance_position(f_obj + index, 8);
-    flame[index].y = f_obj[index].y >> 4;
+    return (f_obj[index].stats & 0xff) >= 64;
 }
 
 static void manage_flames(void) {
     u16 index = tail;
     byte previous = 0;
     while (flame[index].x > 0) {
-	flame_gravity(index);
-	if ((counter & 1) == 0) {
-	    flame[index].cfg += 2;
-	}
+	f_obj[index].stats++;
 	if (flame_expired(index)) {
 	    flame[index].x = 0;
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
 	}
-	flame[index].x += 2;
+	f_obj[index].x += 2;
+	advance_y(f_obj + index, 8);
+	update_flame_sprite(index);
 	flame[index].next = previous;
 	previous = index + FLAME_OFFSET;
 	index = next_flame(index);
@@ -268,7 +271,7 @@ void soldier_march(void) {
 
     u16 aim_up = 0;
     if (BUTTON_UP(button_state) && on_ground()) {
-	// aim_up = 1;
+	aim_up = 1;
     }
     else if (BUTTON_RIGHT(button_state)) {
 	move_forward();
@@ -321,8 +324,10 @@ void load_soldier_tiles(void) {
     update_palette(flame_palette, 32, ARRAY_SIZE(soldier_palette));
 
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
-    update_tiles(flame_tiles, SOLDIER_FIRE, ARRAY_SIZE(flame_tiles));
     update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
+
+    update_tiles(flame_tiles, FLAME, ARRAY_SIZE(flame_tiles));
+    update_tiles(flame_up_tiles, FLAME_UP, ARRAY_SIZE(flame_up_tiles));
 }
 
 void setup_soldier_sprites(void) {
