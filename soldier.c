@@ -11,8 +11,10 @@
 #define FLAME		642
 #define FLAME_UP	706
 
-#define SOLDIER_MIN_X	144
-#define SOLDIER_MAX_X	256
+#define ON_SCREEN	128
+
+#define SOLDIER_MIN_X	(ON_SCREEN + 16)
+#define SOLDIER_MAX_X	(ON_SCREEN + 128)
 #define SOLDIER_AHEAD	34
 
 #define FLAME_OFFSET	4
@@ -46,7 +48,7 @@ static u16 read_gamepad(void) {
 
 static void soldier_sprite_update(void) {
     sprite[1].x = soldier.x - window + SOLDIER_MIN_X;
-    sprite[1].y = soldier.y + 128 - 40;
+    sprite[1].y = soldier.y + ON_SCREEN - 40;
 
     sprite[0].x = sprite[1].x + 8;
     sprite[0].y = sprite[1].y + 8;
@@ -57,7 +59,7 @@ static void soldier_sprite_update(void) {
     sprite[3].x = sprite[1].x + 24;
     sprite[3].y = sprite[1].y + 21;
 
-    if (sprite[1].y >= 240 + 128) soldier.y = 0;
+    if (sprite[1].y >= 240 + ON_SCREEN) soldier.y = 0;
 }
 
 static u16 on_ground(void) {
@@ -169,7 +171,7 @@ static u16 next_flame(u16 index) {
 static void update_flame_sprite(u16 index) {
     u16 animation = f_obj[index].life & 0xFE;
     flame[index].cfg = TILE(2, f_obj[index].frame + animation);
-    flame[index].x = soldier.x + (f_obj[index].x >> 4) - window + 128;
+    flame[index].x = soldier.x + (f_obj[index].x >> 4) - window + ON_SCREEN;
     flame[index].y = (f_obj[index].y >> 4);
 }
 
