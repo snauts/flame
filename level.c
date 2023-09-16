@@ -62,7 +62,7 @@ u16 is_leftmost(void) {
 }
 
 static u16 get_height(byte offset) {
-    return height[offset] << Y_FACTOR;
+    return height[offset];
 }
 
 u16 platform_bottom(void) {

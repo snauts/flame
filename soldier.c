@@ -11,8 +11,8 @@
 #define FLAME		642
 #define FLAME_UP	706
 
-#define SOLDIER_MIN_X	150
-#define SOLDIER_MAX_X	250
+#define SOLDIER_MIN_X	144
+#define SOLDIER_MAX_X	256
 #define SOLDIER_AHEAD	34
 
 #define FLAME_OFFSET	4
@@ -46,7 +46,7 @@ static u16 read_gamepad(void) {
 
 static void soldier_sprite_update(void) {
     sprite[1].x = soldier.x - window + SOLDIER_MIN_X;
-    sprite[1].y = (soldier.y >> Y_FACTOR) + 128 - 40;
+    sprite[1].y = soldier.y + 128 - 40;
 
     sprite[0].x = sprite[1].x + 8;
     sprite[0].y = sprite[1].y + 8;
@@ -176,13 +176,13 @@ static void update_flame_sprite(u16 index) {
 static void emit_flame(u16 index, u16 aim_up) {
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 48;
+	offset_x = 42;
 	offset_y = 20;
 	f_obj[index].velocity = 0;
 	f_obj[index].frame = FLAME;
     }
     else {
-	offset_x = 42;
+	offset_x = 36;
 	offset_y = 3;
 	f_obj[index].velocity = 16;
 	f_obj[index].frame = FLAME_UP;
