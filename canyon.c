@@ -3,6 +3,7 @@
 #include "images/canyon.h"
 #include "images/desert.h"
 #include "images/cliffs.h"
+#include "images/hopper.h"
 
 void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;
@@ -85,6 +86,7 @@ void display_canyon(void) {
     update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
     update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
     update_tiles(cliffs_tiles, 161, ARRAY_SIZE(cliffs_tiles));
+    update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
 
     load_soldier_tiles();
     reset_window();
