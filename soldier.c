@@ -22,7 +22,6 @@
 
 extern u16 window;
 static Object soldier;
-static u16 button_state;
 
 static Sprite sprite[80];
 
@@ -36,6 +35,7 @@ static Sprite sprite[80];
 #define BUTTON_RIGHT(x) ((x) & BIT(3))
 
 static u16 read_gamepad(void) {
+    u16 button_state;
     BYTE(GAMEPAD_A_DATA) = 0;
     asm("nop");
     asm("nop");
@@ -43,7 +43,8 @@ static u16 read_gamepad(void) {
     BYTE(GAMEPAD_A_DATA) = BIT(6);
     asm("nop");
     asm("nop");
-    button_state = ~(button_state | BYTE(GAMEPAD_A_DATA));
+    button_state = button_state | BYTE(GAMEPAD_A_DATA);
+    return ~button_state;
 }
 
 static void soldier_sprite_update(void) {
@@ -290,10 +291,9 @@ static void move_backward(void) {
 }
 
 void soldier_march(void) {
+    u16 button_state = read_gamepad();
+    static u16 last_state;
     u16 prev = soldier.x;
-    u16 last = button_state;
-
-    read_gamepad();
 
     u16 aim_up = 0;
     if (BUTTON_RIGHT(button_state)) {
@@ -314,13 +314,14 @@ void soldier_march(void) {
 	cooldown = 8;
     }
 
-    u16 jump = BUTTON_C(button_state) && BUTTON_C(last) == 0;
+    u16 jump = BUTTON_C(button_state) && BUTTON_C(last_state) == 0;
     soldier_jump(jump, BUTTON_DOWN(button_state));
     soldier_animate(prev, aim_up);
     soldier_sprite_update();
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
+    last_state = button_state;
 }
 
 static void put_soldier(u16 x, u16 y) {
