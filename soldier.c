@@ -6,10 +6,10 @@
 #include "images/walk.h"
 
 #define SOLDIER_TOP	512
-#define SOLDIER_LEG	534
+#define SOLDIER_LEG	(SOLDIER_TOP + ((3 + 1 + 3) * 3))
 
-#define FLAME		642
-#define FLAME_UP	706
+#define FLAME		(SOLDIER_LEG + (18 * 3 * 2))
+#define FLAME_UP	(FLAME + (32 * 2 * 1))
 
 #define ON_SCREEN	128
 
