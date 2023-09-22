@@ -23,7 +23,7 @@
 extern u16 window;
 static Object soldier;
 
-static Sprite sprite[80];
+Sprite sprite[80];
 
 #define BUTTON_A(x) ((x) & BIT(12))
 #define BUTTON_B(x) ((x) & BIT(4))
@@ -225,7 +225,8 @@ static void advance_flame(u16 index) {
 
 static void manage_flames(void) {
     u16 index = tail;
-    byte previous = 0;
+    extern byte first_mob_sprite;
+    byte previous = first_mob_sprite;
     while (flame[index].x > 0) {
 	f_obj[index].life++;
 	if (flame_expired(index)) {
@@ -241,7 +242,8 @@ static void manage_flames(void) {
 	index = next_flame(index);
 	if (index == head) break;
     }
-    sprite[FLAME_OFFSET - 1].next = previous;
+    /* link last soldier sprite to first flame */
+    sprite[SOLDIER_BASE + 2].next = previous;
     if (cooldown > 0) {
 	cooldown--;
     }
@@ -318,6 +320,7 @@ void soldier_march(void) {
     soldier_jump(jump, BUTTON_DOWN(button_state));
     soldier_animate(prev, aim_up);
     soldier_sprite_update();
+    manage_mobs();
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);

@@ -116,4 +116,6 @@ void level_scroll(void);
 u16 is_rightmost(void);
 u16 is_leftmost(void);
 
+void manage_mobs(void);
+
 extern u16 counter;
