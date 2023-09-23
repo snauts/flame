@@ -2,7 +2,7 @@
 
 #define MAX_BUDGET	16
 #define MAX_MOBS	8
-#define MOB_OFFSET	12 /* soldier sprites (4) + flame sprites (8) */
+#define MOB_OFFSET	16
 
 byte first_mob_sprite;
 static Mob m_obj[MAX_MOBS];
@@ -53,7 +53,7 @@ void reset_mobs(void) {
     mob_head = -1;
     budget = MAX_BUDGET;
     available = MAX_MOBS;
-    first_mob_sprite = 0;
+    first_mob_sprite = 4; /* soldier */
     sprite = get_sprite(MOB_OFFSET);
     for (char i = 0; i < MAX_MOBS; i++) {
 	m_obj[i].sprite = sprite + i;

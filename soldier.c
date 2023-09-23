@@ -17,8 +17,8 @@
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
 #define SOLDIER_AHEAD	34
 
-#define FLAME_OFFSET	4
-#define SOLDIER_BASE	1
+#define FLAME_OFFSET	8
+#define SOLDIER_BASE	5
 
 static Object soldier;
 static char is_dead;
@@ -247,7 +247,7 @@ static void manage_flames(void) {
 	if (index == head) break;
     }
     /* link last soldier sprite to first flame */
-    base[2].next = previous;
+    sprite[0].next = previous;
     if (cooldown > 0) {
 	cooldown--;
     }
@@ -380,7 +380,7 @@ static void put_soldier(u16 x, u16 y) {
 
     base[2].cfg = TILE(2, SOLDIER_TOP + 9);
     base[2].size = SPRITE_SIZE(1, 1);
-    base[2].next = SOLDIER_BASE - 1;
+    base[2].next = 0;
 
     soldier_sprite_update();
 }
