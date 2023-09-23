@@ -53,7 +53,7 @@ typedef struct Object {
     char gravity;
     char velocity;
     u16 frame;
-    byte life;
+    u16 life;
 } Object;
 
 #define BYTE(x) (* (volatile byte *) (x))
@@ -105,6 +105,7 @@ void set_seed(u16);
 void soldier_march(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
+Sprite *get_sprite(u16 offset);
 
 u16 platform_bottom(void);
 void prepare_desert_level(void);
@@ -117,5 +118,6 @@ u16 is_rightmost(void);
 u16 is_leftmost(void);
 
 void manage_mobs(void);
+void reset_mobs(void);
 
 extern u16 counter;

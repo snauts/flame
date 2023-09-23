@@ -91,6 +91,7 @@ void display_canyon(void) {
 
     load_soldier_tiles();
     reset_window();
+    reset_mobs();
 
     /* background */
     fill_VRAM(0x000,  1, 0x300);

@@ -360,7 +360,11 @@ void load_soldier_tiles(void) {
     update_tiles(flame_up_tiles, FLAME_UP, ARRAY_SIZE(flame_up_tiles));
 }
 
+Sprite *get_sprite(u16 offset) {
+    return sprite + offset;
+}
+
 void setup_soldier_sprites(void) {
-    flame = sprite + FLAME_OFFSET;
+    flame = get_sprite(FLAME_OFFSET);
     put_soldier(0, platform_bottom());
 }
