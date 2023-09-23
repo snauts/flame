@@ -3,6 +3,7 @@
 #define MAX_BUDGET	16
 #define MAX_MOBS	8
 #define MOB_OFFSET	16
+#define NEXT_GROUP	4
 
 byte first_mob_sprite;
 static Mob m_obj[MAX_MOBS];
@@ -37,15 +38,20 @@ Mob *alloc_mob(byte cost, void *fn) {
 }
 
 void free_mob(char i) {
+    char next;
     free[available++] = i;
     sprite[i].x = sprite[i].y = 0;
     budget += m_obj[i].price;
+    next = sprite[i].next - MOB_OFFSET;
     if (m_obj[i].previous < 0) {
 	first_mob_sprite = sprite[i].next;
-	mob_head = sprite[i].next - MOB_OFFSET;
+	mob_head = next;
     }
     else {
 	sprite[m_obj[i].previous].next = sprite[i].next;
+    }
+    if (next >= 0) {
+	m_obj[next].previous = m_obj[i].previous;
     }
 }
 
@@ -53,7 +59,7 @@ void reset_mobs(void) {
     mob_head = -1;
     budget = MAX_BUDGET;
     available = MAX_MOBS;
-    first_mob_sprite = 4; /* soldier */
+    first_mob_sprite = NEXT_GROUP;
     sprite = get_sprite(MOB_OFFSET);
     for (char i = 0; i < MAX_MOBS; i++) {
 	m_obj[i].sprite = sprite + i;
