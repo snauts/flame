@@ -328,6 +328,12 @@ static void soldier_march(void) {
     last_state = button_state;
 }
 
+static void hide_all_sprites(void) {
+    for (u16 i = 0; i < ARRAY_SIZE(sprite); i++) {
+	sprite[i].x = 0;
+    }
+}
+
 static void soldier_die(void) {
     static char ticks;
     if (ticks++ == 10) {
@@ -335,8 +341,13 @@ static void soldier_die(void) {
 	soldier.y++;
 	ticks = 0;
     }
-    if (sprite[1].y >= 224 + ON_SCREEN) {
+    short diff = 224 + ON_SCREEN - sprite[1].y;
+    if (diff < 0) {
+	hide_all_sprites();
 	switch_frame(&display_canyon);
+    }
+    else if (diff <= 7) {
+	upload_palette(7 - diff);
     }
     soldier_sprite_update();
 }
