@@ -113,10 +113,12 @@ void psg_noise(byte type, byte vol);
 u16 random(void);
 void set_seed(u16);
 
-void soldier_march(void);
+void advance_sprites(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
 Sprite *get_sprite(u16 offset);
+
+void display_canyon(void);
 
 u16 platform_bottom(void);
 void prepare_desert_level(void);

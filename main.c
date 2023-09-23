@@ -230,7 +230,6 @@ void memset(void *ptr, byte c, int amount) {
 
 u16 counter;
 static void init_variables(void) {
-    void display_canyon(void);
     extern byte bss_start, bss_end;
     memset(&bss_start, 0, (u32) (&bss_end - &bss_start));
     game_frame = &display_canyon;

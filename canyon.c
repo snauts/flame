@@ -74,8 +74,7 @@ static void draw_sand(void) {
 }
 
 static void update_canyon(void) {
-    manage_mobs();
-    soldier_march();
+    advance_sprites();
     level_scroll();
 }
 

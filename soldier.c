@@ -22,6 +22,7 @@
 
 extern u16 window;
 static Object soldier;
+static char is_dead;
 
 Sprite sprite[80];
 
@@ -60,7 +61,10 @@ static void soldier_sprite_update(void) {
     sprite[3].x = sprite[1].x + 24;
     sprite[3].y = sprite[1].y + 21;
 
-    if (sprite[1].y >= 240 + ON_SCREEN) soldier.y = 0;
+    if (!is_dead && sprite[1].y >= 200 + ON_SCREEN) {
+	sprite[SOLDIER_BASE].cfg = TILE(2, SOLDIER_TOP + 21);
+	is_dead = 1;
+    }
 }
 
 static u16 on_ground(void) {
@@ -292,7 +296,7 @@ static void move_backward(void) {
     }
 }
 
-void soldier_march(void) {
+static void soldier_march(void) {
     u16 button_state = read_gamepad();
     static u16 last_state;
     u16 prev = soldier.x;
@@ -320,11 +324,31 @@ void soldier_march(void) {
     soldier_jump(jump, BUTTON_DOWN(button_state));
     soldier_animate(prev, aim_up);
     soldier_sprite_update();
+
+    last_state = button_state;
+}
+
+static void soldier_die(void) {
+    static char ticks;
+    if (ticks++ == 10) {
+	sprite[SOLDIER_BASE].cfg ^= BIT(11);
+	soldier.y++;
+	ticks = 0;
+    }
+    if (sprite[1].y >= 224 + ON_SCREEN) {
+	switch_frame(&display_canyon);
+    }
+    soldier_sprite_update();
+}
+
+void advance_sprites(void) {
+    is_dead ? soldier_die() : soldier_march();
+
+    /* manage mobs first because manage_flames uses first_mob_sprite */
     manage_mobs();
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
-    last_state = button_state;
 }
 
 static void put_soldier(u16 x, u16 y) {
@@ -367,4 +391,5 @@ Sprite *get_sprite(u16 offset) {
 void setup_soldier_sprites(void) {
     flame = get_sprite(FLAME_OFFSET);
     put_soldier(0, platform_bottom());
+    is_dead = 0;
 }
