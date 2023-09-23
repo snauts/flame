@@ -21,9 +21,9 @@ char alloc_mob(byte cost) {
 	for (char i = 0; i < MAX_MOBS; i++) {
 	    if (mob[i].x == 0) {
 		if (mob_head >= 0) {
-		    mob[i].next = first_mob_sprite;
 		    m_obj[mob_head].previous = i;
 		}
+		mob[i].next = first_mob_sprite;
 		first_mob_sprite = i + MOB_OFFSET;
 		m_obj[i].previous = -1;
 		m_obj[i].price = cost;
