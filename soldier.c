@@ -15,7 +15,7 @@
 
 #define SOLDIER_MIN_X	(ON_SCREEN + 16)
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
-#define SOLDIER_AHEAD	34
+#define SOLDIER_AHEAD	28
 
 #define FLAME_OFFSET	8
 #define SOLDIER_BASE	5
