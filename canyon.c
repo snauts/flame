@@ -83,11 +83,6 @@ void display_canyon(void) {
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
-    update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
-    update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
-    update_tiles(cliffs_tiles, 161, ARRAY_SIZE(cliffs_tiles));
-    update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
-
     load_soldier_tiles();
     reset_window();
     reset_mobs();
@@ -101,19 +96,27 @@ void display_canyon(void) {
     draw_horizon();
     draw_vegetation();
 
+    upload_palette(4);
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
+    update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
+    update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
+    update_tiles(cliffs_tiles, 161, ARRAY_SIZE(cliffs_tiles));
+
     clear_DMA_buffer(0, 0x1000);
 
     prepare_desert_level();
 
+    upload_palette(2);
     fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites();
     void music_johnny(void);
     music_johnny();
+
+    update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
 
     upload_palette(0);
     switch_frame(&update_canyon);
