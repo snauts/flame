@@ -137,4 +137,5 @@ void manage_mobs(void);
 void reset_mobs(void);
 void free_mob(char i);
 
+extern u16 window;
 extern u16 counter;

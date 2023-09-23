@@ -20,11 +20,11 @@
 #define FLAME_OFFSET	4
 #define SOLDIER_BASE	1
 
-extern u16 window;
 static Object soldier;
 static char is_dead;
 
-Sprite sprite[80];
+static Sprite sprite[80];
+static Sprite *base;
 
 #define BUTTON_A(x) ((x) & BIT(12))
 #define BUTTON_B(x) ((x) & BIT(4))
@@ -49,20 +49,20 @@ static u16 read_gamepad(void) {
 }
 
 static void soldier_sprite_update(void) {
-    sprite[1].x = soldier.x - window + SOLDIER_MIN_X;
-    sprite[1].y = soldier.y + ON_SCREEN - 40;
+    base->x = soldier.x - window + SOLDIER_MIN_X;
+    base->y = soldier.y + ON_SCREEN - 40;
 
-    sprite[0].x = sprite[1].x + 8;
-    sprite[0].y = sprite[1].y + 8;
+    base[-1].x = base->x + 8;
+    base[-1].y = base->y + 8;
 
-    sprite[2].x = sprite[1].x;
-    sprite[2].y = sprite[1].y + 24;
+    base[1].x = base->x;
+    base[1].y = base->y + 24;
 
-    sprite[3].x = sprite[1].x + 24;
-    sprite[3].y = sprite[1].y + 21;
+    base[2].x = base->x + 24;
+    base[2].y = base->y + 21;
 
-    if (!is_dead && sprite[1].y >= 200 + ON_SCREEN) {
-	sprite[SOLDIER_BASE].cfg = TILE(2, SOLDIER_TOP + 21);
+    if (!is_dead && base->y >= 200 + ON_SCREEN) {
+	base->cfg = TILE(2, SOLDIER_TOP + 21);
 	is_dead = 1;
     }
 }
@@ -137,12 +137,12 @@ static short animate_walking(short cycle, u16 prev) {
 
 static void select_torso(u16 aim_up) {
     if (aim_up) {
-	sprite[SOLDIER_BASE + 0].cfg = TILE(2, SOLDIER_TOP + 12);
-	sprite[SOLDIER_BASE + 2].cfg = TILE(2, 0);
+	base[0].cfg = TILE(2, SOLDIER_TOP + 12);
+	base[2].cfg = TILE(2, 0);
     }
     else {
-	sprite[SOLDIER_BASE + 0].cfg = TILE(2, SOLDIER_TOP);
-	sprite[SOLDIER_BASE + 2].cfg = TILE(2, SOLDIER_TOP + 9);
+	base[0].cfg = TILE(2, SOLDIER_TOP);
+	base[2].cfg = TILE(2, SOLDIER_TOP + 9);
     }
 }
 
@@ -159,7 +159,7 @@ static void soldier_animate(u16 prev, u16 aim_up) {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 14 : 15;
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
-    sprite[SOLDIER_BASE + 1].cfg = TILE(2, soldier_frame);
+    base[1].cfg = TILE(2, soldier_frame);
 }
 
 static Sprite *flame;
@@ -195,7 +195,7 @@ static void emit_flame(u16 index, u16 aim_up) {
 	f_obj[index].frame = FLAME_UP;
     }
 
-    u16 flame_y = sprite[SOLDIER_BASE].y + offset_y;
+    u16 flame_y = base->y + offset_y;
     f_obj[index].x = offset_x << 4;
     f_obj[index].y = flame_y << 4;
     f_obj[index].gravity = 4;
@@ -247,7 +247,7 @@ static void manage_flames(void) {
 	if (index == head) break;
     }
     /* link last soldier sprite to first flame */
-    sprite[SOLDIER_BASE + 2].next = previous;
+    base[2].next = previous;
     if (cooldown > 0) {
 	cooldown--;
     }
@@ -267,7 +267,7 @@ static void soldier_yelling(byte state) {
     static byte face;
     if (face != state) {
 	psg_noise(7, state ? 0x0 : 0xf);
-	sprite[0].cfg = TILE(2, state ? SOLDIER_TOP + 10 : 0);
+	base[-1].cfg = TILE(2, state ? SOLDIER_TOP + 10 : 0);
 	soldier_flicker(0);
 	face = state;
     }
@@ -277,21 +277,21 @@ static void soldier_yelling(byte state) {
 }
 
 static void move_forward(void) {
-    if (sprite[SOLDIER_BASE].x >= SOLDIER_MAX_X && !is_rightmost()) {
+    if (base->x >= SOLDIER_MAX_X && !is_rightmost()) {
 	update_window(1);
 	soldier.x++;
     }
-    else if (sprite[SOLDIER_BASE].x < SOLDIER_MAX_X) {
+    else if (base->x < SOLDIER_MAX_X) {
 	soldier.x++;
     }
 }
 
 static void move_backward(void) {
-    if (sprite[SOLDIER_BASE].x <= SOLDIER_MIN_X && !is_leftmost()) {
+    if (base->x <= SOLDIER_MIN_X && !is_leftmost()) {
 	update_window(-1);
 	soldier.x--;
     }
-    else if (sprite[SOLDIER_BASE].x > SOLDIER_MIN_X) {
+    else if (base->x > SOLDIER_MIN_X) {
 	soldier.x--;
     }
 }
@@ -337,11 +337,11 @@ static void hide_all_sprites(void) {
 static void soldier_die(void) {
     static char ticks;
     if (ticks++ == 10) {
-	sprite[SOLDIER_BASE].cfg ^= BIT(11);
+	base->cfg ^= BIT(11);
 	soldier.y++;
 	ticks = 0;
     }
-    short diff = 224 + ON_SCREEN - sprite[1].y;
+    short diff = 224 + ON_SCREEN - base->y;
     if (diff < 0) {
 	hide_all_sprites();
 	switch_frame(&display_canyon);
@@ -366,21 +366,21 @@ static void put_soldier(u16 x, u16 y) {
     soldier.x = window + x;
     soldier.y = y;
 
-    sprite[0].cfg = TILE(2, 0);
-    sprite[0].size = SPRITE_SIZE(1, 1);
-    sprite[0].next = 1;
+    base[-1].cfg = TILE(2, 0);
+    base[-1].size = SPRITE_SIZE(1, 1);
+    base[-1].next = SOLDIER_BASE;
 
-    sprite[1].cfg = TILE(2, SOLDIER_TOP);
-    sprite[1].size = SPRITE_SIZE(3, 3);
-    sprite[1].next = 2;
+    base[0].cfg = TILE(2, SOLDIER_TOP);
+    base[0].size = SPRITE_SIZE(3, 3);
+    base[0].next = SOLDIER_BASE + 1;
 
-    sprite[2].cfg = TILE(2, SOLDIER_LEG);
-    sprite[2].size = SPRITE_SIZE(3, 2);
-    sprite[2].next = 3;
+    base[1].cfg = TILE(2, SOLDIER_LEG);
+    base[1].size = SPRITE_SIZE(3, 2);
+    base[1].next = SOLDIER_BASE + 2;
 
-    sprite[3].cfg = TILE(2, SOLDIER_TOP + 9);
-    sprite[3].size = SPRITE_SIZE(1, 1);
-    sprite[3].next = 0;
+    base[2].cfg = TILE(2, SOLDIER_TOP + 9);
+    base[2].size = SPRITE_SIZE(1, 1);
+    base[2].next = SOLDIER_BASE - 1;
 
     soldier_sprite_update();
 }
@@ -400,6 +400,7 @@ Sprite *get_sprite(u16 offset) {
 }
 
 void setup_soldier_sprites(void) {
+    base = get_sprite(SOLDIER_BASE);
     flame = get_sprite(FLAME_OFFSET);
     put_soldier(0, platform_bottom());
     is_dead = 0;
