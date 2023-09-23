@@ -12,6 +12,8 @@ typedef struct Mob {
 
 byte first_mob_sprite;
 Mob m_obj[MAX_MOBS];
+char free[MAX_MOBS];
+char available;
 char mob_head;
 Sprite *mob;
 byte budget;
@@ -30,18 +32,16 @@ static void init_mob(char i, byte cost) {
 }
 
 static char alloc_mob(byte cost) {
-    if (budget >= cost) {
-	for (char i = 0; i < MAX_MOBS; i++) {
-	    if (mob[i].x == 0) {
-		init_mob(i, cost);
-		return i;
-	    }
-	}
+    char i = -1;
+    if (budget >= cost && available > 0) {
+	i = free[--available];
+	init_mob(i, cost);
     }
-    return -1;
+    return i;
 }
 
 static void free_mob(char i) {
+    free[available++] = i;
     mob[i].x = mob[i].y = 0;
     budget += m_obj[i].price;
     if (m_obj[i].previous < 0) {
@@ -56,10 +56,12 @@ static void free_mob(char i) {
 void reset_mobs(void) {
     mob_head = -1;
     budget = MAX_BUDGET;
+    available = MAX_MOBS;
     first_mob_sprite = 0;
     mob = get_sprite(MOB_OFFSET);
-    for (u16 i = 0; i < MAX_MOBS; i++) {
+    for (char i = 0; i < MAX_MOBS; i++) {
 	mob[i].x = 0;
+	free[i] = i;
     }
 }
 
