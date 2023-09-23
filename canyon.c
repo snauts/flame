@@ -115,5 +115,6 @@ void display_canyon(void) {
     void music_johnny(void);
     music_johnny();
 
+    upload_palette(0);
     switch_frame(&update_canyon);
 }

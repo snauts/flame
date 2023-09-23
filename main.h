@@ -8,6 +8,7 @@
 #define VDP_CRAM_WRITE	0xC0000000
 #define VDP_SRAM_WRITE	0x40000010
 #define VDP_VRAM_DMA	0x40000080
+#define VDP_CRAM_DMA	0xC0000080
 
 #define VRAM_TILES	0x0000
 #define VRAM_PLANE_A	0xC000
@@ -98,6 +99,7 @@ void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
 void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
+void upload_palette(char dim);
 void wait_for_interrupt(void);
 void wait_vblank_done(void);
 void *buffer_ptr(u16 addr);

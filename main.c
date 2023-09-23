@@ -95,11 +95,19 @@ void wait_vblank_done(void) {
     } while (!vblank_done);
 }
 
+static u16 palette[64];
+static u16 color_base[64];
+
 void update_palette(const u16 *buf, u16 offset, u16 count) {
     u16 i;
     for (i = 0; i < count; i++) {
-	UPDATE_CRAM_WORD(2 * (offset + i), buf[i]);
+	color_base[offset + i] = buf[i];
     }
+}
+
+void upload_palette(char dim) {
+    memcpy(palette, color_base, 128);
+    copy_to_VRAM_ptr(0, 128, palette);
 }
 
 typedef struct DMA_Chunk {
@@ -139,7 +147,8 @@ static void copy_using_DMA(void) {
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x15, (dma_src >>  1) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x16, (dma_src >>  9) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x17, (dma_src >> 17) & 0x7F);
-	LONG(VDP_CTRL) = VDP_CTRL_VALUE(VDP_VRAM_DMA, chunk[i].dst);
+	u32 addr = (chunk[i].ptr == palette) ? VDP_CRAM_DMA : VDP_VRAM_DMA;
+	LONG(VDP_CTRL) = VDP_CTRL_VALUE(addr, chunk[i].dst);
 	while (is_DMA());
     }
 
