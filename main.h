@@ -56,6 +56,13 @@ typedef struct Object {
     u16 life;
 } Object;
 
+typedef struct Mob {
+    Object obj;
+    byte price;
+    char previous;
+    void (*fn)(char, void*, Sprite*);
+} Mob;
+
 #define BYTE(x) (* (volatile byte *) (x))
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
@@ -117,7 +124,9 @@ void level_scroll(void);
 u16 is_rightmost(void);
 u16 is_leftmost(void);
 
+char alloc_mob(byte cost, void *fn);
 void manage_mobs(void);
 void reset_mobs(void);
+void free_mob(char i);
 
 extern u16 counter;

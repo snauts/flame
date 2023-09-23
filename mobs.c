@@ -1,11 +1,5 @@
 #include "main.h"
 
-typedef struct Mob {
-    Object obj;
-    byte price;
-    char previous;
-} Mob;
-
 #define MAX_BUDGET	16
 #define MAX_MOBS	8
 #define MOB_OFFSET	12 /* soldier sprites (4) + flame sprites (8) */
@@ -18,7 +12,7 @@ char mob_head;
 Sprite *mob;
 byte budget;
 
-static void init_mob(char i, byte cost) {
+static void init_mob(char i, byte cost, void *fn) {
     if (mob_head >= 0) {
 	m_obj[mob_head].previous = i;
     }
@@ -26,21 +20,22 @@ static void init_mob(char i, byte cost) {
     first_mob_sprite = i + MOB_OFFSET;
     m_obj[i].previous = -1;
     m_obj[i].price = cost;
+    m_obj[i].fn = fn;
     budget -= cost;
     mob_head = i;
     mob[i].x = 1;
 }
 
-static char alloc_mob(byte cost) {
+char alloc_mob(byte cost, void *fn) {
     char i = -1;
     if (budget >= cost && available > 0) {
 	i = free[--available];
-	init_mob(i, cost);
+	init_mob(i, cost, fn);
     }
     return i;
 }
 
-static void free_mob(char i) {
+void free_mob(char i) {
     free[available++] = i;
     mob[i].x = mob[i].y = 0;
     budget += m_obj[i].price;
@@ -66,4 +61,7 @@ void reset_mobs(void) {
 }
 
 void manage_mobs(void) {
+    for (char i = 0; i < MAX_MOBS; i++) {
+	if (mob[i].x > 0) m_obj[i].fn(i, m_obj + i, mob + i);
+    }
 }
