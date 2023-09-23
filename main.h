@@ -59,8 +59,10 @@ typedef struct Object {
 typedef struct Mob {
     Object obj;
     byte price;
+    char index;
     char previous;
-    void (*fn)(char, void*, Sprite*);
+    Sprite *sprite;
+    void (*fn)(void *);
 } Mob;
 
 #define BYTE(x) (* (volatile byte *) (x))

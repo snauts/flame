@@ -55,6 +55,8 @@ void reset_mobs(void) {
     first_mob_sprite = 0;
     mob = get_sprite(MOB_OFFSET);
     for (char i = 0; i < MAX_MOBS; i++) {
+	m_obj[i].sprite = mob + i;
+	m_obj[i].index = i;
 	mob[i].x = 0;
 	free[i] = i;
     }
@@ -62,6 +64,6 @@ void reset_mobs(void) {
 
 void manage_mobs(void) {
     for (char i = 0; i < MAX_MOBS; i++) {
-	if (mob[i].x > 0) m_obj[i].fn(i, m_obj + i, mob + i);
+	if (mob[i].x > 0) m_obj[i].fn(m_obj + i);
     }
 }
