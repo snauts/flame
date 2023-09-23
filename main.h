@@ -65,6 +65,8 @@ typedef struct Mob {
     void (*fn)(void *);
 } Mob;
 
+#define NULL ((void *) 0)
+
 #define BYTE(x) (* (volatile byte *) (x))
 #define WORD(x) (* (volatile u16 *) (x))
 #define LONG(x) (* (volatile u32 *) (x))
@@ -126,7 +128,7 @@ void level_scroll(void);
 u16 is_rightmost(void);
 u16 is_leftmost(void);
 
-char alloc_mob(byte cost, void *fn);
+Mob *alloc_mob(byte cost, void *fn);
 void manage_mobs(void);
 void reset_mobs(void);
 void free_mob(char i);
