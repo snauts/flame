@@ -11,8 +11,6 @@
 #define FLAME		(SOLDIER_LEG + (18 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
 
-#define ON_SCREEN	128
-
 #define SOLDIER_MIN_X	(ON_SCREEN + 16)
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
 #define SOLDIER_AHEAD	28

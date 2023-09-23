@@ -73,7 +73,37 @@ static void draw_sand(void) {
     }
 }
 
+static void hopper(Mob *mob) {
+    u16 frame = 4 * (3 + ((mob->obj.life >> 2) % 6));
+    mob->sprite->cfg = TILE(2, 289 + frame);
+    mob->obj.life++;
+
+    mob->obj.x--;
+    mob->sprite->x = mob->obj.x - window + ON_SCREEN;
+    mob->sprite->y = mob->obj.y + ON_SCREEN;
+    if (mob->sprite->x < 112) {
+       free_mob(mob->index);
+    }
+}
+
+static void setup_hopper(Mob *mob) {
+    mob->sprite->size = SPRITE_SIZE(2, 2);
+    mob->obj.x = window + 320;
+    mob->obj.y = 192;
+    mob->obj.life = 0;
+}
+
+static void emit_mobs(void) {
+    static u16 wait;
+    if (wait++ > 48) {
+	Mob *mob = alloc_mob(2, hopper);
+	if (mob) setup_hopper(mob);
+	wait = 0;
+    }
+}
+
 static void update_canyon(void) {
+    emit_mobs();
     advance_sprites();
     level_scroll();
 }
