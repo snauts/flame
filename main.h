@@ -119,7 +119,7 @@ void set_seed(u16);
 void advance_sprites(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
-void advance_obj(Object *obj, u16 offset);
+u16 advance_obj(Object *obj, u16 offset);
 Sprite *get_sprite(u16 offset);
 
 void display_canyon(void);

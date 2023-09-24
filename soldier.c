@@ -94,7 +94,7 @@ static void advance_y(Object *obj, char gravity) {
     obj->gravity--;
 }
 
-void advance_obj(Object *obj, u16 offset) {
+u16 advance_obj(Object *obj, u16 offset) {
     const u16 gravity = 6;
     u16 snap, prev = obj->y;
     advance_y(obj, gravity);
@@ -104,6 +104,7 @@ void advance_obj(Object *obj, u16 offset) {
 	obj->gravity = 0;
 	obj->velocity = 0;
     }
+    return snap;
 }
 
 static void soldier_jump(u16 start, u16 down) {

@@ -81,12 +81,17 @@ static u16 is_hopper_off_screen(Sprite *sprite) {
 static void hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
-    u16 frame = 4 * (3 + ((obj->life >> 2) % 6));
-    sprite->cfg = TILE(2, 289 + frame);
-    obj->life++;
+    u16 frame;
 
     obj->x--;
-    advance_obj(obj, 4);
+    obj->life++;
+    if (advance_obj(obj, 4) == 0) {
+	frame = 1 + ((obj->life >> 1) & 1);
+    }
+    else {
+	frame = 3 + ((obj->life >> 2) % 6);
+    }
+    sprite->cfg = TILE(2, 289 + 4 * frame);
 
     sprite->x = obj->x - window + ON_SCREEN;
     sprite->y = obj->y + ON_SCREEN - 16;
