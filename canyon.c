@@ -105,9 +105,9 @@ static void setup_hopper(Mob *mob) {
 
     obj->life = 0;
     obj->gravity = 0;
-    obj->velocity = 0;
+    obj->velocity = 2;
     obj->x = window + 320;
-    obj->y = 96;
+    obj->y = 32;
 
     mob->sprite->size = SPRITE_SIZE(2, 2);
 }
