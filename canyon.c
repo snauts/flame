@@ -78,17 +78,6 @@ static u16 is_hopper_off_screen(Sprite *sprite) {
 	|| sprite->y > ON_SCREEN + 224;
 }
 
-static void advance_obj(Object *obj) {
-    u16 snap, prev = obj->y;
-    advance_y(obj, 6);
-    snap = get_snap(obj->x, prev, obj->y);
-    if (snap != 0) {
-	obj->y = snap;
-	obj->gravity = 0;
-	obj->velocity = 0;
-    }
-}
-
 static void hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
@@ -97,9 +86,9 @@ static void hopper(Mob *mob) {
     obj->life++;
 
     obj->x--;
-    advance_obj(obj);
+    advance_obj(obj, 4);
 
-    sprite->x = obj->x - window + ON_SCREEN - 4;
+    sprite->x = obj->x - window + ON_SCREEN;
     sprite->y = obj->y + ON_SCREEN - 16;
     if (is_hopper_off_screen(sprite)) {
        free_mob(mob->index);
@@ -113,7 +102,7 @@ static void setup_hopper(Mob *mob) {
     obj->gravity = 0;
     obj->velocity = 0;
     obj->x = window + 320;
-    obj->y = 128;
+    obj->y = 96;
 
     mob->sprite->size = SPRITE_SIZE(2, 2);
 }

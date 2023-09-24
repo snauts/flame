@@ -69,7 +69,7 @@ static u16 on_ground(void) {
     static u16 when;
     static u16 what;
     if (counter != when) {
-	what = get_snap_soldier(soldier.y, soldier.y);
+	what = get_snap(soldier.x + SOLDIER_AHEAD, soldier.y, soldier.y);
 	when = counter;
     }
     return what;
@@ -85,7 +85,7 @@ static void initiate_jump(u16 down, char velocity) {
     }
 }
 
-void advance_y(Object *obj, char gravity) {
+static void advance_y(Object *obj, char gravity) {
     obj->y -= obj->velocity;
     if (obj->gravity == 0) {
 	obj->gravity = gravity;
@@ -94,11 +94,15 @@ void advance_y(Object *obj, char gravity) {
     obj->gravity--;
 }
 
-static void snap_jump(u16 snap) {
+void advance_obj(Object *obj, u16 offset) {
+    const u16 gravity = 6;
+    u16 snap, prev = obj->y;
+    advance_y(obj, gravity);
+    snap = get_snap(obj->x + offset, prev, obj->y);
     if (snap != 0) {
-	soldier.y = snap;
-	soldier.velocity = 0;
-	soldier.gravity = 0;
+	obj->y = snap;
+	obj->gravity = 0;
+	obj->velocity = 0;
     }
 }
 
@@ -106,9 +110,7 @@ static void soldier_jump(u16 start, u16 down) {
     if (start && on_ground()) {
 	initiate_jump(down, 4);
     }
-    u16 prev = soldier.y;
-    advance_y(&soldier, 6);
-    snap_jump(get_snap_soldier(prev, soldier.y));
+    advance_obj(&soldier, SOLDIER_AHEAD);
 }
 
 static short animate_walking(short cycle, u16 prev) {
@@ -309,7 +311,7 @@ static void soldier_march(void) {
     else if (BUTTON_UP(button_state) && on_ground()) {
 	aim_up = 1;
     }
-    update_height_map(soldier.x + SOLDIER_AHEAD);
+    update_height_map(soldier.x);
 
     u16 fire = BUTTON_B(button_state) && on_ground();
     soldier_yelling(fire);

@@ -119,7 +119,7 @@ void set_seed(u16);
 void advance_sprites(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
-void advance_y(Object *obj, char gravity);
+void advance_obj(Object *obj, u16 offset);
 Sprite *get_sprite(u16 offset);
 
 void display_canyon(void);
@@ -128,7 +128,6 @@ u16 platform_bottom(void);
 void prepare_desert_level(void);
 void update_height_map(u16 pos_x);
 void update_window(short direction);
-u16 get_snap_soldier(u16 prev, u16 next);
 u16 get_snap(u16 pos_x, u16 prev, u16 next);
 void reset_window(void);
 void level_scroll(void);
