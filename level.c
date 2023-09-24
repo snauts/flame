@@ -12,7 +12,6 @@ static const u16 *front;
 
 static u16 next_platform;
 static u16 prev_platform;
-static u16 platform_count;
 static const byte *height;
 
 static const u16 *advance(const u16 *ptr) {
@@ -61,22 +60,21 @@ u16 is_leftmost(void) {
     return (*back >> 8) == 0 && (window <= WINDOW_MIN);
 }
 
-static u16 get_height(byte offset) {
-    return height[offset];
+static u16 get_platform_count(const byte *map) {
+    return (map[0] & 0xf) - 1;
 }
 
 u16 platform_bottom(void) {
-    return platform_count > 0 ? get_height(1 + platform_count) : 0;
+    u16 platform_count = get_platform_count(height);
+    return platform_count > 0 ? height[1 + platform_count] : 0;
 }
 
 static void forward_platform(void) {
-    platform_count = (height[0] & 0xf) - 1;
     prev_platform = next_platform;
     next_platform += 8 * height[1];
 }
 
 static void backward_platform(void) {
-    platform_count = (height[0] & 0xf) - 1;
     next_platform = prev_platform;
     prev_platform -= 8 * height[1];
 }
@@ -135,12 +133,25 @@ void update_window(short direction) {
     }
 }
 
-u16 get_snap(u16 prev, u16 next) {
-    for (u16 i = 0; i < platform_count; i++) {
-	u16 snap = get_height(HEIGHT_DATA + i);
+static u16 get_snap_from_height(u16 prev, u16 next, const char *map) {
+    u16 count = get_platform_count(map);
+    for (u16 i = 0; i < count; i++) {
+	u16 snap = height[HEIGHT_DATA + i];
 	if (prev <= snap && snap <= next) {
 	    return snap;
 	}
     }
     return 0;
+}
+
+u16 get_snap_soldier(u16 prev, u16 next) {
+    return get_snap_from_height(prev, next, height);
+}
+
+const byte *find_height(u16 pos_x) {
+    return NULL;
+}
+
+u16 get_snap(u16 pos_x, u16 prev, u16 next) {
+    return get_snap_from_height(prev, next, find_height(pos_x));
 }
