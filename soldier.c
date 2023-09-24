@@ -69,7 +69,7 @@ static u16 on_ground(void) {
     static u16 when;
     static u16 what;
     if (counter != when) {
-	what = get_snap(soldier.y, soldier.y);
+	what = get_snap_soldier(soldier.y, soldier.y);
 	when = counter;
     }
     return what;
@@ -108,7 +108,7 @@ static void soldier_jump(u16 start, u16 down) {
     }
     u16 prev = soldier.y;
     advance_y(&soldier, 6);
-    snap_jump(get_snap(prev, soldier.y));
+    snap_jump(get_snap_soldier(prev, soldier.y));
 }
 
 static short animate_walking(short cycle, u16 prev) {
