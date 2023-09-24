@@ -67,6 +67,10 @@ typedef struct Mob {
     void (*fn)(void *);
 } Mob;
 
+typedef struct Rectangle {
+    u16 x1, y1, x2, y2;
+} Rectangle;
+
 #define NULL ((void *) 0)
 
 #define BYTE(x) (* (volatile byte *) (x))

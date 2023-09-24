@@ -227,6 +227,7 @@ static void advance_flame(u16 index) {
     }
 }
 
+static Rectangle f_rect;
 static void manage_flames(void) {
     u16 index = tail;
     extern byte first_mob_sprite;
