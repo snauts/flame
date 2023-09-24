@@ -94,8 +94,7 @@ static void advance_y(Object *obj, char gravity) {
     obj->gravity--;
 }
 
-u16 advance_obj(Object *obj, u16 offset) {
-    const u16 gravity = 6;
+u16 advance_obj(Object *obj, u16 offset, u16 gravity) {
     u16 snap, prev = obj->y;
     advance_y(obj, gravity);
     snap = get_snap(obj->x + offset, prev, obj->y);
@@ -111,7 +110,7 @@ static void soldier_jump(u16 start, u16 down) {
     if (start && on_ground()) {
 	initiate_jump(down, 4);
     }
-    advance_obj(&soldier, SOLDIER_AHEAD);
+    advance_obj(&soldier, SOLDIER_AHEAD, 6);
 }
 
 static short animate_walking(short cycle, u16 prev) {

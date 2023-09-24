@@ -85,7 +85,7 @@ static void hopper(Mob *mob) {
 
     obj->x--;
     obj->life++;
-    if (advance_obj(obj, 4) == 0) {
+    if (advance_obj(obj, 4, 12) == 0) {
 	frame = 1 + ((obj->life >> 1) & 1);
     }
     else {
