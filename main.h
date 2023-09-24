@@ -119,6 +119,7 @@ void set_seed(u16);
 void advance_sprites(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
+void advance_y(Object *obj, char gravity);
 Sprite *get_sprite(u16 offset);
 
 void display_canyon(void);
