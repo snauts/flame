@@ -149,7 +149,20 @@ u16 get_snap_soldier(u16 prev, u16 next) {
 }
 
 const byte *find_height(u16 pos_x) {
-    return NULL;
+    u16 next = next_platform;
+    u16 prev = prev_platform;
+    const byte *map = height;
+    while (pos_x < prev) {
+	map -= (*map >> 4) + 1;
+	next = prev;
+	prev -= 8 * map[1];
+    }
+    while (pos_x >= next) {
+	map += (*map & 0xf) + 1;
+	prev = next;
+	next += 8 * map[1];
+    }
+    return map;
 }
 
 u16 get_snap(u16 pos_x, u16 prev, u16 next) {
