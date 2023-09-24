@@ -133,10 +133,10 @@ void update_window(short direction) {
     }
 }
 
-static u16 get_snap_from_height(u16 prev, u16 next, const char *map) {
+static u16 get_snap_from_height(u16 prev, u16 next, const byte *map) {
     u16 count = get_platform_count(map);
     for (u16 i = 0; i < count; i++) {
-	u16 snap = height[HEIGHT_DATA + i];
+	u16 snap = map[HEIGHT_DATA + i];
 	if (prev <= snap && snap <= next) {
 	    return snap;
 	}
