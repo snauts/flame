@@ -89,15 +89,15 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
     }
 }
 
-static void z80_word(u16 addr, u16 data) {
+static void z80_word_raw(u16 addr, u16 data) {
     BYTE(Z80_RAM + addr + 1) = data >> 8;
     BYTE(Z80_RAM + addr + 0) = data & 0xff;
 }
 
 static void load_score(u16 offset, const byte *ptr, u16 size) {
     memcpy((void *) Z80_RAM + offset, ptr, size);
-    z80_word(0x14, offset);
-    z80_word(0x12, offset);
+    z80_word_raw(0x14, offset);
+    z80_word_raw(0x12, offset);
     BYTE(Z80_RAM + 0x11) = 1;
     BYTE(Z80_RAM + 0x10) = 0;
 }
@@ -112,8 +112,27 @@ static void setup_johnny_intruments(void) {
     load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 
+#define PSG_SFX_CH0	0x18
+#define PSG_SFX_CH1	0x1A
+#define PSG_SFX_CH2	0x1C
+
+#define SFX_PERISH	0xF00
+
+const u16 perish[] = {
+    0x0fe0, 0x000f
+};
+
+static void load_z80_sfx(void) {
+    memcpy((void *) Z80_RAM + SFX_PERISH, perish, sizeof(perish));
+}
+
+void perish_sfx(void) {
+    z80_word(PSG_SFX_CH0, SFX_PERISH);
+}
+
 void music_johnny(void) {
     do_z80_bus(&setup_johnny_intruments);
+    do_z80_bus(&load_z80_sfx);
 }
 
 void psg_noise(byte type, byte vol) {

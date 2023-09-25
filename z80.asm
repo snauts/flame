@@ -20,12 +20,12 @@ tick:
 	.byte	0
 last:
 	.byte	0
-silent:
-	.word	0x000f
 psg:
 	.word	silent
 	.word	silent
 	.word	silent
+silent:
+	.word	0x0f00
 
 	org	0x0038
 vblank:
@@ -135,7 +135,8 @@ psg_play:
 
 	ld	bc, (hl)
 	ld	ix, bc
-	ld	bc, (ix)
+	ld	b, (ix + 0)
+	ld	c, (ix + 1)
 
 	ld	a, c
 	and	a, 0xf

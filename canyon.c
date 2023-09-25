@@ -92,8 +92,10 @@ static u16 is_hopper_alive(Object *obj) {
 }
 
 static void hopper_die(Object *obj) {
+    void perish_sfx(void);
     obj->frame = 9;
     obj->life = 0;
+    perish_sfx();
 }
 
 static void hopper(Mob *mob) {

@@ -49,6 +49,13 @@ void do_z80_bus(void (*z80_bus_access)(void)) {
     z80_release_bus();
 }
 
+void z80_word(u16 addr, u16 data) {
+    z80_request_bus();
+    BYTE(Z80_RAM + addr + 1) = data >> 8;
+    BYTE(Z80_RAM + addr + 0) = data & 0xff;
+    z80_release_bus();
+}
+
 void z80_poke(u16 addr, byte data) {
     z80_request_bus();
     BYTE(Z80_RAM + addr) = data;

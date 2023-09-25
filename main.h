@@ -114,6 +114,7 @@ void reset_heap(void);
 void init_ym2612(void);
 void execute_nops(u32 nops);
 void do_z80_bus(void (*)(void));
+void z80_word(u16 addr, u16 data);
 void z80_poke(u16 addr, byte data);
 void psg_noise(byte type, byte vol);
 
