@@ -75,6 +75,38 @@ ym2612_write:
 	pop	af
 	ret
 
+psg_write:
+	;; a - channel, bc - frequency/volume
+	push	af
+	push	de
+	push	ix
+	ld	ix, 0x7f11
+
+	rrca
+	rrca
+	rrca
+	or	a, 0x80
+	ld	d, a
+	ld	a, c
+	srl	a
+	srl	a
+	srl	a
+	srl	a
+	or	a, d
+	ld	(ix), a
+	ld	(ix), b
+
+	ld	a, c
+	and	0x0f
+	or	a, d
+	or	a, 0x10
+	ld	(ix), a
+
+	pop	ix
+	pop	de
+	pop	af
+	ret
+
 key_off:
 	;; c - channel
 	push	af
@@ -117,8 +149,8 @@ write_frequency:
 	ld	b, a
 
 	ld	a, c
-	sra	a
-	sra	a
+	srl	a
+	srl	a
 
 	ld	c, d
 
@@ -182,7 +214,7 @@ fetch_note:
 
 	ld	a, e
 	and	0x70
-	sra	a
+	srl	a
 
 	ld	de, (hl)
 
