@@ -89,14 +89,15 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
     }
 }
 
+static void z80_word(u16 addr, u16 data) {
+    BYTE(Z80_RAM + addr + 1) = data >> 8;
+    BYTE(Z80_RAM + addr + 0) = data & 0xff;
+}
+
 static void load_score(u16 offset, const byte *ptr, u16 size) {
     memcpy((void *) Z80_RAM + offset, ptr, size);
-    byte hi = offset >> 8;
-    byte lo = offset & 0xff;
-    BYTE(Z80_RAM + 0x15) = hi;
-    BYTE(Z80_RAM + 0x14) = lo;
-    BYTE(Z80_RAM + 0x13) = hi;
-    BYTE(Z80_RAM + 0x12) = lo;
+    z80_word(0x14, offset);
+    z80_word(0x12, offset);
     BYTE(Z80_RAM + 0x11) = 1;
     BYTE(Z80_RAM + 0x10) = 0;
 }
