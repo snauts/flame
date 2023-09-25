@@ -78,7 +78,7 @@ static u16 is_hopper_off_screen(Sprite *sprite) {
 	|| sprite->y > ON_SCREEN + 224;
 }
 
-static u16 hopper_burn(Sprite *sprite) {
+static u16 is_hopper_in_flame(Sprite *sprite) {
     Rectangle r;
     r.x1 = sprite->x + 4;
     r.y1 = sprite->y + 4;
@@ -87,24 +87,44 @@ static u16 hopper_burn(Sprite *sprite) {
     return flame_collision(&r);
 }
 
+static u16 is_hopper_alive(Object *obj) {
+    return obj->frame < 9;
+}
+
+static void hopper_die(Object *obj) {
+    obj->frame = 9;
+    obj->life = 0;
+}
+
 static void hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
 
     obj->x--;
     obj->life++;
-    if (advance_obj(obj, 4, 12) == 0) {
-	obj->frame = 1 + ((obj->life >> 1) & 1);
-    }
-    else {
-	obj->frame = 3 + ((obj->life >> 2) % 6);
-    }
-    sprite->cfg = TILE(2, 289 + 4 * obj->frame);
+    u16 land = advance_obj(obj, 4, 12);
 
     sprite->x = obj->x - window + ON_SCREEN;
     sprite->y = obj->y + ON_SCREEN - 16;
 
-    if (is_hopper_off_screen(sprite) || hopper_burn(sprite)) {
+    if (!is_hopper_alive(obj)) {
+	obj->frame = 9 + (obj->life >> 2);
+    }
+    else {
+	if (is_hopper_in_flame(sprite)) {
+	    hopper_die(obj);
+	}
+	else if (land) {
+	    obj->frame = 3 + ((obj->life >> 2) % 6);
+	}
+	else {
+	    obj->frame = 1 + ((obj->life >> 1) & 1);
+	}
+    }
+
+    sprite->cfg = TILE(2, 289 + 4 * obj->frame);
+
+    if (is_hopper_off_screen(sprite) || obj->frame == 17) {
 	free_mob(mob->index);
     }
 }
@@ -113,6 +133,7 @@ static void setup_hopper(Mob *mob) {
     Object *obj = &mob->obj;
 
     obj->life = 0;
+    obj->frame = 0;
     obj->gravity = 0;
     obj->velocity = 2;
     obj->x = window + 320;
