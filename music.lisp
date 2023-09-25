@@ -284,7 +284,7 @@
 (defun generate-preish-sfx ()
   (let ((result nil))
     (loop for i from 15 downto 1 do
-      (let ((frequency (* (1+ (mod i 3)) (- 2000 (* i 100)))))
+      (let ((frequency (* (1+ (mod i 3)) (- 200 (* i 5)))))
 	(push (psg-value frequency i) result)))
     (reverse result)))
 
