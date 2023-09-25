@@ -124,6 +124,7 @@ void advance_sprites(void);
 void load_soldier_tiles(void);
 void setup_soldier_sprites(void);
 u16 advance_obj(Object *obj, u16 offset, u16 gravity);
+u16 soldier_collision(Rectangle *r);
 u16 flame_collision(Rectangle *r);
 Sprite *get_sprite(u16 offset);
 

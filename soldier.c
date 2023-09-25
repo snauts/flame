@@ -46,6 +46,15 @@ static u16 read_gamepad(void) {
     return ~button_state;
 }
 
+Rectangle s_rect;
+
+static void update_soldier_rectangle(void) {
+    s_rect.x1 = base->x;
+    s_rect.y1 = base->y;
+    s_rect.x2 = base->x + 24;
+    s_rect.y2 = base->y + 40;
+}
+
 static void soldier_sprite_update(void) {
     base->x = soldier.x - window + SOLDIER_MIN_X;
     base->y = soldier.y + ON_SCREEN - 40;
@@ -59,6 +68,7 @@ static void soldier_sprite_update(void) {
     base[2].x = base->x + 24;
     base[2].y = base->y + 21;
 
+    update_soldier_rectangle();
     if (!is_dead && base->y >= 200 + ON_SCREEN) {
 	base->cfg = TILE(2, SOLDIER_TOP + 21);
 	is_dead = 1;
@@ -311,6 +321,10 @@ u16 flame_collision(Rectangle *r) {
     return 0;
 }
 
+u16 soldier_collision(Rectangle *r) {
+    return intersect(r, &s_rect);
+}
+
 static void flicker_color(u16 index, u16 deviate) {
     u16 color = soldier_palette[index] + deviate;
     UPDATE_CRAM_WORD(2 * (32 + index), color);
@@ -461,5 +475,7 @@ void setup_soldier_sprites(void) {
     base = get_sprite(SOLDIER_BASE);
     flame = get_sprite(FLAME_OFFSET);
     put_soldier(0, platform_bottom());
+    clear_rectangle(&f_rect);
+    clear_rectangle(&s_rect);
     is_dead = 0;
 }
