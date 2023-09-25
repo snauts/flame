@@ -338,7 +338,7 @@ static void soldier_flicker(u16 deviate) {
 static void soldier_yelling(byte state) {
     static byte face;
     if (face != state) {
-	psg_noise(7, state ? 0x0 : 0xf);
+	psg_noise(7, state ? 0x4 : 0xf);
 	base[-1].cfg = TILE(2, state ? SOLDIER_TOP + 10 : 0);
 	soldier_flicker(0);
 	face = state;
