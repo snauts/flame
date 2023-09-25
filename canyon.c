@@ -78,6 +78,15 @@ static u16 is_hopper_off_screen(Sprite *sprite) {
 	|| sprite->y > ON_SCREEN + 224;
 }
 
+static u16 hopper_burn(Sprite *sprite) {
+    Rectangle r;
+    r.x1 = sprite->x + 4;
+    r.y1 = sprite->y + 4;
+    r.x2 = sprite->x + 12;
+    r.y2 = sprite->y + 12;
+    return flame_collision(&r);
+}
+
 static void hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
@@ -94,8 +103,9 @@ static void hopper(Mob *mob) {
 
     sprite->x = obj->x - window + ON_SCREEN;
     sprite->y = obj->y + ON_SCREEN - 16;
-    if (is_hopper_off_screen(sprite)) {
-       free_mob(mob->index);
+
+    if (is_hopper_off_screen(sprite) || hopper_burn(sprite)) {
+	free_mob(mob->index);
     }
 }
 
