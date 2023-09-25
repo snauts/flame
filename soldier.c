@@ -300,10 +300,10 @@ static void manage_flames(void) {
 }
 
 static Rectangle flame_rectangle(Rectangle *r, u16 index) {
-    r->x1 = flame[index].x;
-    r->x2 = r->x1 + 16;
-    r->y1 = flame[index].y;
-    r->y2 = r->y1 + 8;
+    r->x1 = flame[index].x + 1;
+    r->x2 = r->x1 + 14;
+    r->y1 = flame[index].y + 2;
+    r->y2 = r->y1 + 4;
 }
 
 u16 flame_collision(Rectangle *r) {
