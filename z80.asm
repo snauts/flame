@@ -20,6 +20,12 @@ tick:
 	.byte	0
 last:
 	.byte	0
+silent:
+	.word	0x000f
+psg:
+	.word	silent
+	.word	silent
+	.word	silent
 
 	org	0x0038
 vblank:
@@ -39,6 +45,13 @@ main_loop:
 	ld	a, (stop)
 	cp	a
 	jp	nz, halt
+
+	ld	a, 0
+	call	psg_play
+	ld	a, 1
+	call	psg_play
+	ld	a, 2
+	call	psg_play
 
 	ld	a, (tick)
 	ld	b, a
@@ -105,6 +118,39 @@ psg_write:
 	pop	ix
 	pop	de
 	pop	af
+	ret
+
+psg_play:
+	;; a - channel
+	push	bc
+	push	hl
+	push	ix
+
+	push	af
+
+	ld	hl, psg
+	sla	a
+	add	a, l
+	ld	l, a
+
+	ld	bc, (hl)
+	ld	ix, bc
+	ld	bc, (ix)
+
+	ld	a, c
+	and	a, 0xf
+	cp	0xf
+	jp	z, sfx_end
+	inc	(hl)
+	inc	(hl)
+sfx_end:
+	pop	af
+
+	call	psg_write
+
+	pop	ix
+	pop	hl
+	pop	bc
 	ret
 
 key_off:
