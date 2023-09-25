@@ -118,8 +118,11 @@ static void setup_johnny_intruments(void) {
 
 #define SFX_PERISH	0xF00
 
+#define SND(frequency, volume) \
+    (((3579545 / (32 * (frequency))) << 4) | (15 - volume))
+
 const u16 perish[] = {
-    0x0fe0, 0x000f
+    SND(440, 15), 0x000f
 };
 
 static void load_z80_sfx(void) {
