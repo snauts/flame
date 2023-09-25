@@ -228,10 +228,41 @@ static void advance_flame(u16 index) {
 }
 
 static Rectangle f_rect;
+static void clear_rectangle(Rectangle *r) {
+    r->x1 = r->x2 = r->y1 = r->y2 = 0;
+}
+
+static u16 intersect_segment(u16 a1, u16 a2, u16 b1, u16 b2) {
+    return !(a2 < b1 || b2 < a1);
+}
+
+static u16 intersect(Rectangle *r1, Rectangle *r2) {
+    return intersect_segment(r1->x1, r1->x2, r2->x1, r2->x2)
+	&& intersect_segment(r1->y1, r1->y2, r2->y1, r2->y2);
+}
+
+static void update_flame_rectange(u16 index) {
+    u16 x = sprite[index].x;
+    u16 y = sprite[index].y;
+    if (index == tail) {
+	f_rect.x1 = x;
+	f_rect.y1 = y;
+	f_rect.x2 = f_rect.x1;
+	f_rect.y2 = f_rect.y1;
+    }
+    else {
+	if (x < f_rect.x1) f_rect.x1 = x;
+	if (x > f_rect.x2) f_rect.x2 = x;
+	if (y < f_rect.y1) f_rect.y1 = y;
+	if (y > f_rect.y2) f_rect.y2 = y;
+    }
+}
+
 static void manage_flames(void) {
     u16 index = tail;
     extern byte first_mob_sprite;
     byte previous = first_mob_sprite;
+    clear_rectangle(&f_rect);
     while (flame[index].x > 0) {
 	f_obj[index].life++;
 	if (flame_expired(index)) {
@@ -242,11 +273,15 @@ static void manage_flames(void) {
 	}
 	advance_flame(index);
 	update_flame_sprite(index);
+	update_flame_rectange(index);
 	flame[index].next = previous;
 	previous = index + FLAME_OFFSET;
 	index = next_flame(index);
 	if (index == head) break;
     }
+    /* add sprite size */
+    f_rect.x2 += 16;
+    f_rect.y2 += 8;
     /* link last soldier sprite to first flame */
     sprite[0].next = previous;
     if (cooldown > 0) {

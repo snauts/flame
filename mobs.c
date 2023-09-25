@@ -74,12 +74,3 @@ void manage_mobs(void) {
 	if (sprite[i].x > 0) m_obj[i].fn(m_obj + i);
     }
 }
-
-static u16 intersect_segment(u16 a1, u16 a2, u16 b1, u16 b2) {
-    return !(a2 < b1 || b2 < a1);
-}
-
-u16 intersect(Rectangle *r1, Rectangle *r2) {
-    return intersect_segment(r1->x1, r1->x2, r2->x1, r2->x2)
-	&& intersect_segment(r1->y1, r1->y2, r2->y1, r2->y2);
-}
