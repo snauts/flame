@@ -278,9 +278,34 @@
     (clean-up-score score)
     score))
 
+(defun psg-value (frequency volume)
+  (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
+
+(defun generate-preish-sfx ()
+  (let ((result nil))
+    (loop for i from 15 downto 1 do
+      (let ((frequency (* (1+ (mod i 3)) (- 2000 (* i 100)))))
+	(push (psg-value frequency i) result)))
+    (reverse result)))
+
+(defun silence-stop ()
+  (list #x000f))
+
+(defun word-to-bytes (word)
+  (list (ash word -8) (logand word #xff)))
+
+(defun split-in-bytes (list)
+  (unless (null list)
+    (append (word-to-bytes (first list))
+	    (split-in-bytes (rest list)))))
+
+(defun save-sfx (out name sfx)
+  (save-array out name (split-in-bytes (append sfx (silence-stop)))))
+
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
-    (save-array out "johnny_score" (save-score (johnny-score)))))
+    (save-array out "johnny_score" (save-score (johnny-score)))
+    (save-sfx out "perish" (generate-preish-sfx))))
 
 (defun save-and-quit ()
   (handler-case (save-music)
