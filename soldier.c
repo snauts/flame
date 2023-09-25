@@ -241,9 +241,9 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 	&& intersect_segment(r1->y1, r1->y2, r2->y1, r2->y2);
 }
 
-static void update_flame_rectange(u16 index) {
-    u16 x = sprite[index].x;
-    u16 y = sprite[index].y;
+static void update_total_rectange(u16 index) {
+    u16 x = flame[index].x;
+    u16 y = flame[index].y;
     if (index == tail) {
 	f_rect.x1 = x;
 	f_rect.y1 = y;
@@ -273,7 +273,7 @@ static void manage_flames(void) {
 	}
 	advance_flame(index);
 	update_flame_sprite(index);
-	update_flame_rectange(index);
+	update_total_rectange(index);
 	flame[index].next = previous;
 	previous = index + FLAME_OFFSET;
 	index = next_flame(index);
@@ -287,6 +287,28 @@ static void manage_flames(void) {
     if (cooldown > 0) {
 	cooldown--;
     }
+}
+
+static Rectangle flame_rectangle(Rectangle *r, u16 index) {
+    r->x1 = flame[index].x;
+    r->x2 = r->x1 + 16;
+    r->y1 = flame[index].y;
+    r->y2 = r->y1 + 8;
+}
+
+u16 flame_collision(Rectangle *r) {
+    Rectangle f_single;
+    if (intersect(r, &f_rect)) {
+	for (u16 index = 0; index < 8; index++) {
+	    if (flame[index].x > 0) {
+		flame_rectangle(&f_single, index);
+		if (intersect(r, &f_single)) {
+		    return 1;
+		}
+	    }
+	}
+    }
+    return 0;
 }
 
 static void flicker_color(u16 index, u16 deviate) {
