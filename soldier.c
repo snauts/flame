@@ -5,13 +5,15 @@
 #include "images/flame.h"
 #include "images/blood.h"
 #include "images/walk.h"
+#include "images/gun.h"
 
 #define SOLDIER_TOP	512
-#define SOLDIER_LEG	(SOLDIER_TOP + (3 * 13))
+#define SOLDIER_LEG	(SOLDIER_TOP + (3 * 12))
 
 #define FLAME		(SOLDIER_LEG + (18 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
 #define BLOOD		(FLAME_UP + (32 * 2 * 1))
+#define WEAPON		(BLOOD + (8 * 2 * 2))
 
 #define SOLDIER_MIN_X	(ON_SCREEN + 16)
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
@@ -76,7 +78,7 @@ static void soldier_sprite_update(void) {
 
     update_soldier_rectangle();
     if (is_dead != 1 && base->y >= 200 + ON_SCREEN) {
-	base->cfg = TILE(2, SOLDIER_TOP + 21);
+	base->cfg = TILE(2, SOLDIER_TOP + 18);
 	is_dead = 1;
     }
 }
@@ -153,12 +155,12 @@ static short animate_walking(short cycle, u16 prev) {
 
 static void select_torso(u16 aim_up) {
     if (aim_up) {
-	base[0].cfg = TILE(2, SOLDIER_TOP + 12);
+	base[0].cfg = TILE(2, SOLDIER_TOP + 9);
 	base[2].cfg = TILE(2, 0);
     }
     else {
 	base[0].cfg = TILE(2, SOLDIER_TOP);
-	base[2].cfg = TILE(2, SOLDIER_TOP + 9);
+	base[2].cfg = TILE(2, WEAPON + 4);
     }
 }
 
@@ -355,7 +357,7 @@ static void soldier_yelling(byte state) {
     static byte face;
     if (face != state) {
 	psg_noise(7, state ? 0x4 : 0xf);
-	base[-1].cfg = TILE(2, state ? SOLDIER_TOP + 10 : 0);
+	base[-1].cfg = TILE(2, state ? WEAPON : 0);
 	soldier_flicker(0);
 	face = state;
     }
@@ -510,7 +512,7 @@ static void put_soldier(u16 x, u16 y) {
     base[1].size = SPRITE_SIZE(3, 2);
     base[1].next = SOLDIER_BASE + 2;
 
-    base[2].cfg = TILE(2, SOLDIER_TOP + 9);
+    base[2].cfg = TILE(2, WEAPON + 4);
     base[2].size = SPRITE_SIZE(1, 1);
     base[2].next = 0;
 
@@ -527,6 +529,7 @@ void load_soldier_tiles(void) {
     update_tiles(flame_up_tiles, FLAME_UP, ARRAY_SIZE(flame_up_tiles));
 
     update_tiles(blood_tiles, BLOOD, ARRAY_SIZE(blood_tiles));
+    update_tiles(gun_tiles, WEAPON, ARRAY_SIZE(gun_tiles));
 }
 
 Sprite *get_sprite(u16 offset) {
