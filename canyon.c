@@ -78,13 +78,11 @@ static u16 is_hopper_off_screen(Sprite *sprite) {
 	|| sprite->y > ON_SCREEN + 224;
 }
 
-static u16 is_hopper_in_flame(Sprite *sprite) {
-    Rectangle r;
-    r.x1 = sprite->x + 4;
-    r.y1 = sprite->y + 4;
-    r.x2 = sprite->x + 12;
-    r.y2 = sprite->y + 12;
-    return flame_collision(&r);
+static void hopper_rectange(Rectangle *r, Sprite *sprite) {
+    r->x1 = sprite->x + 4;
+    r->y1 = sprite->y + 4;
+    r->x2 = sprite->x + 12;
+    r->y2 = sprite->y + 12;
 }
 
 static u16 is_hopper_alive(Object *obj) {
@@ -113,17 +111,24 @@ static void hopper(Mob *mob) {
 	obj->frame = 9 + (obj->life >> 2);
     }
     else {
-	if (is_hopper_in_flame(sprite)) {
+	Rectangle r;
+	hopper_rectange(&r, sprite);
+	if (flame_collision(&r)) {
 	    hopper_die(obj);
 	}
-	else if (land) {
-	    obj->frame = 3 + ((obj->life >> 2) % 6);
-	}
 	else {
-	    obj->frame = 1 + ((obj->life >> 1) & 1);
-	}
-	if ((obj->life & 0x7F) == 0) {
-	    obj->velocity = 2;
+	    if (land) {
+		obj->frame = 3 + ((obj->life >> 2) % 6);
+	    }
+	    else {
+		obj->frame = 1 + ((obj->life >> 1) & 1);
+	    }
+	    if (soldier_collision(&r)) {
+		bite_soldier(sprite->x, sprite->y - 2);
+	    }
+	    if ((obj->life & 0x7F) == 0) {
+		obj->velocity = 2;
+	    }
 	}
     }
 

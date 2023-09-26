@@ -19,7 +19,7 @@
 
 #define FLAME_OFFSET	8
 #define SOLDIER_BASE	5
-#define BLOOD_SPRITE	24
+#define BLOOD_SPRITE	3
 
 static Object soldier;
 static char is_dead;
@@ -52,7 +52,7 @@ static u16 read_gamepad(void) {
     return ~button_state;
 }
 
-Rectangle s_rect;
+static Rectangle s_rect;
 
 static void update_soldier_rectangle(void) {
     s_rect.x1 = base->x;
@@ -452,7 +452,7 @@ static void spill_blood(u16 cookie) {
     }
 }
 
-void bite_soldier(u16 x, u16 y) {
+static void do_bite(u16 x, u16 y) {
     blood->x = x;
     blood->y = y;
     blood->cfg = TILE(2, BLOOD);
@@ -460,7 +460,11 @@ void bite_soldier(u16 x, u16 y) {
     blood->next = first_mob_sprite;
     schedule(&spill_blood, 2);
     remove_oldest_flame();
-    is_dead = 2;
+    // is_dead = 2;
+}
+
+void bite_soldier(u16 x, u16 y) {
+    if (blood->x == 0) do_bite(x, y);
 }
 
 static void soldier_poison(void) {
