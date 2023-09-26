@@ -497,12 +497,23 @@ static void soldier_kneel(u16 cookie) {
     }
 }
 
+static void update_pl3(u16 idx, u16 color) {
+    UPDATE_CRAM_WORD(2 * (32 + idx), color);
+    update_palette(&color, 32 + idx, 1);
+}
+
+static void face_color(u16 c1, u16 c2) {
+    update_pl3(7, c1);
+    update_pl3(8, c2);
+}
+
 static void soldier_poison(void) {
     if (!on_ground()) {
 	advance_obj(&soldier, SOLDIER_AHEAD, 6);
 	soldier_sprite_update();
     }
     else if (base[0].cfg != TILE(2, SOLDIER_POISON)) {
+	face_color(0x668, 0x446);
 	base[-1].size = SPRITE_SIZE(4, 1);
 	base[-1].cfg = TILE(2, WEAPON + 1);
 	base[-1].x = base[0].x - 4;
@@ -524,6 +535,7 @@ static void soldier_poison(void) {
 	}
     }
     else if (soldier.frame == 0) {
+	face_color(0x666, 0x444);
 	schedule(&soldier_kneel, 6);
 	soldier.frame = TILE(2, SOLDIER_LEG + 18 * 6);
     }
