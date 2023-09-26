@@ -175,7 +175,7 @@ void emit_hopper_squad(u16 pos_x) { /* super hairy */
     if (pos_x > 0) {
 	count = 0;
     }
-    if (count == 0 || last->sprite->x == SCR_WIDTH + ON_SCREEN - 16) {
+    if (count == 0 || last->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
 	last = setup_hopper(window + SCR_WIDTH, 208, variation[count++]);
     }
     if (last && count < 8) {
