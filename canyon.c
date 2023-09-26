@@ -154,7 +154,7 @@ const byte variation[] = {
     60, 52, 42, 97, 15, 86, 65, 39
 };
 void emit_hopper_squad(u16 pos_x) {
-    pos_x += 320;
+    pos_x = window + 320;
     for (u16 i = 0; i < 8; i++) {
 	byte life = variation[i];
 	setup_hopper(pos_x, 208, life);
