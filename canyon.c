@@ -153,12 +153,6 @@ static void emit_mobs(void) {
     }
 }
 
-static void update_canyon(void) {
-    emit_mobs();
-    advance_sprites();
-    level_scroll();
-}
-
 void display_canyon(void) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
@@ -200,5 +194,5 @@ void display_canyon(void) {
     update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
 
     upload_palette(0);
-    switch_frame(&update_canyon);
+    switch_frame(&update_game);
 }

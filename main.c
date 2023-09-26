@@ -315,6 +315,12 @@ static void transfer_to_VRAM(void) {
     vram_idx = 0;
 }
 
+void update_game(void) {
+    manage_timers();
+    advance_sprites();
+    level_scroll();
+}
+
 void vblank_interrupt(void) {
     copy_using_DMA();
     transfer_to_VRAM();

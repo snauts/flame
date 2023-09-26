@@ -114,6 +114,7 @@ void wait_for_interrupt(void);
 void wait_vblank_done(void);
 void *buffer_ptr(u16 addr);
 void *malloc(u16 amount);
+void update_game(void);
 void reset_heap(void);
 
 void init_ym2612(void);
@@ -135,9 +136,9 @@ u16 flame_collision(Rectangle *r);
 Sprite *get_sprite(u16 offset);
 
 void display_canyon(void);
+void prepare_desert_level(void);
 
 u16 platform_bottom(void);
-void prepare_desert_level(void);
 void update_height_map(u16 pos_x);
 void update_window(short direction);
 u16 get_snap(u16 pos_x, u16 prev, u16 next);
@@ -147,6 +148,7 @@ u16 is_rightmost(void);
 u16 is_leftmost(void);
 
 Mob *alloc_mob(byte cost, void *fn);
+void manage_timers(void);
 void manage_mobs(void);
 void reset_mobs(void);
 void free_mob(char i);

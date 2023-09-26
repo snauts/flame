@@ -74,3 +74,6 @@ void manage_mobs(void) {
 	if (sprite[i].x > 0) m_obj[i].fn(m_obj + i);
     }
 }
+
+void manage_timers(void) {
+}
