@@ -425,6 +425,11 @@ static void hide_all_sprites(void) {
     }
 }
 
+static void restart_level(void) {
+    hide_all_sprites();
+    switch_frame(&display_canyon);
+}
+
 static void soldier_sink(void) {
     static char ticks;
     if (ticks++ == 10) {
@@ -434,8 +439,7 @@ static void soldier_sink(void) {
     }
     short diff = 224 + ON_SCREEN - base->y;
     if (diff < 0) {
-	hide_all_sprites();
-	switch_frame(&display_canyon);
+	restart_level();
     }
     else if (diff <= 7) {
 	upload_palette(7 - diff);
@@ -470,12 +474,26 @@ void bite_soldier(u16 x, u16 y) {
     if (blood->x == 0) do_bite(x, y);
 }
 
+static void fade_and_restart(u16 cookie) {
+    upload_palette(soldier.life++);
+    if (soldier.life < 8) {
+	schedule(&fade_and_restart, 6);
+    }
+    else {
+	restart_level();
+    }
+}
+
 static void soldier_kneel(u16 cookie) {
     base[0].y++;
     soldier.frame += 6;
     base[1].cfg = soldier.frame;
     if (soldier.frame < TILE(2, SOLDIER_LEG + 22 * 6)) {
 	schedule(&soldier_kneel, 6);
+    }
+    else {
+	schedule(&fade_and_restart, 12);
+	soldier.life = 1;
     }
 }
 
@@ -576,6 +594,7 @@ void setup_soldier_sprites(void) {
     base = get_sprite(SOLDIER_BASE);
     blood = get_sprite(BLOOD_SPRITE);
     flame = get_sprite(FLAME_OFFSET);
+    memset(&soldier, 0, sizeof(soldier));
     memset(sprite, 0, sizeof(sprite));
     put_soldier(0, platform_bottom());
     clear_rectangle(&f_rect);
