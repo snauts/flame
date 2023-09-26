@@ -10,7 +10,7 @@
 #define SOLDIER_TOP	512
 #define SOLDIER_LEG	(SOLDIER_TOP + (3 * 12))
 
-#define FLAME		(SOLDIER_LEG + (18 * 3 * 2))
+#define FLAME		(SOLDIER_LEG + (23 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
 #define BLOOD		(FLAME_UP + (32 * 2 * 1))
 #define WEAPON		(BLOOD + (8 * 2 * 2))
