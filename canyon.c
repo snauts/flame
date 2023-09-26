@@ -122,6 +122,9 @@ static void hopper(Mob *mob) {
 	else {
 	    obj->frame = 1 + ((obj->life >> 1) & 1);
 	}
+	if ((obj->life & 0x7F) == 0) {
+	    obj->velocity = 2;
+	}
     }
 
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
@@ -131,25 +134,31 @@ static void hopper(Mob *mob) {
     }
 }
 
-static void setup_hopper(Mob *mob) {
-    Object *obj = &mob->obj;
+static void setup_hopper(u16 x, u16 y, u16 life) {
+    Mob *mob = alloc_mob(2, hopper);
+    if (mob != NULL) {
+	Object *obj = &mob->obj;
 
-    obj->life = 0;
-    obj->frame = 0;
-    obj->gravity = 0;
-    obj->velocity = 2;
-    obj->x = window + 320;
-    obj->y = 32;
+	obj->x = x;
+	obj->y = y;
+	obj->frame = 0;
+	obj->gravity = 0;
+	obj->velocity = 0;
+	obj->life = life;
 
-    mob->sprite->size = SPRITE_SIZE(2, 2);
+	mob->sprite->size = SPRITE_SIZE(2, 2);
+    }
 }
 
-static void emit_mobs(void) {
-    static u16 wait;
-    if (wait++ > 48) {
-	Mob *mob = alloc_mob(2, hopper);
-	if (mob) setup_hopper(mob);
-	wait = 0;
+const byte variation[] = {
+    60, 52, 42, 97, 15, 86, 65, 39
+};
+void emit_hopper_squad(u16 pos_x) {
+    pos_x += 320;
+    for (u16 i = 0; i < 8; i++) {
+	byte life = variation[i];
+	setup_hopper(pos_x, 208, life);
+	pos_x += 16 + (life & 3);
     }
 }
 
@@ -194,5 +203,6 @@ void display_canyon(void) {
     update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
 
     upload_palette(0);
+    update_window(0);
     switch_frame(&update_game);
 }

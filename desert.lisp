@@ -126,6 +126,7 @@
 	(ground)
 	(double-platform :h 4 :n 2)
 	(sandwich-platform :h 1 :n 2)
+	(trigger "emit_hopper_squad")
 	(ground :n 5)
 	(bush)
 	(empty 16)))
