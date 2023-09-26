@@ -8,6 +8,7 @@
 #include "images/gun.h"
 
 #define SOLDIER_TOP	512
+#define SOLDIER_POISON	(SOLDIER_TOP + 27)
 #define SOLDIER_LEG	(SOLDIER_TOP + (3 * 12))
 
 #define FLAME		(SOLDIER_LEG + (23 * 3 * 2))
@@ -462,17 +463,51 @@ static void do_bite(u16 x, u16 y) {
     blood->next = first_mob_sprite;
     schedule(&spill_blood, 2);
     remove_oldest_flame();
-    // is_dead = 2;
+    is_dead = 2;
 }
 
 void bite_soldier(u16 x, u16 y) {
     if (blood->x == 0) do_bite(x, y);
 }
 
+static void soldier_kneel(u16 cookie) {
+    base[0].y++;
+    soldier.frame += 6;
+    base[1].cfg = soldier.frame;
+    if (soldier.frame < TILE(2, SOLDIER_LEG + 22 * 6)) {
+	schedule(&soldier_kneel, 6);
+    }
+}
+
 static void soldier_poison(void) {
     if (!on_ground()) {
 	advance_obj(&soldier, SOLDIER_AHEAD, 6);
 	soldier_sprite_update();
+    }
+    else if (base[0].cfg != TILE(2, SOLDIER_POISON)) {
+	base[-1].size = SPRITE_SIZE(4, 1);
+	base[-1].cfg = TILE(2, WEAPON + 1);
+	base[-1].x = base[0].x - 4;
+	base[-1].y = base[2].y;
+
+	base[0].cfg = TILE(2, SOLDIER_POISON);
+	base[1].cfg = TILE(2, SOLDIER_LEG + 18 * 6);
+	base[2].x = base[2].y = 0;
+	soldier.velocity = 0;
+	soldier.gravity = 1;
+	soldier.frame = 0;
+    }
+    else if (base[-1].y < base[1].y + 12) {
+	soldier.gravity--;
+	base[-1].y += soldier.velocity;
+	if (soldier.gravity == 0) {
+	    soldier.gravity = 6;
+	    soldier.velocity++;
+	}
+    }
+    else if (soldier.frame == 0) {
+	schedule(&soldier_kneel, 6);
+	soldier.frame = TILE(2, SOLDIER_LEG + 18 * 6);
     }
 }
 
