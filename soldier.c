@@ -413,7 +413,7 @@ static void hide_all_sprites(void) {
     }
 }
 
-static void soldier_die(void) {
+static void soldier_sink(void) {
     static char ticks;
     if (ticks++ == 10) {
 	base->cfg ^= BIT(11);
@@ -431,8 +431,21 @@ static void soldier_die(void) {
     soldier_sprite_update();
 }
 
+static void soldier_poison(void) {
+}
+
 void advance_sprites(void) {
-    is_dead ? soldier_die() : soldier_march();
+    switch (is_dead) {
+    case 0:
+	soldier_march();
+	break;
+    case 1:
+	soldier_sink();
+	break;
+    case 2:
+	soldier_poison();
+	break;
+    }
 
     /* manage mobs first because manage_flames uses first_mob_sprite */
     manage_mobs();
