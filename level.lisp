@@ -153,11 +153,14 @@
     (when (/= count 0)
       (format out "~%"))))
 
+(defun save-trigger-entry (out distance name &optional (prefix ""))
+  (format out "{ ~5,' d, ~A~A },~%" (max 0 (- distance 320)) prefix name))
+
 (defun save-triggers (out level &optional (distance 0))
   (cond ((null level)
-	 (format out "{ ~5,' d, NULL },~%" 0))
+	 (save-trigger-entry out 0 "NULL"))
 	((stringp (first level))
-	 (format out "{ ~5,' d, &~A },~%" distance (first level))
+	 (save-trigger-entry out distance (first level) "&")
 	 (save-triggers out (rest level) distance))
 	(t (save-triggers out (rest level) (+ 8 distance)))))
 
