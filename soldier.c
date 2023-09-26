@@ -508,6 +508,7 @@ Sprite *get_sprite(u16 offset) {
 
 void setup_soldier_sprites(void) {
     head = tail = cooldown = 0;
+    memset(sprite, 0, sizeof(sprite));
     base = get_sprite(SOLDIER_BASE);
     blood = get_sprite(BLOOD_SPRITE);
     flame = get_sprite(FLAME_OFFSET);
