@@ -222,6 +222,13 @@ static void throw_flames(u16 aim_up) {
     }
 }
 
+static void remove_oldest_flame(void) {
+    if (flame[head].x > 0) {
+	flame[tail].x = flame[tail].y = 0;
+	tail = next_flame(tail);
+    }
+}
+
 static u16 flame_expired(u16 index) {
     return f_obj[index].life >= 64;
 }
@@ -276,7 +283,7 @@ static void manage_flames(void) {
     while (flame[index].x > 0) {
 	f_obj[index].life++;
 	if (flame_expired(index)) {
-	    flame[index].x = 0;
+	    flame[index].x = flame[index].y = 0;
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
@@ -472,6 +479,7 @@ Sprite *get_sprite(u16 offset) {
 }
 
 void setup_soldier_sprites(void) {
+    head = tail = cooldown = 0;
     base = get_sprite(SOLDIER_BASE);
     flame = get_sprite(FLAME_OFFSET);
     put_soldier(0, platform_bottom());
