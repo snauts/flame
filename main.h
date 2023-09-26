@@ -154,7 +154,7 @@ void schedule(void (*fn)(u16), u16 ticks);
 void manage_timers(void);
 void manage_mobs(void);
 void reset_mobs(void);
-void free_mob(char i);
+void free_mob(Mob *mob);
 
 extern u16 window;
 extern u16 counter;

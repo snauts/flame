@@ -135,7 +135,7 @@ static void hopper(Mob *mob) {
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
 
     if (is_hopper_off_screen(sprite) || obj->frame == 17) {
-	free_mob(mob->index);
+	free_mob(mob);
     }
 }
 

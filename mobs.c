@@ -43,21 +43,22 @@ Mob *alloc_mob(byte cost, void *fn) {
     return mob;
 }
 
-void free_mob(char i) {
-    char next;
+void free_mob(Mob *mob) {
+    Sprite *img = mob->sprite;
+    char next, i = mob->index;
     free[available++] = i;
-    sprite[i].x = sprite[i].y = 0;
-    budget += m_obj[i].price;
-    next = sprite[i].next - MOB_OFFSET;
-    if (m_obj[i].previous < 0) {
-	first_mob_sprite = sprite[i].next;
+    img->x = img->y = 0;
+    budget += mob->price;
+    next = img->next - MOB_OFFSET;
+    if (mob->previous < 0) {
+	first_mob_sprite = img->next;
 	mob_head = next;
     }
     else {
-	sprite[m_obj[i].previous].next = sprite[i].next;
+	sprite[mob->previous].next = img->next;
     }
     if (next >= 0) {
-	m_obj[next].previous = m_obj[i].previous;
+	m_obj[next].previous = mob->previous;
     }
 }
 
