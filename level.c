@@ -6,6 +6,8 @@
 
 u16 window;
 
+const Trigger *trigger;
+
 static short column;
 static const u16 *back;
 static const u16 *front;
@@ -90,9 +92,8 @@ void update_height_map(u16 pos_x) {
     }
 }
 
-static void prepare_level(const u16 *level, const byte *map) {
+static void prepare_level(const u16 *level) {
     column = 0;
-    height = map;
     front = level;
     for (u16 x = 0; x < 64; x++) {
 	update_column_forward(&poke_VRAM);
@@ -103,7 +104,9 @@ static void prepare_level(const u16 *level, const byte *map) {
 }
 
 void prepare_desert_level(void) {
-    prepare_level(desert_level, desert_level_height);
+    trigger = desert_level_triggers;
+    height = desert_level_height;
+    prepare_level(desert_level);
 }
 
 void level_scroll(void) {
@@ -130,6 +133,10 @@ void update_window(short direction) {
     }
     if (prev > next) {
 	update_column_backward();
+    }
+    if (window >= trigger->distance && trigger->fn != NULL) {
+	trigger->fn(window);
+	trigger++;
     }
 }
 

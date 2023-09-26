@@ -162,7 +162,7 @@
 	(t (save-triggers out (rest level) (+ 8 distance)))))
 
 (defun save-declarations (out names)
-  (mapc (lambda (x) (format out "void ~A(u16, u16);~%" x)) names))
+  (mapc (lambda (x) (format out "void ~A(u16);~%" x)) names))
 
 (defun save-array (out name level walkable)
   (let ((clean (remove-if #'stringp level)))

@@ -69,7 +69,7 @@ typedef struct Mob {
 
 typedef struct Trigger {
     u16 distance;
-    void (*fn)(u16, u16);
+    void (*fn)(u16);
 } Trigger;
 
 typedef struct Rectangle {
