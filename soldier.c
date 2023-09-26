@@ -75,7 +75,7 @@ static void soldier_sprite_update(void) {
     base[2].y = base->y + 21;
 
     update_soldier_rectangle();
-    if (!is_dead && base->y >= 200 + ON_SCREEN) {
+    if (is_dead != 1 && base->y >= 200 + ON_SCREEN) {
 	base->cfg = TILE(2, SOLDIER_TOP + 21);
 	is_dead = 1;
     }
