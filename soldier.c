@@ -28,6 +28,8 @@ static Sprite sprite[80];
 static Sprite *base;
 static Sprite *blood;
 
+extern byte first_mob_sprite;
+
 #define BUTTON_A(x) ((x) & BIT(12))
 #define BUTTON_B(x) ((x) & BIT(4))
 #define BUTTON_C(x) ((x) & BIT(5))
@@ -280,7 +282,6 @@ static void update_total_rectange(u16 index) {
 }
 
 static byte after_flame(void) {
-    extern byte first_mob_sprite;
     return blood->x > 0 ? BLOOD_SPRITE : first_mob_sprite;
 }
 
@@ -439,7 +440,25 @@ static void soldier_sink(void) {
     soldier_sprite_update();
 }
 
+static void spill_blood(u16 cookie) {
+    blood->cfg += 4;
+    if (blood->cfg >= TILE(2, BLOOD + (4 * 8))) {
+	blood->x = blood->y = 0;
+    }
+    else {
+	schedule(&spill_blood, 2);
+	blood->x++;
+	blood->y--;
+    }
+}
+
 void bite_soldier(u16 x, u16 y) {
+    blood->x = x;
+    blood->y = y;
+    blood->cfg = TILE(2, BLOOD);
+    blood->size = SPRITE_SIZE(2, 2);
+    blood->next = first_mob_sprite;
+    schedule(&spill_blood, 2);
     remove_oldest_flame();
     is_dead = 2;
 }
