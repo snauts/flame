@@ -3,6 +3,7 @@
 #include "images/soldier.h"
 #include "images/flame_up.h"
 #include "images/flame.h"
+#include "images/blood.h"
 #include "images/walk.h"
 
 #define SOLDIER_TOP	512
@@ -10,6 +11,7 @@
 
 #define FLAME		(SOLDIER_LEG + (18 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
+#define BLOOD		(FLAME_UP + (32 * 2 * 1))
 
 #define SOLDIER_MIN_X	(ON_SCREEN + 16)
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
@@ -500,6 +502,8 @@ void load_soldier_tiles(void) {
 
     update_tiles(flame_tiles, FLAME, ARRAY_SIZE(flame_tiles));
     update_tiles(flame_up_tiles, FLAME_UP, ARRAY_SIZE(flame_up_tiles));
+
+    update_tiles(blood_tiles, BLOOD, ARRAY_SIZE(blood_tiles));
 }
 
 Sprite *get_sprite(u16 offset) {
