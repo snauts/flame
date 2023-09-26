@@ -67,6 +67,11 @@ typedef struct Mob {
     void (*fn)(void *);
 } Mob;
 
+typedef struct Trigger {
+    u16 distance;
+    void (*fn)(u16, u16);
+} Trigger;
+
 typedef struct Rectangle {
     u16 x1, y1, x2, y2;
 } Rectangle;

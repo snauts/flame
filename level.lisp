@@ -46,6 +46,9 @@
 (defun join (&rest rest)
   (apply #'append rest))
 
+(defun trigger (name)
+  (list name))
+
 (defun for-all (box fn)
   (labels ((manipulate (x) (unless (null x) (funcall fn x))))
     (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
@@ -150,13 +153,28 @@
     (when (/= count 0)
       (format out "~%"))))
 
+(defun save-triggers (out level &optional (distance 0))
+  (cond ((null level) nil)
+	((stringp (first level))
+	 (format out "{ ~5,' d, &~A },~%" distance (first level))
+	 (save-triggers out (rest level) distance))
+	(t (save-triggers out (rest level) (+ 8 distance)))))
+
+(defun save-declarations (out names)
+  (mapc (lambda (x) (format out "void ~A(u16, u16);~%" x)) names))
+
 (defun save-array (out name level walkable)
-  (format out "const byte ~A_height[] = {~%" name)
-  (save-hex out (encode-height level walkable) 2)
-  (format out "};~%")
-  (format out "const u16 ~A[] = {~%" name)
-  (save-hex out (serialize level))
-  (format out "};~%"))
+  (let ((clean (remove-if #'stringp level)))
+    (save-declarations out (remove-if-not #'stringp level))
+    (format out "const Trigger ~A_triggers[] = {~%" name)
+    (save-triggers out level)
+    (format out "};~%")
+    (format out "const byte ~A_height[] = {~%" name)
+    (save-hex out (encode-height clean walkable) 2)
+    (format out "};~%")
+    (format out "const u16 ~A[] = {~%" name)
+    (save-hex out (serialize clean))
+    (format out "};~%")))
 
 (load "desert.lisp")
 
