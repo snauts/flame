@@ -7,7 +7,7 @@
 #include "images/walk.h"
 
 #define SOLDIER_TOP	512
-#define SOLDIER_LEG	(SOLDIER_TOP + (3 * 10))
+#define SOLDIER_LEG	(SOLDIER_TOP + (3 * 13))
 
 #define FLAME		(SOLDIER_LEG + (18 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
