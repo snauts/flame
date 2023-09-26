@@ -139,7 +139,7 @@ static void hopper(Mob *mob) {
     }
 }
 
-static void setup_hopper(u16 x, u16 y, u16 life) {
+static Mob *setup_hopper(u16 x, u16 y, u16 life) {
     Mob *mob = alloc_mob(2, hopper);
     if (mob != NULL) {
 	Object *obj = &mob->obj;
@@ -153,17 +153,23 @@ static void setup_hopper(u16 x, u16 y, u16 life) {
 
 	mob->sprite->size = SPRITE_SIZE(2, 2);
     }
+    return mob;
 }
 
 const byte variation[] = {
     60, 52, 42, 97, 15, 86, 65, 39
 };
-void emit_hopper_squad(u16 pos_x) {
-    pos_x = window + 320;
-    for (u16 i = 0; i < 8; i++) {
-	byte life = variation[i];
-	setup_hopper(pos_x, 208, life);
-	pos_x += 16 + (life & 3);
+void emit_hopper_squad(u16 pos_x) { /* super hairy */
+    static Mob *last;
+    static byte count;
+    if (pos_x > 0) {
+	count = 0;
+    }
+    if (count == 0 || last->sprite->x == SCR_WIDTH + ON_SCREEN - 16) {
+	last = setup_hopper(window + SCR_WIDTH, 208, variation[count++]);
+    }
+    if (last && count < 8) {
+	schedule(&emit_hopper_squad, 0);
     }
 }
 
@@ -208,6 +214,5 @@ void display_canyon(void) {
     update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
 
     upload_palette(0);
-    update_window(0);
     switch_frame(&update_game);
 }

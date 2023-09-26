@@ -22,6 +22,7 @@
 #define DMA_BUF_SIZE	4096
 #define DMA_CHUNKS	8
 #define ON_SCREEN	128
+#define SCR_WIDTH	320
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
