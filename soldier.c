@@ -57,7 +57,7 @@ static Rectangle s_rect;
 static void update_soldier_rectangle(void) {
     s_rect.x1 = base->x + 4;
     s_rect.y1 = base->y + 4;
-    s_rect.x2 = base->x + 18;
+    s_rect.x2 = base->x + 16;
     s_rect.y2 = base->y + 36;
 }
 
