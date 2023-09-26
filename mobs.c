@@ -13,6 +13,12 @@ static Sprite *sprite;
 static char mob_head;
 static byte budget;
 
+#define MAX_TIMERS	8
+
+static char available_timers;
+static Trigger timers[MAX_TIMERS];
+static char free_timers[MAX_TIMERS];
+
 static void init_mob(char i, byte cost, void *fn) {
     if (mob_head >= 0) {
 	m_obj[mob_head].previous = i;
@@ -67,6 +73,11 @@ void reset_mobs(void) {
 	sprite[i].x = 0;
 	free[i] = i;
     }
+
+    available_timers = MAX_TIMERS;
+    for (char i = 0; i < available_timers; i++) {
+	free_timers[i] = i;
+    }
 }
 
 void manage_mobs(void) {
@@ -75,5 +86,29 @@ void manage_mobs(void) {
     }
 }
 
+void schedule(void (*fn)(u16), u16 ticks) {
+    if (available_timers > 0) {
+	char i = free_timers[--available_timers];
+	timers[i].distance = ticks;
+	timers[i].fn = fn;
+    }
+}
+
+static void free_timer(char i, char n) {
+    char j = free_timers[available_timers];
+    free_timers[available_timers++] = i;
+    free_timers[n] = j;
+}
+
 void manage_timers(void) {
+    for (u16 n = available_timers; n < MAX_TIMERS; n++) {
+	char i = free_timers[n];
+	if (timers[i].distance > 0) {
+	    timers[i].distance--;
+	}
+	else {
+	    free_timer(i, n);
+	    timers[i].fn(0);
+	}
+    }
 }
