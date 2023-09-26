@@ -154,7 +154,8 @@
       (format out "~%"))))
 
 (defun save-triggers (out level &optional (distance 0))
-  (cond ((null level) nil)
+  (cond ((null level)
+	 (format out "{ ~5,' d, NULL },~%" 0))
 	((stringp (first level))
 	 (format out "{ ~5,' d, &~A },~%" distance (first level))
 	 (save-triggers out (rest level) distance))
