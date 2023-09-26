@@ -1,6 +1,11 @@
 #include "main.h"
 #include "music.inc"
 
+static byte music;
+
+#define MUSIC_NONE	0
+#define MUSIC_JOHNNY	1
+
 #define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
 void ym2612_write(byte part, byte reg, byte data) {
     part <<= 1;
@@ -127,8 +132,11 @@ void perish_sfx(void) {
 }
 
 void music_johnny(void) {
-    do_z80_bus(&setup_johnny_intruments);
-    do_z80_bus(&load_z80_sfx);
+    if (music != MUSIC_JOHNNY) {
+	do_z80_bus(&setup_johnny_intruments);
+	do_z80_bus(&load_z80_sfx);
+	music = MUSIC_JOHNNY;
+    }
 }
 
 void psg_noise(byte type, byte vol) {
