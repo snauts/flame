@@ -17,12 +17,14 @@
 
 #define FLAME_OFFSET	8
 #define SOLDIER_BASE	5
+#define BLOOD_SPRITE	24
 
 static Object soldier;
 static char is_dead;
 
 static Sprite sprite[80];
 static Sprite *base;
+static Sprite *blood;
 
 #define BUTTON_A(x) ((x) & BIT(12))
 #define BUTTON_B(x) ((x) & BIT(4))
@@ -275,10 +277,14 @@ static void update_total_rectange(u16 index) {
     }
 }
 
+static byte after_flame(void) {
+    extern byte first_mob_sprite;
+    return blood->x > 0 ? BLOOD_SPRITE : first_mob_sprite;
+}
+
 static void manage_flames(void) {
     u16 index = tail;
-    extern byte first_mob_sprite;
-    byte previous = first_mob_sprite;
+    byte previous = after_flame();
     clear_rectangle(&f_rect);
     while (flame[index].x > 0) {
 	f_obj[index].life++;
@@ -431,7 +437,16 @@ static void soldier_sink(void) {
     soldier_sprite_update();
 }
 
+void bite_soldier(u16 x, u16 y) {
+    remove_oldest_flame();
+    is_dead = 2;
+}
+
 static void soldier_poison(void) {
+    if (!on_ground()) {
+	advance_obj(&soldier, SOLDIER_AHEAD, 6);
+	soldier_sprite_update();
+    }
 }
 
 void advance_sprites(void) {
@@ -494,6 +509,7 @@ Sprite *get_sprite(u16 offset) {
 void setup_soldier_sprites(void) {
     head = tail = cooldown = 0;
     base = get_sprite(SOLDIER_BASE);
+    blood = get_sprite(BLOOD_SPRITE);
     flame = get_sprite(FLAME_OFFSET);
     put_soldier(0, platform_bottom());
     clear_rectangle(&f_rect);
