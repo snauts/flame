@@ -149,7 +149,7 @@ void level_scroll(void);
 u16 is_rightmost(void);
 u16 is_leftmost(void);
 
-Mob *alloc_mob(byte cost, void *fn);
+Mob *alloc_mob(byte cost);
 void schedule(void (*fn)(u16), u16 ticks);
 void manage_timers(void);
 void manage_mobs(void);

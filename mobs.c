@@ -31,12 +31,11 @@ static void init_mob(Mob *mob) {
     mob->previous = -1;
 }
 
-Mob *alloc_mob(byte cost, void *fn) {
+Mob *alloc_mob(byte cost) {
     Mob *mob = NULL;
     if (budget >= cost && available > 0) {
 	mob = m_obj + free[--available];
 	mob->price = cost;
-	mob->fn = fn;
 	init_mob(mob);
     }
     return mob;

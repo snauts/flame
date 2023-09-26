@@ -140,7 +140,7 @@ static void hopper(Mob *mob) {
 }
 
 static Mob *setup_hopper(u16 x, u16 y, u16 life) {
-    Mob *mob = alloc_mob(2, hopper);
+    Mob *mob = alloc_mob(2);
     if (mob != NULL) {
 	Object *obj = &mob->obj;
 
@@ -152,6 +152,7 @@ static Mob *setup_hopper(u16 x, u16 y, u16 life) {
 	obj->life = life;
 
 	mob->sprite->size = SPRITE_SIZE(2, 2);
+	mob->fn = (void *) &hopper;
     }
     return mob;
 }
