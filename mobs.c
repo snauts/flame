@@ -19,26 +19,25 @@ static char available_timers;
 static Trigger timers[MAX_TIMERS];
 static char free_timers[MAX_TIMERS];
 
-static void init_mob(char i, byte cost, void *fn) {
+static void init_mob(Mob *mob) {
     if (mob_head >= 0) {
-	m_obj[mob_head].previous = i;
+	m_obj[mob_head].previous = mob->index;
     }
-    sprite[i].next = first_mob_sprite;
-    first_mob_sprite = i + MOB_OFFSET;
-    m_obj[i].previous = -1;
-    m_obj[i].price = cost;
-    m_obj[i].fn = fn;
-    budget -= cost;
-    mob_head = i;
-    sprite[i].x = 1;
+    mob->sprite->x = 1;
+    mob->sprite->next = first_mob_sprite;
+    first_mob_sprite = mob->index + MOB_OFFSET;
+    mob_head = mob->index;
+    budget -= mob->price;
+    mob->previous = -1;
 }
 
 Mob *alloc_mob(byte cost, void *fn) {
     Mob *mob = NULL;
     if (budget >= cost && available > 0) {
-	char i = free[--available];
-	init_mob(i, cost, fn);
-	mob = m_obj + i;
+	mob = m_obj + free[--available];
+	mob->price = cost;
+	mob->fn = fn;
+	init_mob(mob);
     }
     return mob;
 }
