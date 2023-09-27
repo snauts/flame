@@ -202,17 +202,22 @@ void emit_hopper_squad(u16 i) {
     }
 }
 
-void emit_hole_hoppers(u16 pos_x) {
-    u16 x = pos_x + SCR_WIDTH + 16;
-    u16 y = SCR_HEIGHT + 16;
-    Mob *mob = setup_hopper(x, y, 0);
+static u16 hole_x;
+static void emit_next_hole_hopper(u16 count) {
+    Mob *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
     if (mob != NULL) {
 	mob->obj.velocity = 4;
 	mob->fn = &hole_hopper;
     }
-    if (window < pos_x + SCR_WIDTH - 96) {
-	callback(&emit_hole_hoppers, mob ? 24 : 0, pos_x);
+    if (window < hole_x - 112) {
+	u16 delay = mob == NULL ? 0 : (count == 7 ? 128 : 24);
+	callback(&emit_next_hole_hopper, delay, (count + 1) & 7);
     }
+}
+
+void emit_hole_hoppers(u16 pos_x) {
+    hole_x = pos_x + SCR_WIDTH + 16;
+    emit_next_hole_hopper(0);
 }
 
 void display_canyon(void) {
