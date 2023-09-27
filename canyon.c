@@ -177,6 +177,14 @@ void emit_hopper_squad(u16 i) {
     if (mob) callback(&emit_hopper_squad, 0, mob->index);
 }
 
+void emit_hole_hoppers(u16 pos_x) {
+    u16 x = pos_x + SCR_WIDTH + 16;
+    u16 y = SCR_HEIGHT + 16;
+    Mob *mob = setup_hopper(x, y, 40);
+    if (mob) mob->obj.velocity = 3;
+    callback(&emit_hole_hoppers, mob ? 32 : 0, pos_x);
+}
+
 void display_canyon(void) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));

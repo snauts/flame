@@ -117,16 +117,37 @@
    (place (1- width) 1 pipe (platform-edge :type 1 :flip t))))
 
 (defun desert-level ()
-  (join (aloe)
+  (join (aloe) ;; reference
 	(ground :x2 2)
+
+	;; start
 	(cacti)
 	(ground :x2 4)
+	(aloe)
+	(ground :x2 4)
+	(bush)
+	(ground :x2 8)
+	(flip (aloe))
+	(ground :x2 4)
+	(trigger "emit_hopper_squad")
+
+	;; holes
+	(ground)
+	(hole 4)
+	(ground)
+	(hole 4)
+	(ground)
+	(trigger "emit_hole_hoppers")
+	(hole 4)
+	(ground)
+
+	;; sandbox
+	(ground :n 2)
 	(platform :h 3)
 	(hole 4)
 	(ground)
 	(double-platform :h 4 :n 2)
 	(sandwich-platform :h 1 :n 2)
-	(trigger "emit_hopper_squad")
 	(ground :n 5)
 	(bush)
 	(empty 16)))
