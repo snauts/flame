@@ -6,6 +6,11 @@ CFLAGS	= -fomit-frame-pointer -fno-builtin
 CSRC	= main.c canyon.c soldier.c sound.c level.c mobs.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 
+ifneq ($(LTO),)
+CFLAGS	+= -flto
+LDLAGS	+= -flto
+endif
+
 all:	build
 
 build:
@@ -14,7 +19,7 @@ build:
 
 clean:
 	@echo Clean $(NAME).bin
-	@rm -f $(OBJS) $(NAME)*.bin cksum pcx2h images/*.h \
+	@rm -f $(OBJS) $(NAME)* cksum pcx2h images/*.h \
 		z80.rom z80.hex *.inc *.fasl
 
 disasm: build
@@ -34,7 +39,12 @@ debug:	build
 
 $(NAME).bin: $(OBJS) cksum
 	@echo Link $(NAME).bin
+ifneq ($(LTO),)
+	@$(PREFIX)gcc $(LDFLAGS) $(OBJS) -o $(NAME).elf
+	@$(PREFIX)objcopy $(NAME).elf -S -O binary $@
+else
 	@$(PREFIX)ld $(LDFLAGS) $(OBJS) --oformat binary -o $@
+endif
 	@./cksum $(NAME).bin
 
 cksum: cksum.c
