@@ -74,7 +74,8 @@ static void draw_sand(void) {
 }
 
 static u16 is_hopper_off_screen(Sprite *sprite) {
-    return sprite->x < ON_SCREEN - 16
+    return sprite->x >= MAX_POSITION
+	|| sprite->x < ON_SCREEN - 16
 	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
 }
 
@@ -171,7 +172,7 @@ static void hole_hopper(Mob *mob) {
 
 static Mob *setup_hopper(u16 x, u16 y, u16 life) {
     Mob *mob = alloc_mob(2);
-    if (mob != NULL && SCREEN_X(x) + 16 < 512) {
+    if (mob != NULL) {
 	Object *obj = &mob->obj;
 
 	obj->x = x;
@@ -206,11 +207,11 @@ void emit_hole_hoppers(u16 pos_x) {
     u16 y = SCR_HEIGHT + 16;
     Mob *mob = setup_hopper(x, y, 0);
     if (mob != NULL) {
-	mob->obj.velocity = 3;
+	mob->obj.velocity = 4;
 	mob->fn = FN(&hole_hopper);
     }
     if (window < pos_x + SCR_WIDTH - 96) {
-	callback(&emit_hole_hoppers, mob ? 32 : 0, pos_x);
+	callback(&emit_hole_hoppers, mob ? 24 : 0, pos_x);
     }
 }
 

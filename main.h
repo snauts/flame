@@ -25,6 +25,7 @@
 #define SCR_WIDTH	320
 #define SCR_HEIGHT	224
 #define MAX_MOBS	8
+#define MAX_POSITION	512
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
