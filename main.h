@@ -55,7 +55,7 @@ typedef struct Sprite {
 } Sprite;
 
 typedef struct Object {
-    u16 x, y;
+    short x, y;
     char gravity;
     char velocity;
     u16 frame;
