@@ -440,16 +440,10 @@ static void restart_level(void) {
     switch_frame(&display_canyon);
 }
 
-static void fade_and_restart(u16 delay) {
-    static byte fade;
-    if (delay > 0) {
-	/* start fade */
-	fade = 0;
-    }
+static void fade_and_restart(u16 fade) {
     if (fade < 8) {
-	upload_palette(fade++);
-	delay = delay > 0 ? delay : 6;
-	schedule(&fade_and_restart, delay);
+	upload_palette(fade);
+	callback(&fade_and_restart, 6, fade + 1);
     }
     else {
 	restart_level();
@@ -465,7 +459,7 @@ static void soldier_sinking(u16 cookie) {
 
 static void soldier_sink(void) {
     if (is_dead == 1) {
-	fade_and_restart(150);
+	schedule(&fade_and_restart, 150);
 	soldier_sinking(0);
 	is_dead = -1;
     }
@@ -505,7 +499,7 @@ static void soldier_kneel(u16 cookie) {
 	schedule(&soldier_kneel, 6);
     }
     else {
-	fade_and_restart(12);
+	schedule(&fade_and_restart, 12);
     }
 }
 
