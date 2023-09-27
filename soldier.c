@@ -64,6 +64,14 @@ static void update_soldier_rectangle(void) {
     s_rect.y2 = base->y + 36;
 }
 
+static void should_sink(void) {
+    /* if we are bitten in mid air and fall into pit, do the sinking */
+    if ((is_dead == 0 || is_dead == 2) && base->y >= 200 + ON_SCREEN) {
+	base->cfg = TILE(2, SOLDIER_TOP + 18);
+	is_dead = 1;
+    }
+}
+
 static void soldier_sprite_update(void) {
     base->x = soldier.x - window + SOLDIER_MIN_X;
     base->y = soldier.y + ON_SCREEN - 40;
@@ -78,10 +86,7 @@ static void soldier_sprite_update(void) {
     base[2].y = base->y + 21;
 
     update_soldier_rectangle();
-    if (is_dead != 1 && base->y >= 200 + ON_SCREEN) {
-	base->cfg = TILE(2, SOLDIER_TOP + 18);
-	is_dead = 1;
-    }
+    should_sink();
 }
 
 static u16 on_ground(void) {
@@ -451,21 +456,19 @@ static void fade_and_restart(u16 delay) {
     }
 }
 
-static void soldier_sink(void) {
-    static char ticks;
-    if (ticks++ == 10) {
-	base->cfg ^= BIT(11);
-	soldier.y++;
-	ticks = 0;
-    }
-    short diff = 224 + ON_SCREEN - base->y;
-    if (diff < 0) {
-	restart_level();
-    }
-    else if (diff <= 7) {
-	upload_palette(7 - diff);
-    }
+static void soldier_sinking(u16 cookie) {
+    soldier.y++;
+    base->cfg ^= BIT(11);
     soldier_sprite_update();
+    schedule(&soldier_sinking, 10);
+}
+
+static void soldier_sink(void) {
+    if (is_dead == 1) {
+	fade_and_restart(150);
+	soldier_sinking(0);
+	is_dead = -1;
+    }
 }
 
 static void spill_blood(u16 cookie) {
