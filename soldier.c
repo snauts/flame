@@ -467,6 +467,7 @@ static void soldier_sink(void) {
 
 static void spill_blood(u16 cookie) {
     blood->cfg += 4;
+    blood->next = first_mob_sprite;
     if (blood->cfg >= TILE(2, BLOOD + (4 * 8))) {
 	blood->x = blood->y = 0;
     }
