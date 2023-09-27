@@ -183,7 +183,7 @@ static Mob *setup_hopper(u16 x, u16 y, u16 life) {
 	obj->life = life;
 
 	mob->sprite->size = SPRITE_SIZE(2, 2);
-	mob->fn = FN(&move_hopper);
+	mob->fn = &move_hopper;
     }
     return mob;
 }
@@ -197,7 +197,7 @@ void emit_hopper_squad(u16 i) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, variation[i & 7]);
     }
     if (mob) {
-	mob->fn = FN(&periodic_hopper);
+	mob->fn = &periodic_hopper;
 	callback(&emit_hopper_squad, 0, mob->index);
     }
 }
@@ -208,7 +208,7 @@ void emit_hole_hoppers(u16 pos_x) {
     Mob *mob = setup_hopper(x, y, 0);
     if (mob != NULL) {
 	mob->obj.velocity = 4;
-	mob->fn = FN(&hole_hopper);
+	mob->fn = &hole_hopper;
     }
     if (window < pos_x + SCR_WIDTH - 96) {
 	callback(&emit_hole_hoppers, mob ? 24 : 0, pos_x);

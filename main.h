@@ -68,7 +68,7 @@ typedef struct Mob {
     char index;
     char previous;
     Sprite *sprite;
-    void (*fn)(void *);
+    void (*fn)(struct Mob *);
 } Mob;
 
 typedef struct Trigger {
@@ -101,7 +101,6 @@ typedef struct Rectangle {
     update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
 
 #define SCREEN_X(x) ((x) - window + ON_SCREEN)
-#define FN(fn) ((void *) (fn))
 
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
