@@ -222,6 +222,24 @@ void emit_hole_hoppers(u16 pos_x) {
     emit_next_hole_hopper(0);
 }
 
+static u16 sky_x;
+static void emit_next_sky_hopper(u16 count) {
+    u16 delay = 0;
+    if (window < sky_x - 128) {
+	Mob *mob = setup_hopper(sky_x, -16, 0);
+	if (mob != NULL) {
+	    delay = (count == 7 ? 192 : 24);
+	    count++;
+	}
+	callback(&emit_next_sky_hopper, delay, count & 7);
+    }
+}
+
+void emit_sky_hoppers(u16 pos_x) {
+    sky_x = pos_x + SCR_WIDTH;
+    emit_next_sky_hopper(0);
+}
+
 void display_canyon(void) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));

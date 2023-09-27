@@ -159,6 +159,7 @@
 	(cacti)
 	(flip (double-platform :h 1 :n 1))
 	(hole-with-platform :h 10)
+	(trigger "emit_sky_hoppers")
 	(double-platform :h 1 :n 1)
 
 	;; sandbox
