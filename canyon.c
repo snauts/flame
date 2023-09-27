@@ -170,7 +170,7 @@ static void hole_hopper(Mob *mob) {
     jump_hopper(mob, &is_near_hole);
 }
 
-static Mob *setup_hopper(u16 x, u16 y, u16 life) {
+static Mob *setup_hopper(short x, short y, u16 life) {
     Mob *mob = alloc_mob(2);
     if (mob != NULL) {
 	Object *obj = &mob->obj;
@@ -204,14 +204,16 @@ void emit_hopper_squad(u16 i) {
 
 static u16 hole_x;
 static void emit_next_hole_hopper(u16 count) {
-    Mob *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
-    if (mob != NULL) {
-	mob->obj.velocity = 4;
-	mob->fn = &hole_hopper;
-    }
+    u16 delay = 0;
     if (window < hole_x - 112) {
-	u16 delay = mob == NULL ? 0 : (count == 7 ? 128 : 24);
-	callback(&emit_next_hole_hopper, delay, (count + 1) & 7);
+	Mob *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
+	if (mob != NULL) {
+	    mob->obj.velocity = 4;
+	    mob->fn = &hole_hopper;
+	    delay = (count == 7 ? 128 : 24);
+	    count++;
+	}
+	callback(&emit_next_hole_hopper, delay, count & 7);
     }
 }
 
