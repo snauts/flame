@@ -156,6 +156,7 @@ void manage_timers(void);
 void manage_mobs(void);
 void reset_mobs(void);
 void free_mob(Mob *mob);
+Mob *get_mob(u16 i);
 
 extern u16 window;
 extern u16 counter;

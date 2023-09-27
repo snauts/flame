@@ -169,18 +169,12 @@ static Mob *setup_hopper(u16 x, u16 y, u16 life) {
 const byte variation[] = {
     60, 52, 42, 97, 15, 86, 65, 39
 };
-void emit_hopper_squad(u16 pos_x) { /* super hairy */
-    static Mob *last;
-    static byte count;
-    if (pos_x > 0) {
-	count = 0;
+void emit_hopper_squad(u16 i) {
+    Mob *mob = get_mob(i);
+    if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
+	mob = setup_hopper(window + SCR_WIDTH, 208, variation[i & 7]);
     }
-    if (count == 0 || last->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
-	last = setup_hopper(window + SCR_WIDTH, 208, variation[count++]);
-    }
-    if (last && count < 8) {
-	schedule(&emit_hopper_squad, 0);
-    }
+    if (mob) callback(&emit_hopper_squad, 0, mob->index);
 }
 
 void display_canyon(void) {

@@ -25,6 +25,10 @@ static char available_timers;
 static Timer timers[MAX_TIMERS];
 static char free_timers[MAX_TIMERS];
 
+Mob *get_mob(u16 i) {
+    return (i < MAX_MOBS) ? m_obj + i : NULL;
+}
+
 static void init_mob(Mob *mob) {
     if (mob_head >= 0) {
 	m_obj[mob_head].previous = mob->index;
