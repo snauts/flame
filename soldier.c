@@ -440,14 +440,20 @@ static void restart_level(void) {
     switch_frame(&display_canyon);
 }
 
+#define FADE_SPEED 3
 static void fade_and_restart(u16 fade) {
     if (fade < 8) {
 	upload_palette(fade);
-	callback(&fade_and_restart, 6, fade + 1);
+	callback(&fade_and_restart, FADE_SPEED, fade + 1);
     }
     else {
 	restart_level();
     }
+}
+
+void fade_in(u16 fade) {
+    upload_palette(fade);
+    if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 
 static void soldier_sinking(u16 cookie) {
@@ -502,7 +508,7 @@ static void soldier_kneel(u16 cookie) {
 	schedule(&soldier_kneel, 6);
     }
     else {
-	schedule(&fade_and_restart, 12);
+	schedule(&fade_and_restart, 25);
     }
 }
 

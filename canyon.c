@@ -238,7 +238,6 @@ void display_canyon(void) {
     draw_horizon();
     draw_vegetation();
 
-    upload_palette(4);
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
@@ -250,7 +249,6 @@ void display_canyon(void) {
 
     prepare_desert_level();
 
-    upload_palette(2);
     fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
@@ -260,6 +258,6 @@ void display_canyon(void) {
 
     update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
 
-    upload_palette(0);
+    callback(&fade_in, 0, 6);
     switch_frame(&update_game);
 }

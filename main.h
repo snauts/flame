@@ -141,6 +141,7 @@ u16 soldier_collision(Rectangle *r);
 u16 flame_collision(Rectangle *r);
 void bite_soldier(u16 x, u16 y);
 Sprite *get_sprite(u16 offset);
+void fade_in(u16 fade);
 
 void display_canyon(void);
 void prepare_desert_level(void);
