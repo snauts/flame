@@ -119,7 +119,7 @@ static void move_hopper(Mob *mob) {
     sprite->y = obj->y + ON_SCREEN - 16;
 
     if (!is_hopper_alive(obj)) {
-	obj->frame = 9 + (obj->life >> 2);
+	if ((obj->life & 3) == 0) obj->frame++;
     }
     else {
 	if (should_hopper_burn(sprite)) {
