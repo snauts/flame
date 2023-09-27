@@ -152,6 +152,14 @@
 	(hole 4)
 	(ground)
 
+	;; platforms over bigger hole
+	(aloe)
+	(ground)
+	(cacti)
+	(flip (double-platform :h 1 :n 1))
+	(hole-with-platform :h 10)
+	(double-platform :h 1 :n 1)
+
 	;; sandbox
 	(ground :n 2)
 	(platform :h 3)
