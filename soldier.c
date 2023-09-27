@@ -467,7 +467,6 @@ static void soldier_sink(void) {
 
 static void spill_blood(u16 cookie) {
     blood->cfg += 4;
-    blood->next = first_mob_sprite;
     if (blood->cfg >= TILE(2, BLOOD + (4 * 8))) {
 	blood->x = blood->y = 0;
     }
@@ -483,10 +482,13 @@ static void do_bite(u16 x, u16 y) {
     blood->y = y;
     blood->cfg = TILE(2, BLOOD);
     blood->size = SPRITE_SIZE(2, 2);
-    blood->next = first_mob_sprite;
     schedule(&spill_blood, 2);
     remove_oldest_flame();
     if (!is_dead) is_dead = 2;
+}
+
+static void manage_blood(void) {
+    blood->next = first_mob_sprite;
 }
 
 void bite_soldier(u16 x, u16 y) {
@@ -548,6 +550,7 @@ void advance_sprites(void) {
 
     /* manage mobs first because manage_flames uses first_mob_sprite */
     manage_mobs();
+    manage_blood();
     manage_flames();
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
