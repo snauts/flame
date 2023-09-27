@@ -200,7 +200,7 @@ static u16 next_flame(u16 index) {
 static void update_flame_sprite(u16 index) {
     u16 animation = f_obj[index].life & 0xFE;
     flame[index].cfg = TILE(2, f_obj[index].frame + animation);
-    flame[index].x = soldier.x + (f_obj[index].x >> 4) - window + ON_SCREEN;
+    flame[index].x = SCREEN_X(soldier.x + (f_obj[index].x >> 4));
     flame[index].y = (f_obj[index].y >> 4);
 }
 
