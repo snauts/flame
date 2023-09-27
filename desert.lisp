@@ -116,6 +116,17 @@
    (place (- width 2) 0 pipe (desert-cell (tile 282 :pr 1 :h 1)))
    (place (1- width) 1 pipe (platform-edge :type 1 :flip t))))
 
+(defun hole-with-platform (&key (h 2))
+  (incf h 4)
+  (box-pipe
+   (hole 14)
+   (place 3 h pipe (top-ground))
+   (place 2 (1+ h) pipe (platform-edge :type 0 :flip t))
+   (place 11 (1+ h) pipe (platform-edge :type 1))
+   (place 4 0 pipe (make 6 h :e (desert-tile 234)))
+   (decorate-side pipe 10 h :move -1 :flip 1)
+   (decorate-side pipe 3 h :move -1)))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
