@@ -109,6 +109,7 @@
 
 (defun hole (width)
   (box-pipe
+   (empty width)
    (place 0 1 pipe (platform-edge :type 1))
    (place 0 0 pipe (desert-cell (tile 281 :pr 1)))
    (place 1 0 pipe (desert-cell (tile 282 :pr 1)))
@@ -161,12 +162,7 @@
 	(double-platform :h 1 :n 1)
 
 	;; sandbox
-	(ground :n 2)
-	(platform :h 3)
-	(hole 4)
-	(ground)
-	(double-platform :h 4 :n 2)
-	(sandwich-platform :h 1 :n 2)
-	(ground :n 5)
-	(bush)
+	(ground :n 4)
+	(hole 32)
+	(ground :n 4)
 	(empty 16)))
