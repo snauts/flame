@@ -23,6 +23,8 @@
 #define DMA_CHUNKS	8
 #define ON_SCREEN	128
 #define SCR_WIDTH	320
+#define SCR_HEIGHT	224
+#define MAX_MOBS	8
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
@@ -96,6 +98,8 @@ typedef struct Rectangle {
 
 #define UPDATE_CRAM_WORD(addr, data) \
     update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
+
+#define SCREEN_X(x) ((x) - window + ON_SCREEN)
 
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);

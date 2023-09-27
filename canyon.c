@@ -75,7 +75,7 @@ static void draw_sand(void) {
 
 static u16 is_hopper_off_screen(Sprite *sprite) {
     return sprite->x < ON_SCREEN - 16
-	|| sprite->y > ON_SCREEN + 224;
+	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
 }
 
 static u16 should_hopper_burn(Sprite *sprite) {
@@ -115,7 +115,7 @@ static void hopper(Mob *mob) {
     obj->life++;
     u16 land = advance_obj(obj, 4, 12);
 
-    sprite->x = obj->x - window + ON_SCREEN;
+    sprite->x = SCREEN_X(obj->x);
     sprite->y = obj->y + ON_SCREEN - 16;
 
     if (!is_hopper_alive(obj)) {
@@ -150,7 +150,7 @@ static void hopper(Mob *mob) {
 
 static Mob *setup_hopper(u16 x, u16 y, u16 life) {
     Mob *mob = alloc_mob(2);
-    if (mob != NULL) {
+    if (mob != NULL && SCREEN_X(x) + 16 < 512) {
 	Object *obj = &mob->obj;
 
 	obj->x = x;
