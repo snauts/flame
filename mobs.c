@@ -15,8 +15,14 @@ static byte budget;
 
 #define MAX_TIMERS	8
 
+typedef struct Timer {
+    u16 cookie;
+    u16 timeout;
+    void (*fn)(u16);
+} Timer;
+
 static char available_timers;
-static Trigger timers[MAX_TIMERS];
+static Timer timers[MAX_TIMERS];
 static char free_timers[MAX_TIMERS];
 
 static void init_mob(Mob *mob) {
@@ -85,12 +91,17 @@ void manage_mobs(void) {
     }
 }
 
-void schedule(void (*fn)(u16), u16 ticks) {
+void callback(void (*fn)(u16), u16 timeout, u16 cookie) {
     if (available_timers > 0) {
 	char i = free_timers[--available_timers];
-	timers[i].distance = ticks;
+	timers[i].timeout = timeout;
+	timers[i].cookie = cookie;
 	timers[i].fn = fn;
     }
+}
+
+void schedule(void (*fn)(u16), u16 ticks) {
+    callback(fn, ticks, 0);
 }
 
 static void free_timer(char i, char n) {
@@ -102,12 +113,13 @@ static void free_timer(char i, char n) {
 void manage_timers(void) {
     for (u16 n = available_timers; n < MAX_TIMERS; n++) {
 	char i = free_timers[n];
-	if (timers[i].distance > 0) {
-	    timers[i].distance--;
+	Timer *timer = timers + i;
+	if (timer->timeout > 0) {
+	    timer->timeout--;
 	}
 	else {
 	    free_timer(i, n);
-	    timers[i].fn(0);
+	    timer->fn(timer->cookie);
 	}
     }
 }
