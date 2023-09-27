@@ -435,6 +435,22 @@ static void restart_level(void) {
     switch_frame(&display_canyon);
 }
 
+static void fade_and_restart(u16 delay) {
+    static byte fade;
+    if (delay > 0) {
+	/* start fade */
+	fade = 0;
+    }
+    if (fade < 8) {
+	upload_palette(fade++);
+	delay = delay > 0 ? delay : 6;
+	schedule(&fade_and_restart, delay);
+    }
+    else {
+	restart_level();
+    }
+}
+
 static void soldier_sink(void) {
     static char ticks;
     if (ticks++ == 10) {
@@ -479,16 +495,6 @@ void bite_soldier(u16 x, u16 y) {
     if (blood->x == 0) do_bite(x, y);
 }
 
-static void fade_and_restart(u16 cookie) {
-    upload_palette(soldier.life++);
-    if (soldier.life < 8) {
-	schedule(&fade_and_restart, 6);
-    }
-    else {
-	restart_level();
-    }
-}
-
 static void soldier_kneel(u16 cookie) {
     base[0].y++;
     soldier.frame += 6;
@@ -497,8 +503,7 @@ static void soldier_kneel(u16 cookie) {
 	schedule(&soldier_kneel, 6);
     }
     else {
-	schedule(&fade_and_restart, 12);
-	soldier.life = 1;
+	fade_and_restart(12);
     }
 }
 
