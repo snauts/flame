@@ -107,7 +107,7 @@ static void hopper_die(Object *obj) {
     perish_sfx();
 }
 
-static void hopper(Mob *mob) {
+static void move_hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
 
@@ -135,9 +135,6 @@ static void hopper(Mob *mob) {
 	    if (should_hopper_bite(sprite)) {
 		bite_soldier(sprite->x, sprite->y - 2);
 	    }
-	    if ((obj->life & 0x7F) == 0) {
-		obj->velocity = 2;
-	    }
 	}
     }
 
@@ -146,6 +143,30 @@ static void hopper(Mob *mob) {
     if (is_hopper_off_screen(sprite) || obj->frame == 17) {
 	free_mob(mob);
     }
+}
+
+static void jump_hopper(Mob *mob, u16(*jump_condition)(u16)) {
+    Object *obj = &mob->obj;
+    if (is_hopper_alive(obj) && jump_condition(obj->life)) {
+	obj->velocity = 2;
+    }
+    move_hopper(mob);
+}
+
+static u16 is_period(u16 life) {
+    return (life & 0x7F) == 0;
+}
+
+static void periodic_hopper(Mob *mob) {
+    jump_hopper(mob, &is_period);
+}
+
+static u16 is_near_hole(u16 life) {
+    return (life == 80 || life == 180);
+}
+
+static void hole_hopper(Mob *mob) {
+    jump_hopper(mob, &is_near_hole);
 }
 
 static Mob *setup_hopper(u16 x, u16 y, u16 life) {
@@ -161,7 +182,7 @@ static Mob *setup_hopper(u16 x, u16 y, u16 life) {
 	obj->life = life;
 
 	mob->sprite->size = SPRITE_SIZE(2, 2);
-	mob->fn = (void *) &hopper;
+	mob->fn = FN(&move_hopper);
     }
     return mob;
 }
@@ -174,14 +195,20 @@ void emit_hopper_squad(u16 i) {
     if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, variation[i & 7]);
     }
-    if (mob) callback(&emit_hopper_squad, 0, mob->index);
+    if (mob) {
+	mob->fn = FN(&periodic_hopper);
+	callback(&emit_hopper_squad, 0, mob->index);
+    }
 }
 
 void emit_hole_hoppers(u16 pos_x) {
     u16 x = pos_x + SCR_WIDTH + 16;
     u16 y = SCR_HEIGHT + 16;
-    Mob *mob = setup_hopper(x, y, 40);
-    if (mob) mob->obj.velocity = 3;
+    Mob *mob = setup_hopper(x, y, 0);
+    if (mob != NULL) {
+	mob->obj.velocity = 3;
+	mob->fn = FN(&hole_hopper);
+    }
     callback(&emit_hole_hoppers, mob ? 32 : 0, pos_x);
 }
 
