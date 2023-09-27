@@ -209,7 +209,9 @@ void emit_hole_hoppers(u16 pos_x) {
 	mob->obj.velocity = 3;
 	mob->fn = FN(&hole_hopper);
     }
-    callback(&emit_hole_hoppers, mob ? 32 : 0, pos_x);
+    if (window < pos_x + SCR_WIDTH - 96) {
+	callback(&emit_hole_hoppers, mob ? 32 : 0, pos_x);
+    }
 }
 
 void display_canyon(void) {
