@@ -7,7 +7,7 @@
 #include "images/walk.h"
 #include "images/gun.h"
 
-#define SOLDIER_TOP	512
+#define SOLDIER_TOP	1024
 #define SOLDIER_POISON	(SOLDIER_TOP + 27)
 #define SOLDIER_LEG	(SOLDIER_TOP + (3 * 12))
 
