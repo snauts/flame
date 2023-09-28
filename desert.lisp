@@ -187,7 +187,6 @@
 	(cacti)
 	(ground :x2 4)
 	(aloe)
-	(hole 4)
 	(ground :x2 4)
 	(bush)
 	(ground :x2 8)
