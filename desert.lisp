@@ -2,13 +2,13 @@
   '(103 111 119 127 135 143 151 159
     167 175 183 191 199 207 215 223
     163 171 179 187 195 203 211 219
-    258 266 274))
+    258 266 274 236))
 
-(defun desert-tile (id)
-  (tile id :pl 1))
+(defun desert-tile (id &optional (pr 0))
+  (tile id :pl 1 :pr pr))
 
-(defun desert-cell (id)
-  (make 1 1 :e (desert-tile id)))
+(defun desert-cell (id &optional (pr 0))
+  (make 1 1 :e (desert-tile id pr)))
 
 (defun desert ()
   (fill-box 8 8 (desert-tile 97)))

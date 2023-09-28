@@ -56,6 +56,9 @@
 (defun flip (box)
   (for-all (reverse box) (lambda (x) (logxor x (ash 1 11)))))
 
+(defun forward (box)
+  (for-all box (lambda (x) (logior x (ash 1 15)))))
+
 (defun place-in (a b i &optional result)
   (cond ((and (null a) (null b)) (reverse result))
 	((> i 0) (place-in (rest a) b (1- i) (cons (first a) result)))
