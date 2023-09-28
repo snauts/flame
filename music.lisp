@@ -281,12 +281,20 @@
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
 
-(defun generate-preish-sfx ()
+(defun generate-sfx (fn)
   (let ((result nil))
     (loop for i from 15 downto 1 do
-      (let ((frequency (* (1+ (mod i 3)) (- 200 (* i 5)))))
-	(push (psg-value frequency i) result)))
+      (push (psg-value (funcall fn i) i) result))
     (reverse result)))
+
+(defun generate-perish-sfx ()
+  (generate-sfx (lambda (i) (* (1+ (mod i 3)) (- 200 (* i 5))))))
+
+(defun generate-wiggle-1-sfx ()
+  (generate-sfx (lambda (i) (+ 1200 (* i 40)))))
+
+(defun generate-wiggle-2-sfx ()
+  (generate-sfx (lambda (i) (- 1800 (* i 40)))))
 
 (defun silence-stop ()
   (list #x000f))
@@ -305,7 +313,9 @@
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
     (save-array out "johnny_score" (save-score (johnny-score)))
-    (save-sfx out "perish" (generate-preish-sfx))))
+    (save-sfx out "perish" (generate-perish-sfx))
+    (save-sfx out "wiggle1" (generate-wiggle-1-sfx))
+    (save-sfx out "wiggle2" (generate-wiggle-2-sfx))))
 
 (defun save-and-quit ()
   (handler-case (save-music)

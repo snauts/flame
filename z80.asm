@@ -53,6 +53,8 @@ main_loop:
 	ld	a, 2
 	call	psg_play
 
+	jp	halt
+
 	ld	a, (tick)
 	ld	b, a
 	ld	a, (last)

@@ -456,11 +456,13 @@ void fade_in(u16 fade) {
     if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 
+void wiggle_sfx(u16 i);
 static void soldier_sinking(u16 cookie) {
     soldier.y++;
     base->cfg ^= BIT(11);
     soldier_sprite_update();
     schedule(&soldier_sinking, 10);
+    wiggle_sfx((base->cfg >> 11) & 1);
 }
 
 static void soldier_sink(void) {
