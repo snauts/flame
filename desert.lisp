@@ -174,7 +174,7 @@
    (place 8 2 pipe (big-cacti 4 0 0 0 0 0))
    (place 10 1 pipe (front-cacti 7 3 1 3 0 1))
    (place 12 2 pipe (big-cacti 0 2 0 2 3 0))
-   (place 14 1 pipe (front-cacti 4 4 0 0 3 1))
+   (place 14 1 pipe (front-cacti 5 4 0 0 3 1))
    (place 16 1 pipe (front-cacti 2 2 3 0 0 0))
    (place 18 2 pipe (big-cacti 8 2 0 0 2 1))
    (place 20 1 pipe (front-cacti 2 7 1 0 0 0))))
