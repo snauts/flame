@@ -167,17 +167,24 @@
 
 (defun cacti-garden ()
   (box-pipe
-   (ground :n 3)
+   (ground :n 5)
    (place 1 1 pipe (front-cacti 1 2 0 2 0))
    (place 3 2 pipe (big-cacti 3 0 0 2 1 1))
    (place 6 1 pipe (front-cacti 2 6 0 0 0 1))
    (place 8 2 pipe (big-cacti 4 0 0 0 0 0))
-   (place 10 1 pipe (front-cacti 7 3 1 3 0 1))
+   (place 10 1 pipe (front-cacti 6 2 1 2 0 1))
    (place 12 2 pipe (big-cacti 0 2 0 2 3 0))
    (place 14 1 pipe (front-cacti 5 4 0 0 3 1))
    (place 16 1 pipe (front-cacti 2 2 3 0 0 0))
-   (place 18 2 pipe (big-cacti 8 2 0 0 2 1))
-   (place 20 1 pipe (front-cacti 2 7 1 0 0 0))))
+   (place 18 2 pipe (big-cacti 8 2 0 0 0 1))
+   (place 20 1 pipe (front-cacti 2 7 1 0 0 0))
+   (place 22 2 pipe (big-cacti 5 0 0 0 0 1))
+   (place 24 1 pipe (front-cacti 2 4 1 2 0 0))
+   (place 26 2 pipe (big-cacti 3 0 0 2 0 1))
+   (place 29 1 pipe (front-cacti 2 2 1 2 0 1))
+   (place 31 2 pipe (big-cacti 1 0 0 4 2 1))
+   (place 34 1 pipe (front-cacti 1 3 1 3 1 0))
+   (place 36 2 pipe (big-cacti 4 0 0 2 1 1))))
 
 (defun desert-level ()
   (join (aloe) ;; reference
@@ -215,7 +222,7 @@
 
 	;; garden
 	(multiply (bush) 3)
-	(inject (cacti-garden) "emit_hopper_squad" 16)
+	(inject (cacti-garden) "emit_hopper_squad" 24)
 
 	;; sandbox
 	(ground :n 2)
