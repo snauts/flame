@@ -88,11 +88,12 @@ static u16 should_hopper_burn(Sprite *sprite) {
     return flame_collision(&r);
 }
 
-static u16 should_hopper_bite(Sprite *sprite) {
+static u16 should_hopper_bite(Sprite *sprite, char dir) {
     Rectangle r;
-    r.x1 = sprite->x + 2;
+    dir = 4 * (dir + 1);
+    r.x1 = sprite->x + 2 + dir;
     r.y1 = sprite->y + 4;
-    r.x2 = sprite->x + 6;
+    r.x2 = sprite->x + 6 + dir;
     r.y2 = sprite->y + 8;
     return soldier_collision(&r);
 }
@@ -133,8 +134,9 @@ static void move_hopper(Mob *mob) {
 	    else {
 		obj->frame = 1 + ((obj->life >> 1) & 1);
 	    }
-	    if (should_hopper_bite(sprite)) {
-		bite_soldier(sprite->x, sprite->y - 2);
+	    if (should_hopper_bite(sprite, mob->direction)) {
+		u16 offset = 8 * (mob->direction + 1);
+		bite_soldier(sprite->x + offset, sprite->y - 2);
 	    }
 	}
     }
