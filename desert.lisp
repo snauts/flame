@@ -128,6 +128,57 @@
    (decorate-side pipe 10 h :move -1 :flip 1)
    (decorate-side pipe 3 h :move -1)))
 
+(defun branch-element (h x y result)
+  (cond ((null result)
+	 (crop x 4 (+ x 2) 5 (cliffs)))
+	((= h 1)
+	 (place 0 (height result) result (crop x 5 (+ x 2) 6 (cliffs))))
+	((> h 1)
+	 (place 0 (height result) result (crop 14 y 16 (1+ y) (cliffs))))))
+
+(defun cacti-branch (h x y &optional (result nil))
+  (if (= h 0)
+      result
+      (cacti-branch (1- h) x y (branch-element h x y result))))
+
+(defun cacti-stem (h)
+  (let ((tile (+ 227 (logand h 1))))
+    (cond ((< h 1) nil)
+	  ((= h 1) (desert-cell tile))
+	  (t (place 0 1 (desert-cell tile) (cacti-stem (1- h)))))))
+
+(defun get-branch (h type)
+  (case type
+    (0 (cacti-branch h 10 5))
+    (1 (cacti-branch h 12 4))))
+
+(defun big-cacti (s1 b1 s2 b2 s3 &optional (type 0) (stem 229))
+  (box-pipe
+   (place 1 0 (empty 1) (desert-cell stem))
+   (place 1 1 pipe (cacti-stem s1))
+   (place (- 1 type) (1+ s1) pipe (get-branch b1 type))
+   (place 1 (+ s1 b1 1) pipe (cacti-stem s2))
+   (place type (+ s1 b1 s2 1) pipe (get-branch b2 (- 1 type)))
+   (place 1 (+ s1 b1 s2 b2 1) pipe (cacti-stem s3))
+   (place 1 (+ s1 b1 s2 b2 s3 1) pipe (desert-cell 235))))
+
+(defun front-cacti (s1 b1 s2 b2 s3 &optional (type 0))
+  (forward (big-cacti s1 b1 s2 b2 s3 type 236)))
+
+(defun cacti-garden ()
+  (box-pipe
+   (ground :n 3)
+   (place 1 1 pipe (front-cacti 1 2 0 2 0))
+   (place 3 2 pipe (big-cacti 3 0 0 2 1 1))
+   (place 6 1 pipe (front-cacti 2 6 0 0 0 1))
+   (place 8 2 pipe (big-cacti 4 0 0 0 0 0))
+   (place 10 1 pipe (front-cacti 7 3 1 3 0 1))
+   (place 12 2 pipe (big-cacti 0 2 0 2 3 0))
+   (place 14 1 pipe (front-cacti 4 4 0 0 3 1))
+   (place 16 1 pipe (front-cacti 2 2 3 0 0 0))
+   (place 18 2 pipe (big-cacti 8 2 0 0 2 1))
+   (place 20 1 pipe (front-cacti 2 7 1 0 0 0))))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -161,6 +212,11 @@
 	(hole-with-platform :h 10)
 	(trigger "emit_sky_hoppers")
 	(double-platform :h 1 :n 1)
+
+	;; garden
+	(ground :n 2)
+	(cacti-garden)
+	(trigger "emit_hopper_squad")
 
 	;; sandbox
 	(ground :n 4)
