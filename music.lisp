@@ -296,6 +296,9 @@
 (defun generate-wiggle-2-sfx ()
   (generate-sfx (lambda (i) (- 1800 (* i 40)))))
 
+(defun generate-slash-sfx ()
+  (generate-sfx (lambda (i) (- 5000 (* 10 i i)))))
+
 (defun silence-stop ()
   (list #x000f))
 
@@ -315,7 +318,8 @@
     (save-array out "johnny_score" (save-score (johnny-score)))
     (save-sfx out "perish" (generate-perish-sfx))
     (save-sfx out "wiggle1" (generate-wiggle-1-sfx))
-    (save-sfx out "wiggle2" (generate-wiggle-2-sfx))))
+    (save-sfx out "wiggle2" (generate-wiggle-2-sfx))
+    (save-sfx out "slash" (generate-slash-sfx))))
 
 (defun save-and-quit ()
   (handler-case (save-music)

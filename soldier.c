@@ -485,7 +485,9 @@ static void spill_blood(u16 cookie) {
     }
 }
 
+void slash_sfx(void);
 static void do_bite(u16 x, u16 y) {
+    slash_sfx();
     blood->x = x;
     blood->y = y;
     blood->cfg = TILE(2, BLOOD);

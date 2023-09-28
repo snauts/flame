@@ -124,11 +124,13 @@ static void setup_johnny_intruments(void) {
 #define SFX_PERISH	0xF00
 #define SFX_WIGGLE1	0xF20
 #define SFX_WIGGLE2	0xF40
+#define SFX_SLASH	0xF60
 
 static void load_z80_sfx(void) {
     memcpy((void *) Z80_RAM + SFX_PERISH, perish, sizeof(perish));
     memcpy((void *) Z80_RAM + SFX_WIGGLE1, wiggle1, sizeof(wiggle1));
     memcpy((void *) Z80_RAM + SFX_WIGGLE2, wiggle2, sizeof(wiggle2));
+    memcpy((void *) Z80_RAM + SFX_SLASH, slash, sizeof(slash));
 }
 
 void perish_sfx(void) {
@@ -137,6 +139,10 @@ void perish_sfx(void) {
 
 void wiggle_sfx(u16 i) {
     z80_word(PSG_SFX_CH1, i == 1 ? SFX_WIGGLE1 : SFX_WIGGLE2);
+}
+
+void slash_sfx(void) {
+    z80_word(PSG_SFX_CH1, SFX_SLASH);
 }
 
 void music_johnny(void) {
