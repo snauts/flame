@@ -18,7 +18,7 @@
   (length box))
 
 (defun height (box)
-  (reduce #'max (mapcar #'length box)))
+  (if (null box) 0 (reduce #'max (mapcar #'length box))))
 
 (defun empty (width)
   (make-list width :initial-element (list nil)))
