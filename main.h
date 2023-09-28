@@ -67,6 +67,7 @@ typedef struct Mob {
     byte price;
     char index;
     char previous;
+    char direction;
     Sprite *sprite;
     void (*fn)(struct Mob *);
 } Mob;

@@ -112,8 +112,8 @@ static void move_hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
 
-    obj->x--;
     obj->life++;
+    obj->x += mob->direction;
     u16 land = advance_obj(obj, 4, 12);
 
     sprite->x = SCREEN_X(obj->x);
@@ -140,6 +140,7 @@ static void move_hopper(Mob *mob) {
     }
 
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
+    if (mob->direction > 0) sprite->cfg |= BIT(11);
 
     if (is_hopper_off_screen(sprite) || obj->frame == 17) {
 	free_mob(mob);
@@ -184,6 +185,7 @@ static Mob *setup_hopper(short x, short y, u16 life) {
 
 	mob->sprite->size = SPRITE_SIZE(2, 2);
 	mob->fn = &move_hopper;
+	mob->direction = -1;
     }
     return mob;
 }
@@ -226,7 +228,7 @@ static u16 sky_x;
 static void emit_next_sky_hopper(u16 delay) {
     if (window < sky_x - 112) {
 	for (u16 i = 0; i < 4; i++) {
-	    Mob *mob = setup_hopper(sky_x + (i << 4), -16 + (i << 2), 0);
+	    setup_hopper(sky_x + (i << 4), -16 + (i << 2), 0);
 	}
 	callback(&emit_next_sky_hopper, delay, 384 - delay);
     }
