@@ -223,18 +223,18 @@ void emit_hole_hoppers(u16 pos_x) {
 }
 
 static u16 sky_x;
-static void emit_next_sky_hopper(u16 count) {
+static void emit_next_sky_hopper(u16 delay) {
     if (window < sky_x - 112) {
 	for (u16 i = 0; i < 4; i++) {
 	    Mob *mob = setup_hopper(sky_x + (i << 4), -16 + (i << 2), 0);
 	}
-	schedule(&emit_next_sky_hopper, 256);
+	callback(&emit_next_sky_hopper, delay, 384 - delay);
     }
 }
 
 void emit_sky_hoppers(u16 pos_x) {
     sky_x = pos_x + SCR_WIDTH - 40;
-    emit_next_sky_hopper(0);
+    emit_next_sky_hopper(96);
 }
 
 void display_canyon(void) {
