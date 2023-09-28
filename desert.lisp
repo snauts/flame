@@ -214,12 +214,11 @@
 	(double-platform :h 1 :n 1)
 
 	;; garden
-	(ground :n 2)
-	(cacti-garden)
-	(trigger "emit_hopper_squad")
+	(multiply (bush) 3)
+	(inject (cacti-garden) "emit_hopper_squad" 16)
 
 	;; sandbox
-	(ground :n 4)
+	(ground :n 2)
 	(hole 32)
 	(ground :n 4)
 	(empty 16)))

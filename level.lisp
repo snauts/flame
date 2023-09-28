@@ -49,6 +49,11 @@
 (defun trigger (name)
   (list name))
 
+(defun inject (box name pos)
+  (if (= 0 pos)
+      (cons name box)
+      (cons (first box) (inject (rest box) name (1- pos)))))
+
 (defun for-all (box fn)
   (labels ((manipulate (x) (unless (null x) (funcall fn x))))
     (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
