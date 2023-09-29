@@ -281,23 +281,39 @@
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
 
-(defun generate-sfx (fn)
-  (let ((result nil))
-    (loop for i from 15 downto 1 do
-      (push (psg-value (funcall fn i) i) result))
-    (reverse result)))
+(defun convert-sfx (samples f-fn v-fn)
+  (let ((time 0.0)
+	(result nil)
+	(step (/ 1.0 samples)))
+    (dotimes (i samples (reverse result))
+      (let ((volume (round (+ 1.0 (* 14.0 (funcall v-fn time)))))
+	    (frequency (round (funcall f-fn time))))
+	(push (psg-value frequency volume) result)
+	(incf time step)))))
 
-(defun generate-perish-sfx ()
-  (generate-sfx (lambda (i) (* (1+ (mod i 3)) (- 200 (* i 5))))))
+(defun linear-fade (x)
+  (- 1.0 x))
 
-(defun generate-wiggle-1-sfx ()
-  (generate-sfx (lambda (i) (+ 1200 (* i 40)))))
+(defun quadratic-fade (x)
+  (- 1.0 (expt x 2)))
 
-(defun generate-wiggle-2-sfx ()
-  (generate-sfx (lambda (i) (- 1800 (* i 40)))))
+(defun periodic (x period)
+  (mod (* x period) 1.0))
 
-(defun generate-slash-sfx ()
-  (generate-sfx (lambda (i) (- 5000 (* 10 i i)))))
+(defun up-down (x)
+  (- 1.0 (abs (- (* 2.0 x) 1.0))))
+
+(defun perish (x)
+  (- 500 (* 300 (periodic x 4))))
+
+(defun wiggle (x)
+  (+ 600 (* (up-down x) 300)))
+
+(defun wiggle-volume (x)
+  (- 1.0 (periodic x 2)))
+
+(defun slash (x)
+  (+ 1000 (- 1.0 x) (random 1000.0)))
 
 (defun silence-stop ()
   (list #x000f))
@@ -316,10 +332,9 @@
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
     (save-array out "johnny_score" (save-score (johnny-score)))
-    (save-sfx out "perish" (generate-perish-sfx))
-    (save-sfx out "wiggle1" (generate-wiggle-1-sfx))
-    (save-sfx out "wiggle2" (generate-wiggle-2-sfx))
-    (save-sfx out "slash" (generate-slash-sfx))))
+    (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
+    (save-sfx out "wiggle" (convert-sfx 20 #'wiggle #'wiggle-volume))
+    (save-sfx out "slash" (convert-sfx 32 #'slash #'quadratic-fade))))
 
 (defun save-and-quit ()
   (handler-case (save-music)

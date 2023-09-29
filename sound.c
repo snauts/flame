@@ -121,28 +121,38 @@ static void setup_johnny_intruments(void) {
 #define PSG_SFX_CH1	0x1A
 #define PSG_SFX_CH2	0x1C
 
-#define SFX_PERISH	0xF00
-#define SFX_WIGGLE1	0xF20
-#define SFX_WIGGLE2	0xF40
-#define SFX_SLASH	0xF60
+#define SFX_BASE	0xF00
+enum {
+    SFX_PERISH = 0,
+    SFX_WIGGLE,
+    SFX_SLASH,
+    SFX_LASTONE,
+};
+
+static u16 sfx[SFX_LASTONE];
+
+static void load_sfx(u16 i, const byte *ptr, u16 size) {
+    memcpy((void *) Z80_RAM + sfx[i], ptr, size);
+    sfx[i + 1] = sfx[i] + size;
+}
 
 static void load_z80_sfx(void) {
-    memcpy((void *) Z80_RAM + SFX_PERISH, perish, sizeof(perish));
-    memcpy((void *) Z80_RAM + SFX_WIGGLE1, wiggle1, sizeof(wiggle1));
-    memcpy((void *) Z80_RAM + SFX_WIGGLE2, wiggle2, sizeof(wiggle2));
-    memcpy((void *) Z80_RAM + SFX_SLASH, slash, sizeof(slash));
+    sfx[0] = 0xF00;
+    load_sfx(SFX_PERISH, perish, sizeof(perish));
+    load_sfx(SFX_WIGGLE, wiggle, sizeof(wiggle));
+    load_sfx(SFX_SLASH, slash, sizeof(slash));
 }
 
 void perish_sfx(void) {
-    z80_word(PSG_SFX_CH0, SFX_PERISH);
+    z80_word(PSG_SFX_CH0, sfx[SFX_PERISH]);
 }
 
-void wiggle_sfx(u16 i) {
-    z80_word(PSG_SFX_CH1, i == 1 ? SFX_WIGGLE1 : SFX_WIGGLE2);
+void wiggle_sfx(void) {
+    z80_word(PSG_SFX_CH1, sfx[SFX_WIGGLE]);
 }
 
 void slash_sfx(void) {
-    z80_word(PSG_SFX_CH1, SFX_SLASH);
+    z80_word(PSG_SFX_CH1, sfx[SFX_SLASH]);
 }
 
 void music_johnny(void) {
