@@ -334,7 +334,7 @@
     (save-array out "johnny_score" (save-score (johnny-score)))
     (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
     (save-sfx out "wiggle" (convert-sfx 20 #'wiggle #'wiggle-volume))
-    (save-sfx out "slash" (convert-sfx 32 #'slash #'quadratic-fade))))
+    (save-sfx out "slash" (convert-sfx 32 #'slash #'linear-fade))))
 
 (defun save-and-quit ()
   (handler-case (save-music)
