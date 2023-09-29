@@ -247,7 +247,7 @@ static void emit_next_sky_hopper(u16 delay) {
 	for (u16 i = 0; i < 4; i++) {
 	    setup_hopper(sky_x + (i << 4), -16 + (i << 2), 0);
 	}
-	callback(&emit_next_sky_hopper, delay, 384 - delay);
+	callback(&emit_next_sky_hopper, delay, 416 - delay);
     }
 }
 
