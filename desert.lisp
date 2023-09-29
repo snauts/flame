@@ -172,6 +172,36 @@
 	(place (+ i 4) 2 garden (apply #'full-cacti (cacti-params 1)))))
     garden))
 
+(defun tripple-sandwich ()
+  (box-pipe
+   (platform :h 11)
+   (place 0 0 pipe (platform :h 1))
+   (place 0 0 pipe (platform :h 6))
+   (place 1 5  pipe (shaded-ground :type 0))
+   (place 1 10 pipe (shaded-ground :type 0))))
+
+(defun hanging-platform ()
+  (place 0 0 (ground) (crop 0 1 8 2 (cliffs))))
+
+(defun plateau-pillars (n)
+  (join
+   (tripple-sandwich)
+   (hole (- (* 8 n) 2))
+   (tripple-sandwich)))
+
+(defun decorate-plateau (pillars)
+  (with-box pillars
+    (place 28 17 pillars (full-cacti 5 2 1 3 1))
+    (place 30 16 pillars (front-cacti 9 8 0 7 0))
+    (place 32 17 pillars (full-cacti 5 3 1 2 1))))
+
+(defun plateau (n)
+  (let ((pillars (plateau-pillars n)))
+    (dotimes (i n)
+      (with-box pillars
+	(place (+ 9 (* 8 i)) 15 pillars (hanging-platform))))
+    (if (< n 3) pillars (decorate-plateau pillars))))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -209,6 +239,10 @@
 	;; garden
 	(multiply (bush) 3)
 	(inject (cacti-garden) "emit_hopper_stream" 24)
+
+	;; plateau
+	(ground :n 1)
+	(plateau 6)
 
 	;; sandbox
 	(ground :n 2)
