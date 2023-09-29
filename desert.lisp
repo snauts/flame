@@ -165,7 +165,7 @@
     (loop for i from 0 to (- (* n 8) 8) by 6 do
       (with-box garden
 	(place (+ i 1) 1 garden (apply #'front-cacti (cacti-params 2)))
-	(place (+ i 4) 2 garden (apply #'full-cacti (cacti-params 0)))))
+	(place (+ i 4) 2 garden (apply #'full-cacti (cacti-params 1)))))
     garden))
 
 (defun desert-level ()
