@@ -195,6 +195,25 @@ void emit_hopper_squad(u16 i) {
     }
 }
 
+static u16 stream_x;
+void emit_next_hopper_stream(u16 i) {
+    Mob *mob = get_mob(i);
+    if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
+	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
+    }
+    if (mob) {
+	mob->fn = &periodic_hopper;
+    }
+    if (window < stream_x + 160) {
+	callback(&emit_next_hopper_stream, 0, mob->index);
+    }
+}
+
+void emit_hopper_stream(u16 pos_x) {
+    stream_x = pos_x;
+    emit_next_hopper_stream(0);
+}
+
 static u16 hole_x;
 static void emit_next_hole_hopper(u16 count) {
     u16 delay = 0;

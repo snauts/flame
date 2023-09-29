@@ -206,7 +206,7 @@
 
 	;; garden
 	(multiply (bush) 3)
-	(inject (cacti-garden) "emit_hopper_squad" 24)
+	(inject (cacti-garden) "emit_hopper_stream" 24)
 
 	;; sandbox
 	(ground :n 2)
