@@ -8,6 +8,17 @@
      ,@(mapcar (lambda (x) `(setf ,box ,x)) forms)
      ,box))
 
+(defparameter *seed* 0)
+
+(defun xor-seed (shift)
+  (setf *seed* (logxor *seed* (ash *seed* shift))))
+
+(defun xor-random (x)
+  (xor-seed 13)
+  (xor-seed -7)
+  (xor-seed 17)
+  (mod *seed* x))
+
 (defun tile (id &key (pr 0) (pl 0) (v 0) (h 0))
   (logxor (ash pr 15) (ash v 12) (ash h 11) (logior (ash pl 13) id)))
 

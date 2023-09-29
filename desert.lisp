@@ -155,12 +155,14 @@
   (forward (full-cacti h b1p b1h b2p b2h 236)))
 
 (defun cacti-params (n)
-  (let* ((h (+ 4 (random 4)))
-	 (p1 (+ 1 n (random (- h n 1))))
-	 (p2 (+ 1 n (random (- h n 1)))))
-    (list (1+ h) p1 (random (- h p1)) p2 (random (- h p1)))))
+  (let* ((h (+ 4 (xor-random 4)))
+	 (p1 (+ 1 n (xor-random (- h n 1))))
+	 (p2 (+ 1 n (xor-random (- h n 1)))))
+    (labels ((stem-height (p) (xor-random (+ 1 (- h p)))))
+      (list (1+ h) p1 (stem-height p1) p2 (stem-height p2)))))
 
 (defun cacti-garden (&optional (n 6))
+  (setf *seed* 1945)
   (let ((garden (ground :n n)))
     (loop for i from 0 to (- (* n 8) 8) by 6 do
       (with-box garden
