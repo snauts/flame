@@ -241,7 +241,7 @@
 	(inject (cacti-garden) "emit_hopper_stream" 24)
 
 	;; plateau
-	(ground :n 1)
+	(ground :n 2)
 	(plateau 6)
 
 	;; sandbox
