@@ -191,9 +191,9 @@
 
 (defun decorate-plateau (pillars)
   (with-box pillars
-    (place 28 17 pillars (full-cacti 5 2 1 3 1))
-    (place 30 16 pillars (front-cacti 9 8 0 7 0))
-    (place 32 17 pillars (full-cacti 5 3 1 2 1))))
+    (place 28 16 pillars (front-cacti 6 3 1 4 1))
+    (place 30 17 pillars (full-cacti 8 7 0 6 0))
+    (place 32 16 pillars (front-cacti 6 4 1 3 1))))
 
 (defun plateau (n)
   (let ((pillars (plateau-pillars n)))
