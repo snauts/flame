@@ -1,6 +1,5 @@
 (defparameter *desert-walkable*
   '(103 111 119 127 135 143 151 159
-    167 175 183 191 199 207 215 223
     163 171 179 187 195 203 211 219
     258 266 274 236))
 
@@ -62,9 +61,12 @@
 	(t (let ((done (poke pipe x (+ move count) (random-decoration flip))))
 	     (decorate-side done  x (1- count) :move move :flip flip)))))
 
+(defun shaded-bottom ()
+  (place 0 1 (crop 0 0 8 4 (cliffs)) (crop 0 5 8 6 (cliffs))))
+
 (defun shaded-ground (&key type)
   (case type
-    (0 (crop 0 0 8 4 (cliffs)))
+    (0 (shaded-bottom))
     (1 (crop 0 4 4 8 (cliffs)))
     (2 (crop 4 4 8 8 (cliffs)))))
 
