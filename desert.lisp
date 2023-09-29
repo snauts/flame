@@ -154,15 +154,18 @@
 (defun front-cacti (h b1p b1h b2p b2h)
   (forward (full-cacti h b1p b1h b2p b2h 236)))
 
-(defun random-cacti-params ()
-  )
+(defun cacti-params (n)
+  (let* ((h (+ 4 (random 4)))
+	 (p1 (+ 1 n (random (- h n 1))))
+	 (p2 (+ 1 n (random (- h n 1)))))
+    (list (1+ h) p1 (random (- h p1)) p2 (random (- h p1)))))
 
 (defun cacti-garden (&optional (n 6))
   (let ((garden (ground :n n)))
     (loop for i from 0 to (- (* n 8) 8) by 6 do
       (with-box garden
-	(place (+ i 1) 1 garden (front-cacti 7 5 2 2 4))
-	(place (+ i 4) 2 garden (full-cacti 5 2 6 2 1))))
+	(place (+ i 1) 1 garden (apply #'front-cacti (cacti-params 2)))
+	(place (+ i 4) 2 garden (apply #'full-cacti (cacti-params 0)))))
     garden))
 
 (defun desert-level ()
