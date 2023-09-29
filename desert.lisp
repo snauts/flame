@@ -162,7 +162,7 @@
       (list (1+ h) p1 (stem-height p1) p2 (stem-height p2)))))
 
 (defun cacti-garden (&optional (n 6))
-  (setf *seed* 1945)
+  (setf *seed* 1940)
   (let ((garden (ground :n n)))
     (loop for i from 0 to (- (* n 8) 8) by 6 do
       (with-box garden
