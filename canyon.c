@@ -158,7 +158,7 @@ static void jump_hopper(Mob *mob, u16(*jump_condition)(u16)) {
 }
 
 static u16 is_period(u16 life) {
-    return (life & 0x7F) == 0;
+    return (life & 0x3F) == 0;
 }
 
 static void periodic_hopper(Mob *mob) {
@@ -184,13 +184,10 @@ static Mob *setup_hopper(short x, short y, u16 life) {
     return mob;
 }
 
-const byte variation[] = {
-    60, 52, 42, 97, 15, 86, 65, 39
-};
 void emit_hopper_squad(u16 i) {
     Mob *mob = get_mob(i);
     if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
-	mob = setup_hopper(window + SCR_WIDTH, 208, variation[i & 7]);
+	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
     }
     if (mob) {
 	mob->fn = &periodic_hopper;
