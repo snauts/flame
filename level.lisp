@@ -3,6 +3,11 @@
      ,@(mapcar (lambda (x) `(setf pipe ,x)) forms)
      pipe))
 
+(defmacro with-box (box &rest forms)
+  `(progn
+     ,@(mapcar (lambda (x) `(setf ,box ,x)) forms)
+     ,box))
+
 (defun tile (id &key (pr 0) (pl 0) (v 0) (h 0))
   (logxor (ash pr 15) (ash v 12) (ash h 11) (logior (ash pl 13) id)))
 

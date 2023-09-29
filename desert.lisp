@@ -128,63 +128,42 @@
    (decorate-side pipe 10 h :move -1 :flip 1)
    (decorate-side pipe 3 h :move -1)))
 
-(defun branch-element (h x y result)
-  (cond ((null result)
-	 (crop x 4 (+ x 2) 5 (cliffs)))
-	((= h 1)
-	 (place 0 (height result) result (crop x 5 (+ x 2) 6 (cliffs))))
-	((> h 1)
-	 (place 0 (height result) result (crop 14 y 16 (1+ y) (cliffs))))))
+(defun cacti-stem (h &optional (stem 251) (cap 235) (variate 1))
+  (if (< h 1)
+      (desert-cell cap)
+      (let ((tile (+ stem (logand h variate))))
+	(place 0 1 (desert-cell tile) (cacti-stem (1- h) stem cap variate)))))
 
-(defun cacti-branch (h x y &optional (result nil))
-  (if (= h 0)
-      result
-      (cacti-branch (1- h) x y (branch-element h x y result))))
+(defun cacti-base (h &optional (base 244))
+  (place 0 1 (desert-cell base) (cacti-stem h)))
 
-(defun cacti-stem (h)
-  (let ((tile (+ 227 (logand h 1))))
-    (cond ((< h 1) nil)
-	  ((= h 1) (desert-cell tile))
-	  (t (place 0 1 (desert-cell tile) (cacti-stem (1- h)))))))
-
-(defun get-branch (h type)
-  (case type
-    (0 (cacti-branch h 10 5))
-    (1 (cacti-branch h 12 4))))
-
-(defun big-cacti (s1 b1 s2 b2 s3 &optional (type 0) (stem 229))
+(defun cacti-branch (h &optional (pos-x 8) (offset 0))
   (box-pipe
-   (place 1 0 (empty 1) (desert-cell stem))
-   (place 1 1 pipe (cacti-stem s1))
-   (place (- 1 type) (1+ s1) pipe (get-branch b1 type))
-   (place 1 (+ s1 b1 1) pipe (cacti-stem s2))
-   (place type (+ s1 b1 s2 1) pipe (get-branch b2 (- 1 type)))
-   (place 1 (+ s1 b1 s2 b2 1) pipe (cacti-stem s3))
-   (place 1 (+ s1 b1 s2 b2 s3 1) pipe (desert-cell 235))))
+   (crop pos-x 3 (+ pos-x 2) 4 (cliffs))
+   (place offset 1 pipe (cacti-stem h 228 227 0))))
 
-(defun front-cacti (s1 b1 s2 b2 s3 &optional (type 0))
-  (forward (big-cacti s1 b1 s2 b2 s3 type 236)))
-
-(defun cacti-garden ()
+(defun full-cacti (h b1p b1h b2p b2h &optional (base 244))
   (box-pipe
-   (ground :n 5)
-   (place 1 1 pipe (front-cacti 1 2 0 2 0))
-   (place 3 2 pipe (big-cacti 3 0 0 2 1 1))
-   (place 6 1 pipe (front-cacti 2 6 0 0 0 1))
-   (place 8 2 pipe (big-cacti 4 0 0 0 0 0))
-   (place 10 1 pipe (front-cacti 6 2 1 2 0 1))
-   (place 12 2 pipe (big-cacti 0 2 0 2 3 0))
-   (place 14 1 pipe (front-cacti 5 4 0 0 3 1))
-   (place 16 1 pipe (front-cacti 2 2 3 0 0 0))
-   (place 18 2 pipe (big-cacti 8 2 0 0 0 1))
-   (place 20 1 pipe (front-cacti 2 7 1 0 0 0))
-   (place 22 2 pipe (big-cacti 5 0 0 0 0 1))
-   (place 24 1 pipe (front-cacti 2 4 1 2 0 0))
-   (place 26 2 pipe (big-cacti 3 0 0 2 0 1))
-   (place 29 1 pipe (front-cacti 2 2 1 2 0 1))
-   (place 31 2 pipe (big-cacti 1 0 0 4 2 1))
-   (place 34 1 pipe (front-cacti 1 3 1 3 1 0))
-   (place 36 2 pipe (big-cacti 4 0 0 2 1 1))))
+   (cacti-base h base)
+   (place -1 b1p pipe (cacti-branch b1h))
+   (place 1 b2p pipe (cacti-branch b2h 10 1))
+   (if (and (= b1p b2p) (>= b1p 0))
+       (place 1 b1p pipe (desert-cell 243))
+       pipe)))
+
+(defun front-cacti (h b1p b1h b2p b2h)
+  (forward (full-cacti h b1p b1h b2p b2h 236)))
+
+(defun random-cacti-params ()
+  )
+
+(defun cacti-garden (&optional (n 6))
+  (let ((garden (ground :n n)))
+    (loop for i from 0 to (- (* n 8) 8) by 6 do
+      (with-box garden
+	(place (+ i 1) 1 garden (front-cacti 7 5 2 2 4))
+	(place (+ i 4) 2 garden (full-cacti 5 2 6 2 1))))
+    garden))
 
 (defun desert-level ()
   (join (aloe) ;; reference
