@@ -188,9 +188,9 @@
 	;; holes
 	(ground)
 	(hole 4)
-	(ground)
+	(ground :x1 4)
 	(hole 4)
-	(ground)
+	(ground :x2 4)
 	(trigger "emit_hole_hoppers")
 	(hole 4)
 	(ground)

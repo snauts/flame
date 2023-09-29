@@ -165,14 +165,6 @@ static void periodic_hopper(Mob *mob) {
     jump_hopper(mob, &is_period);
 }
 
-static u16 is_near_hole(u16 life) {
-    return (life == 80 || life == 180);
-}
-
-static void hole_hopper(Mob *mob) {
-    jump_hopper(mob, &is_near_hole);
-}
-
 static Mob *setup_hopper(short x, short y, u16 life) {
     Mob *mob = alloc_mob(2);
     if (mob != NULL) {
@@ -213,7 +205,6 @@ static void emit_next_hole_hopper(u16 count) {
 	Mob *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
 	if (mob != NULL) {
 	    mob->obj.velocity = 4;
-	    mob->fn = &hole_hopper;
 	    delay = (count == 7 ? 128 : 24);
 	    count++;
 	}
@@ -222,7 +213,7 @@ static void emit_next_hole_hopper(u16 count) {
 }
 
 void emit_hole_hoppers(u16 pos_x) {
-    hole_x = pos_x + SCR_WIDTH + 16;
+    hole_x = pos_x + SCR_WIDTH + 18;
     emit_next_hole_hopper(0);
 }
 
