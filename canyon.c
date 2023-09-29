@@ -149,10 +149,10 @@ static void move_hopper(Mob *mob) {
     }
 }
 
-static void jump_hopper(Mob *mob, u16(*jump_condition)(u16)) {
+static void jump_hopper(Mob *mob, u16(*jump_condition)(u16), u16 jump) {
     Object *obj = &mob->obj;
     if (is_hopper_alive(obj) && jump_condition(obj->life)) {
-	obj->velocity = 2;
+	obj->velocity = jump;
     }
     move_hopper(mob);
 }
@@ -161,8 +161,16 @@ static u16 is_period(u16 life) {
     return (life & 0x3F) == 0;
 }
 
+static u16 is_long_period(u16 life) {
+    return (life & 0x7F) == 0;
+}
+
 static void periodic_hopper(Mob *mob) {
-    jump_hopper(mob, &is_period);
+    jump_hopper(mob, &is_period, 2);
+}
+
+static void periodic_high_hopper(Mob *mob) {
+    jump_hopper(mob, &is_long_period, 4);
 }
 
 static Mob *setup_hopper(short x, short y, u16 life) {
@@ -199,10 +207,10 @@ static u16 stream_x;
 void emit_next_hopper_stream(u16 i) {
     Mob *mob = get_mob(i);
     if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
-	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
+	mob = setup_hopper(window + SCR_WIDTH, 208, 112);
     }
     if (mob) {
-	mob->fn = &periodic_hopper;
+	mob->fn = &periodic_high_hopper;
     }
     if (window < stream_x + 160) {
 	callback(&emit_next_hopper_stream, 0, mob->index);
