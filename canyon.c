@@ -73,6 +73,14 @@ static void draw_sand(void) {
     }
 }
 
+typedef struct Hopper {
+    u16 patrol_start;
+    u16 patrol_end;
+    byte persistent;
+} Hopper;
+
+Hopper h_obj[MAX_MOBS];
+
 static u16 is_hopper_off_screen(Sprite *sprite) {
     return sprite->x >= MAX_POSITION
 	|| sprite->x < ON_SCREEN - 16
@@ -112,6 +120,7 @@ static void hopper_die(Object *obj) {
 static void move_hopper(Mob *mob) {
     Object *obj = &mob->obj;
     Sprite *sprite = mob->sprite;
+    Hopper *hopper = h_obj + mob->index;
 
     obj->life++;
     obj->x += mob->direction;
@@ -144,8 +153,17 @@ static void move_hopper(Mob *mob) {
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
     if (mob->direction > 0) sprite->cfg |= BIT(11);
 
-    if (is_hopper_off_screen(sprite) || obj->frame == 17) {
+    if (obj->frame == 17) {
 	free_mob(mob);
+    }
+    else if (is_hopper_off_screen(sprite)) {
+	if (hopper->persistent) {
+	    sprite->x = 1;
+	    sprite->y = 1;
+	}
+	else {
+	    free_mob(mob);
+	}
     }
 }
 
@@ -177,6 +195,7 @@ static Mob *setup_hopper(short x, short y, u16 life) {
     Mob *mob = alloc_mob(2);
     if (mob != NULL) {
 	Object *obj = &mob->obj;
+	Hopper *hopper = h_obj + mob->index;
 
 	obj->x = x;
 	obj->y = y;
@@ -188,6 +207,8 @@ static Mob *setup_hopper(short x, short y, u16 life) {
 	mob->sprite->size = SPRITE_SIZE(2, 2);
 	mob->fn = &move_hopper;
 	mob->direction = -1;
+
+	hopper->persistent = 0;
     }
     return mob;
 }
@@ -254,6 +275,32 @@ static void emit_next_sky_hopper(u16 delay) {
 void emit_sky_hoppers(u16 pos_x) {
     sky_x = pos_x + SCR_WIDTH - 40;
     emit_next_sky_hopper(96);
+}
+
+static void patrolling_hopper(Mob *mob) {
+    Object *obj = &mob->obj;
+    Hopper *hopper = h_obj + mob->index;
+
+    if (obj->x <= hopper->patrol_start) {
+	mob->direction = 1;
+    }
+    else if (obj->x >= hopper->patrol_end) {
+	mob->direction = -1;
+    }
+    move_hopper(mob);
+}
+
+void emit_plateau_patrollers(u16 pos_x) {
+    for (u16 y = 160; y >= 64; y -= 48) {
+	for (u16 x = 16; x <= 48; x += 32) {
+	    Mob *mob = setup_hopper(pos_x + SCR_WIDTH + x, y, 0);
+	    Hopper *hopper = h_obj + mob->index;
+	    hopper->persistent = 1;
+	    hopper->patrol_start = pos_x + SCR_WIDTH;
+	    hopper->patrol_end = pos_x + SCR_WIDTH + 64;
+	    mob->fn = &patrolling_hopper;
+	}
+    }
 }
 
 void display_canyon(void) {
