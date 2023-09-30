@@ -189,18 +189,11 @@
    (hole (- (* 8 n) 2))
    (tripple-sandwich)))
 
-(defun decorate-plateau (pillars)
-  (with-box pillars
-    (place 28 16 pillars (front-cacti 6 3 1 4 1))
-    (place 30 17 pillars (full-cacti 8 7 0 6 0))
-    (place 32 16 pillars (front-cacti 6 4 1 3 1))))
-
 (defun plateau (n)
   (let ((pillars (plateau-pillars n)))
-    (dotimes (i n)
+    (dotimes (i n pillars)
       (with-box pillars
-	(place (+ 9 (* 8 i)) 15 pillars (hanging-platform))))
-    (if (< n 3) pillars (decorate-plateau pillars))))
+	(place (+ 9 (* 8 i)) 15 pillars (hanging-platform))))))
 
 (defun desert-level ()
   (join (aloe) ;; reference
