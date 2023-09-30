@@ -157,7 +157,7 @@
   (forward (full-cacti h b1p b1h b2p b2h 236)))
 
 (defun back-cacti (h b1p b1h b2p b2h)
-  (palette 3 (full-cacti h b1p b1h b2p b2h)))
+  (full-cacti h b1p b1h b2p b2h))
 
 (defun cacti-height (i &optional (base 10))
   (round (+ base (* 2 (sin (* 0.25 i))))))
