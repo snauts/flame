@@ -298,6 +298,7 @@ void emit_plateau_patrollers(u16 pos_x) {
 	    hopper->persistent = 1;
 	    hopper->patrol_start = pos_x + SCR_WIDTH;
 	    hopper->patrol_end = pos_x + SCR_WIDTH + 64;
+	    mob->direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
 	    mob->fn = &patrolling_hopper;
 	}
     }
