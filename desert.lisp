@@ -156,17 +156,17 @@
 (defun front-cacti (h b1p b1h b2p b2h)
   (forward (full-cacti h b1p b1h b2p b2h 236)))
 
-(defun cacti-height (n i &optional (base 10))
-  (round (+ base (- n) (* 2 (sin (* 0.25 i))))))
+(defun cacti-height (i &optional (base 10))
+  (round (+ base (* 2 (sin (* 0.25 i))))))
 
 (defun cacti-variation (i h)
   (setf *seed* (* 1942 i))
   (+ (floor h 2) (xor-random 3) -2))
 
 (defun cacti-params (n i)
-  (let* ((h0 (cacti-height n i))
-	 (h1 (cacti-height 0 (1- i)))
-	 (h2 (cacti-height 0 (1+ i)))
+  (let* ((h0 (cacti-height i))
+	 (h1 (cacti-height (1- i)))
+	 (h2 (cacti-height (1+ i)))
 	 (b1 (cacti-variation (1- i) h1))
 	 (b2 (cacti-variation (1+ i) h2)))
     (cond ((= n 0)
