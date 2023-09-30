@@ -252,6 +252,8 @@
 	(ground :n 3)
 	(trigger "emit_plateau_patrollers")
 	(plateau 6)
+	(cacti)
+	(hole 6)
 
 	;; sandbox
 	(ground :n 2)
