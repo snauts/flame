@@ -172,10 +172,8 @@
 	 (h2 (cacti-height (1+ i)))
 	 (b1 (cacti-variation (1- i) h1))
 	 (b2 (cacti-variation (1+ i) h2)))
-    (cond ((= n 0)
-	   (list h0 3 (- b1 2) 3 (- b2 2)))
-	  ((= n 1)
-	   (list h0 (+ 2 b1) (- h1 b1 4) (+ 2 b2) (- h2 b2 4))))))
+    (cond ((= n 0) (list h0 3 (- b1 2) 3 (- b2 2)))
+	  ((= n 1) (list h0 (+ 2 b1) (- h1 b1 4) (+ 2 b2) (- h2 b2 4))))))
 
 (defun place-cacti (garden fn x y)
   (place x (1+ y) garden (apply fn (cacti-params y x))))
@@ -183,10 +181,10 @@
 (defun cacti-garden (&optional (n 6))
   (setf *seed* 1940)
   (let* ((garden (ground :n n)))
-    (loop for i from 0 to (- (* n 8) 8) by 4 do
+    (loop for i from 0 to (- (* n 8) 8) by 6 do
       (with-box garden
 	(place-cacti garden #'front-cacti (+ i 1) 0)
-	(place-cacti garden #'back-cacti (+ i 3) 1)))
+	(place-cacti garden #'back-cacti (+ i 4) 1)))
     garden))
 
 (defun tripple-sandwich ()
