@@ -256,6 +256,17 @@ void emit_sky_hoppers(u16 pos_x) {
     emit_next_sky_hopper(96);
 }
 
+static void darker_palette(void) {
+    u16 palette[ARRAY_SIZE(desert_palette)];
+    for (u16 i = 0; i < ARRAY_SIZE(desert_palette); i++) {
+	palette[i] = desert_palette[i];
+    }
+    for (u16 i = 9; i <= 12; i++) {
+	palette[i] = dim_color(palette[i], 1);
+    }
+    update_palette(palette, 48, ARRAY_SIZE(palette));
+}
+
 void display_canyon(void) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
@@ -293,6 +304,7 @@ void display_canyon(void) {
     music_johnny();
 
     update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
+    darker_palette();
 
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);

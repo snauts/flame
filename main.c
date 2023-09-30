@@ -112,7 +112,7 @@ void update_palette(const u16 *buf, u16 offset, u16 count) {
     }
 }
 
-static u16 dim_color(u16 color, u16 dim) {
+u16 dim_color(u16 color, u16 dim) {
     if (dim > 0) {
 	dim = dim << 1;
 	for (u16 mask = 0xf; mask != 0xf000; mask <<= 4) {

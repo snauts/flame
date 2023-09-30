@@ -116,6 +116,7 @@ void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
 void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
+u16 dim_color(u16 color, u16 dim);
 void upload_palette(u16 dim);
 void wait_for_interrupt(void);
 void wait_vblank_done(void);

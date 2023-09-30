@@ -156,6 +156,9 @@
 (defun front-cacti (h b1p b1h b2p b2h)
   (forward (full-cacti h b1p b1h b2p b2h 236)))
 
+(defun back-cacti (h b1p b1h b2p b2h)
+  (palette 3 (full-cacti h b1p b1h b2p b2h)))
+
 (defun cacti-height (i &optional (base 10))
   (round (+ base (* 2 (sin (* 0.25 i))))))
 
@@ -183,7 +186,7 @@
     (loop for i from 0 to (- (* n 8) 8) by 4 do
       (with-box garden
 	(place-cacti garden #'front-cacti (+ i 1) 0)
-	(place-cacti garden #'full-cacti (+ i 3) 1)))
+	(place-cacti garden #'back-cacti (+ i 3) 1)))
     garden))
 
 (defun tripple-sandwich ()
