@@ -156,20 +156,34 @@
 (defun front-cacti (h b1p b1h b2p b2h)
   (forward (full-cacti h b1p b1h b2p b2h 236)))
 
-(defun cacti-params (n)
-  (let* ((h (+ 4 (xor-random 4)))
-	 (p1 (+ 1 n (xor-random (- h n 1))))
-	 (p2 (+ 1 n (xor-random (- h n 1)))))
-    (labels ((stem-height (p) (xor-random (+ 1 (- h p)))))
-      (list (1+ h) p1 (stem-height p1) p2 (stem-height p2)))))
+(defun cacti-height (n i &optional (base 10))
+  (round (+ base (- n) (* 2 (sin (* 0.25 i))))))
+
+(defun cacti-variation (i h)
+  (setf *seed* (* 1942 i))
+  (+ (floor h 2) (xor-random 3) -2))
+
+(defun cacti-params (n i)
+  (let* ((h0 (cacti-height n i))
+	 (h1 (cacti-height 0 (1- i)))
+	 (h2 (cacti-height 0 (1+ i)))
+	 (b1 (cacti-variation (1- i) h1))
+	 (b2 (cacti-variation (1+ i) h2)))
+    (cond ((= n 0)
+	   (list h0 3 (- b1 2) 3 (- b2 2)))
+	  ((= n 1)
+	   (list h0 (+ 2 b1) (- h1 b1 4) (+ 2 b2) (- h2 b2 4))))))
+
+(defun place-cacti (garden fn x y)
+  (place x (1+ y) garden (apply fn (cacti-params y x))))
 
 (defun cacti-garden (&optional (n 6))
   (setf *seed* 1940)
-  (let ((garden (ground :n n)))
-    (loop for i from 0 to (- (* n 8) 8) by 6 do
+  (let* ((garden (ground :n n)))
+    (loop for i from 0 to (- (* n 8) 8) by 4 do
       (with-box garden
-	(place (+ i 1) 1 garden (apply #'front-cacti (cacti-params 2)))
-	(place (+ i 4) 2 garden (apply #'full-cacti (cacti-params 1)))))
+	(place-cacti garden #'front-cacti (+ i 1) 0)
+	(place-cacti garden #'full-cacti (+ i 3) 1)))
     garden))
 
 (defun tripple-sandwich ()
