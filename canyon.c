@@ -305,9 +305,9 @@ void emit_plateau_patrollers(u16 pos_x) {
 }
 
 static void emit_charging_hoppers(u16 pos_x) {
-    if (window < pos_x + 128) {
-	Mob *mob = setup_hopper(window + SCR_WIDTH + 16, -16, 0);
-	callback(&emit_charging_hoppers, 20, pos_x);
+    if (window < pos_x + 160) {
+	setup_hopper(window + SCR_WIDTH, 32, 0);
+	callback(&emit_charging_hoppers, 48, pos_x);
     }
 }
 
