@@ -414,7 +414,7 @@ static void soldier_march(void) {
     }
     update_height_map(soldier.x);
 
-    u16 fire = BUTTON_B(button_state) && on_ground();
+    u16 fire = BUTTON_B(button_state);
     soldier_yelling(fire);
     if (fire && cooldown == 0) {
 	throw_flames(aim_up);
