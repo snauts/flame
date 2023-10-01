@@ -252,6 +252,7 @@
 	(ground :n 3)
 	(trigger "emit_plateau_patrollers")
 	(inject (plateau 6) "emit_chasing_hoppers" 50)
+	(ground :x2 2)
 	(cacti)
 	(hole 6)
 
