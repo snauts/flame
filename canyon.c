@@ -213,15 +213,24 @@ static Mob *setup_hopper(short x, short y, u16 life) {
     return mob;
 }
 
-void emit_hopper_squad(u16 i) {
+static byte squad_members;
+static void emit_hopper_squad_next(u16 i) {
     Mob *mob = get_mob(i);
     if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
+	squad_members--;
     }
     if (mob) {
 	mob->fn = &periodic_hopper;
-	callback(&emit_hopper_squad, 0, mob->index);
+	if (squad_members > 0) {
+	    callback(&emit_hopper_squad_next, 0, mob->index);
+	}
     }
+}
+
+void emit_hopper_squad(u16 i) {
+    squad_members = 8;
+    emit_hopper_squad_next(0);
 }
 
 static u16 stream_x;
