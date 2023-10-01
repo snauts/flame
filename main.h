@@ -162,6 +162,7 @@ void schedule(void (*fn)(u16), u16 ticks);
 void callback(void (*fn)(u16), u16 timeout, u16 cookie);
 void manage_timers(void);
 void manage_mobs(void);
+void purge_mobs(void);
 void reset_mobs(void);
 void free_mob(Mob *mob);
 Mob *get_mob(u16 i);

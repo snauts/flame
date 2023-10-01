@@ -69,6 +69,14 @@ void free_mob(Mob *mob) {
     }
 }
 
+void purge_mobs(void) {
+    for (u16 i = 0; i < MAX_MOBS; i++) {
+	if (m_obj[i].sprite->x > 0) {
+	    free_mob(m_obj + i);
+	}
+    }
+}
+
 void reset_mobs(void) {
     mob_head = -1;
     budget = MAX_BUDGET;

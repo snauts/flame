@@ -304,6 +304,22 @@ void emit_plateau_patrollers(u16 pos_x) {
     }
 }
 
+static void emit_charging_hoppers(u16 pos_x) {
+    if (window < pos_x + 128) {
+	Mob *mob = setup_hopper(window + SCR_WIDTH + 16, -16, 0);
+	callback(&emit_charging_hoppers, 20, pos_x);
+    }
+}
+
+void emit_chasing_hoppers(u16 pos_x) {
+    purge_mobs();
+    for (short i = 0; i <= 48; i += 16) {
+	Mob *mob = setup_hopper(pos_x + i, -16, 0);
+	mob->direction = 1;
+    }
+    emit_charging_hoppers(pos_x);
+}
+
 void display_canyon(void) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));

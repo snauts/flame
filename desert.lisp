@@ -251,7 +251,7 @@
 	;; plateau
 	(ground :n 3)
 	(trigger "emit_plateau_patrollers")
-	(plateau 6)
+	(inject (plateau 6) "emit_chasing_hoppers" 50)
 	(cacti)
 	(hole 6)
 
