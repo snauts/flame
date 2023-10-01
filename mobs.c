@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define MAX_BUDGET	16
+#define MAX_BUDGET	32
 #define MOB_OFFSET	16
 #define NEXT_GROUP	4
 
