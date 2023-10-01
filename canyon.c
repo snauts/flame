@@ -305,7 +305,7 @@ void emit_plateau_patrollers(u16 pos_x) {
 }
 
 static void emit_charging_hoppers(u16 pos_x) {
-    if (window < pos_x + 160) {
+    if (window < pos_x + 152) {
 	setup_hopper(window + SCR_WIDTH, 32, 0);
 	callback(&emit_charging_hoppers, 48, pos_x);
     }
@@ -313,7 +313,7 @@ static void emit_charging_hoppers(u16 pos_x) {
 
 void emit_chasing_hoppers(u16 pos_x) {
     purge_mobs();
-    for (short i = 0; i <= 48; i += 16) {
+    for (short i = 0; i <= 32; i += 16) {
 	Mob *mob = setup_hopper(pos_x + i, -16, 0);
 	mob->direction = 1;
     }
