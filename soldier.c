@@ -19,7 +19,6 @@
 #define SOLDIER_MIN_X	(ON_SCREEN + 16)
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
 #define SOLDIER_AHEAD	28
-#define FLAME_DECOPLE	24
 
 #define FLAME_OFFSET	8
 #define SOLDIER_BASE	5
@@ -188,10 +187,12 @@ static void soldier_animate(u16 prev, u16 aim_up) {
     base[1].cfg = TILE(2, soldier_frame);
 }
 
+#define FLAME_COUNT 8
+
 static Sprite *flame;
 static u16 head, tail;
 static u16 cooldown;
-static Object f_obj[8];
+static Object f_obj[FLAME_COUNT];
 
 static u16 next_flame(u16 index) {
     return (index + 1) & 7;
@@ -211,7 +212,7 @@ static short clamp(short value, short max) {
     }
 }
 
-static Pos emit_pos[8];
+static Pos emit_pos[FLAME_COUNT];
 const byte decople_table[64];
 static void update_flame_sprite(u16 index) {
     u16 animation = f_obj[index].life & 0xFE;
@@ -354,7 +355,7 @@ static Rectangle flame_rectangle(Rectangle *r, u16 index) {
 u16 flame_collision(Rectangle *r) {
     Rectangle f_single;
     if (intersect(r, &f_rect)) {
-	for (u16 index = 0; index < 8; index++) {
+	for (u16 index = 0; index < FLAME_COUNT; index++) {
 	    if (flame[index].x > 0) {
 		flame_rectangle(&f_single, index);
 		if (intersect(r, &f_single)) {
