@@ -329,7 +329,7 @@ void emit_chasing_hoppers(u16 pos_x) {
     emit_charging_hoppers(pos_x);
 }
 
-void display_canyon(void) {
+void display_desert(Function prepare_level) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
@@ -356,7 +356,7 @@ void display_canyon(void) {
 
     clear_DMA_buffer(0, 0x1000);
 
-    prepare_desert_level();
+    prepare_level();
 
     fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
@@ -369,4 +369,12 @@ void display_canyon(void) {
 
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);
+}
+
+void display_canyon(void) {
+    display_desert(&prepare_desert_level);
+}
+
+void display_rusty(void) {
+    display_desert(&prepare_rusty_level);
 }

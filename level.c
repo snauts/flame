@@ -109,6 +109,12 @@ void prepare_desert_level(void) {
     prepare_level(desert_level);
 }
 
+void prepare_rusty_level(void) {
+    trigger = rusty_level_triggers;
+    height = rusty_level_height;
+    prepare_level(rusty_level);
+}
+
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(window >> 1));

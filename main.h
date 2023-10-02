@@ -155,7 +155,9 @@ Sprite *get_sprite(u16 offset);
 void fade_in(u16 fade);
 
 void display_canyon(void);
+void display_rusty(void);
 void prepare_desert_level(void);
+void prepare_rusty_level(void);
 
 u16 platform_bottom(void);
 void update_height_map(u16 pos_x);
