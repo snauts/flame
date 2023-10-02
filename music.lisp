@@ -332,7 +332,7 @@
 (defun generate-decople-table ()
   (let ((result nil))
     (dotimes (i 64 (reverse result))
-      (push (floor (expt i 1.2) 8) result))))
+      (push (floor (expt i 2) 128) result))))
 
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)

@@ -220,9 +220,11 @@ static void update_flame_sprite(u16 index) {
     flame[index].cfg = TILE(2, f_obj[index].frame + animation);
 
     flame[index].x = base->x + (f_obj[index].x >> 4)
-	+ clamp(emit_pos[index].x - base->x, decople);
+	+ clamp(emit_pos[index].x - base->x, decople >> 2);
     flame[index].y = base->y + (f_obj[index].y >> 4)
 	+ clamp(emit_pos[index].y - base->y, decople);
+
+    emit_pos[index].y = (15 * emit_pos[index].y + base->y) >> 4;
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
