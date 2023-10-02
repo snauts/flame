@@ -8,6 +8,11 @@
      ,@(mapcar (lambda (x) `(setf ,box ,x)) forms)
      ,box))
 
+(defmacro top-pipe (&rest forms)
+  `(let ((pipe ,(first forms)))
+     ,@(mapcar (lambda (x) `(setf pipe (on-top pipe ,x))) (rest forms))
+     pipe))
+
 (defparameter *seed* 0)
 
 (defun xor-seed (shift)
@@ -76,6 +81,9 @@
 
 (defun flip (box)
   (for-all (reverse box) (lambda (x) (logxor x (ash 1 11)))))
+
+(defun topple (box)
+  (mapcar #'reverse (for-all box (lambda (x) (logxor x (ash 1 12))))))
 
 (defun forward (box)
   (for-all box (lambda (x) (logior x (ash 1 15)))))

@@ -220,11 +220,11 @@
 (defun rusty-to-desert ()
   (crop 15 0 16 3 (cliffs)))
 
-(defun rusty-end ()
-  (crop 11 0 12 3 (cliffs)))
+(defun rusty-end (&optional (start 0))
+  (crop 11 start 12 3 (cliffs)))
 
-(defun rusty-start ()
-  (crop 12 0 13 3 (cliffs)))
+(defun rusty-start (&optional (start 0))
+  (crop 12 start 13 3 (cliffs)))
 
 (defun rusty-hole (n)
   (join (rusty-end)
@@ -243,6 +243,34 @@
    (rusty-base-side 280 h (rusty-start))
    (multiply (rusty-base h) n)
    (rusty-base-side 272 h (rusty-end))))
+
+(defun rusty-over-platform-middle (&optional (n 1) (h 0))
+  (labels ((n-times (x) (multiply x n)))
+    (n-times (top-pipe (crop 13 2 15 3 (cliffs))
+		       (stack (crop 13 0 15 1 (cliffs)) h)
+		       (crop 13 1 15 2 (cliffs))
+		       (crop 9 2 11 3 (cliffs))))))
+
+(defun rusty-over-platform-side (tile1 tile2 box &optional (h 0))
+  (top-pipe (desert-cell tile1) (stack (desert-cell tile2) h) box))
+
+(defun rusty-over-platform (&optional (n 1) (h 0))
+  (join (rusty-over-platform-side 278 280 (rusty-start 1) h)
+	(rusty-over-platform-middle n h)
+	(rusty-over-platform-side 270 272 (rusty-end 1) h)))
+
+(defun rusty-double-platform ()
+  (box-pipe
+   (rusty-base-platform 6 4)
+   (place 2 6 pipe (rusty-over-platform 4 2))
+   (place 4 10 pipe (rusty-over-platform 2 2))
+   (place 3 7 pipe (crop 13 4 15 5 (cliffs)))
+   (place 3 8 pipe (topple (crop 13 4 15 5 (cliffs))))
+   (place 5 8 pipe (crop 13 4 15 5 (cliffs)))
+   (place 4 1 pipe (crop 13 5 15 6 (cliffs)))
+   (place 4 2 pipe (topple (crop 13 5 15 6 (cliffs))))
+   (place 6 2 pipe (crop 13 5 15 6 (cliffs)))
+   (place 6 3 pipe (topple (crop 13 5 15 6 (cliffs))))))
 
 (defun desert-level ()
   (join (aloe) ;; reference
@@ -310,5 +338,5 @@
 	(empty 2)
 	(rusty-base-platform 4 2)
 	(empty 2)
-	(rusty-base-platform 4 4)
+	(rusty-double-platform)
 	(empty 64)))
