@@ -195,7 +195,7 @@ static u16 cooldown;
 static Object f_obj[FLAME_COUNT];
 
 static u16 next_flame(u16 index) {
-    return (index + 1) & 7;
+    return (index + 1) & (FLAME_COUNT - 1);
 }
 
 #define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
