@@ -85,6 +85,8 @@ typedef struct Pos {
     short x, y;
 } Pos;
 
+typedef void(*Function)(void);
+
 #define NULL ((void *) 0)
 
 #define BYTE(x) (* (volatile byte *) (x))
@@ -115,7 +117,6 @@ void memcpy(void *dst, const void *src, int amount);
 void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
 void update_VDP_word(u32 ctrl, u16 data);
-void switch_frame(void (*fn)(void));
 void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
 void *copy_to_VRAM_async(u16 dst, u16 len);
 void copy_to_VRAM(u16 dst, u16 len);
@@ -128,6 +129,10 @@ void *buffer_ptr(u16 addr);
 void *malloc(u16 amount);
 void update_game(void);
 void reset_heap(void);
+
+void switch_frame(Function fn);
+void restart_level(void);
+void next_level(void);
 
 void init_ym2612(void);
 void execute_nops(u32 nops);

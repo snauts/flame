@@ -456,11 +456,6 @@ static void hide_all_sprites(void) {
     }
 }
 
-static void restart_level(void) {
-    hide_all_sprites();
-    switch_frame(&display_canyon);
-}
-
 #define FADE_SPEED 3
 static void fade_and_restart(u16 fade) {
     if (fade < 8) {
@@ -468,6 +463,7 @@ static void fade_and_restart(u16 fade) {
 	callback(&fade_and_restart, FADE_SPEED, fade + 1);
     }
     else {
+	hide_all_sprites();
 	restart_level();
     }
 }
@@ -569,7 +565,9 @@ static void soldier_complete(void) {
 	soldier.x++;
     }
     else {
-	schedule(&fade_and_restart, 25);
+	is_dead = -1;
+	next_level();
+	fade_and_restart(0);
     }
     soldier_animate(prev, 0);
     soldier_sprite_update();

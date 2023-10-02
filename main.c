@@ -1,6 +1,6 @@
 #include "main.h"
 
-static void (*game_frame)(void);
+static Function game_frame;
 
 static const byte z80[] = {
 #include "z80.hex"
@@ -258,11 +258,26 @@ void memset(void *ptr, byte c, int amount) {
     for (int i = 0; i < amount; i++) ((byte *) ptr)[i] = c;
 }
 
+static const Function loader_table[] = {
+    &display_canyon,
+    NULL,
+};
+const Function *loader;
+
+void next_level(void) {
+    if (loader[1]) loader++;
+}
+
+void restart_level(void) {
+    switch_frame(*loader);
+}
+
 u16 counter;
 static void init_variables(void) {
     extern byte bss_start, bss_end;
     memset(&bss_start, 0, (u32) (&bss_end - &bss_start));
-    game_frame = &display_canyon;
+    loader = loader_table;
+    restart_level();
     counter = 0;
 }
 
@@ -296,7 +311,7 @@ void update_VDP_word(u32 ctrl, u16 data) {
     vram_idx++;
 }
 
-void switch_frame(void (*fn)(void)) {
+void switch_frame(Function fn) {
     game_frame = fn;
     reset_heap();
 }
