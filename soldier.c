@@ -563,6 +563,22 @@ static void soldier_poison(void) {
     }
 }
 
+static void soldier_complete(void) {
+    u16 prev = soldier.x;
+    if (soldier.x < window + SCR_WIDTH - 16) {
+	soldier.x++;
+    }
+    else {
+	schedule(&fade_and_restart, 25);
+    }
+    soldier_animate(prev, 0);
+    soldier_sprite_update();
+}
+
+void level_done(u16 x) {
+    is_dead = 3;
+}
+
 void advance_sprites(void) {
     switch (is_dead) {
     case 0:
@@ -573,6 +589,9 @@ void advance_sprites(void) {
 	break;
     case 2:
 	soldier_poison();
+	break;
+    case 3:
+	soldier_complete();
 	break;
     default:
 	/* whoops */
