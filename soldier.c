@@ -11,7 +11,7 @@
 #define SOLDIER_POISON	(SOLDIER_TOP + 27)
 #define SOLDIER_LEG	(SOLDIER_TOP + (3 * 12))
 
-#define FLAME		(SOLDIER_LEG + (23 * 3 * 2))
+#define FLAME		(SOLDIER_LEG + (25 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
 #define BLOOD		(FLAME_UP + (32 * 2 * 1))
 #define WEAPON		(BLOOD + (8 * 2 * 2))
@@ -182,6 +182,7 @@ static void soldier_animate(u16 prev, u16 aim_up) {
     }
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 14 : 15;
+	if (aim_up) soldier_frame += 9;
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     base[1].cfg = TILE(2, soldier_frame);
@@ -429,7 +430,7 @@ static void soldier_march(void) {
     else if (BUTTON_LEFT(button_state)) {
 	move_backward();
     }
-    else if (BUTTON_UP(button_state) && on_ground()) {
+    else if (BUTTON_UP(button_state)) {
 	aim_up = 1;
     }
     update_height_map(soldier.x);
