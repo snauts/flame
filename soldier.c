@@ -210,35 +210,36 @@ static short clamp(short value, short max) {
     }
 }
 
-static short emit_y[8];
+static Pos emit_pos[8];
 const byte decople_table[64];
 static void update_flame_sprite(u16 index) {
     u16 animation = f_obj[index].life & 0xFE;
+    byte decople = decople_table[f_obj[index].life];
     flame[index].cfg = TILE(2, f_obj[index].frame + animation);
-    flame[index].x = SCREEN_X(soldier.x + (f_obj[index].x >> 4));
-    flame[index].y = (f_obj[index].y >> 4);
 
-    short diff = emit_y[index] - base->y;
-    short offset = clamp(diff, decople_table[f_obj[index].life]);
-    flame[index].y = base->y + (f_obj[index].y >> 4) + offset;
+    flame[index].x = base->x + (f_obj[index].x >> 4)
+	+ clamp(emit_pos[index].x - base->x, decople);
+    flame[index].y = base->y + (f_obj[index].y >> 4)
+	+ clamp(emit_pos[index].y - base->y, decople);
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 42;
+	offset_x = 26;
 	offset_y = 20;
 	f_obj[index].velocity = 0;
 	f_obj[index].frame = FLAME;
     }
     else {
-	offset_x = 36;
+	offset_x = 20;
 	offset_y = 3;
 	f_obj[index].velocity = 16;
 	f_obj[index].frame = FLAME_UP;
     }
 
-    emit_y[index] = base->y;
+    emit_pos[index].x = base->x;
+    emit_pos[index].y = base->y;
     f_obj[index].x = offset_x << 4;
     f_obj[index].y = offset_y << 4;
     f_obj[index].gravity = 4;

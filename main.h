@@ -81,6 +81,10 @@ typedef struct Rectangle {
     u16 x1, y1, x2, y2;
 } Rectangle;
 
+typedef struct Pos {
+    short x, y;
+} Pos;
+
 #define NULL ((void *) 0)
 
 #define BYTE(x) (* (volatile byte *) (x))
