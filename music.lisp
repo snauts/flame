@@ -329,9 +329,15 @@
 (defun save-sfx (out name sfx)
   (save-array out name (split-in-bytes (append sfx (silence-stop)))))
 
+(defun generate-decople-table ()
+  (let ((result nil))
+    (dotimes (i 64 (reverse result))
+      (push (floor (expt i 2) 160) result))))
+
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
     (save-array out "johnny_score" (save-score (johnny-score)))
+    (save-array out "decople_table" (generate-decople-table))
     (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
     (save-sfx out "wiggle" (convert-sfx 20 #'wiggle #'wiggle-volume))
     (save-sfx out "slash" (convert-sfx 32 #'slash #'linear-fade))))
