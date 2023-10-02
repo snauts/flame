@@ -1,7 +1,7 @@
 (defparameter *desert-walkable*
   '(103 111 119 127 135 143 151 159
     163 171 179 187 195 203 211 219
-    258 266 274 236))
+    258 266 274 236 231 239 247))
 
 (defun desert-tile (id &optional (pr 0))
   (tile id :pl 1 :pr pr))
@@ -210,6 +210,12 @@
       (with-box pillars
 	(place (+ 9 (* 8 i)) 15 pillars (hanging-platform))))))
 
+(defun rusty-walkway (&optional (n 1))
+  (multiply (crop 9 0 11 3 (cliffs)) n))
+
+(defun desert-to-rusty ()
+  (crop 8 0 9 3 (cliffs)))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -256,8 +262,10 @@
 	(cacti)
 	(hole 6)
 
-	;; sandbox
-	(ground :n 2)
-	(hole 32)
+	;; to next level
 	(ground :n 4)
+	(desert-to-rusty)
+	(rusty-walkway 12)
+	(trigger "level_done")
+	(rusty-walkway 2)
 	(empty 16)))
