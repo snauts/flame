@@ -1,7 +1,8 @@
 (defparameter *desert-walkable*
   '(103 111 119 127 135 143 151 159
     163 171 179 187 195 203 211 219
-    258 266 274 236 231 239 247 255))
+    258 266 274 236 231 239 247 255
+    263))
 
 (defun desert-tile (id &optional (pr 0))
   (tile id :pl 1 :pr pr))
@@ -219,6 +220,14 @@
 (defun rusty-end ()
   (crop 11 0 12 3 (cliffs)))
 
+(defun rusty-start ()
+  (crop 12 0 13 3 (cliffs)))
+
+(defun rusty-hole (n)
+  (join (rusty-end)
+	(empty n)
+	(rusty-start)))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -275,5 +284,7 @@
 
 (defun rusty-level ()
   (join (rusty-walkway 16)
+	(rusty-hole 4)
+	(rusty-walkway 4)
 	(rusty-end)
 	(empty 64)))
