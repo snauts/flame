@@ -574,6 +574,7 @@ static void soldier_complete(void) {
 	fade_and_restart(0);
     }
     advance_obj(&soldier, SOLDIER_AHEAD, 6);
+    soldier_yelling(0);
     soldier_animate(prev, 0);
     soldier_sprite_update();
 }
