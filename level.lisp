@@ -121,6 +121,9 @@
     (dotimes (i n result)
       (setf result (place 0 (* i (height box)) result box)))))
 
+(defun on-top (box1 box2)
+  (place 0 (height box1) box1 box2))
+
 (defun zero-first (box)
   (substitute 0 nil (first box)))
 

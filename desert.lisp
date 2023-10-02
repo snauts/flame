@@ -231,6 +231,19 @@
 	(empty n)
 	(rusty-start)))
 
+(defun rusty-base (&optional (h 0))
+  (on-top (stack (crop 13 3 15 4 (cliffs)) h)
+	  (crop 9 0 11 3 (cliffs))))
+
+(defun rusty-base-side (tile h box)
+  (on-top (stack (desert-cell tile) h) box))
+
+(defun rusty-base-platform (&optional (n 1) (h 0))
+  (join
+   (rusty-base-side 280 h (rusty-start))
+   (multiply (rusty-base h) n)
+   (rusty-base-side 272 h (rusty-end))))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -294,4 +307,8 @@
 	(rusty-hole 4)
 	(rusty-walkway 4)
 	(rusty-end)
+	(empty 2)
+	(rusty-base-platform 4 2)
+	(empty 2)
+	(rusty-base-platform 4 4)
 	(empty 64)))
