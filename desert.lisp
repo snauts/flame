@@ -2,7 +2,7 @@
   '(103 111 119 127 135 143 151 159
     163 171 179 187 195 203 211 219
     258 266 274 236 231 239 247 255
-    263))
+    263 271 279 287))
 
 (defun desert-tile (id &optional (pr 0))
   (tile id :pl 1 :pr pr))
@@ -217,6 +217,9 @@
 (defun desert-to-rusty ()
   (crop 8 0 9 3 (cliffs)))
 
+(defun rusty-to-desert ()
+  (crop 15 0 16 3 (cliffs)))
+
 (defun rusty-end ()
   (crop 11 0 12 3 (cliffs)))
 
@@ -283,7 +286,11 @@
 	(empty 32)))
 
 (defun rusty-level ()
-  (join (rusty-walkway 16)
+  (join (rusty-walkway 8)
+	(rusty-to-desert)
+	(ground :n 1)
+	(desert-to-rusty)
+	(rusty-walkway 1)
 	(rusty-hole 4)
 	(rusty-walkway 4)
 	(rusty-end)
