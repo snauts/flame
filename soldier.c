@@ -489,7 +489,7 @@ static void soldier_sink(void) {
     if (is_dead == 1) {
 	schedule(&fade_and_restart, 150);
 	soldier_sinking(0);
-	base[-1].cfg = 0;
+	soldier_yelling(0);
 	is_dead = -1;
     }
 }
