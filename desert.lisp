@@ -240,9 +240,20 @@
 		(rusty-platform-left x)
 		(rusty-platform-right x))))
 
+(defun base-cross ()
+  (let ((half (crop 13 5 15 6 (cliffs))))
+    (on-top half (topple half))))
+
+(defun rusty-platform-middle (h n)
+  (let ((result (multiply (rusty-base h) n)))
+    (dotimes (i (1- n) result)
+      (let ((y (1- (xor-random h))))
+	(when (and (> h 1) (not (< y 0)))
+	  (setf result (place (1+ (* 2 i)) y result (base-cross))))))))
+
 (defun rusty-base-platform (&optional (n 1) (h 0))
   (join (rusty-platform-side 280 h)
-	(multiply (rusty-base h) n)
+	(rusty-platform-middle h n)
 	(rusty-platform-side 272 h)))
 
 (defun rusty-over-platform-middle (&optional (n 1) (h 0))
@@ -264,11 +275,7 @@
    (place 4 10 pipe (rusty-over-platform 2 2))
    (place 3 7 pipe (crop 13 4 15 5 (cliffs)))
    (place 3 8 pipe (topple (crop 13 4 15 5 (cliffs))))
-   (place 5 8 pipe (crop 13 4 15 5 (cliffs)))
-   (place 4 1 pipe (crop 13 5 15 6 (cliffs)))
-   (place 4 2 pipe (topple (crop 13 5 15 6 (cliffs))))
-   (place 6 2 pipe (crop 13 5 15 6 (cliffs)))
-   (place 6 3 pipe (topple (crop 13 5 15 6 (cliffs))))))
+   (place 5 8 pipe (crop 13 4 15 5 (cliffs)))))
 
 (defun desert-level ()
   (join (aloe) ;; reference
@@ -325,6 +332,7 @@
 	(empty 32)))
 
 (defun rusty-level ()
+  (setf *seed* 1914)
   (join (rusty-walkway 8)
 	(rusty-to-desert)
 	(ground :n 1)
