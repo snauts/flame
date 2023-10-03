@@ -284,6 +284,26 @@
    (place 2 6 pipe (rusty-over-platform 14 4))
    (place 4 12 pipe (rusty-over-platform 12 4))))
 
+(defun rusty-bridge ()
+  (box-pipe
+   (join
+    (rusty-platform-left)
+    (rusty-walkway 1)
+    (empty 10)
+    (rusty-walkway 1)
+    (rusty-platform-right))
+
+   (place 3 1 pipe (multiply (crop 15 3 16 5 (cliffs)) 10))
+
+   (place 12 0 pipe (desert-cell 280))
+   (place 12 1 pipe (desert-cell 261))
+   (place 12 2 pipe (desert-cell 246))
+
+   (place 3 0 pipe (desert-cell 272))
+   (place 3 1 pipe (desert-cell 260))
+   (place 3 2 pipe (desert-cell 238))
+   ))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -341,6 +361,12 @@
 (defun rusty-level ()
   (setf *seed* 1914)
   (join (rusty-walkway 8)
+	(rusty-platform-right)
+	(empty 1)
+	(rusty-bridge)
+	(empty 1)
+	(rusty-platform-left)
+	(rusty-walkway 1)
 	(rusty-to-desert)
 	(ground :n 1)
 	(desert-to-rusty)
