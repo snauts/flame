@@ -24,7 +24,7 @@
 #define ON_SCREEN	128
 #define SCR_WIDTH	320
 #define SCR_HEIGHT	224
-#define MAX_MOBS	16
+#define MAX_MOBS	32
 #define MAX_POSITION	512
 
 #define GAMEPAD_A_CTRL	0xA10009
