@@ -289,20 +289,46 @@
 (defun rusty-bridge-middle (n h)
   (on-top (stack (empty n) (1+ h)) (multiply (crop 15 3 16 5 (cliffs)) n)))
 
-(defun rusty-bridge (&optional (n 4) (h 0))
+(defun rusty-over-platform-with-studs (n h)
   (box-pipe
-   (join
-    (rusty-base-platform 1 h)
-    (rusty-bridge-middle n h)
-    (rusty-base-platform 1 h))
+  (rusty-over-platform n h)
+  (place 0 (+ h 2) pipe (desert-cell 283))
+  (place 1 (+ h 2) pipe (multiply (crop 13 2 15 3 (cliffs)) n))
+  (place (1+ (* 2 n)) (+ h 2) pipe (desert-cell 259))))
 
-   (place (+ n 4) (+ h 0) pipe (desert-cell 280))
-   (place (+ n 4) (+ h 1) pipe (desert-cell 261))
-   (place (+ n 4) (+ h 2) pipe (desert-cell 246))
+(defun martas-platformas (&optional (w 16))
+  (let ((*disable-cross* t))
+    (box-pipe
+     (rusty-base-platform 8)
+     (place 2 2 pipe (rusty-over-platform 6 16))
+     (place 6 2 pipe (rusty-over-platform-with-studs 4 13))
+     (place 2 2 pipe (rusty-over-platform-with-studs 4 10))
+     (place 6 2 pipe (rusty-over-platform-with-studs 4 7))
+     (place 2 2 pipe (rusty-over-platform-with-studs 4 4))
+     (place 6 2 pipe (rusty-over-platform-with-studs 4 1))
+     (place (+ w 12) 0 pipe (rusty-base-platform 6))
+     (place (+ w 14) 2 pipe (rusty-over-platform 4 16))
+     (place 15 18 pipe (rusty-bridge-middle w 0))
+     (place (+ w 14) 20 pipe (desert-cell 246))
+     (place (+ w 14) 19 pipe (desert-cell 279)))))
 
-   (place 3 (+ h 0) pipe (desert-cell 272))
-   (place 3 (+ h 1) pipe (desert-cell 260))
-   (place 3 (+ h 2) pipe (desert-cell 238))))
+(defun rusty-cacti ()
+  (box-pipe
+   (ground :n 1)
+   (place 3 2 pipe (back-cacti 8 4 2 3 4))
+   (place 1 2 pipe (back-cacti 3 2 0 1 1))))
+
+(defun rusty-dirt-with-cacti ()
+  (join
+   (empty 3)
+   (rusty-platform-left)
+   (rusty-walkway 1)
+   (rusty-to-desert)
+   (rusty-cacti)
+   (desert-to-rusty)
+   (rusty-walkway 1)
+   (rusty-platform-right)
+   (empty 3)))
 
 (defun desert-level ()
   (join (aloe) ;; reference
@@ -360,22 +386,12 @@
 
 (defun rusty-level ()
   (setf *seed* 1914)
-  (join (rusty-walkway 8)
-	(rusty-platform-right)
-	(empty 1)
-	(rusty-bridge 7 2)
-	(empty 1)
-	(rusty-platform-left)
-	(rusty-walkway 1)
-	(rusty-to-desert)
-	(ground :n 1)
-	(desert-to-rusty)
-	(rusty-walkway 1)
-	(rusty-hole 4)
-	(rusty-walkway 4)
-	(rusty-platform-right)
-	(empty 2)
-	(rusty-base-platform 4 2)
-	(empty 2)
-	(rusty-double-platform)
+  (join (rusty-base-platform 12)
+
+	;; start
+	(rusty-dirt-with-cacti)
+
+	;; Martas platformas
+	(martas-paltformas)
+
 	(empty 64)))
