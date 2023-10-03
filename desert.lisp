@@ -332,11 +332,24 @@
    (rusty-platform-right)
    (empty 3)))
 
+(defun rusty-bridge (&optional (n 4) (h 0))
+  (box-pipe
+   (join
+    (rusty-base-platform 1 h)
+    (rusty-bridge-middle n h)
+    (rusty-base-platform 1 h))
+   (place (+ n 4) (+ h 0) pipe (desert-cell 280))
+   (place (+ n 4) (+ h 1) pipe (desert-cell 261))
+   (place (+ n 4) (+ h 2) pipe (desert-cell 246))
+   (place 3 (+ h 0) pipe (desert-cell 272))
+   (place 3 (+ h 1) pipe (desert-cell 260))
+   (place 3 (+ h 2) pipe (desert-cell 238))))
+
 (defun rusty-down-stairs ()
   (let ((stairs (empty 2)))
     (loop for h from 15 downto 0 by 3 do
       (with-box stairs
-	(join stairs (rusty-base-platform 3 h))
+	(join stairs (rusty-bridge 2 h))
 	(join stairs (empty 2))))
     stairs))
 
