@@ -125,7 +125,7 @@
       (setf result (append box result)))))
 
 (defun stack (box n)
-  (let ((result (empty 1)))
+  (let ((result nil))
     (dotimes (i n result)
       (setf result (place 0 (* i (height box)) result box)))))
 

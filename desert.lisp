@@ -2,7 +2,7 @@
   '(103 111 119 127 135 143 151 159
     163 171 179 187 195 203 211 219
     258 266 274 236 231 239 247 255
-    263 271 279 287))
+    263 271 279 287 285 260 261))
 
 (defun desert-tile (id &optional (pr 0))
   (tile id :pl 1 :pr pr))
@@ -284,25 +284,23 @@
    (place 2 6 pipe (rusty-over-platform 14 4))
    (place 4 12 pipe (rusty-over-platform 12 4))))
 
-(defun rusty-bridge ()
+(defun rusty-bridge-middle (n h)
+  (on-top (stack (empty n) (1+ h)) (multiply (crop 15 3 16 5 (cliffs)) n)))
+
+(defun rusty-bridge (&optional (n 4) (h 0))
   (box-pipe
    (join
-    (rusty-platform-left)
-    (rusty-walkway 1)
-    (empty 10)
-    (rusty-walkway 1)
-    (rusty-platform-right))
+    (rusty-base-platform 1 h)
+    (rusty-bridge-middle n h)
+    (rusty-base-platform 1 h))
 
-   (place 3 1 pipe (multiply (crop 15 3 16 5 (cliffs)) 10))
+   (place (+ n 4) (+ h 0) pipe (desert-cell 280))
+   (place (+ n 4) (+ h 1) pipe (desert-cell 261))
+   (place (+ n 4) (+ h 2) pipe (desert-cell 246))
 
-   (place 12 0 pipe (desert-cell 280))
-   (place 12 1 pipe (desert-cell 261))
-   (place 12 2 pipe (desert-cell 246))
-
-   (place 3 0 pipe (desert-cell 272))
-   (place 3 1 pipe (desert-cell 260))
-   (place 3 2 pipe (desert-cell 238))
-   ))
+   (place 3 (+ h 0) pipe (desert-cell 272))
+   (place 3 (+ h 1) pipe (desert-cell 260))
+   (place 3 (+ h 2) pipe (desert-cell 238))))
 
 (defun desert-level ()
   (join (aloe) ;; reference
@@ -363,7 +361,7 @@
   (join (rusty-walkway 8)
 	(rusty-platform-right)
 	(empty 1)
-	(rusty-bridge)
+	(rusty-bridge 7 2)
 	(empty 1)
 	(rusty-platform-left)
 	(rusty-walkway 1)
