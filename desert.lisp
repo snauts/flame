@@ -296,7 +296,10 @@
   (place 1 (+ h 2) pipe (multiply (crop 13 2 15 3 (cliffs)) n))
   (place (1+ (* 2 n)) (+ h 2) pipe (desert-cell 259))))
 
-(defun martas-platformas (&optional (w 16))
+(defun crop-bottom (box)
+  (crop 0 1 (width box) (height box) box))
+
+(defun martas-platformas (&optional (w 32))
   (let ((*disable-cross* t))
     (box-pipe
      (rusty-base-platform 8)
@@ -306,8 +309,7 @@
      (place 6 2 pipe (rusty-over-platform-with-studs 4 7))
      (place 2 2 pipe (rusty-over-platform-with-studs 4 4))
      (place 6 2 pipe (rusty-over-platform-with-studs 4 1))
-     (place (+ w 12) 0 pipe (rusty-base-platform 6))
-     (place (+ w 14) 2 pipe (rusty-over-platform 4 16))
+     (place (+ w 14) 0 pipe (crop-bottom (rusty-over-platform 4 19)))
      (place 15 18 pipe (rusty-bridge-middle w 0))
      (place (+ w 14) 20 pipe (desert-cell 246))
      (place (+ w 14) 19 pipe (desert-cell 279)))))
@@ -329,6 +331,14 @@
    (rusty-walkway 1)
    (rusty-platform-right)
    (empty 3)))
+
+(defun rusty-down-stairs ()
+  (let ((stairs (empty 2)))
+    (loop for h from 15 downto 0 by 3 do
+      (with-box stairs
+	(join stairs (rusty-base-platform 3 h))
+	(join stairs (empty 2))))
+    stairs))
 
 (defun desert-level ()
   (join (aloe) ;; reference
@@ -393,5 +403,6 @@
 
 	;; Martas platformas
 	(martas-platformas)
+	(rusty-down-stairs)
 
 	(empty 64)))
