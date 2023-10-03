@@ -244,11 +244,13 @@
   (let ((half (crop 13 y 15 (1+ y) (cliffs))))
     (on-top half (topple half))))
 
+(defvar *disable-cross* nil)
+
 (defun decorate-rusty (h n dx dy dt result)
   (let ((cross (base-cross dt)))
     (dotimes (i (1- n) result)
-      (let ((y (1- (xor-random h))))
-	(when (and (> h 1) (not (< y 0)))
+      (let ((y (1- (if (= h 0) 0 (xor-random h)))))
+	(when (and (> h 1) (not (< y 0)) (not *disable-cross*))
 	  (setf result (place (+ dx (* 2 i)) (+ dy y) result cross)))))))
 
 (defun rusty-platform-middle (h n)
