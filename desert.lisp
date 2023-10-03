@@ -220,29 +220,30 @@
 (defun rusty-to-desert ()
   (crop 15 0 16 3 (cliffs)))
 
-(defun rusty-end (&optional (start 0))
+(defun rusty-platform-right (&optional (start 0))
   (crop 11 start 12 3 (cliffs)))
 
-(defun rusty-start (&optional (start 0))
+(defun rusty-platform-left (&optional (start 0))
   (crop 12 start 13 3 (cliffs)))
 
 (defun rusty-hole (n)
-  (join (rusty-end)
-	(empty n)
-	(rusty-start)))
+  (join (rusty-platform-right) (empty n) (rusty-platform-left)))
 
 (defun rusty-base (&optional (h 0))
   (on-top (stack (crop 13 3 15 4 (cliffs)) h)
 	  (crop 9 0 11 3 (cliffs))))
 
-(defun rusty-base-side (tile h box)
-  (on-top (stack (desert-cell tile) h) box))
+(defun rusty-platform-side (tile h &optional base (x 0))
+  (top-pipe (and base (desert-cell base))
+	    (stack (desert-cell tile) h)
+	    (if (= tile 280)
+		(rusty-platform-left x)
+		(rusty-platform-right x))))
 
 (defun rusty-base-platform (&optional (n 1) (h 0))
-  (join
-   (rusty-base-side 280 h (rusty-start))
-   (multiply (rusty-base h) n)
-   (rusty-base-side 272 h (rusty-end))))
+  (join (rusty-platform-side 280 h)
+	(multiply (rusty-base h) n)
+	(rusty-platform-side 272 h)))
 
 (defun rusty-over-platform-middle (&optional (n 1) (h 0))
   (labels ((n-times (x) (multiply x n)))
@@ -251,13 +252,10 @@
 		       (crop 13 1 15 2 (cliffs))
 		       (crop 9 2 11 3 (cliffs))))))
 
-(defun rusty-over-platform-side (tile1 tile2 box &optional (h 0))
-  (top-pipe (desert-cell tile1) (stack (desert-cell tile2) h) box))
-
 (defun rusty-over-platform (&optional (n 1) (h 0))
-  (join (rusty-over-platform-side 278 280 (rusty-start 1) h)
+  (join (rusty-platform-side 280 h 278 1)
 	(rusty-over-platform-middle n h)
-	(rusty-over-platform-side 270 272 (rusty-end 1) h)))
+	(rusty-platform-side 272 h 270 1)))
 
 (defun rusty-double-platform ()
   (box-pipe
@@ -334,7 +332,7 @@
 	(rusty-walkway 1)
 	(rusty-hole 4)
 	(rusty-walkway 4)
-	(rusty-end)
+	(rusty-platform-right)
 	(empty 2)
 	(rusty-base-platform 4 2)
 	(empty 2)
