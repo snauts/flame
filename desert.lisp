@@ -392,6 +392,6 @@
 	(rusty-dirt-with-cacti)
 
 	;; Martas platformas
-	(martas-paltformas)
+	(martas-platformas)
 
 	(empty 64)))
