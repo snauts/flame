@@ -451,7 +451,8 @@
 	(rusty-dirt-with-cacti #'dab-cacti)
 
 	;; swarm chase
-	(rusty-jumps)
+	(inject (rusty-jumps) "emit_chasing_swarm" 24)
 	(rusty-dirt-with-cacti #'long-cacti)
+	(trigger "ignite_swarm")
 
 	(empty 64)))

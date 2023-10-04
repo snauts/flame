@@ -76,6 +76,7 @@ static void draw_sand(void) {
 typedef struct Hopper {
     u16 patrol_start;
     u16 patrol_end;
+    byte jump_amount;
     byte persistent;
 } Hopper;
 
@@ -167,28 +168,38 @@ static void move_hopper(Mob *mob) {
     }
 }
 
-static void jump_hopper(Mob *mob, u16(*jump_condition)(u16), u16 jump) {
+static void jump_hopper(Mob *mob, u16(*jump_condition)(Mob *)) {
     Object *obj = &mob->obj;
-    if (is_hopper_alive(obj) && jump_condition(obj->life)) {
-	obj->velocity = jump;
+    if (is_hopper_alive(obj) && jump_condition(mob)) {
+	Hopper *hopper = h_obj + mob->index;
+	obj->velocity = hopper->jump_amount;
     }
     move_hopper(mob);
 }
 
-static u16 is_period(u16 life) {
-    return (life & 0x3F) == 0;
+static u16 is_period(Mob *mob) {
+    return (mob->obj.life & 0x3F) == 0;
 }
 
-static u16 is_long_period(u16 life) {
-    return (life & 0x7F) == 0;
+static u16 is_long_period(Mob *mob) {
+    return (mob->obj.life & 0x7F) == 0;
+}
+
+static u16 is_on_ground(Mob *mob) {
+    Object *obj = &mob->obj;
+    return get_snap(obj->x + 4, obj->y, obj->y);
 }
 
 static void periodic_hopper(Mob *mob) {
-    jump_hopper(mob, &is_period, 2);
+    jump_hopper(mob, &is_period);
 }
 
 static void periodic_high_hopper(Mob *mob) {
-    jump_hopper(mob, &is_long_period, 4);
+    jump_hopper(mob, &is_long_period);
+}
+
+static void immediate_hopper(Mob *mob) {
+    jump_hopper(mob, &is_on_ground);
 }
 
 static Mob *setup_hopper(short x, short y, u16 life) {
@@ -222,6 +233,7 @@ static void emit_hopper_squad_next(u16 i) {
     }
     if (mob) {
 	mob->fn = &periodic_hopper;
+	h_obj[mob->index].jump_amount = 2;
 	if (squad_members > 0) {
 	    callback(&emit_hopper_squad_next, 0, mob->index);
 	}
@@ -241,6 +253,7 @@ void emit_next_hopper_stream(u16 i) {
     }
     if (mob) {
 	mob->fn = &periodic_high_hopper;
+	h_obj[mob->index].jump_amount = 4;
     }
     if (window < stream_x + 160) {
 	callback(&emit_next_hopper_stream, 0, mob->index);
@@ -358,6 +371,41 @@ void emit_down_stair_guards(u16 pos_x) {
 	mob->fn = &patrolling_hopper;
 	x += 96;
 	y += 24;
+    }
+}
+
+#define SWARM_SIZE 5
+static char swarm_on;
+static char swarm[SWARM_SIZE];
+static void chasing_swarm(u16 x) {
+    if (swarm_on) {
+	u16 id = swarm[x >> 4];
+	Mob *mob = get_mob(id);
+	if (mob == NULL || mob->sprite->x == 0) {
+	    mob = setup_hopper(window + x, -16, 0);
+	    h_obj[mob->index].jump_amount = 2 + (counter & 3);
+	    swarm[x >> 4] = mob->index;
+	    mob->fn = &immediate_hopper;
+	    mob->direction = 1;
+	}
+	callback(&chasing_swarm, 1, x < 16 * SWARM_SIZE ? x + 16 : 0);
+    }
+}
+
+void emit_chasing_swarm(u16 pos_x) {
+    for (u16 i = 0; i < SWARM_SIZE; i++) swarm[i] = MAX_MOBS;
+    purge_mobs();
+    swarm_on = 1;
+    chasing_swarm(0);
+}
+
+void ignite_swarm(u16 pos_x) {
+    swarm_on = 0;
+    for (u16 i = 0; i < SWARM_SIZE; i++) {
+	Mob *mob = get_mob(swarm[i]);
+	if (mob && mob->sprite->x > 0) {
+	    hopper_die(&mob->obj);
+	}
     }
 }
 
