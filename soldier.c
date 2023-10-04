@@ -224,7 +224,12 @@ static void update_flame_sprite(u16 index) {
     flame[index].y = base->y + (f_obj[index].y >> 4)
 	+ clamp(emit_pos[index].y - base->y, decople);
 
-    emit_pos[index].y = (15 * emit_pos[index].y + base->y) >> 4;
+    if (f_obj[index].life > 48) {
+	emit_pos[index].y += clamp(base->y - emit_pos[index].y, 1);
+    }
+    else {
+	emit_pos[index].y = (15 * emit_pos[index].y + base->y) >> 4;
+    }
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
