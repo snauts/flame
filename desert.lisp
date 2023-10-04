@@ -417,6 +417,7 @@
 	;; Martas platformas
 	(trigger "emit_marta_platform_patrollers")
 	(martas-platformas)
+	(trigger "emit_down_stair_guards")
 	(rusty-down-stairs)
 
 	(empty 64)))

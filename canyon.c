@@ -345,6 +345,22 @@ void emit_marta_platform_patrollers(u16 pos_x) {
     }
 }
 
+void emit_down_stair_guards(u16 pos_x) {
+    purge_mobs();
+    u16 x = pos_x + SCR_WIDTH + 48, y = 88;
+    for (u16 i = 0; i < 6; i++) {
+	Mob *mob = setup_hopper(x, y, 0);
+	Hopper *hopper = h_obj + mob->index;
+	hopper->persistent = 1;
+	hopper->patrol_start = x - 32;
+	hopper->patrol_end = x + 32;
+	mob->direction = 1;
+	mob->fn = &patrolling_hopper;
+	x += 96;
+	y += 24;
+    }
+}
+
 void display_desert(Function prepare_level) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
