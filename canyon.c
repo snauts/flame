@@ -379,16 +379,17 @@ static char swarm_on;
 static char swarm[SWARM_SIZE];
 static void chasing_swarm(u16 x) {
     if (swarm_on) {
-	u16 id = swarm[x >> 4];
-	Mob *mob = get_mob(id);
-	if (mob == NULL || mob->sprite->x == 0) {
-	    mob = setup_hopper(window + x, -16, 0);
-	    h_obj[mob->index].jump_amount = 2 + (counter & 3);
-	    swarm[x >> 4] = mob->index;
-	    mob->fn = &immediate_hopper;
-	    mob->direction = 1;
+	for (u16 i = 0; i < SWARM_SIZE; i++) {
+	    Mob *mob = get_mob(swarm[i]);
+	    if (mob == NULL || mob->sprite->x == 0) {
+		mob = setup_hopper(window + 16 * i, -16, 0);
+		h_obj[mob->index].jump_amount = 2 + ((counter + i) & 3);
+		swarm[i] = mob->index;
+		mob->fn = &immediate_hopper;
+		mob->direction = 1;
+	    }
 	}
-	callback(&chasing_swarm, 1, x < 16 * SWARM_SIZE ? x + 16 : 0);
+	schedule(&chasing_swarm, 0);
     }
 }
 
