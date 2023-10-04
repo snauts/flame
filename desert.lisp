@@ -326,6 +326,12 @@
    (place 4 1 pipe (front-cacti 7 3 3 4 1))
    (place 1 1 pipe (front-cacti 5 4 0 3 2))))
 
+(defun long-cacti ()
+  (box-pipe
+   (ground :n 1)
+   (place 4 2 pipe (back-cacti 15 12 1 9 4))
+   (place 2 1 pipe (front-cacti 11 7 2 8 2))))
+
 (defun rusty-dirt-with-cacti (&optional (fn #'rusty-cacti))
   (join
    (empty 3)
@@ -365,7 +371,7 @@
     ((2 5) 1) ((1 1) 3) ((1 1) 3) ((2 2) 2)
     ((1 4) 1) ((1 7) 3) ((2 5) 4) ((1 4) 3)
     ((1 3) 3) ((2 3) 3) ((1 1) 1) ((1 5) 1)
-    ((1 1) 1) ((1 5) 4) ((1 0) 2) ((2 2) 2)))
+    ((1 1) 1) ((1 5) 4) ((1 0) 2) ((2 2) 0)))
 
 (defun one-rusty-jump (jump)
   (join (apply #'rusty-base-platform (first jump))
@@ -446,5 +452,6 @@
 
 	;; swarm chase
 	(rusty-jumps)
+	(rusty-dirt-with-cacti #'long-cacti)
 
 	(empty 64)))
