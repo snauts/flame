@@ -228,7 +228,7 @@ static void update_flame_sprite(u16 index) {
 	emit_pos[index].y += clamp(base->y - emit_pos[index].y, 1);
     }
     else {
-	emit_pos[index].y = (15 * emit_pos[index].y + base->y) >> 4;
+	emit_pos[index].y = (7 * emit_pos[index].y + base->y) >> 3;
     }
 }
 
