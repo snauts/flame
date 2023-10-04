@@ -382,6 +382,24 @@
     (dolist (x *jumps* result)
       (setf result (join result (one-rusty-jump x))))))
 
+(defun dirt-n-rust-segment (x)
+  (join (rusty-walkway 1) (rusty-to-desert) x (desert-to-rusty)))
+
+(defun dirt-n-rust-decorations ()
+  (list (ground :x1 4) (aloe) (ground :x2 4) (bush) (ground)))
+
+(defun dirt-n-rust-middle ()
+  (let ((middle nil))
+    (dolist (x (dirt-n-rust-decorations) middle)
+      (setf middle (join middle (dirt-n-rust-segment x))))))
+
+(defun alternate-dirt-n-rust ()
+  (join
+   (rusty-platform-left)
+   (dirt-n-rust-middle)
+   (rusty-walkway 1)
+   (rusty-platform-right)))
+
 (defun desert-level ()
   (join (aloe) ;; reference
 	(ground :x2 2)
@@ -454,5 +472,8 @@
 	(inject (rusty-jumps) "emit_chasing_swarm" 24)
 	(rusty-dirt-with-cacti #'long-cacti)
 	(trigger "ignite_swarm")
+
+	;; ending
+	(inject (alternate-dirt-n-rust) "level_done" 38)
 
 	(empty 64)))
