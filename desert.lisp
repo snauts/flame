@@ -320,13 +320,19 @@
    (place 3 2 pipe (back-cacti 8 4 2 3 4))
    (place 1 2 pipe (back-cacti 3 2 0 1 1))))
 
-(defun rusty-dirt-with-cacti ()
+(defun dab-cacti ()
+  (box-pipe
+   (ground :n 1)
+   (place 4 1 pipe (front-cacti 7 3 3 4 1))
+   (place 1 1 pipe (front-cacti 5 4 0 3 2))))
+
+(defun rusty-dirt-with-cacti (&optional (fn #'rusty-cacti))
   (join
    (empty 3)
    (rusty-platform-left)
    (rusty-walkway 1)
    (rusty-to-desert)
-   (rusty-cacti)
+   (funcall fn)
    (desert-to-rusty)
    (rusty-walkway 1)
    (rusty-platform-right)
@@ -346,11 +352,11 @@
    (place 3 (+ h 2) pipe (desert-cell 238))))
 
 (defun rusty-down-stairs ()
-  (let ((stairs (empty 2)))
+  (let ((stairs nil))
     (loop for h from 15 downto 0 by 3 do
       (with-box stairs
-	(join stairs (rusty-bridge 2 h))
-	(join stairs (empty 2))))
+	(join stairs (empty 2))
+	(join stairs (rusty-bridge 2 h))))
     stairs))
 
 (defun desert-level ()
@@ -419,5 +425,6 @@
 	(martas-platformas)
 	(trigger "emit_down_stair_guards")
 	(rusty-down-stairs)
+	(rusty-dirt-with-cacti #'dab-cacti)
 
 	(empty 64)))
