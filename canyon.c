@@ -329,6 +329,22 @@ void emit_chasing_hoppers(u16 pos_x) {
     emit_charging_hoppers(pos_x);
 }
 
+void emit_marta_platform_patrollers(u16 pos_x) {
+    for (u16 y = 184; y >= 88; y -= 24) {
+	for (u16 x = 0; x <= 32; x += 16) {
+	    u16 skew = y & BIT(3);
+	    u16 offset = pos_x + SCR_WIDTH + (skew ? 64 : 32);
+	    Mob *mob = setup_hopper(offset + x, y, 0);
+	    Hopper *hopper = h_obj + mob->index;
+	    hopper->persistent = 1;
+	    hopper->patrol_start = offset - 16;
+	    hopper->patrol_end = offset + 48;
+	    mob->direction = skew ? -1 : 1;
+	    mob->fn = &patrolling_hopper;
+	}
+    }
+}
+
 void display_desert(Function prepare_level) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));

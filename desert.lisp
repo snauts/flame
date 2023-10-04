@@ -415,6 +415,7 @@
 	(rusty-dirt-with-cacti)
 
 	;; Martas platformas
+	(trigger "emit_marta_platform_patrollers")
 	(martas-platformas)
 	(rusty-down-stairs)
 
