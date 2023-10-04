@@ -400,11 +400,16 @@ void emit_chasing_swarm(u16 pos_x) {
 }
 
 void ignite_swarm(u16 pos_x) {
-    swarm_on = 0;
-    for (u16 i = 0; i < SWARM_SIZE; i++) {
-	Mob *mob = get_mob(swarm[i]);
-	if (mob && mob->sprite->x > 0) {
-	    hopper_die(&mob->obj);
+    if (pos_x > 0) {
+	schedule(&ignite_swarm, 80);
+    }
+    else {
+	swarm_on = 0;
+	for (u16 i = 0; i < SWARM_SIZE; i++) {
+	    Mob *mob = get_mob(swarm[i]);
+	    if (mob && mob->sprite->x > 0) {
+		hopper_die(&mob->obj);
+	    }
 	}
     }
 }
