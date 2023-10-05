@@ -140,6 +140,7 @@ void do_z80_bus(void (*)(void));
 void z80_word(u16 addr, u16 data);
 void z80_poke(u16 addr, byte data);
 void psg_noise(byte type, byte vol);
+void music_toggle(byte state);
 
 u16 random(void);
 void set_seed(u16);

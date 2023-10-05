@@ -155,6 +155,17 @@ void slash_sfx(void) {
     z80_word(PSG_SFX_CH1, sfx[SFX_SLASH]);
 }
 
+static void mute_ym2612(void) {
+    for (byte ch = 0; ch <= 6; ch++) {
+	if (ch != 3) ym2612_write(0, 0x28, ch);
+    }
+}
+
+void music_toggle(byte state) {
+    z80_poke(0x10, state);
+    if (state) do_z80_bus(&mute_ym2612);
+}
+
 void music_johnny(void) {
     if (music != MUSIC_JOHNNY) {
 	do_z80_bus(&setup_johnny_intruments);

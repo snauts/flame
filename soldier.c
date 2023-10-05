@@ -464,6 +464,7 @@ void game_paused(void) {
     }
     last_state = this_state;
     upload_palette(pause << 1);
+    music_toggle(pause);
     flame_noise(pause);
 }
 
