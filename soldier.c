@@ -451,28 +451,36 @@ static void move_backward(void) {
     }
 }
 
+static byte pause;
 static u16 last_state;
-static u16 pause_toggle(u16 state) {
-    return BUTTON_START(last_state) == 0 && BUTTON_START(state);
+static u16 button_state;
+
+static u16 pause_toggle(void) {
+    return BUTTON_START(last_state) == 0 && BUTTON_START(button_state);
 }
 
-extern byte pause;
-void game_paused(void) {
-    u16 this_state = read_gamepad();
-    if (pause_toggle(this_state)) {
-	pause = 0;
-    }
-    last_state = this_state;
+static void game_paused(void) {
     upload_palette(pause << 1);
     music_toggle(pause);
     flame_noise(pause);
 }
 
-static void soldier_march(void) {
-    u16 button_state = read_gamepad();
-    u16 prev = soldier.x;
+void update_game(void) {
+    button_state = read_gamepad();
+    if (pause_toggle()) {
+	pause = !pause;
+	game_paused();
+    }
+    if (!pause) {
+	manage_timers();
+	advance_sprites();
+	level_scroll();
+    }
+    last_state = button_state;
+}
 
-    if (pause_toggle(button_state)) pause = 1;
+static void soldier_march(void) {
+    u16 prev = soldier.x;
 
     u16 aim_up = 0;
     if (BUTTON_RIGHT(button_state)) {
@@ -498,8 +506,6 @@ static void soldier_march(void) {
     soldier_jump(jump, button_down);
     soldier_animate(prev, aim_up);
     soldier_sprite_update();
-
-    last_state = button_state;
 }
 
 static void hide_all_sprites(void) {
