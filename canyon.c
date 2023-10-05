@@ -284,12 +284,16 @@ void emit_hole_hoppers(u16 pos_x) {
     emit_next_hole_hopper(0);
 }
 
+static void emit_row_of_sky_hoppers(u16 pos_x) {
+    for (u16 i = 0; i < 4; i++) {
+	setup_hopper(pos_x + (i << 4), -16 + (i << 2), 0);
+    }
+}
+
 static u16 sky_x;
 static void emit_next_sky_hopper(u16 delay) {
     if (window < sky_x - 112) {
-	for (u16 i = 0; i < 4; i++) {
-	    setup_hopper(sky_x + (i << 4), -16 + (i << 2), 0);
-	}
+	emit_row_of_sky_hoppers(sky_x);
 	callback(&emit_next_sky_hopper, delay, 416 - delay);
     }
 }
@@ -361,6 +365,7 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 void emit_down_stair_guards(u16 pos_x) {
     purge_mobs();
     u16 x = pos_x + SCR_WIDTH + 48, y = 88;
+    emit_row_of_sky_hoppers(pos_x + SCR_WIDTH - 24);
     for (u16 i = 0; i < 6; i++) {
 	Mob *mob = setup_hopper(x, y, 0);
 	Hopper *hopper = h_obj + mob->index;
