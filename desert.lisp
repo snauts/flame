@@ -289,12 +289,12 @@
 (defun rusty-bridge-middle (n h)
   (on-top (stack (empty n) (1+ h)) (multiply (crop 15 3 16 5 (cliffs)) n)))
 
-(defun rusty-over-platform-with-studs (n h)
+(defun rusty-stud-platform (n h &optional (x1 0) (x2 n) (c1 283) (c2 259))
   (box-pipe
   (rusty-over-platform n h)
-  (place 0 (+ h 2) pipe (desert-cell 283))
-  (place 1 (+ h 2) pipe (multiply (crop 13 2 15 3 (cliffs)) n))
-  (place (1+ (* 2 n)) (+ h 2) pipe (desert-cell 259))))
+  (place x1 (+ h 2) pipe (desert-cell c1))
+  (place (1+ x1) (+ h 2) pipe (multiply (crop 13 2 15 3 (cliffs)) x2))
+  (place (+ x1 (* 2 x2) 1) (+ h 2) pipe (desert-cell c2))))
 
 (defun crop-bottom (box)
   (crop 0 1 (width box) (height box) box))
@@ -304,11 +304,11 @@
     (box-pipe
      (rusty-base-platform 8)
      (place 2 2 pipe (rusty-over-platform 6 16))
-     (place 6 2 pipe (rusty-over-platform-with-studs 4 13))
-     (place 2 2 pipe (rusty-over-platform-with-studs 4 10))
-     (place 6 2 pipe (rusty-over-platform-with-studs 4 7))
-     (place 2 2 pipe (rusty-over-platform-with-studs 4 4))
-     (place 6 2 pipe (rusty-over-platform-with-studs 4 1))
+     (place 6 2 pipe (rusty-stud-platform 4 13))
+     (place 2 2 pipe (rusty-stud-platform 4 10))
+     (place 6 2 pipe (rusty-stud-platform 4 7))
+     (place 2 2 pipe (rusty-stud-platform 4 4))
+     (place 6 2 pipe (rusty-stud-platform 4 1))
      (place (+ w 14) 0 pipe (crop-bottom (rusty-over-platform 4 19)))
      (place 15 18 pipe (rusty-bridge-middle w 0))
      (place (+ w 14) 20 pipe (desert-cell 246))
