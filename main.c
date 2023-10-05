@@ -270,8 +270,10 @@ void next_level(void) {
     if (loader[1]) loader++;
 }
 
+byte pause;
 void restart_level(void) {
     switch_frame(*loader);
+    pause = 0;
 }
 
 u16 counter;
@@ -333,9 +335,14 @@ static void transfer_to_VRAM(void) {
 }
 
 void update_game(void) {
-    manage_timers();
-    advance_sprites();
-    level_scroll();
+    if (!pause) {
+	manage_timers();
+	advance_sprites();
+	level_scroll();
+    }
+    else {
+	game_paused();
+    }
 }
 
 void vblank_interrupt(void) {

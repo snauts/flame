@@ -42,6 +42,8 @@ extern byte first_mob_sprite;
 #define BUTTON_LEFT(x) ((x) & BIT(2))
 #define BUTTON_RIGHT(x) ((x) & BIT(3))
 
+#define BUTTON_START(x) ((x) & BIT(13))
+
 static u16 read_gamepad(void) {
     u16 button_state;
     BYTE(GAMEPAD_A_DATA) = 0;
@@ -445,10 +447,26 @@ static void move_backward(void) {
     }
 }
 
+static u16 last_state;
+static u16 pause_toggle(u16 state) {
+    return BUTTON_START(last_state) == 0 && BUTTON_START(state);
+}
+
+extern byte pause;
+void game_paused(void) {
+    u16 this_state = read_gamepad();
+    if (pause_toggle(this_state)) {
+	pause = 0;
+    }
+    last_state = this_state;
+    upload_palette(pause << 1);
+}
+
 static void soldier_march(void) {
     u16 button_state = read_gamepad();
-    static u16 last_state;
     u16 prev = soldier.x;
+
+    if (pause_toggle(button_state)) pause = 1;
 
     u16 aim_up = 0;
     if (BUTTON_RIGHT(button_state)) {

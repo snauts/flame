@@ -154,6 +154,7 @@ void bite_soldier(u16 x, u16 y);
 Sprite *get_sprite(u16 offset);
 void lock_screen(byte state);
 void fade_in(u16 fade);
+void game_paused(void);
 
 void display_canyon(void);
 void display_rusty(void);
