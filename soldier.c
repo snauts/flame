@@ -400,8 +400,8 @@ static void soldier_flicker(u16 deviate) {
 }
 
 static byte face;
-static void flame_noise(void) {
-    psg_noise(7, face ? 0x4 : 0xf);
+static void flame_noise(u16 off) {
+    psg_noise(7, face && !off ? 0x4 : 0xf);
 }
 
 static void soldier_yelling(byte state) {
@@ -409,7 +409,7 @@ static void soldier_yelling(byte state) {
 	base[-1].cfg = TILE(2, state ? WEAPON : 0);
 	soldier_flicker(0);
 	face = state;
-	flame_noise();
+	flame_noise(0);
     }
     if (state) {
 	soldier_flicker(counter & 2);
@@ -460,14 +460,11 @@ extern byte pause;
 void game_paused(void) {
     u16 this_state = read_gamepad();
     if (pause_toggle(this_state)) {
-	flame_noise();
 	pause = 0;
-    }
-    else {
-	psg_noise(7, 0xf);
     }
     last_state = this_state;
     upload_palette(pause << 1);
+    flame_noise(pause);
 }
 
 static void soldier_march(void) {
