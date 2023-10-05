@@ -478,5 +478,22 @@
 
 	(empty 64)))
 
+(defun mantis-stairs ()
+  (box-pipe
+   (place 0 2 pipe (rusty-over-platform 5 3))
+   (place 2 7 pipe (rusty-over-platform 3 3))
+   (place 4 12 pipe (rusty-over-platform 1 3))))
+
 (defun mantis-level ()
-  (join (rusty-base-platform 24)))
+  (setf *seed* 1918)
+  (box-pipe
+   (join (rusty-walkway 11)
+	 (rusty-to-desert)
+	 (cacti) (ground :x2 2) (aloe)
+	 (desert-to-rusty)
+	 (rusty-walkway 15))
+   (place 9 0 pipe (mantis-stairs))
+   (place 35 0 pipe (mantis-stairs))
+   (place 16 15 pipe (rusty-bridge-middle 24 0))
+   (place 39 17 pipe (desert-cell 246))
+   (place 39 16 pipe (desert-cell 279))))
