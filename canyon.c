@@ -472,4 +472,5 @@ void display_rusty(void) {
 
 void display_mantis(void) {
     display_desert(&prepare_mantis_level);
+    lock_screen(1);
 }

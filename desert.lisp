@@ -479,5 +479,4 @@
 	(empty 64)))
 
 (defun mantis-level ()
-  (join (rusty-base-platform 12)
-	(empty 64)))
+  (join (rusty-base-platform 24)))

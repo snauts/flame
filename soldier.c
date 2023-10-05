@@ -230,6 +230,9 @@ static void update_flame_sprite(u16 index) {
     else {
 	emit_pos[index].y = (7 * emit_pos[index].y + base->y) >> 3;
     }
+    if (flame[index].x > SCR_WIDTH + ON_SCREEN) {
+	flame[index].x = flame[index].y = 1;
+    }
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
@@ -407,8 +410,18 @@ static void soldier_yelling(byte state) {
     }
 }
 
+static byte locked;
+void lock_screen(byte state) {
+    locked = state;
+}
+
 static void move_forward(void) {
-    if (base->x >= SOLDIER_MAX_X && !is_rightmost()) {
+    if (locked) {
+	if (base->x < SCR_WIDTH + ON_SCREEN - 24) {
+	    soldier.x++;
+	}
+    }
+    else if (base->x >= SOLDIER_MAX_X && !is_rightmost()) {
 	update_window(1);
 	soldier.x++;
     }
@@ -418,7 +431,12 @@ static void move_forward(void) {
 }
 
 static void move_backward(void) {
-    if (base->x <= SOLDIER_MIN_X && !is_leftmost()) {
+    if (locked) {
+	if (base->x > ON_SCREEN) {
+	    soldier.x--;
+	}
+    }
+    else if (base->x <= SOLDIER_MIN_X && !is_leftmost()) {
 	update_window(-1);
 	soldier.x--;
     }
@@ -669,4 +687,5 @@ void setup_soldier_sprites(void) {
     clear_rectangle(&s_rect);
     button_down = 0;
     is_dead = 0;
+    locked = 0;
 }
