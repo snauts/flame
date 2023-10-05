@@ -229,6 +229,7 @@
 (defun save-level ()
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
     (save-array out "desert_level" (desert-level) *desert-walkable*)
+    (save-array out "mantis_level" (mantis-level) *desert-walkable*)
     (save-array out "rusty_level" (rusty-level) *desert-walkable*)))
 
 (defun save-and-quit ()

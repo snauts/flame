@@ -115,6 +115,12 @@ void prepare_rusty_level(void) {
     prepare_level(rusty_level);
 }
 
+void prepare_mantis_level(void) {
+    trigger = mantis_level_triggers;
+    height = mantis_level_height;
+    prepare_level(mantis_level);
+}
+
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(window >> 1));

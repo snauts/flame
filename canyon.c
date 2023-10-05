@@ -469,3 +469,7 @@ void display_canyon(void) {
 void display_rusty(void) {
     display_desert(&prepare_rusty_level);
 }
+
+void display_mantis(void) {
+    display_desert(&prepare_mantis_level);
+}

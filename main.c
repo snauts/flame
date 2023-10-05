@@ -261,6 +261,7 @@ void memset(void *ptr, byte c, int amount) {
 static const Function loader_table[] = {
     &display_canyon,
     &display_rusty,
+    &display_mantis,
     NULL,
 };
 const Function *loader;
