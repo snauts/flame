@@ -43,7 +43,7 @@ halt:
 
 main_loop:
 	ld	a, (stop)
-	cp	a
+	and	a
 	jp	nz, halt
 
 	ld	a, 0
