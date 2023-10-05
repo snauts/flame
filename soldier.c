@@ -101,11 +101,11 @@ static u16 on_ground(void) {
 
 static void initiate_jump(u16 down, char velocity) {
     soldier.gravity = 0;
-    if (!down) {
-	soldier.velocity = velocity;
-    }
-    else if (soldier.y < platform_bottom()) {
+    if (down && soldier.y < platform_bottom()) {
 	soldier.y++;
+    }
+    else {
+	soldier.velocity = velocity;
     }
 }
 
@@ -276,9 +276,10 @@ static u16 flame_expired(u16 index) {
     return f_obj[index].life >= 64;
 }
 
+static byte button_down;
 static void advance_flame(u16 index) {
     if (f_obj[index].frame == FLAME) {
-	f_obj[index].x += 22;
+	f_obj[index].x += button_down ? 11 : 22;
 	advance_y(f_obj + index, 8);
     }
     else {
@@ -451,7 +452,8 @@ static void soldier_march(void) {
     }
 
     u16 jump = BUTTON_C(button_state) && BUTTON_C(last_state) == 0;
-    soldier_jump(jump, BUTTON_DOWN(button_state));
+    button_down = BUTTON_DOWN(button_state);
+    soldier_jump(jump, button_down);
     soldier_animate(prev, aim_up);
     soldier_sprite_update();
 
@@ -665,5 +667,6 @@ void setup_soldier_sprites(void) {
     put_soldier(0, platform_bottom());
     clear_rectangle(&f_rect);
     clear_rectangle(&s_rect);
+    button_down = 0;
     is_dead = 0;
 }
