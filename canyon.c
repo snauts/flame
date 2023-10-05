@@ -52,12 +52,20 @@ const byte cacti_spacing[] = {
     6, 20, 38, 28, 22, 26, 30, 42, 22, 16, 56, 26, 22, 48, 114, 28,
 };
 
-static void draw_vegetation(void) {
+static void draw_vegetation(byte more_bones) {
     u16 i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
 	u16 tile = cacti[(tile + offset) & 7];
-	if (i == 60 || i == 40 || i == 20) tile = 95;
+	if (!more_bones) {
+	    if (i == 60 || i == 40 || i == 20) tile = 95;
+	}
+	else if (tile == 69 || tile == 77 || tile == 93) {
+	    tile = 95;
+	}
+	else if (tile == 85) {
+	    tile = 86;
+	}
 	poke_VRAM(offset, tile);
 	tile++;
     }
@@ -420,7 +428,7 @@ void ignite_swarm(u16 pos_x) {
     }
 }
 
-void display_desert(Function prepare_level) {
+void display_desert(Function prepare_level, byte more_bones) {
     /* load tiles */
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
@@ -436,7 +444,7 @@ void display_desert(Function prepare_level) {
     draw_sand();
     draw_clouds();
     draw_horizon();
-    draw_vegetation();
+    draw_vegetation(more_bones);
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
@@ -463,14 +471,14 @@ void display_desert(Function prepare_level) {
 }
 
 void display_canyon(void) {
-    display_desert(&prepare_desert_level);
+    display_desert(&prepare_desert_level, 0);
 }
 
 void display_rusty(void) {
-    display_desert(&prepare_rusty_level);
+    display_desert(&prepare_rusty_level, 0);
 }
 
 void display_mantis(void) {
-    display_desert(&prepare_mantis_level);
+    display_desert(&prepare_mantis_level, 1);
     lock_screen(1);
 }
