@@ -33,7 +33,7 @@ static Timer timers[MAX_TIMERS];
 static char free_timers[MAX_TIMERS];
 
 Object *get_mob(u16 index) {
-    return &mobs[index].obj;
+    return (index < MAX_MOBS) ? &mobs[index].obj : NULL;
 }
 
 u16 mob_index(Object *obj) {
