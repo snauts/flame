@@ -28,7 +28,6 @@ static Object soldier;
 static char is_dead;
 
 static Sprite sprite[80];
-static Sprite *base;
 static Sprite *blood;
 
 extern byte first_mob_sprite;
@@ -60,32 +59,36 @@ static u16 read_gamepad(void) {
 static Rectangle s_rect;
 
 static void update_soldier_rectangle(void) {
-    s_rect.x1 = base->x + 4;
-    s_rect.y1 = base->y + 4;
-    s_rect.x2 = base->x + 16;
-    s_rect.y2 = base->y + 36;
+    s_rect.x1 = soldier.sprite->x + 4;
+    s_rect.y1 = soldier.sprite->y + 4;
+    s_rect.x2 = soldier.sprite->x + 16;
+    s_rect.y2 = soldier.sprite->y + 36;
+}
+
+static u16 is_soldier_on_screen(void) {
+    return soldier.sprite->y >= 200 + ON_SCREEN;
 }
 
 static void should_sink(void) {
     /* if we are bitten in mid air and fall into pit, do the sinking */
-    if ((is_dead == 0 || is_dead == 2) && base->y >= 200 + ON_SCREEN) {
-	base->cfg = TILE(2, SOLDIER_TOP + 18);
+    if ((is_dead == 0 || is_dead == 2) && is_soldier_on_screen()) {
+	soldier.sprite->cfg = TILE(2, SOLDIER_TOP + 18);
 	is_dead = 1;
     }
 }
 
 static void soldier_sprite_update(void) {
-    base->x = soldier.x - window + SOLDIER_MIN_X;
-    base->y = soldier.y + ON_SCREEN - 40;
+    soldier.sprite->x = soldier.x - window + SOLDIER_MIN_X;
+    soldier.sprite->y = soldier.y + ON_SCREEN - 40;
 
-    base[-1].x = base->x + 8;
-    base[-1].y = base->y + 8;
+    soldier.sprite[-1].x = soldier.sprite->x + 8;
+    soldier.sprite[-1].y = soldier.sprite->y + 8;
 
-    base[1].x = base->x;
-    base[1].y = base->y + 24;
+    soldier.sprite[1].x = soldier.sprite->x;
+    soldier.sprite[1].y = soldier.sprite->y + 24;
 
-    base[2].x = base->x + soldier.direction * 16 + 8;
-    base[2].y = base->y + 21;
+    soldier.sprite[2].x = soldier.sprite->x + soldier.direction * 16 + 8;
+    soldier.sprite[2].y = soldier.sprite->y + 21;
 
     update_soldier_rectangle();
     should_sink();
@@ -163,18 +166,18 @@ static short animate_walking(short cycle, u16 prev) {
 
 static void select_torso(u16 aim_up) {
     if (aim_up) {
-	base[0].cfg = TILE(2, SOLDIER_TOP + 9);
-	base[2].cfg = TILE(2, 0);
+	soldier.sprite[0].cfg = TILE(2, SOLDIER_TOP + 9);
+	soldier.sprite[2].cfg = TILE(2, 0);
     }
     else {
-	base[0].cfg = TILE(2, SOLDIER_TOP);
-	base[2].cfg = TILE(2, WEAPON + 4);
+	soldier.sprite[0].cfg = TILE(2, SOLDIER_TOP);
+	soldier.sprite[2].cfg = TILE(2, WEAPON + 4);
     }
 }
 
 static void flip_soldier_sprites(void) {
     for (char i = -1; i <= 2; i++) {
-	base[i].cfg |= BIT(11);
+	soldier.sprite[i].cfg |= BIT(11);
     }
 }
 
@@ -194,7 +197,7 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
 	if (aim_up) soldier_frame += 9;
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
-    base[1].cfg = TILE(2, soldier_frame);
+    soldier.sprite[1].cfg = TILE(2, soldier_frame);
     if (soldier.direction < 0) {
 	flip_soldier_sprites();
     }
@@ -240,16 +243,16 @@ static void update_flame_sprite(u16 index) {
     u16 animation = f->life & ((FLAME_LIFE - 1) << 1);
     f_obj[index].sprite->cfg = TILE(2, f->frame + animation);
 
-    f_obj[index].sprite->x = base->x + (f->x >> 4)
-	+ clamp(p->x - base->x, decople >> 1);
-    f_obj[index].sprite->y = base->y + (f->y >> 4)
-	+ clamp(p->y - base->y, decople);
+    f_obj[index].sprite->x = soldier.sprite->x + (f->x >> 4)
+	+ clamp(p->x - soldier.sprite->x, decople >> 1);
+    f_obj[index].sprite->y = soldier.sprite->y + (f->y >> 4)
+	+ clamp(p->y - soldier.sprite->y, decople);
 
     if (f->life > 48) {
-	p->y += clamp(base->y - p->y, 1);
+	p->y += clamp(soldier.sprite->y - p->y, 1);
     }
     else {
-	p->y = (7 * p->y + base->y) >> 3;
+	p->y = (7 * p->y + soldier.sprite->y) >> 3;
     }
     if (f_obj[index].sprite->x > SCR_WIDTH + ON_SCREEN) {
 	f_obj[index].sprite->x = f_obj[index].sprite->y = 1;
@@ -272,8 +275,8 @@ static void emit_flame(u16 index, u16 aim_up) {
 	f->frame = FLAME_UP;
     }
 
-    f_obj[index].emit.x = base->x;
-    f_obj[index].emit.y = base->y;
+    f_obj[index].emit.x = soldier.sprite->x;
+    f_obj[index].emit.y = soldier.sprite->y;
     f_obj[index].dir = soldier.direction;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
@@ -438,7 +441,7 @@ static void flame_noise(u16 off) {
 
 static void soldier_yelling(byte state) {
     if (face != state) {
-	base[-1].cfg = TILE(2, state ? WEAPON : 0);
+	soldier.sprite[-1].cfg = TILE(2, state ? WEAPON : 0);
 	soldier_flicker(0);
 	face = state;
 	flame_noise(0);
@@ -465,30 +468,30 @@ static void soldier_backward(void) {
 
 static void move_forward(void) {
     if (locked) {
-	if (base->x < SCR_WIDTH + ON_SCREEN - 24) {
+	if (soldier.sprite->x < SCR_WIDTH + ON_SCREEN - 24) {
 	    soldier_forward();
 	}
     }
-    else if (base->x >= SOLDIER_MAX_X && !is_rightmost()) {
+    else if (soldier.sprite->x >= SOLDIER_MAX_X && !is_rightmost()) {
 	update_window(1);
 	soldier_forward();
     }
-    else if (base->x < SOLDIER_MAX_X) {
+    else if (soldier.sprite->x < SOLDIER_MAX_X) {
 	soldier_forward();
     }
 }
 
 static void move_backward(void) {
     if (locked) {
-	if (base->x > ON_SCREEN) {
+	if (soldier.sprite->x > ON_SCREEN) {
 	    soldier_backward();
 	}
     }
-    else if (base->x <= SOLDIER_MIN_X && !is_leftmost()) {
+    else if (soldier.sprite->x <= SOLDIER_MIN_X && !is_leftmost()) {
 	update_window(-1);
 	soldier_backward();
     }
-    else if (base->x > SOLDIER_MIN_X) {
+    else if (soldier.sprite->x > SOLDIER_MIN_X) {
 	soldier_backward();
     }
 }
@@ -575,10 +578,10 @@ void fade_in(u16 fade) {
 void wiggle_sfx(void);
 static void soldier_sinking(u16 cookie) {
     soldier.y++;
-    base->cfg ^= BIT(11);
+    soldier.sprite->cfg ^= BIT(11);
     soldier_sprite_update();
     schedule(&soldier_sinking, 10);
-    if ((base->cfg >> 11) & 1) wiggle_sfx();
+    if ((soldier.sprite->cfg >> 11) & 1) wiggle_sfx();
 }
 
 static void soldier_sink(void) {
@@ -623,9 +626,9 @@ void bite_soldier(u16 x, u16 y) {
 }
 
 static void soldier_kneel(u16 cookie) {
-    base[0].y++;
-    base[1].cfg += 6;
-    if (base[1].cfg < TILE(2, SOLDIER_LEG + 22 * 6)) {
+    soldier.sprite[0].y++;
+    soldier.sprite[1].cfg += 6;
+    if (soldier.sprite[1].cfg < TILE(2, SOLDIER_LEG + 22 * 6)) {
 	schedule(&soldier_kneel, 6);
     }
     else {
@@ -638,20 +641,20 @@ static void soldier_poison(void) {
 	advance_obj(&soldier, SOLDIER_AHEAD, 6);
 	soldier_sprite_update();
     }
-    else if (base[0].cfg != TILE(2, SOLDIER_POISON)) {
+    else if (soldier.sprite[0].cfg != TILE(2, SOLDIER_POISON)) {
 	update_color(39, 0x668);
 	update_color(40, 0x446);
-	base[-1].size = SPRITE_SIZE(4, 1);
-	base[-1].cfg = TILE(2, WEAPON + 1);
-	base[-1].x = base[0].x - 4;
-	base[-1].y = base[2].y;
+	soldier.sprite[-1].size = SPRITE_SIZE(4, 1);
+	soldier.sprite[-1].cfg = TILE(2, WEAPON + 1);
+	soldier.sprite[-1].x = soldier.sprite[0].x - 4;
+	soldier.sprite[-1].y = soldier.sprite[2].y;
 
-	base[0].cfg = TILE(2, SOLDIER_POISON);
-	base[1].cfg = TILE(2, SOLDIER_LEG + 18 * 6);
-	base[2].x = base[2].y = 0;
+	soldier.sprite[0].cfg = TILE(2, SOLDIER_POISON);
+	soldier.sprite[1].cfg = TILE(2, SOLDIER_LEG + 18 * 6);
+	soldier.sprite[2].x = soldier.sprite[2].y = 0;
     }
-    else if (base[-1].y < base[1].y + 12) {
-	base[-1].y++;
+    else if (soldier.sprite[-1].y < soldier.sprite[1].y + 12) {
+	soldier.sprite[-1].y++;
     }
     else {
 	schedule(&soldier_kneel, 6);
@@ -706,25 +709,26 @@ void advance_sprites(void) {
 }
 
 static void put_soldier(u16 x, u16 y) {
+    soldier.sprite = get_sprite(SOLDIER_BASE);
     soldier.direction = 1;
     soldier.x = window + x;
     soldier.y = y;
 
-    base[-1].cfg = TILE(2, 0);
-    base[-1].size = SPRITE_SIZE(1, 1);
-    base[-1].next = SOLDIER_BASE;
+    soldier.sprite[-1].cfg = TILE(2, 0);
+    soldier.sprite[-1].size = SPRITE_SIZE(1, 1);
+    soldier.sprite[-1].next = SOLDIER_BASE;
 
-    base[0].cfg = TILE(2, SOLDIER_TOP);
-    base[0].size = SPRITE_SIZE(3, 3);
-    base[0].next = SOLDIER_BASE + 1;
+    soldier.sprite[0].cfg = TILE(2, SOLDIER_TOP);
+    soldier.sprite[0].size = SPRITE_SIZE(3, 3);
+    soldier.sprite[0].next = SOLDIER_BASE + 1;
 
-    base[1].cfg = TILE(2, SOLDIER_LEG);
-    base[1].size = SPRITE_SIZE(3, 2);
-    base[1].next = SOLDIER_BASE + 2;
+    soldier.sprite[1].cfg = TILE(2, SOLDIER_LEG);
+    soldier.sprite[1].size = SPRITE_SIZE(3, 2);
+    soldier.sprite[1].next = SOLDIER_BASE + 2;
 
-    base[2].cfg = TILE(2, WEAPON + 4);
-    base[2].size = SPRITE_SIZE(1, 1);
-    base[2].next = 0;
+    soldier.sprite[2].cfg = TILE(2, WEAPON + 4);
+    soldier.sprite[2].size = SPRITE_SIZE(1, 1);
+    soldier.sprite[2].next = 0;
 
     soldier_sprite_update();
 }
@@ -755,7 +759,6 @@ static void setup_flame_sprites(void) {
 
 void setup_soldier_sprites(void) {
     head = tail = cooldown = 0;
-    base = get_sprite(SOLDIER_BASE);
     blood = get_sprite(BLOOD_SPRITE);
     memset(&soldier, 0, sizeof(soldier));
     memset(sprite, 0, sizeof(sprite));
