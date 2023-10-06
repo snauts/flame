@@ -257,13 +257,13 @@ static void emit_flame(u16 index, u16 aim_up) {
     Object *f = &f_obj[index].obj;
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 26;
+	offset_x = 4 + 22 * s_dir;
 	offset_y = 20;
 	f->velocity = 0;
 	f->frame = FLAME;
     }
     else {
-	offset_x = 20;
+	offset_x = 4 + 16 * s_dir;
 	offset_y = 3;
 	f->velocity = 16;
 	f->frame = FLAME_UP;
@@ -271,8 +271,10 @@ static void emit_flame(u16 index, u16 aim_up) {
 
     f_obj[index].emit.x = base->x;
     f_obj[index].emit.y = base->y;
+    f_obj[index].dir = s_dir;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
+    f->frame |= s_cfg;
     f->gravity = 4;
     f->life = 0;
 
@@ -299,16 +301,22 @@ static u16 flame_expired(u16 index) {
     return f_obj[index].obj.life >= FLAME_LIFE;
 }
 
+static u16 is_horizontal_flame(u16 index) {
+    return (f_obj[index].obj.frame & 0x7FF) == FLAME;
+}
+
 static byte button_down;
 static void advance_flame(u16 index) {
-    if (f_obj[index].obj.frame == FLAME) {
-	f_obj[index].obj.x += button_down ? 11 : 22;
+    char move_x;
+    if (is_horizontal_flame(index)) {
 	advance_y(&f_obj[index].obj, 8);
+	move_x = button_down ? 11 : 22;
     }
     else {
-	f_obj[index].obj.x += 16;
 	advance_y(&f_obj[index].obj, 4);
+	move_x = 16;
     }
+    f_obj[index].obj.x += move_x * f_obj[index].dir;
 }
 
 static Rectangle f_rect;
