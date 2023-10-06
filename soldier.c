@@ -289,27 +289,30 @@ static void emit_flame(u16 index, u16 aim_up) {
     update_flame_sprite(f);
 }
 
+static char is_good_flame(u16 index) {
+    return is_good_object(&flame[index].obj);
+}
+
 static Sprite *flame_sprite(u16 i) {
     return flame[i].obj.sprite;
 }
 
 static void throw_flames(u16 aim_up) {
-    if (flame_sprite(head)->x == 0) {
+    if (!is_good_flame(head)) {
 	emit_flame(head, aim_up);
 	head = next_flame(head);
     }
 }
 
 static void remove_oldest_flame(void) {
-    if (flame_sprite(head)->x > 0) {
-	Sprite *sprite = flame_sprite(tail);
-	sprite->x = sprite->y = 0;
+    if (is_good_flame(head)) {
+	destroy_object(&flame[tail].obj);
 	tail = next_flame(tail);
     }
 }
 
 static u16 flame_expired(Object *f) {
-    return f->life >= FLAME_LIFE;
+    return (++f->life) >= FLAME_LIFE;
 }
 
 static char is_horizontal_flame(Object *f) {
@@ -368,12 +371,10 @@ static byte after_flame(void) {
 
 static void manage_flames(void) {
     u16 index = tail;
-    Object *f = &flame[tail].obj;
     byte previous = after_flame();
     clear_rectangle(&f_rect);
-    while (is_good_object(f)) {
-	f = &flame[index].obj;
-	f->life++;
+    while (is_good_flame(index)) {
+	Object *f = &flame[index].obj;
 	if (flame_expired(f)) {
 	    destroy_object(f);
 	    index = next_flame(index);
