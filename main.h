@@ -63,21 +63,17 @@ typedef struct Object {
     char velocity;
     char direction;
     Sprite *sprite;
+    void *private;
     u16 frame;
     u16 life;
 } Object;
 
-typedef struct Mob {
-    Object obj;
-    byte price;
-    char index;
-    char previous;
-    void (*fn)(struct Mob *);
-} Mob;
+typedef void(*Callback)(u16);
+typedef void(*Function)(void);
 
 typedef struct Trigger {
     u16 distance;
-    void (*fn)(u16);
+    Callback fn;
 } Trigger;
 
 typedef struct Rectangle {
@@ -87,8 +83,6 @@ typedef struct Rectangle {
 typedef struct Pos {
     short x, y;
 } Pos;
-
-typedef void(*Function)(void);
 
 #define NULL ((void *) 0)
 
@@ -183,15 +177,17 @@ void level_scroll(void);
 u16 is_rightmost(void);
 u16 is_leftmost(void);
 
-Mob *alloc_mob(byte cost);
-void schedule(void (*fn)(u16), u16 ticks);
-void callback(void (*fn)(u16), u16 timeout, u16 cookie);
+Object *alloc_mob(byte cost);
+void schedule(Callback, u16 ticks);
+void callback(Callback, u16 timeout, u16 cookie);
+void mob_fn(Object *obj, void (*fn)(Object *));
 void manage_timers(void);
 void manage_mobs(void);
 void purge_mobs(void);
 void reset_mobs(void);
-void free_mob(Mob *mob);
-Mob *get_mob(u16 i);
+void free_mob(Object *obj);
+u16 mob_index(Object *obj);
+Object *get_mob(u16 index);
 
 extern u16 window;
 extern u16 counter;

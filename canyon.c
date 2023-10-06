@@ -90,6 +90,8 @@ typedef struct Hopper {
 
 Hopper h_obj[MAX_MOBS];
 
+#define HOPPER(obj) ((Hopper *) (obj->private))
+
 static u16 is_hopper_off_screen(Sprite *sprite) {
     return sprite->x >= MAX_POSITION
 	|| sprite->x < ON_SCREEN - 16
@@ -126,10 +128,8 @@ static void hopper_die(Object *obj) {
     perish_sfx();
 }
 
-static void move_hopper(Mob *mob) {
-    Object *obj = &mob->obj;
-    Sprite *sprite = mob->obj.sprite;
-    Hopper *hopper = h_obj + mob->index;
+static void move_hopper(Object *obj) {
+    Sprite *sprite = obj->sprite;
 
     obj->life++;
     obj->x += obj->direction;
@@ -163,59 +163,53 @@ static void move_hopper(Mob *mob) {
     if (obj->direction > 0) sprite->cfg |= BIT(11);
 
     if (obj->frame == 17) {
-	free_mob(mob);
+	free_mob(obj);
     }
     else if (is_hopper_off_screen(sprite)) {
-	if (hopper->persistent) {
+	if (HOPPER(obj)->persistent) {
 	    sprite->x = 1;
 	    sprite->y = 1;
 	}
 	else {
-	    free_mob(mob);
+	    free_mob(obj);
 	}
     }
 }
 
-static void jump_hopper(Mob *mob, u16(*jump_condition)(Mob *)) {
-    Object *obj = &mob->obj;
-    if (is_hopper_alive(obj) && jump_condition(mob)) {
-	Hopper *hopper = h_obj + mob->index;
-	obj->velocity = hopper->jump_amount;
+static void jump_hopper(Object *obj, u16(*jump_condition)(Object *)) {
+    if (is_hopper_alive(obj) && jump_condition(obj)) {
+	obj->velocity = HOPPER(obj)->jump_amount;
     }
-    move_hopper(mob);
+    move_hopper(obj);
 }
 
-static u16 is_period(Mob *mob) {
-    return (mob->obj.life & 0x3F) == 0;
+static u16 is_period(Object *obj) {
+    return (obj->life & 0x3F) == 0;
 }
 
-static u16 is_long_period(Mob *mob) {
-    return (mob->obj.life & 0x7F) == 0;
+static u16 is_long_period(Object *obj) {
+    return (obj->life & 0x7F) == 0;
 }
 
-static u16 is_on_ground(Mob *mob) {
-    Object *obj = &mob->obj;
+static u16 is_on_ground(Object *obj) {
     return get_snap(obj->x + 4, obj->y, obj->y);
 }
 
-static void periodic_hopper(Mob *mob) {
+static void periodic_hopper(Object *mob) {
     jump_hopper(mob, &is_period);
 }
 
-static void periodic_high_hopper(Mob *mob) {
+static void periodic_high_hopper(Object *mob) {
     jump_hopper(mob, &is_long_period);
 }
 
-static void immediate_hopper(Mob *mob) {
+static void immediate_hopper(Object *mob) {
     jump_hopper(mob, &is_on_ground);
 }
 
-static Mob *setup_hopper(short x, short y, u16 life) {
-    Mob *mob = alloc_mob(2);
-    if (mob != NULL) {
-	Object *obj = &mob->obj;
-	Hopper *hopper = h_obj + mob->index;
-
+static Object *setup_hopper(short x, short y, u16 life) {
+    Object *obj = alloc_mob(2);
+    if (obj != NULL) {
 	obj->x = x;
 	obj->y = y;
 	obj->frame = 0;
@@ -223,27 +217,27 @@ static Mob *setup_hopper(short x, short y, u16 life) {
 	obj->velocity = 0;
 	obj->life = life;
 	obj->direction = -1;
+	obj->private = h_obj + mob_index(obj);
 	obj->sprite->size = SPRITE_SIZE(2, 2);
+	mob_fn(obj, &move_hopper);
 
-	mob->fn = &move_hopper;
-
-	hopper->persistent = 0;
+	HOPPER(obj)->persistent = 0;
     }
-    return mob;
+    return obj;
 }
 
 static byte squad_members;
 static void emit_hopper_squad_next(u16 i) {
-    Mob *mob = get_mob(i);
-    if (mob == NULL || mob->obj.sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
+    Object *mob = get_mob(i);
+    if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
 	squad_members--;
     }
     if (mob) {
-	mob->fn = &periodic_hopper;
-	h_obj[mob->index].jump_amount = 2;
+	mob_fn(mob, &periodic_hopper);
+	HOPPER(mob)->jump_amount = 2;
 	if (squad_members > 0) {
-	    callback(&emit_hopper_squad_next, 0, mob->index);
+	    callback(&emit_hopper_squad_next, 0, mob_index(mob));
 	}
     }
 }
@@ -255,16 +249,16 @@ void emit_hopper_squad(u16 i) {
 
 static u16 stream_x;
 void emit_next_hopper_stream(u16 i) {
-    Mob *mob = get_mob(i);
-    if (mob == NULL || mob->obj.sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
+    Object *mob = get_mob(i);
+    if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, 112);
     }
     if (mob) {
-	mob->fn = &periodic_high_hopper;
-	h_obj[mob->index].jump_amount = 4;
+	mob_fn(mob, &periodic_high_hopper);
+	HOPPER(mob)->jump_amount = 4;
     }
     if (window < stream_x + 160) {
-	callback(&emit_next_hopper_stream, 0, mob->index);
+	callback(&emit_next_hopper_stream, 0, mob_index(mob));
     }
 }
 
@@ -277,9 +271,9 @@ static u16 hole_x;
 static void emit_next_hole_hopper(u16 count) {
     u16 delay = 0;
     if (window < hole_x - 112) {
-	Mob *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
+	Object *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
 	if (mob != NULL) {
-	    mob->obj.velocity = 4;
+	    mob->velocity = 4;
 	    delay = (count == 7 ? 128 : 24);
 	    count++;
 	}
@@ -311,29 +305,25 @@ void emit_sky_hoppers(u16 pos_x) {
     emit_next_sky_hopper(96);
 }
 
-static void patrolling_hopper(Mob *mob) {
-    Object *obj = &mob->obj;
-    Hopper *hopper = h_obj + mob->index;
-
-    if (obj->x <= hopper->patrol_start) {
+static void patrolling_hopper(Object *obj) {
+    if (obj->x <= HOPPER(obj)->patrol_start) {
 	obj->direction = 1;
     }
-    else if (obj->x >= hopper->patrol_end) {
+    else if (obj->x >= HOPPER(obj)->patrol_end) {
 	obj->direction = -1;
     }
-    move_hopper(mob);
+    move_hopper(obj);
 }
 
 void emit_plateau_patrollers(u16 pos_x) {
     for (u16 y = 160; y >= 64; y -= 48) {
 	for (u16 x = 16; x <= 48; x += 32) {
-	    Mob *mob = setup_hopper(pos_x + SCR_WIDTH + x, y, 0);
-	    Hopper *hopper = h_obj + mob->index;
-	    hopper->persistent = 1;
-	    hopper->patrol_start = pos_x + SCR_WIDTH;
-	    hopper->patrol_end = pos_x + SCR_WIDTH + 64;
-	    mob->obj.direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
-	    mob->fn = &patrolling_hopper;
+	    Object *mob = setup_hopper(pos_x + SCR_WIDTH + x, y, 0);
+	    HOPPER(mob)->persistent = 1;
+	    HOPPER(mob)->patrol_start = pos_x + SCR_WIDTH;
+	    HOPPER(mob)->patrol_end = pos_x + SCR_WIDTH + 64;
+	    mob->direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
+	    mob_fn(mob, &patrolling_hopper);
 	}
     }
 }
@@ -348,8 +338,8 @@ static void emit_charging_hoppers(u16 pos_x) {
 void emit_chasing_hoppers(u16 pos_x) {
     purge_mobs();
     for (short i = 0; i <= 32; i += 16) {
-	Mob *mob = setup_hopper(pos_x + i, -16, 0);
-	mob->obj.direction = 1;
+	Object *mob = setup_hopper(pos_x + i, -16, 0);
+	mob->direction = 1;
     }
     emit_charging_hoppers(pos_x);
 }
@@ -359,13 +349,12 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 	for (u16 x = 0; x <= 32; x += 16) {
 	    u16 skew = y & BIT(3);
 	    u16 offset = pos_x + SCR_WIDTH + (skew ? 64 : 32);
-	    Mob *mob = setup_hopper(offset + x, y, 0);
-	    Hopper *hopper = h_obj + mob->index;
-	    hopper->persistent = 1;
-	    hopper->patrol_start = offset - 16;
-	    hopper->patrol_end = offset + 48;
-	    mob->obj.direction = skew ? -1 : 1;
-	    mob->fn = &patrolling_hopper;
+	    Object *mob = setup_hopper(offset + x, y, 0);
+	    HOPPER(mob)->persistent = 1;
+	    HOPPER(mob)->patrol_start = offset - 16;
+	    HOPPER(mob)->patrol_end = offset + 48;
+	    mob->direction = skew ? -1 : 1;
+	    mob_fn(mob, &patrolling_hopper);
 	}
     }
 }
@@ -375,13 +364,12 @@ void emit_down_stair_guards(u16 pos_x) {
     u16 x = pos_x + SCR_WIDTH + 48, y = 88;
     emit_row_of_sky_hoppers(pos_x + SCR_WIDTH - 24);
     for (u16 i = 0; i < 6; i++) {
-	Mob *mob = setup_hopper(x, y, 0);
-	Hopper *hopper = h_obj + mob->index;
-	hopper->persistent = 1;
-	hopper->patrol_start = x - 32;
-	hopper->patrol_end = x + 32;
-	mob->obj.direction = 1;
-	mob->fn = &patrolling_hopper;
+	Object *mob = setup_hopper(x, y, 0);
+	HOPPER(mob)->persistent = 1;
+	HOPPER(mob)->patrol_start = x - 32;
+	HOPPER(mob)->patrol_end = x + 32;
+	mob_fn(mob, &patrolling_hopper);
+	mob->direction = 1;
 	x += 96;
 	y += 24;
     }
@@ -393,13 +381,13 @@ static char swarm[SWARM_SIZE];
 static void chasing_swarm(u16 x) {
     if (swarm_on) {
 	for (u16 i = 0; i < SWARM_SIZE; i++) {
-	    Mob *mob = get_mob(swarm[i]);
-	    if (mob == NULL || mob->obj.sprite->x == 0) {
+	    Object *mob = get_mob(swarm[i]);
+	    if (mob == NULL || !is_good_object(mob)) {
 		mob = setup_hopper(window + 16 * i, -16, 0);
-		h_obj[mob->index].jump_amount = 2 + ((counter + i) & 3);
-		swarm[i] = mob->index;
-		mob->fn = &immediate_hopper;
-		mob->obj.direction = 1;
+		HOPPER(mob)->jump_amount = 2 + ((counter + i) & 3);
+		mob_fn(mob, &immediate_hopper);
+		swarm[i] = mob_index(mob);
+		mob->direction = 1;
 	    }
 	}
 	schedule(&chasing_swarm, 0);
@@ -420,9 +408,9 @@ void ignite_swarm(u16 pos_x) {
     else {
 	swarm_on = 0;
 	for (u16 i = 0; i < SWARM_SIZE; i++) {
-	    Mob *mob = get_mob(swarm[i]);
-	    if (mob && mob->obj.sprite->x > 0) {
-		hopper_die(&mob->obj);
+	    Object *mob = get_mob(swarm[i]);
+	    if (mob && mob->sprite->x > 0) {
+		hopper_die(mob);
 	    }
 	}
     }

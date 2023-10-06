@@ -4,33 +4,51 @@
 #define MOB_OFFSET	16
 #define NEXT_GROUP	4
 
+#define MAX_TIMERS	8
+
+typedef struct Mob {
+    Object obj;
+    byte index;
+    byte price;
+    char previous;
+    void (*fn)(Object *);
+} Mob;
+
 byte first_mob_sprite;
-static Mob m_obj[MAX_MOBS];
-static char free[MAX_MOBS];
-static char available;
-static Sprite *sprite;
 static char mob_head;
 static byte budget;
 
-#define MAX_TIMERS	8
+static char available_mobs;
+static Mob mobs[MAX_MOBS];
+static char free_mobs[MAX_MOBS];
 
 typedef struct Timer {
     u16 cookie;
     u16 timeout;
-    void (*fn)(u16);
+    Callback fn;
 } Timer;
 
 static char available_timers;
 static Timer timers[MAX_TIMERS];
 static char free_timers[MAX_TIMERS];
 
-Mob *get_mob(u16 i) {
-    return (i < MAX_MOBS) ? m_obj + i : NULL;
+Object *get_mob(u16 index) {
+    return &mobs[index].obj;
+}
+
+u16 mob_index(Object *obj) {
+    Mob *mob = CONTAINER_OF(obj, Mob, obj);
+    return mob->index;
+}
+
+void mob_fn(Object *obj, void (*fn)(Object *)) {
+    Mob *mob = CONTAINER_OF(obj, Mob, obj);
+    mob->fn = fn;
 }
 
 static void init_mob(Mob *mob) {
     if (mob_head >= 0) {
-	m_obj[mob_head].previous = mob->index;
+	mobs[mob_head].previous = mob->index;
     }
     mob->obj.sprite->x = 1;
     mob->obj.sprite->next = first_mob_sprite;
@@ -40,54 +58,53 @@ static void init_mob(Mob *mob) {
     mob->previous = -1;
 }
 
-Mob *alloc_mob(byte cost) {
-    Mob *mob = NULL;
-    if (budget >= cost && available > 0) {
-	mob = m_obj + free[--available];
+Object *alloc_mob(byte cost) {
+    Object *obj = NULL;
+    if (budget >= cost && available_mobs > 0) {
+	Mob *mob = mobs + free_mobs[--available_mobs];
 	mob->price = cost;
+	obj = &mob->obj;
 	init_mob(mob);
     }
-    return mob;
+    return obj;
 }
 
-void free_mob(Mob *mob) {
-    Sprite *img = mob->obj.sprite;
-    char next, i = mob->index;
-    free[available++] = i;
-    img->x = img->y = 0;
+void free_mob(Object *obj) {
+    Mob *mob = CONTAINER_OF(obj, Mob, obj);
+    Sprite *sprite = obj->sprite;
+    char next = sprite->next - MOB_OFFSET;
+    free_mobs[available_mobs++] = mob->index;
+    destroy_object(obj);
     budget += mob->price;
-    next = img->next - MOB_OFFSET;
     if (mob->previous < 0) {
-	first_mob_sprite = img->next;
+	first_mob_sprite = sprite->next;
 	mob_head = next;
     }
     else {
-	sprite[mob->previous].next = img->next;
+	mobs[mob->previous].obj.sprite->next = sprite->next;
     }
     if (next >= 0) {
-	m_obj[next].previous = mob->previous;
+	mobs[next].previous = mob->previous;
     }
 }
 
 void purge_mobs(void) {
     for (u16 i = 0; i < MAX_MOBS; i++) {
-	if (m_obj[i].obj.sprite->x > 0) {
-	    free_mob(m_obj + i);
-	}
+	Object *obj = &mobs[i].obj;
+	if (is_good_object(obj)) free_mob(obj);
     }
 }
 
 void reset_mobs(void) {
     mob_head = -1;
     budget = MAX_BUDGET;
-    available = MAX_MOBS;
+    available_mobs = MAX_MOBS;
     first_mob_sprite = NEXT_GROUP;
-    sprite = get_sprite(MOB_OFFSET);
     for (char i = 0; i < MAX_MOBS; i++) {
-	m_obj[i].obj.sprite = sprite + i;
-	m_obj[i].index = i;
-	sprite[i].x = 0;
-	free[i] = i;
+	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
+	destroy_object(&mobs[i].obj);
+	mobs[i].index = i;
+	free_mobs[i] = i;
     }
 
     available_timers = MAX_TIMERS;
@@ -98,11 +115,13 @@ void reset_mobs(void) {
 
 void manage_mobs(void) {
     for (char i = 0; i < MAX_MOBS; i++) {
-	if (sprite[i].x > 0) m_obj[i].fn(m_obj + i);
+	Mob *mob = mobs + i;
+	Object *obj = &mob->obj;
+	if (is_good_object(obj)) mob->fn(obj);
     }
 }
 
-void callback(void (*fn)(u16), u16 timeout, u16 cookie) {
+void callback(Callback fn, u16 timeout, u16 cookie) {
     if (available_timers > 0) {
 	char i = free_timers[--available_timers];
 	timers[i].timeout = timeout;
@@ -111,11 +130,11 @@ void callback(void (*fn)(u16), u16 timeout, u16 cookie) {
     }
 }
 
-void schedule(void (*fn)(u16), u16 ticks) {
+void schedule(Callback fn, u16 ticks) {
     callback(fn, ticks, 0);
 }
 
-static void free_timer(char i, char n) {
+static void release_timer(char i, char n) {
     char j = free_timers[available_timers];
     free_timers[available_timers++] = i;
     free_timers[n] = j;
@@ -129,7 +148,7 @@ void manage_timers(void) {
 	    timer->timeout--;
 	}
 	else {
-	    free_timer(i, n);
+	    release_timer(i, n);
 	    timer->fn(timer->cookie);
 	}
     }
