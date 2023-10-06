@@ -142,10 +142,6 @@ static void soldier_jump(u16 start, u16 down) {
     advance_obj(&soldier, SOLDIER_AHEAD, 6);
 }
 
-static short sign(short x) {
-    return x < 0 ? -1 : 1;
-}
-
 static short animate_walking(short cycle, short prev) {
     if (prev == soldier.x) {
 	if (cycle >= 0) {
@@ -157,12 +153,7 @@ static short animate_walking(short cycle, short prev) {
 	    cycle = (cycle == -1) ? 2 : 8; /* start walking frame */
 	}
 	if ((soldier.x & 3) == 1) {
-	    if (sign(soldier.x - prev) != soldier.direction) {
-		if (cycle == 0) cycle = 11; else cycle--;
-	    }
-	    else {
-		if (cycle == 11) cycle = 0; else cycle++;
-	    }
+	    if (cycle == 11) cycle = 0; else cycle++;
 	}
     }
     return cycle;
