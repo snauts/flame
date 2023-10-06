@@ -27,7 +27,6 @@
 static Object soldier;
 static char is_dead;
 static char s_dir;
-static u16 s_cfg;
 
 static Sprite sprite[80];
 static Sprite *base;
@@ -174,6 +173,12 @@ static void select_torso(u16 aim_up) {
     }
 }
 
+static void flip_soldier_sprites(void) {
+    for (char i = -1; i <= 2; i++) {
+	base[i].cfg |= BIT(11);
+    }
+}
+
 static void soldier_yelling(byte state);
 static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     static short cycle;
@@ -191,10 +196,7 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     base[1].cfg = TILE(2, soldier_frame);
-
-    for (char i = -1; i <= 2; i++) {
-	base[i].cfg |= s_cfg;
-    }
+    if (s_dir < 0) flip_soldier_sprites();
 }
 
 #define FLAME_COUNT	8
@@ -269,12 +271,12 @@ static void emit_flame(u16 index, u16 aim_up) {
 	f->frame = FLAME_UP;
     }
 
+    if (s_dir < 0) f->frame |= BIT(11);
     f_obj[index].emit.x = base->x;
     f_obj[index].emit.y = base->y;
     f_obj[index].dir = s_dir;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
-    f->frame |= s_cfg;
     f->gravity = 4;
     f->life = 0;
 
@@ -450,13 +452,11 @@ void lock_screen(byte state) {
 static void soldier_forward(void) {
     soldier.x++;
     s_dir = 1;
-    s_cfg = 0;
 }
 
 static void soldier_backward(void) {
     soldier.x--;
     s_dir = -1;
-    s_cfg = BIT(11);
 }
 
 static void move_forward(void) {
@@ -761,6 +761,5 @@ void setup_soldier_sprites(void) {
     button_down = 0;
     is_dead = 0;
     locked = 0;
-    s_cfg = 0;
     s_dir = 1;
 }
