@@ -26,6 +26,8 @@
 
 static Object soldier;
 static char is_dead;
+static char s_dir;
+static u16 s_cfg;
 
 static Sprite sprite[80];
 static Sprite *base;
@@ -421,33 +423,45 @@ void lock_screen(byte state) {
     locked = state;
 }
 
+static void soldier_forward(void) {
+    soldier.x++;
+    s_dir = 1;
+    s_cfg = 0;
+}
+
+static void soldier_backward(void) {
+    soldier.x--;
+    s_dir = -1;
+    s_cfg = BIT(11);
+}
+
 static void move_forward(void) {
     if (locked) {
 	if (base->x < SCR_WIDTH + ON_SCREEN - 24) {
-	    soldier.x++;
+	    soldier_forward();
 	}
     }
     else if (base->x >= SOLDIER_MAX_X && !is_rightmost()) {
 	update_window(1);
-	soldier.x++;
+	soldier_forward();
     }
     else if (base->x < SOLDIER_MAX_X) {
-	soldier.x++;
+	soldier_forward();
     }
 }
 
 static void move_backward(void) {
     if (locked) {
 	if (base->x > ON_SCREEN) {
-	    soldier.x--;
+	    soldier_backward();
 	}
     }
     else if (base->x <= SOLDIER_MIN_X && !is_leftmost()) {
 	update_window(-1);
-	soldier.x--;
+	soldier_backward();
     }
     else if (base->x > SOLDIER_MIN_X) {
-	soldier.x--;
+	soldier_backward();
     }
 }
 
@@ -621,7 +635,7 @@ static void soldier_poison(void) {
 static void soldier_complete(void) {
     u16 prev = soldier.x;
     if (soldier.x < window + SCR_WIDTH - 16) {
-	soldier.x++;
+	soldier_forward();
     }
     else {
 	is_dead = -1;
@@ -718,4 +732,6 @@ void setup_soldier_sprites(void) {
     button_down = 0;
     is_dead = 0;
     locked = 0;
+    s_cfg = 0;
+    s_dir = 1;
 }
