@@ -210,7 +210,6 @@ typedef struct Flame {
     Sprite *sprite;
     Object obj;
     Pos emit;
-    char dir;
 } Flame;
 
 static u16 head, tail;
@@ -277,7 +276,7 @@ static void emit_flame(u16 index, u16 aim_up) {
 
     f_obj[index].emit.x = soldier.sprite->x;
     f_obj[index].emit.y = soldier.sprite->y;
-    f_obj[index].dir = soldier.direction;
+    f_obj[index].obj.direction = soldier.direction;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
     f->gravity = 4;
@@ -325,7 +324,7 @@ static void advance_flame(u16 index) {
 	advance_y(&f_obj[index].obj, 4);
 	move_x = 16;
     }
-    f_obj[index].obj.x += move_x * f_obj[index].dir;
+    f_obj[index].obj.x += move_x * f_obj[index].obj.direction;
 }
 
 static Rectangle f_rect;
