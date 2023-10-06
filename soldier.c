@@ -174,10 +174,12 @@ static void select_torso(u16 aim_up) {
     }
 }
 
-static void soldier_animate(u16 prev, u16 aim_up) {
+static void soldier_yelling(byte state);
+static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     static short cycle;
     u16 soldier_frame;
 
+    soldier_yelling(fire);
     select_torso(aim_up);
     if (on_ground()) {
 	cycle = animate_walking(cycle, prev);
@@ -509,7 +511,6 @@ static void soldier_march(void) {
     update_height_map(soldier.x);
 
     u16 fire = BUTTON_B(button_state);
-    soldier_yelling(fire);
     if (fire && cooldown == 0) {
 	throw_flames(aim_up);
 	cooldown = 8;
@@ -518,7 +519,7 @@ static void soldier_march(void) {
     u16 jump = BUTTON_C(button_state) && BUTTON_C(last_state) == 0;
     button_down = BUTTON_DOWN(button_state);
     soldier_jump(jump, button_down);
-    soldier_animate(prev, aim_up);
+    soldier_animate(prev, aim_up, fire);
     soldier_sprite_update();
 }
 
@@ -643,8 +644,7 @@ static void soldier_complete(void) {
 	fade_and_restart(0);
     }
     advance_obj(&soldier, SOLDIER_AHEAD, 6);
-    soldier_yelling(0);
-    soldier_animate(prev, 0);
+    soldier_animate(prev, 0, 0);
     soldier_sprite_update();
 }
 
