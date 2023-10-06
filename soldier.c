@@ -307,26 +307,27 @@ static void remove_oldest_flame(void) {
     }
 }
 
-static u16 flame_expired(u16 index) {
-    return flame[index].obj.life >= FLAME_LIFE;
+static u16 flame_expired(Object *f) {
+    return f->life >= FLAME_LIFE;
 }
 
-static u16 is_horizontal_flame(u16 index) {
-    return (flame[index].obj.frame & 0x7FF) == FLAME;
+static char is_horizontal_flame(Object *f) {
+    return (f->frame & 0x7FF) == FLAME;
 }
 
 static byte button_down;
-static void advance_flame(u16 index) {
-    char move_x;
-    if (is_horizontal_flame(index)) {
-	advance_y(&flame[index].obj, 8);
+static void advance_flame(Object *f) {
+    char move_x, move_y;
+    if (is_horizontal_flame(f)) {
 	move_x = button_down ? 11 : 22;
+	move_y = 8;
     }
     else {
-	advance_y(&flame[index].obj, 4);
 	move_x = 16;
+	move_y = 4;
     }
-    flame[index].obj.x += move_x * flame[index].obj.direction;
+    f->x += move_x * f->direction;
+    advance_y(f, move_y);
 }
 
 static Rectangle f_rect;
@@ -370,13 +371,13 @@ static void manage_flames(void) {
     clear_rectangle(&f_rect);
     while (flame[index].obj.sprite->x > 0) {
 	flame[index].obj.life++;
-	if (flame_expired(index)) {
+	if (flame_expired(&flame[index].obj)) {
 	    flame[index].obj.sprite->x = flame[index].obj.sprite->y = 0;
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
 	}
-	advance_flame(index);
+	advance_flame(&flame[index].obj);
 	update_flame_sprite(&flame[index].obj);
 	update_total_rectange(flame[index].obj.sprite, index == tail);
 	flame[index].obj.sprite->next = previous;
