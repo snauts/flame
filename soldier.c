@@ -440,8 +440,8 @@ static void flame_noise(u16 off) {
 }
 
 static void soldier_yelling(byte state) {
+    soldier.sprite[-1].cfg = TILE(2, state ? WEAPON : 0);
     if (face != state) {
-	soldier.sprite[-1].cfg = TILE(2, state ? WEAPON : 0);
 	soldier_flicker(0);
 	face = state;
 	flame_noise(0);
