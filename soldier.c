@@ -26,7 +26,6 @@
 
 static Object soldier;
 static char is_dead;
-static char s_dir;
 
 static Sprite sprite[80];
 static Sprite *base;
@@ -85,7 +84,7 @@ static void soldier_sprite_update(void) {
     base[1].x = base->x;
     base[1].y = base->y + 24;
 
-    base[2].x = base->x + s_dir * 16 + 8;
+    base[2].x = base->x + soldier.direction * 16 + 8;
     base[2].y = base->y + 21;
 
     update_soldier_rectangle();
@@ -196,7 +195,9 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     base[1].cfg = TILE(2, soldier_frame);
-    if (s_dir < 0) flip_soldier_sprites();
+    if (soldier.direction < 0) {
+	flip_soldier_sprites();
+    }
 }
 
 #define FLAME_COUNT	8
@@ -259,26 +260,29 @@ static void emit_flame(u16 index, u16 aim_up) {
     Object *f = &f_obj[index].obj;
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 4 + 22 * s_dir;
+	offset_x = 4 + 22 * soldier.direction;
 	offset_y = 20;
 	f->velocity = 0;
 	f->frame = FLAME;
     }
     else {
-	offset_x = 4 + 16 * s_dir;
+	offset_x = 4 + 16 * soldier.direction;
 	offset_y = 3;
 	f->velocity = 16;
 	f->frame = FLAME_UP;
     }
 
-    if (s_dir < 0) f->frame |= BIT(11);
     f_obj[index].emit.x = base->x;
     f_obj[index].emit.y = base->y;
-    f_obj[index].dir = s_dir;
+    f_obj[index].dir = soldier.direction;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
     f->gravity = 4;
     f->life = 0;
+
+    if (soldier.direction < 0) {
+	f->frame |= BIT(11);
+    }
 
     update_flame_sprite(index);
     f_obj[index].sprite->size = SPRITE_SIZE(2, 1);
@@ -450,13 +454,13 @@ void lock_screen(byte state) {
 }
 
 static void soldier_forward(void) {
+    soldier.direction = 1;
     soldier.x++;
-    s_dir = 1;
 }
 
 static void soldier_backward(void) {
+    soldier.direction = -1;
     soldier.x--;
-    s_dir = -1;
 }
 
 static void move_forward(void) {
@@ -702,6 +706,7 @@ void advance_sprites(void) {
 }
 
 static void put_soldier(u16 x, u16 y) {
+    soldier.direction = 1;
     soldier.x = window + x;
     soldier.y = y;
 
@@ -761,5 +766,4 @@ void setup_soldier_sprites(void) {
     button_down = 0;
     is_dead = 0;
     locked = 0;
-    s_dir = 1;
 }
