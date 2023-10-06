@@ -42,6 +42,9 @@
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
+#define CONTAINER_OF(ptr, type, member) \
+    ({ ((type *)(((void *)(ptr)) - __builtin_offsetof(type, member))); })
+
 typedef unsigned char byte;
 typedef unsigned short u16;
 typedef unsigned int u32;
