@@ -296,13 +296,13 @@ static u16 sky_x;
 static void emit_next_sky_hopper(u16 delay) {
     if (window < sky_x - 112) {
 	emit_row_of_sky_hoppers(sky_x);
-	callback(&emit_next_sky_hopper, delay, 416 - delay);
+	callback(&emit_next_sky_hopper, delay, 384 - delay);
     }
 }
 
 void emit_sky_hoppers(u16 pos_x) {
     sky_x = pos_x + SCR_WIDTH - 40;
-    emit_next_sky_hopper(96);
+    emit_next_sky_hopper(64);
 }
 
 static void patrolling_hopper(Object *obj) {
