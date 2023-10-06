@@ -86,7 +86,7 @@ static void soldier_sprite_update(void) {
     base[1].x = base->x;
     base[1].y = base->y + 24;
 
-    base[2].x = base->x + 24;
+    base[2].x = base->x + s_dir * 16 + 8;
     base[2].y = base->y + 21;
 
     update_soldier_rectangle();
@@ -191,6 +191,10 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     base[1].cfg = TILE(2, soldier_frame);
+
+    for (char i = -1; i <= 2; i++) {
+	base[i].cfg |= s_cfg;
+    }
 }
 
 #define FLAME_COUNT 8
