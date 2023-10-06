@@ -91,6 +91,7 @@ typedef struct Pos {
 #define LONG(x) (* (volatile u32 *) (x))
 
 #define TILE(p, i) (((p) << 13) | (i))
+#define TILE_ID(tile_cfg) ((tile_cfg) & 0x7FF)
 #define SPRITE_SIZE(x, y) ((((x) - 1) << 2) | ((y) - 1))
 
 #define VDP_CTRL_REG(reg, val) (BIT(15) | ((reg) << 8) | (val))

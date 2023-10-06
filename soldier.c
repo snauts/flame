@@ -175,9 +175,11 @@ static void select_torso(u16 aim_up) {
     }
 }
 
-static void flip_soldier_sprites(void) {
-    for (char i = -1; i <= 2; i++) {
-	soldier.sprite[i].cfg |= BIT(11);
+static void soldier_flip_sprites(void) {
+    if (soldier.direction < 0) {
+	for (char i = -1; i <= 2; i++) {
+	    soldier.sprite[i].cfg |= BIT(11);
+	}
     }
 }
 
@@ -198,9 +200,7 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     }
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     soldier.sprite[1].cfg = TILE(2, soldier_frame);
-    if (soldier.direction < 0) {
-	flip_soldier_sprites();
-    }
+    soldier_flip_sprites();
 }
 
 #define FLAME_COUNT	8
@@ -316,7 +316,7 @@ static u16 flame_expired(Object *f) {
 }
 
 static char is_horizontal_flame(Object *f) {
-    return (f->frame & 0x7FF) == FLAME;
+    return TILE_ID(f->frame) == FLAME;
 }
 
 static byte button_down;
@@ -635,7 +635,7 @@ void bite_soldier(u16 x, u16 y) {
 static void soldier_kneel(u16 cookie) {
     soldier.sprite[0].y++;
     soldier.sprite[1].cfg += 6;
-    if (soldier.sprite[1].cfg < TILE(2, SOLDIER_LEG + 22 * 6)) {
+    if (TILE_ID(soldier.sprite[1].cfg) < SOLDIER_LEG + 22 * 6) {
 	schedule(&soldier_kneel, 6);
     }
     else {
@@ -648,7 +648,7 @@ static void soldier_poison(void) {
 	advance_obj(&soldier, SOLDIER_AHEAD, 6);
 	soldier_sprite_update();
     }
-    else if (soldier.sprite[0].cfg != TILE(2, SOLDIER_POISON)) {
+    else if (TILE_ID(soldier.sprite[0].cfg) != SOLDIER_POISON) {
 	update_color(39, 0x668);
 	update_color(40, 0x446);
 	soldier.sprite[-1].size = SPRITE_SIZE(4, 1);
@@ -659,6 +659,7 @@ static void soldier_poison(void) {
 	soldier.sprite[0].cfg = TILE(2, SOLDIER_POISON);
 	soldier.sprite[1].cfg = TILE(2, SOLDIER_LEG + 18 * 6);
 	soldier.sprite[2].x = soldier.sprite[2].y = 0;
+	soldier_flip_sprites();
     }
     else if (soldier.sprite[-1].y < soldier.sprite[1].y + 12) {
 	soldier.sprite[-1].y++;
