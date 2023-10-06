@@ -211,8 +211,8 @@ typedef struct Flame {
     Pos emit;
 } Flame;
 
-static u16 head, tail;
 static u16 cooldown;
+static u16 head, tail;
 static Flame flame[FLAME_COUNT];
 const byte decople_table[FLAME_LIFE];
 
@@ -272,8 +272,9 @@ static void emit_flame(u16 index, u16 aim_up) {
 	f->frame = FLAME_UP;
     }
 
-    flame[index].emit.x = soldier.sprite->x;
-    flame[index].emit.y = soldier.sprite->y;
+    Pos *p = &flame[index].emit;
+    p->x = soldier.sprite->x;
+    p->y = soldier.sprite->y;
     f->direction = soldier.direction;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
@@ -344,10 +345,10 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 	&& intersect_segment(r1->y1, r1->y2, r2->y1, r2->y2);
 }
 
-static void update_total_rectange(Sprite *sprite, char is_first) {
-    u16 x = sprite->x;
-    u16 y = sprite->y;
-    if (is_first) {
+static void update_total_rectange(u16 index) {
+    u16 x = flame_sprite(index)->x;
+    u16 y = flame_sprite(index)->y;
+    if (index == tail) {
 	f_rect.x1 = x;
 	f_rect.y1 = y;
 	f_rect.x2 = f_rect.x1;
@@ -367,20 +368,22 @@ static byte after_flame(void) {
 
 static void manage_flames(void) {
     u16 index = tail;
+    Object *f = &flame[tail].obj;
     byte previous = after_flame();
     clear_rectangle(&f_rect);
-    while (flame[index].obj.sprite->x > 0) {
-	flame[index].obj.life++;
-	if (flame_expired(&flame[index].obj)) {
-	    flame[index].obj.sprite->x = flame[index].obj.sprite->y = 0;
+    while (f->sprite->x > 0) {
+	f = &flame[index].obj;
+	f->life++;
+	if (flame_expired(f)) {
+	    f->sprite->x = f->sprite->y = 0;
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
 	}
-	advance_flame(&flame[index].obj);
-	update_flame_sprite(&flame[index].obj);
-	update_total_rectange(flame[index].obj.sprite, index == tail);
-	flame[index].obj.sprite->next = previous;
+	advance_flame(f);
+	update_flame_sprite(f);
+	update_total_rectange(index);
+	f->sprite->next = previous;
 	previous = index + FLAME_OFFSET;
 	index = next_flame(index);
 	if (index == head) break;
@@ -388,7 +391,7 @@ static void manage_flames(void) {
     /* add sprite size */
     f_rect.x2 += 16;
     f_rect.y2 += 8;
-    /* link last soldier sprite to first flame */
+    /* start with flames */
     sprite[0].next = previous;
     if (cooldown > 0) {
 	cooldown--;
