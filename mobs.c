@@ -32,8 +32,8 @@ static void init_mob(Mob *mob) {
     if (mob_head >= 0) {
 	m_obj[mob_head].previous = mob->index;
     }
-    mob->sprite->x = 1;
-    mob->sprite->next = first_mob_sprite;
+    mob->obj.sprite->x = 1;
+    mob->obj.sprite->next = first_mob_sprite;
     first_mob_sprite = mob->index + MOB_OFFSET;
     mob_head = mob->index;
     budget -= mob->price;
@@ -51,7 +51,7 @@ Mob *alloc_mob(byte cost) {
 }
 
 void free_mob(Mob *mob) {
-    Sprite *img = mob->sprite;
+    Sprite *img = mob->obj.sprite;
     char next, i = mob->index;
     free[available++] = i;
     img->x = img->y = 0;
@@ -71,7 +71,7 @@ void free_mob(Mob *mob) {
 
 void purge_mobs(void) {
     for (u16 i = 0; i < MAX_MOBS; i++) {
-	if (m_obj[i].sprite->x > 0) {
+	if (m_obj[i].obj.sprite->x > 0) {
 	    free_mob(m_obj + i);
 	}
     }
@@ -84,7 +84,7 @@ void reset_mobs(void) {
     first_mob_sprite = NEXT_GROUP;
     sprite = get_sprite(MOB_OFFSET);
     for (char i = 0; i < MAX_MOBS; i++) {
-	m_obj[i].sprite = sprite + i;
+	m_obj[i].obj.sprite = sprite + i;
 	m_obj[i].index = i;
 	sprite[i].x = 0;
 	free[i] = i;

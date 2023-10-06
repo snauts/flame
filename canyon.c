@@ -128,7 +128,7 @@ static void hopper_die(Object *obj) {
 
 static void move_hopper(Mob *mob) {
     Object *obj = &mob->obj;
-    Sprite *sprite = mob->sprite;
+    Sprite *sprite = mob->obj.sprite;
     Hopper *hopper = h_obj + mob->index;
 
     obj->life++;
@@ -223,8 +223,8 @@ static Mob *setup_hopper(short x, short y, u16 life) {
 	obj->velocity = 0;
 	obj->life = life;
 	obj->direction = -1;
+	obj->sprite->size = SPRITE_SIZE(2, 2);
 
-	mob->sprite->size = SPRITE_SIZE(2, 2);
 	mob->fn = &move_hopper;
 
 	hopper->persistent = 0;
@@ -235,7 +235,7 @@ static Mob *setup_hopper(short x, short y, u16 life) {
 static byte squad_members;
 static void emit_hopper_squad_next(u16 i) {
     Mob *mob = get_mob(i);
-    if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
+    if (mob == NULL || mob->obj.sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
 	squad_members--;
     }
@@ -256,7 +256,7 @@ void emit_hopper_squad(u16 i) {
 static u16 stream_x;
 void emit_next_hopper_stream(u16 i) {
     Mob *mob = get_mob(i);
-    if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
+    if (mob == NULL || mob->obj.sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
 	mob = setup_hopper(window + SCR_WIDTH, 208, 112);
     }
     if (mob) {
@@ -394,7 +394,7 @@ static void chasing_swarm(u16 x) {
     if (swarm_on) {
 	for (u16 i = 0; i < SWARM_SIZE; i++) {
 	    Mob *mob = get_mob(swarm[i]);
-	    if (mob == NULL || mob->sprite->x == 0) {
+	    if (mob == NULL || mob->obj.sprite->x == 0) {
 		mob = setup_hopper(window + 16 * i, -16, 0);
 		h_obj[mob->index].jump_amount = 2 + ((counter + i) & 3);
 		swarm[i] = mob->index;
@@ -421,7 +421,7 @@ void ignite_swarm(u16 pos_x) {
 	swarm_on = 0;
 	for (u16 i = 0; i < SWARM_SIZE; i++) {
 	    Mob *mob = get_mob(swarm[i]);
-	    if (mob && mob->sprite->x > 0) {
+	    if (mob && mob->obj.sprite->x > 0) {
 		hopper_die(&mob->obj);
 	    }
 	}

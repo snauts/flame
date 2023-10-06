@@ -59,6 +59,7 @@ typedef struct Object {
     char gravity;
     char velocity;
     char direction;
+    Sprite *sprite;
     u16 frame;
     u16 life;
 } Object;
@@ -68,7 +69,6 @@ typedef struct Mob {
     byte price;
     char index;
     char previous;
-    Sprite *sprite;
     void (*fn)(struct Mob *);
 } Mob;
 
