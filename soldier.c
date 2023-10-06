@@ -11,7 +11,7 @@
 #define SOLDIER_POISON	(SOLDIER_TOP + 27)
 #define SOLDIER_LEG	(SOLDIER_TOP + (3 * 12))
 
-#define FLAME		(SOLDIER_LEG + (25 * 3 * 2))
+#define FLAME		(SOLDIER_LEG + (37 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
 #define BLOOD		(FLAME_UP + (32 * 2 * 1))
 #define WEAPON		(BLOOD + (8 * 2 * 2))
@@ -187,12 +187,12 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire) {
     select_torso(aim_up);
     if (on_ground()) {
 	cycle = animate_walking(cycle, prev);
-	soldier_frame = aim_up ? 18 + cycle : cycle + 2;
+	soldier_frame = cycle + 2;
     }
     else {
 	soldier_frame = (cycle >= 6 || cycle == -2) ? 14 : 15;
-	if (aim_up) soldier_frame += 9;
     }
+    if (aim_up) soldier_frame += 16;
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
     soldier.sprite[1].cfg = TILE(2, soldier_frame);
     soldier_flip_sprites();
@@ -536,7 +536,7 @@ static void soldier_march(void) {
     else if (BUTTON_LEFT(button_state)) {
 	move_backward();
     }
-    else if (BUTTON_UP(button_state)) {
+    if (BUTTON_UP(button_state)) {
 	aim_up = 1;
     }
     update_height_map(soldier.x);
@@ -630,7 +630,7 @@ void bite_soldier(u16 x, u16 y) {
 static void soldier_kneel(u16 cookie) {
     soldier.sprite[0].y++;
     soldier.sprite[1].cfg += 6;
-    if (TILE_ID(soldier.sprite[1].cfg) < SOLDIER_LEG + 22 * 6) {
+    if (TILE_ID(soldier.sprite[1].cfg) < SOLDIER_LEG + 36 * 6) {
 	schedule(&soldier_kneel, 6);
     }
     else {
@@ -652,7 +652,7 @@ static void soldier_poison(void) {
 	soldier.sprite[-1].y = soldier.sprite[2].y;
 
 	soldier.sprite[0].cfg = TILE(2, SOLDIER_POISON);
-	soldier.sprite[1].cfg = TILE(2, SOLDIER_LEG + 18 * 6);
+	soldier.sprite[1].cfg = TILE(2, SOLDIER_LEG + 32 * 6);
 	soldier.sprite[2].x = soldier.sprite[2].y = 0;
 	soldier_flip_sprites();
     }
