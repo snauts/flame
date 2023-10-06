@@ -197,7 +197,8 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
     }
 }
 
-#define FLAME_COUNT 8
+#define FLAME_COUNT	8
+#define FLAME_LIFE	64
 
 static Sprite *flame;
 static u16 head, tail;
@@ -223,22 +224,24 @@ static short clamp(short value, short max) {
 }
 
 static Pos emit_pos[FLAME_COUNT];
-const byte decople_table[64];
+const byte decople_table[FLAME_LIFE];
 static void update_flame_sprite(u16 index) {
-    u16 animation = f_obj[index].life & 0xFE;
-    byte decople = decople_table[f_obj[index].life];
-    flame[index].cfg = TILE(2, f_obj[index].frame + animation);
+    Object *f = f_obj + index;
+    Pos *p = emit_pos + index;
+    byte decople = decople_table[f->life];
+    u16 animation = f->life & ((FLAME_LIFE - 1) << 1);
+    flame[index].cfg = TILE(2, f->frame + animation);
 
-    flame[index].x = base->x + (f_obj[index].x >> 4)
-	+ clamp(emit_pos[index].x - base->x, decople >> 1);
-    flame[index].y = base->y + (f_obj[index].y >> 4)
-	+ clamp(emit_pos[index].y - base->y, decople);
+    flame[index].x = base->x + (f->x >> 4)
+	+ clamp(p->x - base->x, decople >> 1);
+    flame[index].y = base->y + (f->y >> 4)
+	+ clamp(p->y - base->y, decople);
 
-    if (f_obj[index].life > 48) {
-	emit_pos[index].y += clamp(base->y - emit_pos[index].y, 1);
+    if (f->life > 48) {
+	p->y += clamp(base->y - p->y, 1);
     }
     else {
-	emit_pos[index].y = (7 * emit_pos[index].y + base->y) >> 3;
+	p->y = (7 * p->y + base->y) >> 3;
     }
     if (flame[index].x > SCR_WIDTH + ON_SCREEN) {
 	flame[index].x = flame[index].y = 1;
@@ -246,26 +249,27 @@ static void update_flame_sprite(u16 index) {
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
+    Object *f = f_obj + index;
     u16 offset_y, offset_x;
     if (!aim_up) {
 	offset_x = 26;
 	offset_y = 20;
-	f_obj[index].velocity = 0;
-	f_obj[index].frame = FLAME;
+	f->velocity = 0;
+	f->frame = FLAME;
     }
     else {
 	offset_x = 20;
 	offset_y = 3;
-	f_obj[index].velocity = 16;
-	f_obj[index].frame = FLAME_UP;
+	f->velocity = 16;
+	f->frame = FLAME_UP;
     }
 
     emit_pos[index].x = base->x;
     emit_pos[index].y = base->y;
-    f_obj[index].x = offset_x << 4;
-    f_obj[index].y = offset_y << 4;
-    f_obj[index].gravity = 4;
-    f_obj[index].life = 0;
+    f->x = offset_x << 4;
+    f->y = offset_y << 4;
+    f->gravity = 4;
+    f->life = 0;
 
     update_flame_sprite(index);
     flame[index].size = SPRITE_SIZE(2, 1);
@@ -286,7 +290,7 @@ static void remove_oldest_flame(void) {
 }
 
 static u16 flame_expired(u16 index) {
-    return f_obj[index].life >= 64;
+    return f_obj[index].life >= FLAME_LIFE;
 }
 
 static byte button_down;
