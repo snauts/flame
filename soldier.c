@@ -200,10 +200,17 @@ static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
 #define FLAME_COUNT	8
 #define FLAME_LIFE	64
 
-static Sprite *flame;
+typedef struct Flame {
+    Sprite *spr;
+    Object obj;
+    Pos emit;
+    char dir;
+} Flame;
+
 static u16 head, tail;
 static u16 cooldown;
-static Object f_obj[FLAME_COUNT];
+static Flame f_obj[FLAME_COUNT];
+const byte decople_table[FLAME_LIFE];
 
 static u16 next_flame(u16 index) {
     return (index + 1) & (FLAME_COUNT - 1);
@@ -223,18 +230,16 @@ static short clamp(short value, short max) {
     }
 }
 
-static Pos emit_pos[FLAME_COUNT];
-const byte decople_table[FLAME_LIFE];
 static void update_flame_sprite(u16 index) {
-    Object *f = f_obj + index;
-    Pos *p = emit_pos + index;
+    Object *f = &f_obj[index].obj;
+    Pos *p = &f_obj[index].emit;
     byte decople = decople_table[f->life];
     u16 animation = f->life & ((FLAME_LIFE - 1) << 1);
-    flame[index].cfg = TILE(2, f->frame + animation);
+    f_obj[index].spr->cfg = TILE(2, f->frame + animation);
 
-    flame[index].x = base->x + (f->x >> 4)
+    f_obj[index].spr->x = base->x + (f->x >> 4)
 	+ clamp(p->x - base->x, decople >> 1);
-    flame[index].y = base->y + (f->y >> 4)
+    f_obj[index].spr->y = base->y + (f->y >> 4)
 	+ clamp(p->y - base->y, decople);
 
     if (f->life > 48) {
@@ -243,13 +248,13 @@ static void update_flame_sprite(u16 index) {
     else {
 	p->y = (7 * p->y + base->y) >> 3;
     }
-    if (flame[index].x > SCR_WIDTH + ON_SCREEN) {
-	flame[index].x = flame[index].y = 1;
+    if (f_obj[index].spr->x > SCR_WIDTH + ON_SCREEN) {
+	f_obj[index].spr->x = f_obj[index].spr->y = 1;
     }
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
-    Object *f = f_obj + index;
+    Object *f = &f_obj[index].obj;
     u16 offset_y, offset_x;
     if (!aim_up) {
 	offset_x = 26;
@@ -264,44 +269,45 @@ static void emit_flame(u16 index, u16 aim_up) {
 	f->frame = FLAME_UP;
     }
 
-    emit_pos[index].x = base->x;
-    emit_pos[index].y = base->y;
+    f_obj[index].emit.x = base->x;
+    f_obj[index].emit.y = base->y;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
     f->gravity = 4;
     f->life = 0;
 
     update_flame_sprite(index);
-    flame[index].size = SPRITE_SIZE(2, 1);
+    f_obj[index].spr->size = SPRITE_SIZE(2, 1);
 }
 
 static void throw_flames(u16 aim_up) {
-    if (flame[head].x == 0) {
+    if (f_obj[head].spr->x == 0) {
 	emit_flame(head, aim_up);
 	head = next_flame(head);
     }
 }
 
 static void remove_oldest_flame(void) {
-    if (flame[head].x > 0) {
-	flame[tail].x = flame[tail].y = 0;
+    if (f_obj[head].spr->x > 0) {
+	Sprite *spr = f_obj[tail].spr;
+	spr->x = spr->y = 0;
 	tail = next_flame(tail);
     }
 }
 
 static u16 flame_expired(u16 index) {
-    return f_obj[index].life >= FLAME_LIFE;
+    return f_obj[index].obj.life >= FLAME_LIFE;
 }
 
 static byte button_down;
 static void advance_flame(u16 index) {
-    if (f_obj[index].frame == FLAME) {
-	f_obj[index].x += button_down ? 11 : 22;
-	advance_y(f_obj + index, 8);
+    if (f_obj[index].obj.frame == FLAME) {
+	f_obj[index].obj.x += button_down ? 11 : 22;
+	advance_y(&f_obj[index].obj, 8);
     }
     else {
-	f_obj[index].x += 16;
-	advance_y(f_obj + index, 4);
+	f_obj[index].obj.x += 16;
+	advance_y(&f_obj[index].obj, 4);
     }
 }
 
@@ -320,8 +326,8 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 }
 
 static void update_total_rectange(u16 index) {
-    u16 x = flame[index].x;
-    u16 y = flame[index].y;
+    u16 x = f_obj[index].spr->x;
+    u16 y = f_obj[index].spr->y;
     if (index == tail) {
 	f_rect.x1 = x;
 	f_rect.y1 = y;
@@ -344,10 +350,10 @@ static void manage_flames(void) {
     u16 index = tail;
     byte previous = after_flame();
     clear_rectangle(&f_rect);
-    while (flame[index].x > 0) {
-	f_obj[index].life++;
+    while (f_obj[index].spr->x > 0) {
+	f_obj[index].obj.life++;
 	if (flame_expired(index)) {
-	    flame[index].x = flame[index].y = 0;
+	    f_obj[index].spr->x = f_obj[index].spr->y = 0;
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
@@ -355,7 +361,7 @@ static void manage_flames(void) {
 	advance_flame(index);
 	update_flame_sprite(index);
 	update_total_rectange(index);
-	flame[index].next = previous;
+	f_obj[index].spr->next = previous;
 	previous = index + FLAME_OFFSET;
 	index = next_flame(index);
 	if (index == head) break;
@@ -371,9 +377,9 @@ static void manage_flames(void) {
 }
 
 static Rectangle flame_rectangle(Rectangle *r, u16 index) {
-    r->x1 = flame[index].x + 1;
+    r->x1 = f_obj[index].spr->x + 1;
     r->x2 = r->x1 + 14;
-    r->y1 = flame[index].y + 2;
+    r->y1 = f_obj[index].spr->y + 2;
     r->y2 = r->y1 + 4;
 }
 
@@ -381,7 +387,7 @@ u16 flame_collision(Rectangle *r) {
     Rectangle f_single;
     if (intersect(r, &f_rect)) {
 	for (u16 index = 0; index < FLAME_COUNT; index++) {
-	    if (flame[index].x > 0) {
+	    if (f_obj[index].spr->x > 0) {
 		flame_rectangle(&f_single, index);
 		if (intersect(r, &f_single)) {
 		    return 1;
@@ -727,16 +733,23 @@ Sprite *get_sprite(u16 offset) {
     return sprite + offset;
 }
 
+static void setup_flame_sprites(void) {
+    Sprite *f_spr = get_sprite(FLAME_OFFSET);
+    for (u16 i = 0; i < FLAME_COUNT; i++) {
+	f_obj[i].spr = f_spr + i;
+    }
+}
+
 void setup_soldier_sprites(void) {
     head = tail = cooldown = 0;
     base = get_sprite(SOLDIER_BASE);
     blood = get_sprite(BLOOD_SPRITE);
-    flame = get_sprite(FLAME_OFFSET);
     memset(&soldier, 0, sizeof(soldier));
     memset(sprite, 0, sizeof(sprite));
     put_soldier(0, platform_bottom());
     clear_rectangle(&f_rect);
     clear_rectangle(&s_rect);
+    setup_flame_sprites();
     button_down = 0;
     is_dead = 0;
     locked = 0;
