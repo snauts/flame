@@ -112,6 +112,14 @@ typedef void(*Function)(void);
 
 #define SCREEN_X(x) ((x) - window + ON_SCREEN)
 
+static inline char is_good_object(Object *o) {
+    return o->sprite->x > 0;
+}
+
+static inline void destroy_object(Object *o) {
+    o->sprite->x = o->sprite->y = 0;
+}
+
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 

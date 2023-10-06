@@ -371,11 +371,11 @@ static void manage_flames(void) {
     Object *f = &flame[tail].obj;
     byte previous = after_flame();
     clear_rectangle(&f_rect);
-    while (f->sprite->x > 0) {
+    while (is_good_object(f)) {
 	f = &flame[index].obj;
 	f->life++;
 	if (flame_expired(f)) {
-	    f->sprite->x = f->sprite->y = 0;
+	    destroy_object(f);
 	    index = next_flame(index);
 	    tail = index;
 	    continue;
@@ -398,10 +398,10 @@ static void manage_flames(void) {
     }
 }
 
-static Rectangle flame_rectangle(Rectangle *r, Sprite *sprite) {
-    r->x1 = sprite->x + 1;
+static Rectangle flame_rectangle(Rectangle *r, Object *f) {
+    r->x1 = f->sprite->x + 1;
     r->x2 = r->x1 + 14;
-    r->y1 = sprite->y + 2;
+    r->y1 = f->sprite->y + 2;
     r->y2 = r->y1 + 4;
 }
 
@@ -409,9 +409,9 @@ u16 flame_collision(Rectangle *r) {
     Rectangle f_single;
     if (intersect(r, &f_rect)) {
 	for (u16 index = 0; index < FLAME_COUNT; index++) {
-	    Sprite *sprite = flame_sprite(index);
-	    if (sprite->x > 0) {
-		flame_rectangle(&f_single, sprite);
+	    Object *f = &flame[index].obj;
+	    if (is_good_object(f)) {
+		flame_rectangle(&f_single, f);
 		if (intersect(r, &f_single)) {
 		    return 1;
 		}
