@@ -132,7 +132,7 @@ static void move_hopper(Mob *mob) {
     Hopper *hopper = h_obj + mob->index;
 
     obj->life++;
-    obj->x += mob->direction;
+    obj->x += obj->direction;
     u16 land = advance_obj(obj, 4, 12);
 
     sprite->x = SCREEN_X(obj->x);
@@ -152,15 +152,15 @@ static void move_hopper(Mob *mob) {
 	    else {
 		obj->frame = 1 + ((obj->life >> 1) & 1);
 	    }
-	    if (should_hopper_bite(sprite, mob->direction)) {
-		u16 offset = 8 * (mob->direction + 1);
+	    if (should_hopper_bite(sprite, obj->direction)) {
+		u16 offset = 8 * (obj->direction + 1);
 		bite_soldier(sprite->x + offset, sprite->y - 2);
 	    }
 	}
     }
 
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
-    if (mob->direction > 0) sprite->cfg |= BIT(11);
+    if (obj->direction > 0) sprite->cfg |= BIT(11);
 
     if (obj->frame == 17) {
 	free_mob(mob);
@@ -222,10 +222,10 @@ static Mob *setup_hopper(short x, short y, u16 life) {
 	obj->gravity = 0;
 	obj->velocity = 0;
 	obj->life = life;
+	obj->direction = -1;
 
 	mob->sprite->size = SPRITE_SIZE(2, 2);
 	mob->fn = &move_hopper;
-	mob->direction = -1;
 
 	hopper->persistent = 0;
     }
@@ -316,10 +316,10 @@ static void patrolling_hopper(Mob *mob) {
     Hopper *hopper = h_obj + mob->index;
 
     if (obj->x <= hopper->patrol_start) {
-	mob->direction = 1;
+	obj->direction = 1;
     }
     else if (obj->x >= hopper->patrol_end) {
-	mob->direction = -1;
+	obj->direction = -1;
     }
     move_hopper(mob);
 }
@@ -332,7 +332,7 @@ void emit_plateau_patrollers(u16 pos_x) {
 	    hopper->persistent = 1;
 	    hopper->patrol_start = pos_x + SCR_WIDTH;
 	    hopper->patrol_end = pos_x + SCR_WIDTH + 64;
-	    mob->direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
+	    mob->obj.direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
 	    mob->fn = &patrolling_hopper;
 	}
     }
@@ -349,7 +349,7 @@ void emit_chasing_hoppers(u16 pos_x) {
     purge_mobs();
     for (short i = 0; i <= 32; i += 16) {
 	Mob *mob = setup_hopper(pos_x + i, -16, 0);
-	mob->direction = 1;
+	mob->obj.direction = 1;
     }
     emit_charging_hoppers(pos_x);
 }
@@ -364,7 +364,7 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 	    hopper->persistent = 1;
 	    hopper->patrol_start = offset - 16;
 	    hopper->patrol_end = offset + 48;
-	    mob->direction = skew ? -1 : 1;
+	    mob->obj.direction = skew ? -1 : 1;
 	    mob->fn = &patrolling_hopper;
 	}
     }
@@ -380,7 +380,7 @@ void emit_down_stair_guards(u16 pos_x) {
 	hopper->persistent = 1;
 	hopper->patrol_start = x - 32;
 	hopper->patrol_end = x + 32;
-	mob->direction = 1;
+	mob->obj.direction = 1;
 	mob->fn = &patrolling_hopper;
 	x += 96;
 	y += 24;
@@ -399,7 +399,7 @@ static void chasing_swarm(u16 x) {
 		h_obj[mob->index].jump_amount = 2 + ((counter + i) & 3);
 		swarm[i] = mob->index;
 		mob->fn = &immediate_hopper;
-		mob->direction = 1;
+		mob->obj.direction = 1;
 	    }
 	}
 	schedule(&chasing_swarm, 0);
