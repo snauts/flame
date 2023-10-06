@@ -142,7 +142,11 @@ static void soldier_jump(u16 start, u16 down) {
     advance_obj(&soldier, SOLDIER_AHEAD, 6);
 }
 
-static short animate_walking(short cycle, u16 prev) {
+static short sign(short x) {
+    return x < 0 ? -1 : 1;
+}
+
+static short animate_walking(short cycle, short prev) {
     if (prev == soldier.x) {
 	if (cycle >= 0) {
 	    cycle = (cycle < 6) ? -1 : -2; /* stop walking frame */
@@ -153,7 +157,7 @@ static short animate_walking(short cycle, u16 prev) {
 	    cycle = (cycle == -1) ? 2 : 8; /* start walking frame */
 	}
 	if ((soldier.x & 3) == 1) {
-	    if (soldier.x < prev) {
+	    if (sign(soldier.x - prev) != soldier.direction) {
 		if (cycle == 0) cycle = 11; else cycle--;
 	    }
 	    else {
@@ -184,7 +188,7 @@ static void soldier_flip_sprites(void) {
 }
 
 static void soldier_yelling(byte state);
-static void soldier_animate(u16 prev, u16 aim_up, u16 fire) {
+static void soldier_animate(short prev, u16 aim_up, u16 fire) {
     static short cycle;
     u16 soldier_frame;
 
@@ -532,7 +536,7 @@ void update_game(void) {
 }
 
 static void soldier_march(void) {
-    u16 prev = soldier.x;
+    short prev = soldier.x;
 
     u16 aim_up = 0;
     if (BUTTON_RIGHT(button_state)) {
