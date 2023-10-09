@@ -203,17 +203,16 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire) {
 
 typedef struct Flame {
     Object obj;
+    char in_pool;
+    char index;
     Pos emit;
 } Flame;
 
 static u16 cooldown;
-static u16 head, tail;
+static char available_flames;
 static Flame flame[FLAME_COUNT];
+static char free_flames[FLAME_COUNT];
 const byte decople_table[FLAME_LIFE];
-
-static u16 next_flame(u16 index) {
-    return (index + 1) & (FLAME_COUNT - 1);
-}
 
 #define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
 
@@ -281,28 +280,26 @@ static void emit_flame(u16 index, u16 aim_up) {
     }
 
     f->sprite->size = SPRITE_SIZE(2, 1);
+    flame[index].in_pool = available_flames;
     update_flame_sprite(f);
 }
 
-static char is_good_flame(u16 index) {
-    return is_good_object(&flame[index].obj);
-}
-
-static Sprite *flame_sprite(u16 i) {
-    return flame[i].obj.sprite;
+static void remove_flame(Flame *f) {
+    char other = free_flames[available_flames];
+    free_flames[available_flames++] = f->index;
+    free_flames[f->in_pool] = other;
+    flame[other].in_pool = f->in_pool;
 }
 
 static void throw_flames(u16 aim_up) {
-    if (!is_good_flame(head)) {
-	emit_flame(head, aim_up);
-	head = next_flame(head);
+    if (available_flames > 0) {
+	emit_flame(free_flames[--available_flames], aim_up);
     }
 }
 
-static void remove_oldest_flame(void) {
-    if (is_good_flame(head)) {
-	destroy_object(&flame[tail].obj);
-	tail = next_flame(tail);
+static void remove_one_flame(void) {
+    if (available_flames == 0) {
+	remove_flame(flame);
     }
 }
 
@@ -344,8 +341,8 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 }
 
 static void update_total_rectange(u16 index) {
-    u16 x = flame_sprite(index)->x;
-    u16 y = flame_sprite(index)->y;
+    u16 x = flame[index].obj.sprite->x;
+    u16 y = flame[index].obj.sprite->y;
     if (f_rect.x1 == 0 && f_rect.y1 == 0) {
 	f_rect.x1 = x;
 	f_rect.y1 = y;
@@ -364,25 +361,27 @@ static byte after_flame(void) {
     return blood->x > 0 ? BLOOD_SPRITE : first_mob_sprite;
 }
 
-static void manage_flames(void) {
-    u16 index = tail;
-    byte previous = after_flame();
-    clear_rectangle(&f_rect);
-    while (is_good_flame(index)) {
-	Object *f = &flame[index].obj;
-	if (flame_expired(f)) {
-	    destroy_object(f);
-	    index = next_flame(index);
-	    tail = index;
-	    continue;
+static void remove_old_flames(void) {
+    for (char i = available_flames; i < FLAME_COUNT; i++) {
+	u16 index = free_flames[i];
+	if (flame_expired(&flame[index].obj)) {
+	    remove_flame(flame + index);
 	}
+    }
+}
+
+static void manage_flames(void) {
+    remove_old_flames();
+    clear_rectangle(&f_rect);
+    byte previous = after_flame();
+    for (char i = available_flames; i < FLAME_COUNT; i++) {
+	u16 index = free_flames[i];
+	Object *f = &flame[index].obj;
 	advance_flame(f);
 	update_flame_sprite(f);
 	update_total_rectange(index);
 	f->sprite->next = previous;
 	previous = index + FLAME_OFFSET;
-	index = next_flame(index);
-	if (index == head) break;
     }
     /* add sprite size */
     f_rect.x2 += 16;
@@ -404,13 +403,12 @@ static Rectangle flame_rectangle(Rectangle *r, Object *f) {
 u16 flame_collision(Rectangle *r) {
     Rectangle f_single;
     if (intersect(r, &f_rect)) {
-	for (u16 index = 0; index < FLAME_COUNT; index++) {
+	for (byte i = available_flames; i < FLAME_COUNT; i++) {
+	    u16 index = free_flames[i];
 	    Object *f = &flame[index].obj;
-	    if (is_good_object(f)) {
-		flame_rectangle(&f_single, f);
-		if (intersect(r, &f_single)) {
-		    return 1;
-		}
+	    flame_rectangle(&f_single, f);
+	    if (intersect(r, &f_single)) {
+		return 1;
 	    }
 	}
     }
@@ -615,7 +613,7 @@ static void do_bite(u16 x, u16 y) {
     blood->cfg = TILE(2, BLOOD);
     blood->size = SPRITE_SIZE(2, 2);
     schedule(&spill_blood, 2);
-    remove_oldest_flame();
+    remove_one_flame();
     if (!is_dead) is_dead = 2;
 }
 
@@ -754,13 +752,16 @@ Sprite *get_sprite(u16 offset) {
 }
 
 static void setup_flame_sprites(void) {
+    cooldown = 0;
+    available_flames = FLAME_COUNT;
     for (u16 i = 0; i < FLAME_COUNT; i++) {
 	flame[i].obj.sprite = get_sprite(FLAME_OFFSET) + i;
+	flame[i].index = i;
+	free_flames[i] = i;
     }
 }
 
 void setup_soldier_sprites(void) {
-    head = tail = cooldown = 0;
     blood = get_sprite(BLOOD_SPRITE);
     memset(&soldier, 0, sizeof(soldier));
     memset(sprite, 0, sizeof(sprite));
