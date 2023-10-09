@@ -346,7 +346,7 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 static void update_total_rectange(u16 index) {
     u16 x = flame_sprite(index)->x;
     u16 y = flame_sprite(index)->y;
-    if (index == tail) {
+    if (f_rect.x1 == 0 && f_rect.y1 == 0) {
 	f_rect.x1 = x;
 	f_rect.y1 = y;
 	f_rect.x2 = f_rect.x1;
