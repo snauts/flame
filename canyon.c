@@ -208,7 +208,7 @@ static void immediate_hopper(Object *mob) {
 }
 
 static Object *setup_hopper(short x, short y, u16 life) {
-    Object *obj = alloc_mob(2);
+    Object *obj = alloc_mob();
     if (obj != NULL) {
 	obj->x = x;
 	obj->y = y;
