@@ -460,6 +460,72 @@ void display_rusty(void) {
     display_desert(&prepare_rusty_level, 0);
 }
 
+Object *claws;
+Object *f_leg;
+Object *b_leg;
+short f_frame;
+short b_frame;
+
+static void animate_mantis(u16 i) {
+    claws->sprite->cfg = TILE(3, 385 + 16 * ((i >> 1) & 3));
+    f_leg->sprite->cfg = TILE(3, 449 + 8 * f_frame);
+    b_leg->sprite->cfg = TILE(3, 449 + 8 * b_frame) | BIT(11);
+    if (f_frame++ == 11) f_frame = 0;
+    if (b_frame-- ==  0) b_frame = 11;
+    callback(&animate_mantis, 4, i + 1);
+}
+
+static void show_mantis(u16 i) {
+    Object *obj;
+    u16 x = 248, y = 256 + 16;
+
+    obj = alloc_mob();
+    obj->sprite->x = x;
+    obj->sprite->y = y;
+    obj->sprite->size = SPRITE_SIZE(4, 2);
+    obj->sprite->cfg = TILE(3, 357);
+
+    obj = alloc_mob();
+    obj->sprite->x = x + 8;
+    obj->sprite->y = y + 16;
+    obj->sprite->size = SPRITE_SIZE(2, 2);
+    obj->sprite->cfg = TILE(3, 365);
+
+    obj = alloc_mob();
+    obj->sprite->x = x + 16;
+    obj->sprite->y = y + 32;
+    obj->sprite->size = SPRITE_SIZE(4, 2);
+    obj->sprite->cfg = TILE(3, 369);
+
+    obj = alloc_mob();
+    obj->sprite->x = x + 48;
+    obj->sprite->y = y + 32;
+    obj->sprite->size = SPRITE_SIZE(4, 2);
+    obj->sprite->cfg = TILE(3, 377);
+
+    claws = alloc_mob();
+    claws->sprite->x = x - 16;
+    claws->sprite->y = y + 16;
+    claws->sprite->size = SPRITE_SIZE(4, 4);
+    claws->sprite->cfg = TILE(3, 385);
+
+    f_leg = alloc_mob();
+    f_leg->sprite->x = x + 16;
+    f_leg->sprite->y = y + 48;
+    f_leg->sprite->size = SPRITE_SIZE(4, 2);
+    f_leg->sprite->cfg = TILE(3, 449);
+    f_frame = 0;
+
+    b_leg = alloc_mob();
+    b_leg->sprite->x = x + 48;
+    b_leg->sprite->y = y + 48;
+    b_leg->sprite->size = SPRITE_SIZE(4, 2);
+    b_leg->sprite->cfg = TILE(3, 449) | BIT(11);
+    b_frame = 3;
+
+    callback(&animate_mantis, 0, 0);
+}
+
 #include "images/mantis_body.h"
 #include "images/mantis_claw.h"
 #include "images/mantis_leg.h"
@@ -467,7 +533,11 @@ void display_rusty(void) {
 void display_mantis(void) {
     update_palette(mantis_body_palette, 48, ARRAY_SIZE(mantis_body_palette));
     update_tiles(mantis_body_tiles, 357, ARRAY_SIZE(mantis_body_tiles));
+    update_tiles(mantis_claw_tiles, 385, ARRAY_SIZE(mantis_claw_tiles));
+    update_tiles(mantis_leg_tiles, 449, ARRAY_SIZE(mantis_leg_tiles));
 
     display_desert(&prepare_mantis_level, 1);
     lock_screen(1);
+
+    schedule(&show_mantis, 0);
 }
