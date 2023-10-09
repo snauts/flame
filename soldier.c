@@ -410,6 +410,7 @@ u16 flame_collision(Rectangle *r) {
 	    Object *f = &flame[index].obj;
 	    flame_rectangle(&f_single, f);
 	    if (intersect(r, &f_single)) {
+		remove_flame(f);
 		return 1;
 	    }
 	}
