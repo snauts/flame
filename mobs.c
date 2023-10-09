@@ -48,7 +48,6 @@ Object *alloc_mob(void) {
     if (available_mobs > 0) {
 	Mob *mob = mobs + free_mobs[--available_mobs];
 	mob->in_pool = available_mobs;
-	mob->obj.sprite->x = 1;
 	obj = &mob->obj;
     }
     return obj;
@@ -60,7 +59,6 @@ void free_mob(Object *obj) {
     free_mobs[available_mobs++] = mob->index;
     free_mobs[mob->in_pool] = other;
     mobs[other].in_pool = mob->in_pool;
-    destroy_object(obj);
 }
 
 void purge_mobs(void) {
@@ -74,7 +72,6 @@ void reset_mobs(void) {
     first_mob_sprite = NEXT_GROUP;
     for (char i = 0; i < MAX_MOBS; i++) {
 	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
-	destroy_object(&mobs[i].obj);
 	mobs[i].index = i;
 	free_mobs[i] = i;
     }

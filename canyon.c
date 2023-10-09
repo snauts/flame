@@ -382,7 +382,7 @@ static void chasing_swarm(u16 x) {
     if (swarm_on) {
 	for (u16 i = 0; i < SWARM_SIZE; i++) {
 	    Object *mob = get_mob(swarm[i]);
-	    if (mob == NULL || !is_good_object(mob)) {
+	    if (mob == NULL) {
 		mob = setup_hopper(window + 16 * i, -16, 0);
 		HOPPER(mob)->jump_amount = 2 + ((counter + i) & 3);
 		mob_fn(mob, &immediate_hopper);
