@@ -375,21 +375,21 @@ static void remove_old_flames(void) {
 static void manage_flames(void) {
     remove_old_flames();
     clear_rectangle(&f_rect);
-    byte previous = after_flame();
+    byte next = after_flame();
     for (char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
 	Object *f = &flame[index].obj;
 	advance_flame(f);
 	update_flame_sprite(f);
 	update_total_rectange(index);
-	f->sprite->next = previous;
-	previous = index + FLAME_OFFSET;
+	f->sprite->next = next;
+	next = index + FLAME_OFFSET;
     }
     /* add sprite size */
     f_rect.x2 += 16;
     f_rect.y2 += 8;
     /* start with flames */
-    sprite[0].next = previous;
+    sprite[0].next = next;
     if (cooldown > 0) {
 	cooldown--;
     }
