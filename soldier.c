@@ -204,7 +204,6 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire) {
 typedef struct Flame {
     Object obj;
     char in_pool;
-    char index;
     Pos emit;
 } Flame;
 
@@ -285,8 +284,9 @@ static void emit_flame(u16 index, u16 aim_up) {
 }
 
 static void remove_flame(Flame *f) {
+    char index = free_flames[f->in_pool];
     char other = free_flames[available_flames];
-    free_flames[available_flames++] = f->index;
+    free_flames[available_flames++] = index;
     free_flames[f->in_pool] = other;
     flame[other].in_pool = f->in_pool;
 }
@@ -756,7 +756,6 @@ static void setup_flame_sprites(void) {
     available_flames = FLAME_COUNT;
     for (u16 i = 0; i < FLAME_COUNT; i++) {
 	flame[i].obj.sprite = get_sprite(FLAME_OFFSET) + i;
-	flame[i].index = i;
 	free_flames[i] = i;
     }
 }
