@@ -460,7 +460,14 @@ void display_rusty(void) {
     display_desert(&prepare_rusty_level, 0);
 }
 
+#include "images/mantis_body.h"
+#include "images/mantis_claw.h"
+#include "images/mantis_leg.h"
+
 void display_mantis(void) {
+    update_palette(mantis_body_palette, 48, ARRAY_SIZE(mantis_body_palette));
+    update_tiles(mantis_body_tiles, 357, ARRAY_SIZE(mantis_body_tiles));
+
     display_desert(&prepare_mantis_level, 1);
     lock_screen(1);
 }
