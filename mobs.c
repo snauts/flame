@@ -42,8 +42,10 @@ void mob_fn(Object *obj, void (*fn)(Object *)) {
 Object *alloc_mob(void) {
     Object *obj = NULL;
     if (available_mobs > 0) {
-	obj = &mobs[free_mobs[--available_mobs]].obj;
-	obj->place = available_mobs;
+	Mob *mob = mobs + free_mobs[--available_mobs];
+	mob->obj.place = available_mobs;
+	mob->fn = NULL;
+	obj = &mob->obj;
     }
     return obj;
 }
@@ -80,7 +82,7 @@ void reset_mobs(void) {
 static void call_mob_functions(void) {
     for (char i = available_mobs; i < MAX_MOBS; i++) {
 	Mob *mob = mobs + free_mobs[i];
-	mob->fn(&mob->obj);
+	if (mob->fn) mob->fn(&mob->obj);
     }
 }
 
