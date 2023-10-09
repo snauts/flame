@@ -377,16 +377,18 @@ void emit_down_stair_guards(u16 pos_x) {
 
 #define SWARM_SIZE 5
 static char swarm_on;
-static void chasing_swarm(u16 id) {
-    Object *mob = get_mob(id);
+static void chasing_swarm(u16 info) {
+    byte n = info & 0xff;
+    byte index = info >> 8;
+    Object *mob = get_mob(index);
     if (swarm_on) {
-	if (mob->place < 0) {
-	    mob = setup_hopper(mob->x, -16, 0); /* hairy */
+	if (mob == NULL || mob->place < 0) {
+	    mob = setup_hopper(window + 16 * n, -16, 0);
 	}
 	mob->direction = 1;
 	mob_fn(mob, &immediate_hopper);
-	HOPPER(mob)->jump_amount = 2 + ((counter + id) & 3);
-	callback(&chasing_swarm, 0, mob_index(mob));
+	HOPPER(mob)->jump_amount = 2 + ((counter + n) & 3);
+	callback(&chasing_swarm, 0, (mob_index(mob) << 8) | n);
     }
     else if (mob->place >= 0) {
 	hopper_die(mob);
@@ -396,8 +398,8 @@ static void chasing_swarm(u16 id) {
 void emit_chasing_swarm(u16 pos_x) {
     purge_mobs();
     swarm_on = 1;
-    for (u16 i = 0; i < SWARM_SIZE; i++) {
-	chasing_swarm(mob_index(setup_hopper(window + 16 * i, -16, 0)));
+    for (u16 n = 0; n < SWARM_SIZE; n++) {
+	chasing_swarm((MAX_MOBS << 8) | n);
     }
 }
 
