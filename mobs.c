@@ -2,7 +2,6 @@
 
 #define MAX_BUDGET	32
 #define MOB_OFFSET	16
-#define NEXT_GROUP	4
 
 #define MAX_TIMERS	8
 
@@ -13,7 +12,7 @@ typedef struct Mob {
     void (*fn)(Object *);
 } Mob;
 
-byte first_mob_sprite;
+extern byte next_sprite;
 
 static char available_mobs;
 static Mob mobs[MAX_MOBS];
@@ -69,7 +68,6 @@ void purge_mobs(void) {
 
 void reset_mobs(void) {
     available_mobs = MAX_MOBS;
-    first_mob_sprite = NEXT_GROUP;
     for (char i = 0; i < MAX_MOBS; i++) {
 	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
 	mobs[i].index = i;
@@ -90,14 +88,12 @@ static void call_mob_functions(void) {
 }
 
 void manage_mobs(void) {
-    u16 next = NEXT_GROUP;
     call_mob_functions();
     for (char i = available_mobs; i < MAX_MOBS; i++) {
 	Mob *mob = mobs + free_mobs[i];
-	mob->obj.sprite->next = next;
-	next = mob->index + MOB_OFFSET;
+	mob->obj.sprite->next = next_sprite;
+	next_sprite = mob->index + MOB_OFFSET;
     }
-    first_mob_sprite = next;
 }
 
 void callback(Callback fn, u16 timeout, u16 cookie) {

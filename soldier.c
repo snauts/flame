@@ -30,7 +30,7 @@ static char is_dead;
 static Sprite sprite[80];
 static Sprite *blood;
 
-extern byte first_mob_sprite;
+byte next_sprite;
 
 #define BUTTON_A(x) ((x) & BIT(12))
 #define BUTTON_B(x) ((x) & BIT(4))
@@ -358,10 +358,6 @@ static void update_total_rectange(u16 index) {
     }
 }
 
-static byte after_flame(void) {
-    return blood->x > 0 ? BLOOD_SPRITE : first_mob_sprite;
-}
-
 static void remove_old_flames(void) {
     for (char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
@@ -375,21 +371,18 @@ static void remove_old_flames(void) {
 static void manage_flames(void) {
     remove_old_flames();
     clear_rectangle(&f_rect);
-    byte next = after_flame();
     for (char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
 	Object *f = &flame[index].obj;
 	advance_flame(f);
 	update_flame_sprite(f);
 	update_total_rectange(index);
-	f->sprite->next = next;
-	next = index + FLAME_OFFSET;
+	f->sprite->next = next_sprite;
+	next_sprite = index + FLAME_OFFSET;
     }
     /* add sprite size */
     f_rect.x2 += 16;
     f_rect.y2 += 8;
-    /* start with flames */
-    sprite[0].next = next;
     if (cooldown > 0) {
 	cooldown--;
     }
@@ -621,7 +614,8 @@ static void do_bite(u16 x, u16 y) {
 }
 
 static void manage_blood(void) {
-    blood->next = first_mob_sprite;
+    blood->next = next_sprite;
+    next_sprite = BLOOD_SPRITE;
 }
 
 void bite_soldier(u16 x, u16 y) {
@@ -686,6 +680,8 @@ void level_done(u16 x) {
 }
 
 void advance_sprites(void) {
+    next_sprite = 4; /* soldier */
+
     switch (is_dead) {
     case 0:
 	soldier_march();
@@ -708,6 +704,8 @@ void advance_sprites(void) {
     manage_mobs();
     manage_blood();
     manage_flames();
+
+    sprite[0].next = next_sprite; /* finish sprite link */
 
     copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
 }
