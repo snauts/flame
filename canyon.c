@@ -377,28 +377,28 @@ void emit_down_stair_guards(u16 pos_x) {
 
 #define SWARM_SIZE 5
 static char swarm_on;
-static char swarm[SWARM_SIZE];
-static void chasing_swarm(u16 x) {
+static void chasing_swarm(u16 id) {
+    Object *mob = get_mob(id);
     if (swarm_on) {
-	for (u16 i = 0; i < SWARM_SIZE; i++) {
-	    Object *mob = get_mob(swarm[i]);
-	    if (mob == NULL) {
-		mob = setup_hopper(window + 16 * i, -16, 0);
-		HOPPER(mob)->jump_amount = 2 + ((counter + i) & 3);
-		mob_fn(mob, &immediate_hopper);
-		swarm[i] = mob_index(mob);
-		mob->direction = 1;
-	    }
+	if (mob->place < 0) {
+	    mob = setup_hopper(mob->x, -16, 0); /* hairy */
 	}
-	schedule(&chasing_swarm, 0);
+	mob->direction = 1;
+	mob_fn(mob, &immediate_hopper);
+	HOPPER(mob)->jump_amount = 2 + ((counter + id) & 3);
+	callback(&chasing_swarm, 0, mob_index(mob));
+    }
+    else if (mob->place >= 0) {
+	hopper_die(mob);
     }
 }
 
 void emit_chasing_swarm(u16 pos_x) {
-    for (u16 i = 0; i < SWARM_SIZE; i++) swarm[i] = MAX_MOBS;
     purge_mobs();
     swarm_on = 1;
-    chasing_swarm(0);
+    for (u16 i = 0; i < SWARM_SIZE; i++) {
+	chasing_swarm(mob_index(setup_hopper(window + 16 * i, -16, 0)));
+    }
 }
 
 void ignite_swarm(u16 pos_x) {
@@ -407,12 +407,6 @@ void ignite_swarm(u16 pos_x) {
     }
     else {
 	swarm_on = 0;
-	for (u16 i = 0; i < SWARM_SIZE; i++) {
-	    Object *mob = get_mob(swarm[i]);
-	    if (mob && mob->sprite->x > 0) {
-		hopper_die(mob);
-	    }
-	}
     }
 }
 

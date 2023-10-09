@@ -54,6 +54,7 @@ void free_mob(Object *obj) {
     free_mobs[available_mobs++] = index;
     free_mobs[obj->place] = other;
     mobs[other].obj.place = obj->place;
+    obj->place = -1;
 }
 
 void purge_mobs(void) {
@@ -66,6 +67,7 @@ void reset_mobs(void) {
     available_mobs = MAX_MOBS;
     for (char i = 0; i < MAX_MOBS; i++) {
 	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
+	mobs[i].obj.place = -1;
 	free_mobs[i] = i;
     }
 
