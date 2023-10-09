@@ -283,7 +283,8 @@ static void emit_flame(u16 index, u16 aim_up) {
     update_flame_sprite(f);
 }
 
-static void remove_flame(Flame *f) {
+static void remove_flame(Object *obj) {
+    Flame *f = CONTAINER_OF(obj, Flame, obj);
     char index = free_flames[f->in_pool];
     char other = free_flames[available_flames];
     free_flames[available_flames++] = index;
@@ -299,7 +300,7 @@ static void throw_flames(u16 aim_up) {
 
 static void remove_one_flame(void) {
     if (available_flames == 0) {
-	remove_flame(flame);
+	remove_flame(&flame[free_flames[0]].obj);
     }
 }
 
@@ -364,8 +365,9 @@ static byte after_flame(void) {
 static void remove_old_flames(void) {
     for (char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
-	if (flame_expired(&flame[index].obj)) {
-	    remove_flame(flame + index);
+	Object *f = &flame[index].obj;
+	if (flame_expired(f)) {
+	    remove_flame(f);
 	}
     }
 }
