@@ -203,7 +203,6 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire) {
 
 typedef struct Flame {
     Object obj;
-    char in_pool;
     Pos emit;
 } Flame;
 
@@ -279,17 +278,16 @@ static void emit_flame(u16 index, u16 aim_up) {
     }
 
     f->sprite->size = SPRITE_SIZE(2, 1);
-    flame[index].in_pool = available_flames;
+    f->place = available_flames;
     update_flame_sprite(f);
 }
 
 static void remove_flame(Object *obj) {
-    Flame *f = CONTAINER_OF(obj, Flame, obj);
-    char index = free_flames[f->in_pool];
+    char index = free_flames[obj->place];
     char other = free_flames[available_flames];
     free_flames[available_flames++] = index;
-    free_flames[f->in_pool] = other;
-    flame[other].in_pool = f->in_pool;
+    free_flames[obj->place] = other;
+    flame[other].obj.place = obj->place;
 }
 
 static void throw_flames(u16 aim_up) {
@@ -341,9 +339,9 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 	&& intersect_segment(r1->y1, r1->y2, r2->y1, r2->y2);
 }
 
-static void update_total_rectange(u16 index) {
-    u16 x = flame[index].obj.sprite->x;
-    u16 y = flame[index].obj.sprite->y;
+static void update_total_rectange(Object *f) {
+    u16 x = f->sprite->x;
+    u16 y = f->sprite->y;
     if (f_rect.x1 == 0 && f_rect.y1 == 0) {
 	f_rect.x1 = x;
 	f_rect.y1 = y;
@@ -376,7 +374,7 @@ static void manage_flames(void) {
 	Object *f = &flame[index].obj;
 	advance_flame(f);
 	update_flame_sprite(f);
-	update_total_rectange(index);
+	update_total_rectange(f);
 	f->sprite->next = next_sprite;
 	next_sprite = index + FLAME_OFFSET;
     }

@@ -7,8 +7,6 @@
 
 typedef struct Mob {
     Object obj;
-    byte index;
-    char in_pool;
     void (*fn)(Object *);
 } Mob;
 
@@ -33,8 +31,7 @@ Object *get_mob(u16 index) {
 }
 
 u16 mob_index(Object *obj) {
-    Mob *mob = CONTAINER_OF(obj, Mob, obj);
-    return mob->index;
+    return free_mobs[obj->place];
 }
 
 void mob_fn(Object *obj, void (*fn)(Object *)) {
@@ -45,19 +42,18 @@ void mob_fn(Object *obj, void (*fn)(Object *)) {
 Object *alloc_mob(void) {
     Object *obj = NULL;
     if (available_mobs > 0) {
-	Mob *mob = mobs + free_mobs[--available_mobs];
-	mob->in_pool = available_mobs;
-	obj = &mob->obj;
+	obj = &mobs[free_mobs[--available_mobs]].obj;
+	obj->place = available_mobs;
     }
     return obj;
 }
 
 void free_mob(Object *obj) {
-    Mob *mob = CONTAINER_OF(obj, Mob, obj);
+    char index = free_mobs[obj->place];
     char other = free_mobs[available_mobs];
-    free_mobs[available_mobs++] = mob->index;
-    free_mobs[mob->in_pool] = other;
-    mobs[other].in_pool = mob->in_pool;
+    free_mobs[available_mobs++] = index;
+    free_mobs[obj->place] = other;
+    mobs[other].obj.place = obj->place;
 }
 
 void purge_mobs(void) {
@@ -70,7 +66,6 @@ void reset_mobs(void) {
     available_mobs = MAX_MOBS;
     for (char i = 0; i < MAX_MOBS; i++) {
 	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
-	mobs[i].index = i;
 	free_mobs[i] = i;
     }
 
@@ -90,9 +85,10 @@ static void call_mob_functions(void) {
 void manage_mobs(void) {
     call_mob_functions();
     for (char i = available_mobs; i < MAX_MOBS; i++) {
-	Mob *mob = mobs + free_mobs[i];
+	u16 index = free_mobs[i];
+	Mob *mob = mobs + index;
 	mob->obj.sprite->next = next_sprite;
-	next_sprite = mob->index + MOB_OFFSET;
+	next_sprite = index + MOB_OFFSET;
     }
 }
 
