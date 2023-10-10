@@ -478,24 +478,56 @@ const Mantis mantis_layout[] = {
     { x: 48, y: 32, size: SPRITE_SIZE(4, 2), tile: TILE(3, 377) },
     { x:-16, y: 16, size: SPRITE_SIZE(4, 4), tile: TILE(3, 385) },
     { x: 16, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 449) },
-    { x: 48, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 449) | BIT(11) },
+    { x: 48, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 473) | BIT(11) },
 };
 
+static void set_sprite_tile(Sprite *sprite, u16 tile) {
+    sprite->cfg = (sprite->cfg & ~0x7FF) | tile;
+}
+
 static void animate_mantis(u16 i) {
-    mantis[4]->sprite->cfg = TILE(3, 385 + 16 * ((i >> 1) & 3));
-    mantis[5]->sprite->cfg = TILE(3, 449 + 8 * f_frame);
-    mantis[6]->sprite->cfg = TILE(3, 449 + 8 * b_frame) | BIT(11);
+    set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * ((i >> 1) & 3)));
+    set_sprite_tile(mantis[5]->sprite, TILE(3, 449 + 8 * f_frame));
+    set_sprite_tile(mantis[6]->sprite, TILE(3, 449 + 8 * b_frame));
     if (f_frame++ == 11) f_frame = 0;
     if (b_frame-- ==  0) b_frame = 11;
     callback(&animate_mantis, 4, i + 1);
 }
 
-static void place_mantis(u16 x, u16 y) {
+static u16 is_mantis_neck(u16 i) {
+    return mantis_layout[i].size == SPRITE_SIZE(2, 2);
+}
+
+static short mantis_sprite_x(u16 i, u16 flip) {
+    if (flip) {
+	return 64 + (is_mantis_neck(i) ? 16 : 0) - mantis_layout[i].x;
+    }
+    else {
+	return mantis_layout[i].x;
+    }
+}
+
+static void flip_sprite(Sprite *sprite, u16 should_flip) {
+    if (should_flip) {
+	sprite->cfg &= ~BIT(11);
+    }
+    else {
+	sprite->cfg |= BIT(11);
+    }
+}
+
+static void place_mantis(u16 x, u16 y, u16 flip) {
     for (u16 i = 0; i < MANTIS_PARTS; i++) {
 	Sprite *sprite = mantis[i]->sprite;
-	sprite->x = x + mantis_layout[i].x;
+	sprite->x = x + mantis_sprite_x(i, flip);
 	sprite->y = y + mantis_layout[i].y;
+	flip_sprite(sprite, (flip == 0 ^ i == 6));
     }
+}
+
+static void flip_mantis(u16 flip) {
+    place_mantis(248, 272, flip);
+    callback(&flip_mantis, 50, !flip);
 }
 
 static void setup_mantis(u16 i) {
@@ -506,12 +538,13 @@ static void setup_mantis(u16 i) {
 	sprite->size = mantis_layout[i].size;
 	sprite->cfg = mantis_layout[i].tile;
     }
-    place_mantis(248, 272);
+    place_mantis(248, 272, 0);
 
     f_frame = 0;
     b_frame = 3;
 
-    callback(&animate_mantis, 0, 0);
+    schedule(&flip_mantis, 0);
+    schedule(&animate_mantis, 0);
 }
 
 #include "images/mantis_body.h"
