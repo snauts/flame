@@ -462,67 +462,53 @@ void display_rusty(void) {
     display_desert(&prepare_rusty_level, 0);
 }
 
-Object *claws;
-Object *f_leg;
-Object *b_leg;
-short f_frame;
-short b_frame;
+#define MANTIS_PARTS 7
+static Object **mantis;
+char f_frame, b_frame;
+
+typedef struct Mantis {
+    char x, y, size;
+    u16 tile;
+} Mantis;
+
+const Mantis mantis_layout[] = {
+    { x:  0, y:  0, size: SPRITE_SIZE(4, 2), tile: TILE(3, 357) },
+    { x:  8, y: 16, size: SPRITE_SIZE(2, 2), tile: TILE(3, 365) },
+    { x: 16, y: 32, size: SPRITE_SIZE(4, 2), tile: TILE(3, 369) },
+    { x: 48, y: 32, size: SPRITE_SIZE(4, 2), tile: TILE(3, 377) },
+    { x:-16, y: 16, size: SPRITE_SIZE(4, 4), tile: TILE(3, 385) },
+    { x: 16, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 449) },
+    { x: 48, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 449) | BIT(11) },
+};
 
 static void animate_mantis(u16 i) {
-    claws->sprite->cfg = TILE(3, 385 + 16 * ((i >> 1) & 3));
-    f_leg->sprite->cfg = TILE(3, 449 + 8 * f_frame);
-    b_leg->sprite->cfg = TILE(3, 449 + 8 * b_frame) | BIT(11);
+    mantis[4]->sprite->cfg = TILE(3, 385 + 16 * ((i >> 1) & 3));
+    mantis[5]->sprite->cfg = TILE(3, 449 + 8 * f_frame);
+    mantis[6]->sprite->cfg = TILE(3, 449 + 8 * b_frame) | BIT(11);
     if (f_frame++ == 11) f_frame = 0;
     if (b_frame-- ==  0) b_frame = 11;
     callback(&animate_mantis, 4, i + 1);
 }
 
-static void show_mantis(u16 i) {
-    Object *obj;
-    u16 x = 248, y = 256 + 16;
+static void place_mantis(u16 x, u16 y) {
+    for (u16 i = 0; i < MANTIS_PARTS; i++) {
+	Sprite *sprite = mantis[i]->sprite;
+	sprite->x = x + mantis_layout[i].x;
+	sprite->y = y + mantis_layout[i].y;
+    }
+}
 
-    obj = alloc_mob();
-    obj->sprite->x = x;
-    obj->sprite->y = y;
-    obj->sprite->size = SPRITE_SIZE(4, 2);
-    obj->sprite->cfg = TILE(3, 357);
+static void setup_mantis(u16 i) {
+    mantis = malloc(MANTIS_PARTS * sizeof(Object*));
+    for (u16 i = 0; i < MANTIS_PARTS; i++) {
+	mantis[i] = alloc_mob();
+	Sprite *sprite = mantis[i]->sprite;
+	sprite->size = mantis_layout[i].size;
+	sprite->cfg = mantis_layout[i].tile;
+    }
+    place_mantis(248, 272);
 
-    obj = alloc_mob();
-    obj->sprite->x = x + 8;
-    obj->sprite->y = y + 16;
-    obj->sprite->size = SPRITE_SIZE(2, 2);
-    obj->sprite->cfg = TILE(3, 365);
-
-    obj = alloc_mob();
-    obj->sprite->x = x + 16;
-    obj->sprite->y = y + 32;
-    obj->sprite->size = SPRITE_SIZE(4, 2);
-    obj->sprite->cfg = TILE(3, 369);
-
-    obj = alloc_mob();
-    obj->sprite->x = x + 48;
-    obj->sprite->y = y + 32;
-    obj->sprite->size = SPRITE_SIZE(4, 2);
-    obj->sprite->cfg = TILE(3, 377);
-
-    claws = alloc_mob();
-    claws->sprite->x = x - 16;
-    claws->sprite->y = y + 16;
-    claws->sprite->size = SPRITE_SIZE(4, 4);
-    claws->sprite->cfg = TILE(3, 385);
-
-    f_leg = alloc_mob();
-    f_leg->sprite->x = x + 16;
-    f_leg->sprite->y = y + 48;
-    f_leg->sprite->size = SPRITE_SIZE(4, 2);
-    f_leg->sprite->cfg = TILE(3, 449);
     f_frame = 0;
-
-    b_leg = alloc_mob();
-    b_leg->sprite->x = x + 48;
-    b_leg->sprite->y = y + 48;
-    b_leg->sprite->size = SPRITE_SIZE(4, 2);
-    b_leg->sprite->cfg = TILE(3, 449) | BIT(11);
     b_frame = 3;
 
     callback(&animate_mantis, 0, 0);
@@ -534,6 +520,7 @@ static void show_mantis(u16 i) {
 
 void display_mantis(void) {
     update_palette(mantis_body_palette, 48, ARRAY_SIZE(mantis_body_palette));
+
     update_tiles(mantis_body_tiles, 357, ARRAY_SIZE(mantis_body_tiles));
     update_tiles(mantis_claw_tiles, 385, ARRAY_SIZE(mantis_claw_tiles));
     update_tiles(mantis_leg_tiles, 449, ARRAY_SIZE(mantis_leg_tiles));
@@ -541,5 +528,5 @@ void display_mantis(void) {
     display_desert(&prepare_mantis_level, 1);
     lock_screen(1);
 
-    schedule(&show_mantis, 0);
+    schedule(&setup_mantis, 0);
 }
