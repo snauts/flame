@@ -525,9 +525,16 @@ static void place_mantis(u16 x, u16 y, u16 flip) {
     }
 }
 
-static void flip_mantis(u16 flip) {
-    place_mantis(248, 272, flip);
-    callback(&flip_mantis, 50, !flip);
+static void walk_mantis(Object *obj) {
+    place_mantis(obj->x, obj->y, obj->direction > 0);
+    obj->x += obj->direction;
+
+    if (obj->x <= 128 && obj->direction < 0) {
+	obj->direction = 1;
+    }
+    if (obj->x >= 352 && obj->direction > 0) {
+	obj->direction = -1;
+    }
 }
 
 static void setup_mantis(u16 i) {
@@ -538,12 +545,14 @@ static void setup_mantis(u16 i) {
 	sprite->size = mantis_layout[i].size;
 	sprite->cfg = mantis_layout[i].tile;
     }
-    place_mantis(248, 272, 0);
-
     f_frame = 0;
     b_frame = 3;
 
-    schedule(&flip_mantis, 0);
+    mantis[0]->x = 248;
+    mantis[0]->y = 272;
+    mantis[0]->direction = -1;
+    mob_fn(mantis[0], &walk_mantis);
+
     schedule(&animate_mantis, 0);
 }
 
