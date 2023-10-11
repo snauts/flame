@@ -556,12 +556,16 @@ void fade_in(u16 fade) {
     if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 
+void fade_to_next_level(void) {
+    fade_and_restart(0);
+    next_level();
+}
+
 static byte started;
 static void wait_for_start_loop(void) {
     manage_timers();
     if (!started && BUTTON_START(read_gamepad())) {
-	fade_and_restart(0);
-	next_level();
+	fade_to_next_level();
 	started = 1;
     }
 }
@@ -688,8 +692,7 @@ static void soldier_complete(void) {
     }
     else {
 	is_dead = -1;
-	next_level();
-	fade_and_restart(0);
+	fade_to_next_level();
     }
     advance_obj(&soldier, SOLDIER_AHEAD, 6);
     soldier_animate(prev, 0, 0);

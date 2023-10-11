@@ -564,7 +564,7 @@ static void walk_mantis(Object *obj) {
 	if (flame_collision(box + i)) {
 	    mantis_is_agitated = 1;
 	    if (!decrement_progress_bar()) {
-		/* TODO: victory */
+		fade_to_next_level();
 	    }
 	}
 	if (i != 2 && soldier_collision(box + i)) {
