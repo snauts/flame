@@ -569,6 +569,26 @@ void fade_in(u16 fade) {
     if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 
+#define BAR_SIZE	24
+#define BAR_OFFSET	(16 + 40 - (BAR_SIZE + 2))
+
+static u16 progress;
+void display_progress_bar(void) {
+    poke_VRAM(0, TILE(2, WEAPON + 5));
+    fill_VRAM(2, TILE(2, WEAPON + 6), BAR_SIZE);
+    poke_VRAM((BAR_SIZE + 1) << 1, TILE(2, WEAPON + 15));
+    copy_to_VRAM(VRAM_PLANE_A + BAR_OFFSET, (BAR_SIZE + 2) << 1);
+    progress = BAR_SIZE << 3;
+}
+
+u16 decrement_progress_bar(void) {
+    if (progress > 0) progress--;
+    u16 tile = TILE(2, WEAPON + 14 - (progress & 7));
+    u16 offset = ((progress >> 2) & ~1) + 2;
+    UPDATE_VRAM_WORD(VRAM_PLANE_A + BAR_OFFSET + offset, tile);
+    return progress;
+}
+
 void wiggle_sfx(void);
 static void soldier_sinking(u16 cookie) {
     soldier.y++;

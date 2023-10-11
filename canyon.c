@@ -488,6 +488,7 @@ static void animate_mantis(u16 i) {
     set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * ((i >> 1) & 3)));
     set_sprite_tile(mantis[5]->sprite, TILE(3, 449 + 8 * i));
     set_sprite_tile(mantis[6]->sprite, TILE(3, 449 + 8 * (11 - i)));
+    decrement_progress_bar();
     callback(&animate_mantis, 4, ++i == 12 ? 0 : i);
 }
 
@@ -565,6 +566,7 @@ void display_mantis(void) {
     update_tiles(mantis_leg_tiles, 449, ARRAY_SIZE(mantis_leg_tiles));
 
     display_desert(&prepare_mantis_level, 1);
+    display_progress_bar();
     lock_screen(1);
 
     schedule(&setup_mantis, 0);
