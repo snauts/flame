@@ -183,3 +183,5 @@ const byte *find_height(u16 pos_x) {
 u16 get_snap(u16 pos_x, u16 prev, u16 next) {
     return get_snap_from_height(prev, next, find_height(pos_x));
 }
+
+#include "images/font.h"
