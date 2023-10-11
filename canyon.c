@@ -549,13 +549,11 @@ static void walk_mantis(Object *obj) {
     place_mantis(obj->x, obj->y, obj->direction > 0);
     obj->x += obj->direction;
 
-    if (obj->x <= 128 && obj->direction < 0) {
+    if (obj->x <= 144 && obj->direction < 0) {
 	obj->direction = 1;
-	obj->x = 96;
     }
-    if (obj->x >= 352 && obj->direction > 0) {
+    if (obj->x >= 336 && obj->direction > 0) {
 	obj->direction = -1;
-	obj->x = 384;
     }
 
     Rectangle box[ARRAY_SIZE(f_box)];
@@ -593,7 +591,7 @@ static void setup_mantis(u16 i) {
     }
 
     mantis[0]->x = ON_SCREEN + 320;
-    mantis[0]->y = 272;
+    mantis[0]->y = 272; // 152;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
 
