@@ -287,7 +287,7 @@ static const Function loader_table[] = {
 const Function *loader;
 
 void next_level(void) {
-    if (loader[1]) loader++;
+    loader = (loader[1] == NULL ? loader_table : loader + 1);
 }
 
 void restart_level(void) {
