@@ -164,6 +164,7 @@ void lock_screen(byte state);
 void fade_in(u16 fade);
 
 void display_title(void);
+void display_ending(void);
 void display_canyon(void);
 void display_rusty(void);
 void display_mantis(void);

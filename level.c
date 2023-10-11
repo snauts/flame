@@ -206,8 +206,8 @@ static void display_text(const char *text, u16 offset) {
     copy_to_VRAM(VRAM_PLANE_A + offset, 2 * strlen(text));
 }
 
-static void display_simple_screen(Function paint_screen) {
-    window = 0;
+static void display_simple_screen(Function paint_screen, u16 offset) {
+    window = offset;
     level_scroll();
     load_font_tiles();
     clear_screen_to_black();
@@ -220,5 +220,13 @@ static void flammenwerfer_text(void) {
 }
 
 void display_title(void) {
-    display_simple_screen(&flammenwerfer_text);
+    display_simple_screen(&flammenwerfer_text, 0);
+}
+
+static void end_game_text(void) {
+    display_text("THE END", 0x6a2);
+}
+
+void display_ending(void) {
+    display_simple_screen(&end_game_text, 4);
 }
