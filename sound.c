@@ -178,6 +178,11 @@ void music_johnny(void) {
     }
 }
 
+void music_none(void) {
+    music_toggle(1);
+    music = MUSIC_NONE;
+}
+
 void psg_noise(byte type, byte vol) {
     BYTE(PSG_ADDR) = 0xf0 | vol;
     BYTE(PSG_ADDR) = 0xe0 | type;

@@ -209,6 +209,7 @@ static void display_text(const char *text, u16 offset) {
 static void display_simple_screen(Function paint_screen, u16 offset) {
     window = offset;
     level_scroll();
+    music_none();
     load_font_tiles();
     reset_sprite_table();
     clear_screen_to_black();
