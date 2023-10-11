@@ -556,6 +556,8 @@ static void walk_mantis(Object *obj) {
 	obj->direction = -1;
     }
 
+    if (!obj->life) return; /* pepsi */
+
     Rectangle box[ARRAY_SIZE(f_box)];
     byte mantis_is_agitated = 0;
     get_mantis_hitbox(obj, box);
@@ -565,6 +567,7 @@ static void walk_mantis(Object *obj) {
 	    mantis_is_agitated = 1;
 	    if (!decrement_progress_bar()) {
 		fade_to_next_level();
+		obj->life = 0;
 	    }
 	}
 	if (i != 2 && soldier_collision(box + i)) {
@@ -592,6 +595,7 @@ static void setup_mantis(u16 i) {
 
     mantis[0]->x = ON_SCREEN + 320;
     mantis[0]->y = 272; // 152;
+    mantis[0]->life = 1;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
 
