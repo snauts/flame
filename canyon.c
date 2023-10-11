@@ -531,9 +531,11 @@ static void walk_mantis(Object *obj) {
 
     if (obj->x <= 128 && obj->direction < 0) {
 	obj->direction = 1;
+	obj->x = 96;
     }
     if (obj->x >= 352 && obj->direction > 0) {
 	obj->direction = -1;
+	obj->x = 384;
     }
 }
 
