@@ -785,6 +785,11 @@ static void setup_flame_sprites(void) {
     }
 }
 
+void reset_sprite_table(void) {
+    memset(sprite, 0, sizeof(sprite));
+    copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
+}
+
 void setup_soldier_sprites(void) {
     blood = get_sprite(BLOOD_SPRITE);
     memset(&soldier, 0, sizeof(soldier));

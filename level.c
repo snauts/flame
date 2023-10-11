@@ -210,6 +210,7 @@ static void display_simple_screen(Function paint_screen, u16 offset) {
     window = offset;
     level_scroll();
     load_font_tiles();
+    reset_sprite_table();
     clear_screen_to_black();
     paint_screen();
     wait_for_start();
