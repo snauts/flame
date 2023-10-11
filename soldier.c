@@ -567,9 +567,10 @@ static void wait_for_start_loop(void) {
 }
 
 void wait_for_start(void) {
-    switch_frame(&wait_for_start_loop);
-    reset_mobs();
     started = 0;
+    reset_mobs();
+    callback(&fade_in, 0, 6);
+    switch_frame(&wait_for_start_loop);
 }
 
 #define BAR_OFFSET (16 + 40 - (BAR_SIZE + 2))

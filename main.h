@@ -113,6 +113,7 @@ typedef struct Pos {
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
+u16 strlen(const char *str);
 short clamp(short value, short max);
 void memset(void *ptr, byte c, int amount);
 void memcpy(void *dst, const void *src, int amount);
@@ -161,6 +162,7 @@ Sprite *get_sprite(u16 offset);
 void lock_screen(byte state);
 void fade_in(u16 fade);
 
+void display_title(void);
 void display_canyon(void);
 void display_rusty(void);
 void display_mantis(void);

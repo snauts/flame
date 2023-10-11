@@ -185,3 +185,40 @@ u16 get_snap(u16 pos_x, u16 prev, u16 next) {
 }
 
 #include "images/font.h"
+
+static void load_font_tiles(void) {
+    update_palette(font_palette, 0, ARRAY_SIZE(font_palette));
+    update_tiles(font_tiles, 1, ARRAY_SIZE(font_tiles));
+}
+
+static void clear_screen_to_black(void) {
+    clear_DMA_buffer(0, 0x1000);
+    copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
+    copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
+}
+
+static void display_text(const char *text, u16 offset) {
+    u16 i = 0;
+    while (text[i] != 0) {
+	poke_VRAM(i << 1, text[i] - 'A' + 1);
+	i++;
+    }
+    copy_to_VRAM(VRAM_PLANE_A + offset, 2 * strlen(text));
+}
+
+static void display_simple_screen(Function paint_screen) {
+    window = 0;
+    level_scroll();
+    load_font_tiles();
+    clear_screen_to_black();
+    paint_screen();
+    wait_for_start();
+}
+
+static void flammenwerfer_text(void) {
+    display_text("FLAMMENWERFER", 0x61c);
+}
+
+void display_title(void) {
+    display_simple_screen(&flammenwerfer_text);
+}

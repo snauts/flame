@@ -6,6 +6,12 @@ static const byte z80[] = {
 #include "z80.hex"
 };
 
+u16 strlen(const char *str) {
+    u16 len = 0;
+    while (str[len] != 0) { len++; }
+    return len;
+}
+
 short clamp(short value, short max) {
     if (value > max) {
 	return max;
@@ -271,6 +277,7 @@ void memset(void *ptr, byte c, int amount) {
 }
 
 static const Function loader_table[] = {
+    &display_title,
     &display_canyon,
     &display_rusty,
     &display_mantis,
