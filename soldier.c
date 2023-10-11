@@ -556,8 +556,7 @@ void fade_in(u16 fade) {
     if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 
-#define BAR_SIZE	24
-#define BAR_OFFSET	(16 + 40 - (BAR_SIZE + 2))
+#define BAR_OFFSET (16 + 40 - (BAR_SIZE + 2))
 
 static u16 progress;
 void display_progress_bar(void) {

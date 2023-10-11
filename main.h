@@ -27,6 +27,7 @@
 #define MAX_MOBS	16
 #define MAX_POSITION	512
 #define SOLDIER_BASE	5
+#define BAR_SIZE	24
 
 #define GAMEPAD_A_CTRL	0xA10009
 #define GAMEPAD_A_DATA	0xA10003
