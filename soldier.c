@@ -556,6 +556,22 @@ void fade_in(u16 fade) {
     if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 
+static byte started;
+static void wait_for_start_loop(void) {
+    manage_timers();
+    if (!started && BUTTON_START(read_gamepad())) {
+	fade_and_restart(0);
+	next_level();
+	started = 1;
+    }
+}
+
+void wait_for_start(void) {
+    switch_frame(&wait_for_start_loop);
+    reset_mobs();
+    started = 0;
+}
+
 #define BAR_OFFSET (16 + 40 - (BAR_SIZE + 2))
 
 static u16 progress;

@@ -127,6 +127,7 @@ u16 dim_color(u16 color, u16 dim);
 void upload_palette(u16 dim);
 void wait_for_interrupt(void);
 void wait_vblank_done(void);
+void wait_for_start(void);
 void *buffer_ptr(u16 addr);
 void *malloc(u16 amount);
 void update_game(void);
