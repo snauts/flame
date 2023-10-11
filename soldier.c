@@ -21,7 +21,6 @@
 #define SOLDIER_AHEAD	28
 
 #define FLAME_OFFSET	8
-#define SOLDIER_BASE	5
 #define BLOOD_SPRITE	3
 
 static Object soldier;
@@ -698,7 +697,7 @@ void level_done(u16 x) {
 }
 
 void advance_sprites(void) {
-    next_sprite = 4; /* soldier */
+    next_sprite = SOLDIER_BASE - 1; /* soldier */
 
     switch (is_dead) {
     case 0:

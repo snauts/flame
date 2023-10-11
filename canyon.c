@@ -545,6 +545,7 @@ static void get_mantis_hitbox(Object *obj, Rectangle *box) {
 }
 
 static void walk_mantis(Object *obj) {
+    Sprite *soldier = get_sprite(SOLDIER_BASE);
     place_mantis(obj->x, obj->y, obj->direction > 0);
     obj->x += obj->direction;
 
@@ -567,8 +568,7 @@ static void walk_mantis(Object *obj) {
 	    }
 	}
 	if (i != 2 && soldier_collision(box + i)) {
-	    Sprite *sprite = get_sprite(5);
-	    bite_soldier(sprite->x + 8, sprite->y);
+	    bite_soldier(soldier->x + 8, soldier->y);
 	}
     }
 }
