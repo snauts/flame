@@ -78,7 +78,7 @@ typedef struct Trigger {
 } Trigger;
 
 typedef struct Rectangle {
-    u16 x1, y1, x2, y2;
+    short x1, y1, x2, y2;
 } Rectangle;
 
 typedef struct Pos {

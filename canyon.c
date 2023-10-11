@@ -488,7 +488,6 @@ static void animate_mantis(u16 i) {
     set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * ((i >> 1) & 3)));
     set_sprite_tile(mantis[5]->sprite, TILE(3, 449 + 8 * i));
     set_sprite_tile(mantis[6]->sprite, TILE(3, 449 + 8 * (11 - i)));
-    decrement_progress_bar();
     callback(&animate_mantis, 4, ++i == 12 ? 0 : i);
 }
 
@@ -523,6 +522,28 @@ static void place_mantis(u16 x, u16 y, u16 flip) {
     }
 }
 
+const Rectangle f_box[] = {
+    { x1:  8, y1:  8, x2: 16, y2: 20 },
+    { x1: -4, y1: 20, x2: 16, y2: 48 },
+    { x1: 32, y1: 40, x2: 72, y2: 64 },
+};
+
+const Rectangle b_box[] = {
+    { x1: 80, y1:  8, x2: 88, y2: 20 },
+    { x1: 80, y1: 20, x2:100, y2: 48 },
+    { x1: 24, y1: 40, x2: 64, y2: 64 },
+};
+
+static void get_mantis_hitbox(Object *obj, Rectangle *box) {
+    const Rectangle *box_offset = obj->direction > 0 ? b_box : f_box;
+    for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
+	box[i].x1 = obj->x + box_offset[i].x1;
+	box[i].y1 = obj->y + box_offset[i].y1;
+	box[i].x2 = obj->x + box_offset[i].x2;
+	box[i].y2 = obj->y + box_offset[i].y2;
+    }
+}
+
 static void walk_mantis(Object *obj) {
     place_mantis(obj->x, obj->y, obj->direction > 0);
     obj->x += obj->direction;
@@ -535,6 +556,21 @@ static void walk_mantis(Object *obj) {
 	obj->direction = -1;
 	obj->x = 384;
     }
+
+    Rectangle box[ARRAY_SIZE(f_box)];
+    get_mantis_hitbox(obj, box);
+
+    for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
+	if (flame_collision(box + i)) {
+	    if (!decrement_progress_bar()) {
+		/* TODO: victory */
+	    }
+	}
+	if (i != 2 && soldier_collision(box + i)) {
+	    Sprite *sprite = get_sprite(5);
+	    bite_soldier(sprite->x + 8, sprite->y);
+	}
+    }
 }
 
 static void setup_mantis(u16 i) {
@@ -546,7 +582,7 @@ static void setup_mantis(u16 i) {
 	sprite->cfg = mantis_layout[i].tile;
     }
 
-    mantis[0]->x = 248;
+    mantis[0]->x = ON_SCREEN + 320;
     mantis[0]->y = 272;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
