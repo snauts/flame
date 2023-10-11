@@ -604,6 +604,7 @@ static void setup_mantis(u16 i) {
 
 #include "images/mantis_body.h"
 #include "images/mantis_claw.h"
+#include "images/mantis_wing.h"
 #include "images/mantis_leg.h"
 
 void display_mantis(void) {
@@ -612,6 +613,7 @@ void display_mantis(void) {
     update_tiles(mantis_body_tiles, 357, ARRAY_SIZE(mantis_body_tiles));
     update_tiles(mantis_claw_tiles, 385, ARRAY_SIZE(mantis_claw_tiles));
     update_tiles(mantis_leg_tiles, 449, ARRAY_SIZE(mantis_leg_tiles));
+    update_tiles(mantis_wing_tiles, 545, ARRAY_SIZE(mantis_wing_tiles));
 
     display_desert(&prepare_mantis_level, 1);
     display_progress_bar();
