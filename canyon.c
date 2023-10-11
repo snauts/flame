@@ -464,7 +464,6 @@ void display_rusty(void) {
 
 #define MANTIS_PARTS 7
 static Object **mantis;
-char f_frame, b_frame;
 
 typedef struct Mantis {
     char x, y, size;
@@ -487,11 +486,9 @@ static void set_sprite_tile(Sprite *sprite, u16 tile) {
 
 static void animate_mantis(u16 i) {
     set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * ((i >> 1) & 3)));
-    set_sprite_tile(mantis[5]->sprite, TILE(3, 449 + 8 * f_frame));
-    set_sprite_tile(mantis[6]->sprite, TILE(3, 449 + 8 * b_frame));
-    if (f_frame++ == 11) f_frame = 0;
-    if (b_frame-- ==  0) b_frame = 11;
-    callback(&animate_mantis, 4, i + 1);
+    set_sprite_tile(mantis[5]->sprite, TILE(3, 449 + 8 * i));
+    set_sprite_tile(mantis[6]->sprite, TILE(3, 449 + 8 * (11 - i)));
+    callback(&animate_mantis, 4, ++i == 12 ? 0 : i);
 }
 
 static u16 is_mantis_neck(u16 i) {
@@ -547,8 +544,6 @@ static void setup_mantis(u16 i) {
 	sprite->size = mantis_layout[i].size;
 	sprite->cfg = mantis_layout[i].tile;
     }
-    f_frame = 0;
-    b_frame = 3;
 
     mantis[0]->x = 248;
     mantis[0]->y = 272;
