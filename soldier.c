@@ -213,18 +213,6 @@ const byte decople_table[FLAME_LIFE];
 
 #define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
 
-static short clamp(short value, short max) {
-    if (value > max) {
-	return max;
-    }
-    else if (value < -max) {
-	return -max;
-    }
-    else {
-	return value;
-    }
-}
-
 static void update_flame_sprite(Object *f) {
     Pos *p = &CONTAINER_OF(f, Flame, obj)->emit;
     byte decople = decople_table[f->life];

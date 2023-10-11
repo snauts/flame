@@ -559,16 +559,26 @@ static void walk_mantis(Object *obj) {
     }
 
     Rectangle box[ARRAY_SIZE(f_box)];
+    byte mantis_is_agitated = 0;
     get_mantis_hitbox(obj, box);
 
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	if (flame_collision(box + i)) {
+	    mantis_is_agitated = 1;
 	    if (!decrement_progress_bar()) {
 		/* TODO: victory */
 	    }
 	}
 	if (i != 2 && soldier_collision(box + i)) {
 	    bite_soldier(soldier->x + 8, soldier->y);
+	}
+    }
+
+    if (mantis_is_agitated) {
+	short side = clamp(obj->sprite->x - soldier->x, 1);
+	if (side == obj->direction) {
+	    obj->direction = -obj->direction;
+	    obj->x -= 40 * obj->direction;
 	}
     }
 }

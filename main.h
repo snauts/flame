@@ -112,6 +112,7 @@ typedef struct Pos {
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
+short clamp(short value, short max);
 void memset(void *ptr, byte c, int amount);
 void memcpy(void *dst, const void *src, int amount);
 void update_tiles(const byte *buf, u16 offset, u16 count);

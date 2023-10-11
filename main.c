@@ -6,6 +6,18 @@ static const byte z80[] = {
 #include "z80.hex"
 };
 
+short clamp(short value, short max) {
+    if (value > max) {
+	return max;
+    }
+    else if (value < -max) {
+	return -max;
+    }
+    else {
+	return value;
+    }
+}
+
 static void addr_VDP(u32 flags, u16 addr) {
     LONG(VDP_CTRL) = VDP_CTRL_VALUE(flags, addr);
 }
