@@ -544,7 +544,7 @@ static void animate_wing(Object *obj) {
 	u16 flip = obj->frame & 1;
 	u16 tile = TILE(3, 545 + 16 * flip);
 	if (flip) {
-	    obj->sprite->x += 8;
+	    obj->sprite->x -= 8 * mantis[0]->direction;
 	    obj->sprite->y += 1;
 	}
 	set_sprite_tile(obj->sprite, tile);
