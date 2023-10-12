@@ -464,7 +464,7 @@ void display_rusty(void) {
     display_desert(&prepare_rusty_level, 0);
 }
 
-#define MANTIS_PARTS 7
+#define MANTIS_PARTS 8
 static Object **mantis;
 
 typedef struct Mantis {
@@ -480,6 +480,7 @@ const Mantis mantis_layout[] = {
     { x:-16, y: 16, size: SPRITE_SIZE(4, 4), tile: TILE(3, 385) },
     { x: 16, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 449) },
     { x: 48, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 473) | BIT(11) },
+    { x: 25, y:  1, size: SPRITE_SIZE(4, 4), tile: TILE(3, 545) },
 };
 
 static void set_sprite_tile(Sprite *sprite, u16 tile) {
