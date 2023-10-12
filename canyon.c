@@ -109,7 +109,7 @@ static u16 should_hopper_burn(Sprite *sprite) {
     r.y1 = sprite->y + 4;
     r.x2 = sprite->x + 12;
     r.y2 = sprite->y + 12;
-    return flame_collision(&r);
+    return flame_collision(&r) != NULL;
 }
 
 static u16 should_hopper_bite(Sprite *sprite, char dir) {
@@ -648,7 +648,8 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
     get_mantis_hitbox(obj, box);
 
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
-	if (flame_collision(box + i)) {
+	Object *flame = flame_collision(box + i);
+	if (flame != NULL) {
 	    MANTIS_HP = decrement_progress_bar();
 	    if (!MANTIS_HP) fade_to_next_level();
 	    FLICKERING = (FLICKERING + 1) & 1;

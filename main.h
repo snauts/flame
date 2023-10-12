@@ -162,7 +162,7 @@ void setup_soldier_sprites(void);
 byte update_next_sprite(byte new_value);
 u16 advance_obj(Object *obj, u16 offset, u16 gravity);
 u16 soldier_collision(Rectangle *r);
-u16 flame_collision(Rectangle *r);
+Object *flame_collision(Rectangle *r);
 void display_progress_bar(void);
 u16 decrement_progress_bar(void);
 void bite_soldier(u16 x, u16 y);

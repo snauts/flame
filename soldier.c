@@ -384,7 +384,7 @@ static Rectangle flame_rectangle(Rectangle *r, Object *f) {
     r->y2 = r->y1 + 4;
 }
 
-u16 flame_collision(Rectangle *r) {
+Object *flame_collision(Rectangle *r) {
     Rectangle f_single;
     if (intersect(r, &f_rect)) {
 	for (byte i = available_flames; i < FLAME_COUNT; i++) {
@@ -393,11 +393,11 @@ u16 flame_collision(Rectangle *r) {
 	    flame_rectangle(&f_single, f);
 	    if (intersect(r, &f_single)) {
 		remove_flame(f);
-		return 1;
+		return f;
 	    }
 	}
     }
-    return 0;
+    return NULL;
 }
 
 u16 soldier_collision(Rectangle *r) {
