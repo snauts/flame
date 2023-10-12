@@ -482,6 +482,11 @@ typedef struct Mantis {
 #define MANTIS_WALK	mantis[1]->velocity
 #define VERTICAL	mantis[1]->direction
 
+#define MANTIS_MIN_X	144
+#define MANTIS_MAX_X	336
+#define MANTIS_MIN_Y	152
+#define MANTIS_MAX_Y	272
+
 const Mantis mantis_layout[] = {
     { x:  0, y:  0, size: SPRITE_SIZE(4, 2), tile: TILE(3, 357) },
     { x:  8, y: 16, size: SPRITE_SIZE(2, 2), tile: TILE(3, 365) },
@@ -524,6 +529,10 @@ static void animate_legs(void) {
     set_leg_sprite(mantis[6]);
 }
 
+static void mantis_start_flying(void) {
+    if (VERTICAL == 0) VERTICAL = mantis[0]->y >= MANTIS_MAX_Y ? -1 : 1;
+}
+
 static void animate_wing(Object *obj) {
     if (!mantis_2nd_stage()) {
 	obj->sprite->x = obj->sprite->y = 0;
@@ -542,12 +551,12 @@ static void animate_wing(Object *obj) {
 	if (obj->life-- == 0) {
 	    obj->life = obj->frame;
 	    if (obj->frame < 2) {
-		if (VERTICAL == 0) {
-		    VERTICAL = mantis[0]->y == 272 ? -1 : 1;
-		}
-		obj->frame = 3;
+		mantis_start_flying();
+		obj->frame = 2;
 	    }
-	    obj->frame--;
+	    else {
+		obj->frame--;
+	    }
 	}
     }
 }
@@ -609,41 +618,32 @@ static void mantis_flicker_color(u16 upd) {
     update_color(54 + FLICKERING, mantis_body_palette[FLICKERING + 6] + upd);
 }
 
-static void adjust_mantis_height(Object *obj) {
-    obj->y += VERTICAL;
-    if (obj->y <= 152 && VERTICAL < 0) {
-	MANTIS_WALK = 1;
-	VERTICAL = 0;
-	obj->y = 152;
+static void adjust_manits_position(Object *obj) {
+    if (MANTIS_WALK) obj->x += obj->direction;
+
+    if (obj->x <= MANTIS_MIN_X && obj->direction < 0) {
+	obj->direction = 1;
     }
-    if (obj->y >= 272 && VERTICAL > 0) {
-	MANTIS_WALK = 1;
-	VERTICAL = 0;
-	obj->y = 272;
+    if (obj->x >= MANTIS_MAX_X && obj->direction > 0) {
+	obj->direction = -1;
     }
 }
 
-static void walk_mantis(Object *obj) {
-    Sprite *soldier = get_sprite(SOLDIER_BASE);
-    place_mantis(obj->x, obj->y, obj->direction > 0);
-
-    if (!MANTIS_HP) return; /* pepsi */
-
-    animate_claw();
-    animate_legs();
-    animate_wing(mantis[7]);
-
-    if (MANTIS_WALK) obj->x += obj->direction;
-
-    if (obj->x <= 144 && obj->direction < 0) {
-	obj->direction = 1;
+static void adjust_mantis_height(Object *obj) {
+    obj->y += VERTICAL;
+    if (obj->y <= MANTIS_MIN_Y && VERTICAL < 0) {
+	obj->y = MANTIS_MIN_Y;
+	MANTIS_WALK = 1;
+	VERTICAL = 0;
     }
-    if (obj->x >= 336 && obj->direction > 0) {
-	obj->direction = -1;
+    if (obj->y >= MANTIS_MAX_Y && VERTICAL > 0) {
+	obj->y = MANTIS_MAX_Y;
+	MANTIS_WALK = 1;
+	VERTICAL = 0;
     }
+}
 
-    adjust_mantis_height(obj);
-
+static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
     Rectangle box[ARRAY_SIZE(f_box)];
     get_mantis_hitbox(obj, box);
 
@@ -661,7 +661,9 @@ static void walk_mantis(Object *obj) {
 	    bite_soldier(soldier->x + 8, soldier->y);
 	}
     }
+}
 
+static void mantis_gets_angry(Object *obj, Sprite *soldier) {
     if (IS_AGITATED && MANTIS_WALK) {
 	short side = clamp(obj->sprite->x - soldier->x, 1);
 	if (abs(obj->sprite->x - soldier->x) < 4 && mantis_2nd_stage()) {
@@ -677,6 +679,23 @@ static void walk_mantis(Object *obj) {
     }
 }
 
+static void walk_mantis(Object *obj) {
+    Sprite *soldier = get_sprite(SOLDIER_BASE);
+    place_mantis(obj->x, obj->y, obj->direction > 0);
+
+    if (!MANTIS_HP) return; /* pepsi */
+
+    animate_claw();
+    animate_legs();
+    animate_wing(mantis[7]);
+
+    adjust_manits_position(obj);
+    adjust_mantis_height(obj);
+
+    mantis_check_hitbox(obj, soldier);
+    mantis_gets_angry(obj, soldier);
+}
+
 static void setup_mantis(u16 i) {
     mantis = malloc(MANTIS_PARTS * sizeof(Object*));
     for (u16 i = 0; i < MANTIS_PARTS; i++) {
@@ -690,7 +709,7 @@ static void setup_mantis(u16 i) {
     VERTICAL = 0;
     MANTIS_WALK = 1;
     mantis[0]->x = ON_SCREEN + 320;
-    mantis[0]->y = 272; // 152;
+    mantis[0]->y = MANTIS_MAX_Y;
     mantis[0]->life = BAR_HEALTH;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
