@@ -476,8 +476,11 @@ static byte pause;
 static u16 last_state;
 static u16 button_state;
 
+#define JUST_PRESS(button) \
+    (BUTTON_##button(button_state) && BUTTON_##button(last_state) == 0)
+
 static u16 pause_toggle(void) {
-    return BUTTON_START(last_state) == 0 && BUTTON_START(button_state);
+    return JUST_PRESS(START);
 }
 
 static void game_paused(void) {
@@ -521,9 +524,8 @@ static void soldier_march(void) {
 	cooldown = 8;
     }
 
-    u16 jump = BUTTON_C(button_state) && BUTTON_C(last_state) == 0;
     button_down = BUTTON_DOWN(button_state);
-    soldier_jump(jump, button_down);
+    soldier_jump(JUST_PRESS(C), button_down);
     soldier_animate(prev, aim_up, fire);
     soldier_sprite_update();
 }
