@@ -88,7 +88,7 @@ typedef struct Hopper {
     byte persistent;
 } Hopper;
 
-Hopper h_obj[MAX_MOBS];
+Hopper *h_obj;
 
 #define HOPPER(obj) ((Hopper *) (obj->private))
 
@@ -452,6 +452,8 @@ void display_desert(Function prepare_level, byte more_bones) {
 
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);
+
+    h_obj = malloc(sizeof(Hopper) * MAX_MOBS);
 }
 
 void display_canyon(void) {
