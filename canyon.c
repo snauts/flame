@@ -647,7 +647,6 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
     Rectangle box[ARRAY_SIZE(f_box)];
     get_mantis_hitbox(obj, box);
 
-    mantis_flicker_color(0);
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	if (flame_collision(box + i)) {
 	    MANTIS_HP = decrement_progress_bar();
@@ -682,6 +681,7 @@ static void mantis_gets_angry(Object *obj, Sprite *soldier) {
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
     place_mantis(obj->x, obj->y, obj->direction > 0);
+    mantis_flicker_color(0);
 
     if (!MANTIS_HP) return; /* pepsi */
 
