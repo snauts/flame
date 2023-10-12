@@ -400,11 +400,6 @@ u16 soldier_collision(Rectangle *r) {
     return intersect(r, &s_rect);
 }
 
-static void update_color(u16 idx, u16 color) {
-    UPDATE_CRAM_WORD(2 * idx, color);
-    update_palette(&color, idx, 1);
-}
-
 static void flicker_color(u16 index, u16 deviate) {
     u16 color = soldier_palette[index] + deviate;
     update_color(32 + index, color);

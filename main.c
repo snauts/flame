@@ -142,11 +142,20 @@ u16 dim_color(u16 color, u16 dim) {
 }
 
 /* dimming is expensive, use with care */
+static byte total_dimming;
 void upload_palette(u16 dim) {
+    total_dimming = dim;
     for (u16 i = 0; i < 64; i++) {
 	palette[i] = dim_color(color_base[i], dim);
     }
     copy_to_VRAM_ptr(0, 128, palette);
+}
+
+void update_color(u16 idx, u16 color) {
+    if (total_dimming == 0) {
+	UPDATE_CRAM_WORD(2 * idx, color);
+	update_palette(&color, idx, 1);
+    }
 }
 
 typedef struct DMA_Chunk {
