@@ -5,6 +5,11 @@
 #include "images/cliffs.h"
 #include "images/hopper.h"
 
+#include "images/mantis_body.h"
+#include "images/mantis_claw.h"
+#include "images/mantis_wing.h"
+#include "images/mantis_leg.h"
+
 void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;
     for (dx = 0; dx < w; dx++) {
@@ -569,7 +574,12 @@ static void get_mantis_hitbox(Object *obj, Rectangle *box) {
     }
 }
 
-#define IS_AGITATED mantis[1]->life
+#define IS_AGITATED	mantis[1]->life
+#define FLICKERING	mantis[1]->frame
+
+static void mantis_flicker_color(u16 upd) {
+    update_color(54 + FLICKERING, mantis_body_palette[FLICKERING + 6] + upd);
+}
 
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
@@ -593,11 +603,14 @@ static void walk_mantis(Object *obj) {
     Rectangle box[ARRAY_SIZE(f_box)];
     get_mantis_hitbox(obj, box);
 
+    mantis_flicker_color(0);
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	if (flame_collision(box + i)) {
 	    IS_AGITATED = 1;
 	    obj->life = decrement_progress_bar();
 	    if (!obj->life) fade_to_next_level();
+	    FLICKERING = (FLICKERING + 1) & 1;
+	    mantis_flicker_color(0x222);
 	}
 	if (i != 2 && soldier_collision(box + i)) {
 	    bite_soldier(soldier->x + 8, soldier->y);
@@ -630,11 +643,6 @@ static void setup_mantis(u16 i) {
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
 }
-
-#include "images/mantis_body.h"
-#include "images/mantis_claw.h"
-#include "images/mantis_wing.h"
-#include "images/mantis_leg.h"
 
 void display_mantis(void) {
     update_palette(mantis_body_palette, 48, ARRAY_SIZE(mantis_body_palette));
