@@ -105,6 +105,9 @@
    (place 1 0 pipe (crust :x2 4))
    (place 5 0 pipe (crust))))
 
+(defun inv-double-platform ()
+  (flip (double-platform :h 1 :n 1)))
+
 (defun sandwich-platform (&key (h 0) (n 0))
   (box-pipe
    (place 0 0 (platform :h (+ h n 4)) (platform :h h))
@@ -429,7 +432,7 @@
 	(aloe)
 	(ground)
 	(cacti)
-	(flip (double-platform :h 1 :n 1))
+	(inject (inv-double-platform) "emit_hopper_squad" 4)
 	(hole-with-platform :h 10)
 	(trigger "emit_sky_hoppers")
 	(double-platform :h 1 :n 1)
