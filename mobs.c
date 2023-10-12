@@ -10,8 +10,6 @@ typedef struct Mob {
     void (*fn)(Object *);
 } Mob;
 
-extern byte next_sprite;
-
 static char available_mobs;
 static Mob mobs[MAX_MOBS];
 static char free_mobs[MAX_MOBS];
@@ -91,8 +89,7 @@ void manage_mobs(void) {
     for (char i = available_mobs; i < MAX_MOBS; i++) {
 	u16 index = free_mobs[i];
 	Mob *mob = mobs + index;
-	mob->obj.sprite->next = next_sprite;
-	next_sprite = index + MOB_OFFSET;
+	mob->obj.sprite->next = update_next_sprite(index + MOB_OFFSET);
     }
 }
 
