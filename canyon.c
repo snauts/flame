@@ -501,7 +501,7 @@ static void set_leg_sprite(Object *obj) {
 }
 
 static void animate_legs(void) {
-    if (++mantis[5]->life >= 5) {
+    if (++mantis[5]->life >= 5 && mantis[0]->direction != 0) {
 	mantis[5]->life = 0;
 	mantis[5]->frame = mantis[5]->frame == 11 ? 0 : mantis[5]->frame + 1;
 	mantis[6]->frame = mantis[6]->frame == 0 ? 11 : mantis[6]->frame - 1;
