@@ -476,6 +476,10 @@ typedef struct Mantis {
     u16 tile;
 } Mantis;
 
+#define MANTIS_HP	mantis[0]->life
+#define IS_AGITATED	mantis[1]->life
+#define FLICKERING	mantis[1]->frame
+
 const Mantis mantis_layout[] = {
     { x:  0, y:  0, size: SPRITE_SIZE(4, 2), tile: TILE(3, 357) },
     { x:  8, y: 16, size: SPRITE_SIZE(2, 2), tile: TILE(3, 365) },
@@ -486,6 +490,10 @@ const Mantis mantis_layout[] = {
     { x: 48, y: 48, size: SPRITE_SIZE(4, 2), tile: TILE(3, 473) | BIT(11) },
     { x: 25, y:  1, size: SPRITE_SIZE(4, 4), tile: TILE(3, 545) },
 };
+
+static u16 mantis_2nd_stage(void) {
+    return MANTIS_HP < BAR_HEALTH / 2;
+}
 
 static void set_sprite_tile(Sprite *sprite, u16 tile) {
     sprite->cfg = (sprite->cfg & ~0x7FF) | tile;
@@ -511,7 +519,7 @@ static void animate_legs(void) {
 }
 
 static void animate_wing(void) {
-    if (mantis[0]->life > BAR_HEALTH / 2) {
+    if (!mantis_2nd_stage()) {
 	mantis[7]->sprite->x = mantis[7]->sprite->y = 0;
     }
     else {
@@ -573,9 +581,6 @@ static void get_mantis_hitbox(Object *obj, Rectangle *box) {
     }
 }
 
-#define IS_AGITATED	mantis[1]->life
-#define FLICKERING	mantis[1]->frame
-
 static void mantis_flicker_color(u16 upd) {
     update_color(54 + FLICKERING, mantis_body_palette[FLICKERING + 6] + upd);
 }
@@ -584,7 +589,7 @@ static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
     place_mantis(obj->x, obj->y, obj->direction > 0);
 
-    if (!obj->life) return; /* pepsi */
+    if (!MANTIS_HP) return; /* pepsi */
 
     animate_claw();
     animate_legs();
@@ -606,8 +611,8 @@ static void walk_mantis(Object *obj) {
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	if (flame_collision(box + i)) {
 	    IS_AGITATED = 1;
-	    obj->life = decrement_progress_bar();
-	    if (!obj->life) fade_to_next_level();
+	    MANTIS_HP = decrement_progress_bar();
+	    if (!MANTIS_HP) fade_to_next_level();
 	    FLICKERING = (FLICKERING + 1) & 1;
 	    mantis_flicker_color(0x222);
 	    perish_sfx();
@@ -619,6 +624,9 @@ static void walk_mantis(Object *obj) {
 
     if (IS_AGITATED) {
 	short side = clamp(obj->sprite->x - soldier->x, 1);
+	if (obj->sprite->x == soldier->x && mantis_2nd_stage()) {
+	    obj->direction = 0;
+	}
 	if (side == obj->direction) {
 	    obj->direction = -obj->direction;
 	    obj->x -= 40 * obj->direction;
