@@ -662,10 +662,16 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
     }
 }
 
+static u16 mantis_vertical_attack(Object *obj, Sprite *soldier) {
+    return abs(obj->sprite->x - soldier->x) < 4
+	|| (obj->x >= (MANTIS_MAX_X - 1) && soldier->x > MANTIS_MAX_X)
+	|| (obj->x <= (MANTIS_MIN_X + 1) && soldier->x < MANTIS_MIN_X);
+}
+
 static void mantis_gets_angry(Object *obj, Sprite *soldier) {
     if (IS_AGITATED && MANTIS_WALK) {
 	short side = clamp(obj->sprite->x - soldier->x, 1);
-	if (abs(obj->sprite->x - soldier->x) < 4 && mantis_2nd_stage()) {
+	if (mantis_2nd_stage() && mantis_vertical_attack(obj, soldier)) {
 	    mantis[7]->frame = mantis[7]->life = 10;
 	    MANTIS_WALK = 0;
 	    IS_AGITATED = 0;
