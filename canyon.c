@@ -506,6 +506,16 @@ static void animate_legs(void) {
     set_leg_sprite(mantis[6]);
 }
 
+static void animate_wing(void) {
+    if (mantis[0]->life > BAR_HEALTH / 2) {
+	mantis[7]->sprite->x = mantis[7]->sprite->y = 0;
+    }
+    else {
+	u16 tile = TILE(3, 545 + 16 * ((mantis[7]->life++ >> 2) & 1));
+	set_sprite_tile(mantis[7]->sprite, tile);
+    }
+}
+
 static u16 is_mantis_neck(u16 i) {
     return mantis_layout[i].size == SPRITE_SIZE(2, 2);
 }
@@ -567,6 +577,7 @@ static void walk_mantis(Object *obj) {
 
     animate_claw();
     animate_legs();
+    animate_wing();
 
     obj->x += obj->direction;
 
@@ -613,7 +624,7 @@ static void setup_mantis(u16 i) {
 
     mantis[0]->x = ON_SCREEN + 320;
     mantis[0]->y = 272; // 152;
-    mantis[0]->life = 8 * BAR_SIZE;
+    mantis[0]->life = BAR_HEALTH;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
 }
