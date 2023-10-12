@@ -736,6 +736,7 @@ static void setup_mantis(u16 i) {
 	Sprite *sprite = mantis[i]->sprite;
 	sprite->size = mantis_layout[i].size;
 	sprite->cfg = mantis_layout[i].tile;
+	mantis[i]->frame = 0;
 	mantis[i]->life = 0;
     }
 
