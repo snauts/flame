@@ -648,19 +648,20 @@ static void burn_mantis(Object *obj) {
     burn->sprite->x = obj->sprite->x;
     burn->sprite->y = obj->sprite->y - 4;
     set_sprite_tile(burn->sprite, TILE(2, 289 + 4 * 12));
-    burn->sprite->cfg ^= BIT(11);
     burn->frame = 0;
 }
 
 static void mantis_burner(u16 i) {
-    if (burn->frame >= 4) {
+    if (burn->frame >= 9) {
 	burn->sprite->x = burn->sprite->y = 0;
     }
     else {
 	burn->frame++;
     }
-    set_sprite_tile(burn->sprite, TILE(2, 289 + 4 * (12 + burn->frame)));
-    schedule(&mantis_burner, 1);
+    u16 tile = TILE(2, 289 + 4 * (12 + (burn->frame >> 1)));
+    set_sprite_tile(burn->sprite, tile);
+    burn->sprite->cfg ^= BIT(11);
+    schedule(&mantis_burner, 2);
 }
 
 static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
