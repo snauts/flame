@@ -127,7 +127,6 @@ static u16 is_hopper_alive(Object *obj) {
 }
 
 static void hopper_die(Object *obj) {
-    void perish_sfx(void);
     obj->frame = 9;
     obj->life = 0;
     perish_sfx();
@@ -611,6 +610,7 @@ static void walk_mantis(Object *obj) {
 	    if (!obj->life) fade_to_next_level();
 	    FLICKERING = (FLICKERING + 1) & 1;
 	    mantis_flicker_color(0x222);
+	    perish_sfx();
 	}
 	if (i != 2 && soldier_collision(box + i)) {
 	    bite_soldier(soldier->x + 8, soldier->y);

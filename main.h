@@ -148,6 +148,7 @@ void z80_poke(u16 addr, byte data);
 void psg_noise(byte type, byte vol);
 void music_toggle(byte state);
 void music_none(void);
+void perish_sfx(void);
 
 u16 random(void);
 void set_seed(u16);
