@@ -200,7 +200,14 @@ static void clear_screen_to_black(void) {
 static void display_text(const char *text, u16 offset) {
     u16 i = 0;
     while (text[i] != 0) {
-	poke_VRAM(i << 1, text[i] - 'A' + 1);
+	u16 tile = 0;
+	if ('A' <= text[i] && text[i] <= 'Z') {
+	    tile = 1 + text[i] - 'A';
+	}
+	else if ('0' <= text[i] && text[i] <= '9') {
+	    tile = 1 + text[i] - '0' + 26;
+	}
+	poke_VRAM(i << 1, tile);
 	i++;
     }
     copy_to_VRAM(VRAM_PLANE_A + offset, 2 * strlen(text));
