@@ -22,6 +22,7 @@
 
 #define FLAME_OFFSET	8
 #define BLOOD_SPRITE	3
+#define FLAME_DECOPLE	24
 
 static Object soldier;
 static char is_dead;
@@ -213,21 +214,18 @@ extern const byte decople_table[FLAME_LIFE];
 
 static void update_flame_sprite(Object *f) {
     Pos *p = &CONTAINER_OF(f, Flame, obj)->emit;
-    byte decople = decople_table[f->life];
     u16 animation = f->life & ((FLAME_LIFE - 1) << 1);
     f->sprite->cfg = TILE(2, f->frame + animation);
 
-    f->sprite->x = soldier.sprite->x + (f->x >> 4)
-	+ clamp(p->x - soldier.sprite->x, decople >> 1);
-    f->sprite->y = soldier.sprite->y + (f->y >> 4)
-	+ clamp(p->y - soldier.sprite->y, decople);
+    f->sprite->x = SCREEN_X(soldier.x + (f->x >> 4));
+    f->sprite->y = (f->y >> 4);
+    if (f->life < FLAME_DECOPLE) {
+	f->sprite->y += soldier.sprite->y;
+    }
+    else if (f->life == FLAME_DECOPLE) {
+	f->y += (soldier.sprite->y << 4);
+    }
 
-    if (f->life > 48) {
-	p->y += clamp(soldier.sprite->y - p->y, 1);
-    }
-    else {
-	p->y = (7 * p->y + soldier.sprite->y) >> 3;
-    }
     if (f->sprite->x > SCR_WIDTH + ON_SCREEN) {
 	f->sprite->x = f->sprite->y = 1;
     }
@@ -237,13 +235,13 @@ static void emit_flame(u16 index, u16 aim_up) {
     Object *f = &flame[index].obj;
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 4 + 22 * soldier.direction;
+	offset_x = 20 + 22 * soldier.direction;
 	offset_y = 20;
 	f->velocity = 0;
 	f->frame = FLAME;
     }
     else {
-	offset_x = 4 + 16 * soldier.direction;
+	offset_x = 20 + 16 * soldier.direction;
 	offset_y = 3;
 	f->velocity = 16;
 	f->frame = FLAME_UP;
