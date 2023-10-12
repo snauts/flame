@@ -487,11 +487,23 @@ static void set_sprite_tile(Sprite *sprite, u16 tile) {
     sprite->cfg = (sprite->cfg & ~0x7FF) | tile;
 }
 
-static void animate_mantis(u16 i) {
-    set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * ((i >> 1) & 3)));
-    set_sprite_tile(mantis[5]->sprite, TILE(3, 449 + 8 * i));
-    set_sprite_tile(mantis[6]->sprite, TILE(3, 449 + 8 * (11 - i)));
-    callback(&animate_mantis, 4, ++i == 12 ? 0 : i);
+static void animate_claw(void) {
+    mantis[4]->frame = (mantis[4]->life++ >> 3) & 3;
+    set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * mantis[4]->frame));
+}
+
+static void set_leg_sprite(Object *obj) {
+    set_sprite_tile(obj->sprite, TILE(3, 449 + 8 * obj->frame));
+}
+
+static void animate_legs(void) {
+    if (++mantis[5]->life >= 5) {
+	mantis[5]->life = 0;
+	mantis[5]->frame = mantis[5]->frame == 11 ? 0 : mantis[5]->frame + 1;
+	mantis[6]->frame = mantis[6]->frame == 0 ? 11 : mantis[6]->frame - 1;
+    }
+    set_leg_sprite(mantis[5]);
+    set_leg_sprite(mantis[6]);
 }
 
 static u16 is_mantis_neck(u16 i) {
@@ -550,6 +562,12 @@ static void get_mantis_hitbox(Object *obj, Rectangle *box) {
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
     place_mantis(obj->x, obj->y, obj->direction > 0);
+
+    if (!obj->life) return; /* pepsi */
+
+    animate_claw();
+    animate_legs();
+
     obj->x += obj->direction;
 
     if (obj->x <= 144 && obj->direction < 0) {
@@ -558,8 +576,6 @@ static void walk_mantis(Object *obj) {
     if (obj->x >= 336 && obj->direction > 0) {
 	obj->direction = -1;
     }
-
-    if (!obj->life) return; /* pepsi */
 
     Rectangle box[ARRAY_SIZE(f_box)];
     byte mantis_is_agitated = 0;
@@ -594,6 +610,7 @@ static void setup_mantis(u16 i) {
 	Sprite *sprite = mantis[i]->sprite;
 	sprite->size = mantis_layout[i].size;
 	sprite->cfg = mantis_layout[i].tile;
+	mantis[i]->life = 0;
     }
 
     mantis[0]->x = ON_SCREEN + 320;
@@ -601,8 +618,6 @@ static void setup_mantis(u16 i) {
     mantis[0]->life = 1;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
-
-    schedule(&animate_mantis, 0);
 }
 
 #include "images/mantis_body.h"
