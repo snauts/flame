@@ -569,6 +569,8 @@ static void get_mantis_hitbox(Object *obj, Rectangle *box) {
     }
 }
 
+#define IS_AGITATED mantis[1]->life
+
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
     place_mantis(obj->x, obj->y, obj->direction > 0);
@@ -589,12 +591,11 @@ static void walk_mantis(Object *obj) {
     }
 
     Rectangle box[ARRAY_SIZE(f_box)];
-    byte mantis_is_agitated = 0;
     get_mantis_hitbox(obj, box);
 
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	if (flame_collision(box + i)) {
-	    mantis_is_agitated = 1;
+	    IS_AGITATED = 1;
 	    obj->life = decrement_progress_bar();
 	    if (!obj->life) fade_to_next_level();
 	}
@@ -603,11 +604,12 @@ static void walk_mantis(Object *obj) {
 	}
     }
 
-    if (mantis_is_agitated) {
+    if (IS_AGITATED) {
 	short side = clamp(obj->sprite->x - soldier->x, 1);
 	if (side == obj->direction) {
 	    obj->direction = -obj->direction;
 	    obj->x -= 40 * obj->direction;
+	    IS_AGITATED = 0;
 	}
     }
 }
