@@ -584,10 +584,8 @@ static void walk_mantis(Object *obj) {
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	if (flame_collision(box + i)) {
 	    mantis_is_agitated = 1;
-	    if (!decrement_progress_bar()) {
-		fade_to_next_level();
-		obj->life = 0;
-	    }
+	    obj->life = decrement_progress_bar();
+	    if (!obj->life) fade_to_next_level();
 	}
 	if (i != 2 && soldier_collision(box + i)) {
 	    bite_soldier(soldier->x + 8, soldier->y);
@@ -615,7 +613,7 @@ static void setup_mantis(u16 i) {
 
     mantis[0]->x = ON_SCREEN + 320;
     mantis[0]->y = 272; // 152;
-    mantis[0]->life = 1;
+    mantis[0]->life = 8 * BAR_SIZE;
     mantis[0]->direction = -1;
     mob_fn(mantis[0], &walk_mantis);
 }
