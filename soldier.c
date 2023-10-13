@@ -112,7 +112,7 @@ static void initiate_jump(u16 down, char velocity) {
     }
 }
 
-static void advance_y(Object *obj, char gravity) {
+void advance_y(Object *obj, char gravity) {
     obj->y -= obj->velocity;
     if (obj->gravity == 0) {
 	obj->gravity = gravity;

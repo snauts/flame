@@ -718,7 +718,7 @@ static void mantis_gets_angry(Object *obj, Sprite *soldier) {
 
 static void mantis_fall_down(Object *obj) {
     if (VERTICAL != 0) {
-	obj->y++;
+	advance_y(obj, 6);
 	if (obj->y >= MANTIS_MAX_Y) {
 	    VERTICAL = 0;
 	}
@@ -770,6 +770,8 @@ static void setup_mantis(u16 i) {
     mantis[0]->y = MANTIS_MAX_Y;
     mantis[0]->life = BAR_HEALTH;
     mantis[0]->direction = -1;
+    mantis[0]->velocity = 0;
+    mantis[0]->gravity = 0;
     mob_fn(mantis[0], &walk_mantis);
 }
 
