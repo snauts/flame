@@ -728,7 +728,7 @@ void level_done(u16 x) {
 }
 
 void set_sprite_tile(Sprite *sprite, u16 tile) {
-    sprite->cfg = (sprite->cfg & ~0x7FF) | tile;
+    sprite->cfg = (sprite->cfg & ~0x67FF) | tile;
 }
 
 void soldier_fist_pump() {
