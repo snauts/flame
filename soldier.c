@@ -201,6 +201,7 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire) {
 
 typedef struct Flame {
     Object obj;
+    byte off;
     Pos emit;
 } Flame;
 
@@ -224,8 +225,18 @@ static void update_flame_sprite(Object *f) {
     u16 dx = sx + clamp(this->emit.x - sx, decople >> 1);
     u16 dy = sy + clamp(this->emit.y - sy, decople);
 
-    f->sprite->x = (f->x >> 4) + dx;
+    f->sprite->x = (f->x >> 4);
     f->sprite->y = (f->y >> 4);
+
+    if (!this->off) {
+	if (f->direction != soldier.direction) {
+	    f->x += (dx << 4);
+	    this->off = 1;
+	}
+	else {
+	    f->sprite->x += dx;
+	}
+    }
 
     if (f->life < FLAME_DECOPLE) {
 	f->sprite->y += dy;
@@ -258,6 +269,8 @@ static void emit_flame(u16 index, u16 aim_up) {
     Pos *p = &flame[index].emit;
     p->x = soldier.sprite->x;
     p->y = soldier.sprite->y;
+    flame[index].off = 0;
+
     f->direction = soldier.direction;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
