@@ -230,19 +230,19 @@ static void update_flame_sprite(Object *f) {
 
     if (!this->off) {
 	if (f->direction != soldier.direction) {
-	    f->x += (dx << 4);
 	    this->off = 1;
+	    f->x += (dx << 4);
+	    if (f->life < FLAME_DECOPLE) f->y += (dy << 4);
 	}
 	else {
 	    f->sprite->x += dx;
+	    if (f->life < FLAME_DECOPLE) {
+		f->sprite->y += dy;
+	    }
+	    else if (f->life == FLAME_DECOPLE) {
+		f->y += (dy << 4);
+	    }
 	}
-    }
-
-    if (f->life < FLAME_DECOPLE) {
-	f->sprite->y += dy;
-    }
-    else if (f->life == FLAME_DECOPLE) {
-	f->y += (dy << 4);
     }
 
     if (f->sprite->x > SCR_WIDTH + ON_SCREEN) {
