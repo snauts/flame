@@ -221,14 +221,17 @@ static void update_flame_sprite(Object *f) {
     u16 sx = soldier.sprite->x;
     u16 sy = soldier.sprite->y;
 
-    f->sprite->x = SCREEN_X(soldier.x + (f->x >> 4));
+    u16 dx = sx + clamp(this->emit.x - sx, decople >> 1);
+    u16 dy = sy + clamp(this->emit.y - sy, decople);
+
+    f->sprite->x = (f->x >> 4) + dx;
     f->sprite->y = (f->y >> 4);
 
     if (f->life < FLAME_DECOPLE) {
-	f->sprite->y += sy + clamp(this->emit.y - sy, decople);
+	f->sprite->y += dy;
     }
     else if (f->life == FLAME_DECOPLE) {
-	f->y += (sy << 4);
+	f->y += (dy << 4);
     }
 
     if (f->sprite->x > SCR_WIDTH + ON_SCREEN) {
@@ -240,13 +243,13 @@ static void emit_flame(u16 index, u16 aim_up) {
     Object *f = &flame[index].obj;
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 20 + 22 * soldier.direction;
+	offset_x = 4 + 22 * soldier.direction;
 	offset_y = 20;
 	f->velocity = 0;
 	f->frame = FLAME;
     }
     else {
-	offset_x = 20 + 16 * soldier.direction;
+	offset_x = 4 + 16 * soldier.direction;
 	offset_y = 3;
 	f->velocity = 16;
 	f->frame = FLAME_UP;
