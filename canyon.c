@@ -503,10 +503,6 @@ static u16 mantis_2nd_stage(void) {
     return MANTIS_HP < BAR_HEALTH / 2;
 }
 
-static void set_sprite_tile(Sprite *sprite, u16 tile) {
-    sprite->cfg = (sprite->cfg & ~0x7FF) | tile;
-}
-
 static void animate_claw(void) {
     mantis[4]->frame = (mantis[4]->life++ >> 3) & 3;
     set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * mantis[4]->frame));
@@ -672,14 +668,17 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
 	Object *flame = flame_collision(box + i);
 	if (flame != NULL) {
 	    MANTIS_HP = decrement_progress_bar();
-	    if (!MANTIS_HP) fade_to_next_level();
+	    if (!MANTIS_HP) {
+		soldier_fist_pump();
+		fade_to_next_level();
+	    }
 	    FLICKERING = (FLICKERING + 1) & 1;
 	    mantis_flicker_color(0x222);
 	    burn_mantis(flame);
 	    IS_AGITATED = 1;
 	    perish_sfx();
 	}
-	if (i != 2 && soldier_collision(box + i)) {
+	if (i != 2 && soldier_collision(box + i) && MANTIS_HP) {
 	    bite_soldier(soldier->x + 8, soldier->y);
 	}
     }

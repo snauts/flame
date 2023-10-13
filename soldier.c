@@ -705,6 +705,12 @@ static void soldier_poison(void) {
     }
 }
 
+static void soldier_update(u16 prev, u16 aim_up) {
+    advance_obj(&soldier, SOLDIER_AHEAD, 6);
+    soldier_animate(prev, aim_up, 0);
+    soldier_sprite_update();
+}
+
 static void soldier_complete(void) {
     u16 prev = soldier.x;
     if (soldier.x < window + SCR_WIDTH - 16) {
@@ -714,16 +720,28 @@ static void soldier_complete(void) {
 	is_dead = -1;
 	fade_to_next_level();
     }
-    advance_obj(&soldier, SOLDIER_AHEAD, 6);
-    soldier_animate(prev, 0, 0);
-    soldier_sprite_update();
+    soldier_update(prev, 0);
 }
 
 void level_done(u16 x) {
     is_dead = 3;
 }
 
+void set_sprite_tile(Sprite *sprite, u16 tile) {
+    sprite->cfg = (sprite->cfg & ~0x7FF) | tile;
+}
 
+void soldier_fist_pump() {
+    is_dead = 4;
+    soldier_update(soldier.x, 1);
+    u16 frame = 36 + 9 * (soldier.frame & 1);
+    set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
+    set_sprite_tile(soldier.sprite - 1, TILE(2, WEAPON));
+    if (soldier.life++ >= 20) {
+	soldier.frame ^= 1;
+	soldier.life = 0;
+    }
+}
 
 void advance_sprites(void) {
     update_next_sprite(SOLDIER_BASE - 1);
@@ -740,6 +758,9 @@ void advance_sprites(void) {
 	break;
     case 3:
 	soldier_complete();
+	break;
+    case 4:
+	soldier_fist_pump();
 	break;
     default:
 	/* whoops */

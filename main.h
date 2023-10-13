@@ -156,10 +156,12 @@ void set_seed(u16);
 
 void advance_sprites(void);
 void fade_to_next_level(void);
+void soldier_fist_pump(void);
 void load_soldier_tiles(void);
 void reset_sprite_table(void);
 void setup_soldier_sprites(void);
 byte update_next_sprite(byte new_value);
+void set_sprite_tile(Sprite *sprite, u16 tile);
 u16 advance_obj(Object *obj, u16 offset, u16 gravity);
 u16 soldier_collision(Rectangle *r);
 Object *flame_collision(Rectangle *r);
