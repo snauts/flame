@@ -468,9 +468,10 @@ void display_rusty(void) {
     display_desert(&prepare_rusty_level, 0);
 }
 
-#define MANTIS_PARTS 8
+#define MANTIS_PARTS	8
+#define BURN_COUNT	4
 static Object **mantis;
-static Object *burn;
+static Object **burns;
 
 typedef struct Mantis {
     char x, y, size;
@@ -640,24 +641,36 @@ static void adjust_mantis_height(Object *obj) {
     }
 }
 
+static void add_mantis_burn(Object *obj, u16 x, u16 y) {
+    set_sprite_tile(obj->sprite, TILE(2, 289 + 4 * 12));
+    obj->sprite->x = x;
+    obj->sprite->y = y;
+    obj->frame = 0;
+}
+
 static void burn_mantis(Object *obj) {
-    burn->sprite->x = obj->sprite->x;
-    burn->sprite->y = obj->sprite->y - 4;
-    set_sprite_tile(burn->sprite, TILE(2, 289 + 4 * 12));
-    burn->frame = 0;
+    add_mantis_burn(burns[0], obj->sprite->x, obj->sprite->y - 4);
 }
 
 static void mantis_burner(u16 i) {
-    if (burn->frame >= 9) {
-	burn->sprite->x = burn->sprite->y = 0;
+    for (i = 0; i < BURN_COUNT; i++) {
+	Object *burn = burns[i];
+	if (burn->frame >= 9) {
+	    burn->sprite->x = burn->sprite->y = 0;
+	}
+	else {
+	    burn->frame++;
+	}
+	u16 tile = TILE(2, 289 + 4 * (12 + (burn->frame >> 1)));
+	set_sprite_tile(burn->sprite, tile);
+	burn->sprite->cfg ^= BIT(11);
     }
-    else {
-	burn->frame++;
-    }
-    u16 tile = TILE(2, 289 + 4 * (12 + (burn->frame >> 1)));
-    set_sprite_tile(burn->sprite, tile);
-    burn->sprite->cfg ^= BIT(11);
     schedule(&mantis_burner, 2);
+}
+
+static void mantis_pepsi(u16 n) {
+    fade_to_next_level();
+    soldier_fist_pump();
 }
 
 static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
@@ -668,10 +681,7 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
 	Object *flame = flame_collision(box + i);
 	if (flame != NULL) {
 	    MANTIS_HP = decrement_progress_bar();
-	    if (!MANTIS_HP) {
-		soldier_fist_pump();
-		fade_to_next_level();
-	    }
+	    if (!MANTIS_HP) schedule(&mantis_pepsi, 0);
 	    FLICKERING = (FLICKERING + 1) & 1;
 	    mantis_flicker_color(0x222);
 	    burn_mantis(flame);
@@ -725,8 +735,11 @@ static void walk_mantis(Object *obj) {
 }
 
 static void setup_mantis(u16 i) {
-    burn = alloc_mob();
-    burn->sprite->size = SPRITE_SIZE(2, 2);
+    burns = malloc(BURN_COUNT * sizeof(Object*));
+    for (u16 i = 0; i < BURN_COUNT; i++) {
+	burns[i] = alloc_mob();
+	burns[i]->sprite->size = SPRITE_SIZE(2, 2);
+    }
     schedule(&mantis_burner, 0);
 
     mantis = malloc(MANTIS_PARTS * sizeof(Object*));
