@@ -504,9 +504,13 @@ static u16 mantis_2nd_stage(void) {
     return MANTIS_HP < BAR_HEALTH / 2;
 }
 
+static void set_claw_sprite(Object *obj) {
+    set_sprite_tile(obj->sprite, TILE(3, 385 + 16 * obj->frame));
+}
+
 static void animate_claw(void) {
     mantis[4]->frame = (mantis[4]->life++ >> 3) & 3;
-    set_sprite_tile(mantis[4]->sprite, TILE(3, 385 + 16 * mantis[4]->frame));
+    set_claw_sprite(mantis[4]);
 }
 
 static void set_leg_sprite(Object *obj) {
