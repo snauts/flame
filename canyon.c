@@ -678,6 +678,17 @@ static void mantis_burner(u16 i) {
     schedule(&mantis_burner, 2);
 }
 
+static byte special_burns;
+static void emit_mantis_burn(u16 i) {
+    add_mantis_burn(burns[i]);
+    burns[i]->private = mantis[0];
+    burns[i]->x = random() & 0x3F;
+    burns[i]->x += (mantis[0]->direction < 0) ? 8 : -60;
+    burns[i]->y = 24 + (random() & 0x0F) ;
+    callback(&emit_mantis_burn, 4, i >= (BURN_COUNT - 1) ? 0 : i + 1);
+    if (i == 0) perish_sfx();
+}
+
 static void mantis_agony_jerk(u16 delay) {
     mantis[4]->frame = 3 - mantis[4]->frame;
     set_claw_sprite(mantis[4]);
@@ -700,7 +711,9 @@ static void start_agonizing(void) {
 static void mantis_pepsi(u16 n) {
     fade_to_next_level();
     soldier_fist_pump();
+    emit_mantis_burn(0);
     start_agonizing();
+    special_burns = 0;
 }
 
 static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
