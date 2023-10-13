@@ -806,7 +806,7 @@ static void mantis_fall_down(Object *obj) {
 }
 
 static void walk_mantis(Object *obj) {
-    Sprite *soldier = get_sprite(SOLDIER_BASE);
+    Sprite *soldier = get_soldier()->sprite;
     if (!DETACHED) place_mantis(obj->x, obj->y, obj->direction > 0);
 
     if (!MANTIS_HP) {

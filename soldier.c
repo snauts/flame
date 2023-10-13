@@ -20,11 +20,16 @@
 #define SOLDIER_MAX_X	(ON_SCREEN + 128)
 #define SOLDIER_AHEAD	28
 
+#define SOLDIER_BASE	5
 #define FLAME_OFFSET	8
 #define BLOOD_SPRITE	3
 #define FLAME_DECOPLE	24
 
-Object soldier;
+static Object soldier;
+
+Object *get_soldier(void) {
+    return &soldier;
+}
 
 static Sprite sprite[80];
 static Sprite *blood;

@@ -26,7 +26,6 @@
 #define SCR_HEIGHT	224
 #define MAX_MOBS	16
 #define MAX_POSITION	512
-#define SOLDIER_BASE	5
 #define BAR_SIZE	24
 #define BAR_HEALTH	(8 * BAR_SIZE)
 
@@ -154,6 +153,7 @@ void perish_sfx(void);
 u16 random(void);
 void set_seed(u16);
 
+Object *get_soldier(void);
 void advance_sprites(void);
 void fade_to_next_level(void);
 void soldier_fist_pump(void);
