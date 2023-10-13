@@ -785,7 +785,7 @@ static void blow_off_legs_and_body(u16 i) {
     mantis_blow_off_part(3, 10, burns[1], -1);
     mantis_blow_off_part(5, 40, burns[3], 1);
     mantis_blow_off_part(6, 40, burns[2], -1);
-    schedule(&finish_level, 150);
+    schedule(&finish_level, 200);
 }
 
 static void mantis_turn_to_ash(u16 i) {
