@@ -272,6 +272,7 @@ static void emit_flame(u16 index, u16 aim_up) {
     flame[index].off = 0;
 
     f->direction = soldier.direction;
+    f->velocity -= soldier.velocity;
     f->x = offset_x << 4;
     f->y = offset_y << 4;
     f->gravity = 4;
