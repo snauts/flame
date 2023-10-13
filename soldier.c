@@ -734,13 +734,10 @@ void set_sprite_tile(Sprite *sprite, u16 tile) {
 void soldier_fist_pump() {
     is_dead = 4;
     soldier_update(soldier.x, 1);
-    u16 frame = 36 + 9 * (soldier.frame & 1);
+    u16 frame = 36 + 9 * ((soldier.frame >> 4) & 1);
     set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
     set_sprite_tile(soldier.sprite - 1, TILE(2, WEAPON));
-    if (soldier.life++ >= 20) {
-	soldier.frame ^= 1;
-	soldier.life = 0;
-    }
+    soldier.frame++;
 }
 
 void advance_sprites(void) {
