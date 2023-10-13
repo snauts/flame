@@ -645,20 +645,26 @@ static void adjust_mantis_height(Object *obj) {
     }
 }
 
-static void add_mantis_burn(Object *obj, u16 x, u16 y) {
+static void add_mantis_burn(Object *obj) {
     set_sprite_tile(obj->sprite, TILE(2, 289 + 4 * 12));
-    obj->sprite->x = x;
-    obj->sprite->y = y;
     obj->frame = 0;
 }
 
 static void burn_mantis(Object *obj) {
-    add_mantis_burn(burns[0], obj->sprite->x, obj->sprite->y - 4);
+    add_mantis_burn(burns[0]);
+    burns[0]->private = NULL;
+    burns[0]->sprite->x = obj->sprite->x;
+    burns[0]->sprite->y = obj->sprite->y - 4;
 }
 
 static void mantis_burner(u16 i) {
     for (i = 0; i < BURN_COUNT; i++) {
 	Object *burn = burns[i];
+	Object *parent = (Object *) burn->private;
+	if (parent != NULL) {
+	    burn->sprite->x = parent->sprite->x + burn->x;
+	    burn->sprite->y = parent->sprite->y + burn->y;
+	}
 	if (burn->frame >= 9) {
 	    burn->sprite->x = burn->sprite->y = 0;
 	}
