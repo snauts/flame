@@ -24,8 +24,7 @@
 #define BLOOD_SPRITE	3
 #define FLAME_DECOPLE	24
 
-static Object soldier;
-static char is_dead;
+Object soldier;
 
 static Sprite sprite[80];
 static Sprite *blood;
@@ -69,9 +68,9 @@ static u16 is_soldier_on_screen(void) {
 
 static void should_sink(void) {
     /* if we are bitten in mid air and fall into pit, do the sinking */
-    if ((is_dead == 0 || is_dead == 2) && is_soldier_on_screen()) {
+    if ((soldier.life == 0 || soldier.life == 2) && is_soldier_on_screen()) {
 	soldier.sprite->cfg = TILE(2, SOLDIER_TOP + 18);
-	is_dead = 1;
+	soldier.life = 1;
     }
 }
 
@@ -627,11 +626,11 @@ static void soldier_sinking(u16 cookie) {
 }
 
 static void soldier_sink(void) {
-    if (is_dead == 1) {
+    if (soldier.life == 1) {
 	schedule(&fade_and_restart, 150);
 	soldier_sinking(0);
 	soldier_yelling(0);
-	is_dead = -1;
+	soldier.life = -1;
     }
 }
 
@@ -656,7 +655,7 @@ static void do_bite(u16 x, u16 y) {
     blood->size = SPRITE_SIZE(2, 2);
     schedule(&spill_blood, 2);
     remove_one_flame();
-    if (!is_dead) is_dead = 2;
+    if (!soldier.life) soldier.life = 2;
 }
 
 static void manage_blood(void) {
@@ -701,7 +700,7 @@ static void soldier_poison(void) {
     }
     else {
 	schedule(&soldier_kneel, 6);
-	is_dead = -1;
+	soldier.life = -1;
     }
 }
 
@@ -717,14 +716,14 @@ static void soldier_complete(void) {
 	soldier_forward();
     }
     else {
-	is_dead = -1;
+	soldier.life = -1;
 	fade_to_next_level();
     }
     soldier_update(prev, 0);
 }
 
 void level_done(u16 x) {
-    is_dead = 3;
+    soldier.life = 3;
 }
 
 void set_sprite_tile(Sprite *sprite, u16 tile) {
@@ -732,7 +731,7 @@ void set_sprite_tile(Sprite *sprite, u16 tile) {
 }
 
 void soldier_fist_pump() {
-    is_dead = 4;
+    soldier.life = 4;
     soldier_update(soldier.x, 1);
     u16 frame = 36 + 9 * ((soldier.frame >> 4) & 1);
     set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
@@ -743,7 +742,7 @@ void soldier_fist_pump() {
 void advance_sprites(void) {
     update_next_sprite(SOLDIER_BASE - 1);
 
-    switch (is_dead) {
+    switch (soldier.life) {
     case 0:
 	soldier_march();
 	break;
@@ -839,6 +838,6 @@ void setup_soldier_sprites(void) {
     clear_rectangle(&s_rect);
     setup_flame_sprites();
     button_down = 0;
-    is_dead = 0;
+    soldier.life = 0;
     locked = 0;
 }

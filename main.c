@@ -290,9 +290,9 @@ void memset(void *ptr, byte c, int amount) {
 }
 
 static const Function loader_table[] = {
-    &display_title,
-    &display_canyon,
-    &display_rusty,
+//    &display_title,
+//    &display_canyon,
+//    &display_rusty,
     &display_mantis,
     &display_ending,
     NULL,

@@ -724,15 +724,21 @@ static void upload_ash_palette(u16 i) {
     upload_palette(0);
 }
 
+static void mantis_head_explode(void) {
+}
+
 static void mantis_turn_to_ash(u16 i) {
     upload_ash_palette(i);
     if (i < ARRAY_SIZE(ash_palette) - 1) {
 	callback(&mantis_turn_to_ash, 25, i + 1);
     }
+    else {
+	schedule(&mantis_head_explode, 25);
+    }
 }
 
 static void mantis_pepsi(u16 n) {
-    fade_to_next_level();
+    //fade_to_next_level();
     soldier_fist_pump();
     emit_mantis_burn(0);
     start_agonizing();
