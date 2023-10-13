@@ -678,9 +678,29 @@ static void mantis_burner(u16 i) {
     schedule(&mantis_burner, 2);
 }
 
+static void mantis_agony_jerk(u16 delay) {
+    mantis[4]->frame = 3 - mantis[4]->frame;
+    set_claw_sprite(mantis[4]);
+
+    mantis[5]->frame = 11 - mantis[5]->frame;
+    set_leg_sprite(mantis[5]);
+    mantis[6]->frame = 11 - mantis[6]->frame;
+    set_leg_sprite(mantis[6]);
+
+    callback(&mantis_agony_jerk, delay, 7 - delay);
+}
+
+static void start_agonizing(void) {
+    mantis[4]->frame = 0;
+    mantis[5]->frame = 0;
+    mantis[6]->frame = 8;
+    mantis_agony_jerk(3);
+}
+
 static void mantis_pepsi(u16 n) {
     fade_to_next_level();
     soldier_fist_pump();
+    start_agonizing();
 }
 
 static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
