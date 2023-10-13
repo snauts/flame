@@ -483,6 +483,7 @@ typedef struct Mantis {
 #define FLICKERING	mantis[1]->frame
 #define MANTIS_WALK	mantis[1]->velocity
 #define VERTICAL	mantis[1]->direction
+#define DETACHED	mantis[2]->life
 
 #define MANTIS_MIN_X	144
 #define MANTIS_MAX_X	336
@@ -681,10 +682,10 @@ static void mantis_burner(u16 i) {
 static byte special_burns;
 static void emit_mantis_burn(u16 i) {
     add_mantis_burn(burns[i]);
-    burns[i]->private = mantis[0];
-    burns[i]->x = random() & 0x3F;
-    burns[i]->x += (mantis[0]->direction < 0) ? 8 : -60;
-    burns[i]->y = 24 + (random() & 0x0F) ;
+    burns[i]->private = mantis[2];
+    u16 dx = (mantis[0]->direction < 0) ? -8 : -40;
+    burns[i]->x = (random() & 0x3F) + dx;
+    burns[i]->y = (random() & 0x07) - 4;
     callback(&emit_mantis_burn, 4, i >= (BURN_COUNT - 1) ? 0 : i + 1);
     if (i == 0) perish_sfx();
 }
@@ -735,6 +736,7 @@ static void mantis_turn_to_ash(u16 i) {
     }
     else {
 	schedule(&mantis_head_explode, 25);
+	DETACHED = 1;
     }
 }
 
@@ -805,7 +807,7 @@ static void mantis_fall_down(Object *obj) {
 
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
-    place_mantis(obj->x, obj->y, obj->direction > 0);
+    if (!DETACHED) place_mantis(obj->x, obj->y, obj->direction > 0);
 
     if (!MANTIS_HP) {
 	mantis_fall_down(obj);
