@@ -679,13 +679,14 @@ static void mantis_burner(u16 i) {
     schedule(&mantis_burner, 2);
 }
 
-static byte special_burns;
 static void emit_mantis_burn(u16 i) {
     add_mantis_burn(burns[i]);
-    burns[i]->private = mantis[2];
-    u16 dx = (mantis[0]->direction < 0) ? -8 : -40;
-    burns[i]->x = (random() & 0x3F) + dx;
-    burns[i]->y = (random() & 0x07) - 4;
+    if (!burns[i]->life) {
+	burns[i]->private = mantis[2];
+	u16 dx = (mantis[0]->direction < 0) ? -8 : -40;
+	burns[i]->x = (random() & 0x3F) + dx;
+	burns[i]->y = (random() & 0x07) - 4;
+    }
     callback(&emit_mantis_burn, 4, i >= (BURN_COUNT - 1) ? 0 : i + 1);
     if (i == 0) perish_sfx();
 }
@@ -741,11 +742,11 @@ static void mantis_turn_to_ash(u16 i) {
 }
 
 static void mantis_pepsi(u16 n) {
+    set_seed(1984);
     soldier_fist_pump();
     emit_mantis_burn(0);
     start_agonizing();
     mantis_turn_to_ash(0);
-    special_burns = 0;
 }
 
 static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
@@ -755,7 +756,7 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
     mantis_flicker_color(0);
     for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
 	Object *flame = flame_collision(box + i);
-	if (flame != NULL) {
+	if (flame != NULL && get_soldier()->life == 0) {
 	    MANTIS_HP = decrement_progress_bar();
 	    if (!MANTIS_HP) {
 		schedule(&mantis_pepsi, 0);
@@ -797,17 +798,21 @@ static void mantis_gets_angry(Object *obj, Sprite *soldier) {
 }
 
 static void mantis_fall_down(Object *obj) {
-    if (VERTICAL != 0) {
-	advance_y(obj, 6);
+    if (!DETACHED) {
 	if (obj->y >= MANTIS_MAX_Y) {
-	    VERTICAL = 0;
+	    obj->y = MANTIS_MAX_Y;
+	}
+	else {
+	    advance_y(obj, 6);
 	}
     }
 }
 
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_soldier()->sprite;
-    if (!DETACHED) place_mantis(obj->x, obj->y, obj->direction > 0);
+    if (!DETACHED) {
+	place_mantis(obj->x, obj->y, obj->direction > 0);
+    }
 
     if (!MANTIS_HP) {
 	mantis_fall_down(obj);
@@ -830,6 +835,7 @@ static void setup_mantis(u16 i) {
     for (u16 i = 0; i < BURN_COUNT; i++) {
 	burns[i] = alloc_mob();
 	burns[i]->sprite->size = SPRITE_SIZE(2, 2);
+	burns[i]->life = 0;
     }
     schedule(&mantis_burner, 0);
 
