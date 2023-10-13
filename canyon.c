@@ -897,6 +897,7 @@ static void setup_mantis(u16 i) {
     for (u16 i = 0; i < BURN_COUNT; i++) {
 	burns[i] = alloc_mob();
 	burns[i]->sprite->size = SPRITE_SIZE(2, 2);
+	burns[i]->private = NULL;
 	burns[i]->life = 0;
     }
     schedule(&mantis_burner, 0);
