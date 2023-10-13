@@ -716,12 +716,24 @@ static void mantis_gets_angry(Object *obj, Sprite *soldier) {
     }
 }
 
+static void mantis_fall_down(Object *obj) {
+    if (VERTICAL != 0) {
+	obj->y++;
+	if (obj->y >= MANTIS_MAX_Y) {
+	    VERTICAL = 0;
+	}
+    }
+}
+
 static void walk_mantis(Object *obj) {
     Sprite *soldier = get_sprite(SOLDIER_BASE);
     place_mantis(obj->x, obj->y, obj->direction > 0);
     mantis_flicker_color(0);
 
-    if (!MANTIS_HP) return; /* pepsi */
+    if (!MANTIS_HP) {
+	mantis_fall_down(obj);
+	return; /* pepsi */
+    }
 
     animate_claw();
     animate_legs();
