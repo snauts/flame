@@ -185,6 +185,7 @@ u16 get_snap(u16 pos_x, u16 prev, u16 next) {
 }
 
 #include "images/font.h"
+#include "images/title.h"
 
 static void load_font_tiles(void) {
     update_palette(font_palette, 0, ARRAY_SIZE(font_palette));
@@ -226,7 +227,14 @@ static void display_simple_screen(Function paint_screen, u16 offset) {
 }
 
 static void flammenwerfer_text(void) {
-    display_text("FLAMMENWERFER", 0x61c);
+    update_palette(title_palette, 16, ARRAY_SIZE(title_palette));
+    update_tiles(title_tiles, 256, ARRAY_SIZE(title_tiles));
+
+    clear_DMA_buffer(0, 0x1000);
+    paint_background(0, 0, 40, 8, TILE(1, 256), 0);
+    copy_to_VRAM(VRAM_PLANE_A + 0x400, 80 * 8 * 2);
+
+    display_text("PRESS START", 0x81e);
 }
 
 void display_title(void) {
