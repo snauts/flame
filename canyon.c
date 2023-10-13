@@ -708,11 +708,35 @@ static void start_agonizing(void) {
     mantis_agony_jerk(3);
 }
 
+static const u16 ash_palette[][13] = {
+    { 0x00a2,0x02a4,0x04a6,0x0462,0x02a8,0x02a6,0x04a4,
+      0x046c,0x0008,0x02aa,0x0288,0x0484,0x06c6, },
+    { 0x008a,0x0286,0x0486,0x0268,0x028a,0x0288,0x0488,
+      0x046a,0x0006,0x0288,0x0268,0x0466,0x06a8, },
+    { 0x0268,0x0266,0x0468,0x0244,0x0268,0x0266,0x0466,
+      0x0448,0x0004,0x0466,0x0466,0x0446,0x08a8, },
+    { 0x0444,0x0444,0x0666,0x0222,0x0222,0x0444,0x0666,
+      0x0444,0x0000,0x0444,0x0444,0x0444,0x0888, },
+};
+
+static void upload_ash_palette(u16 i) {
+    update_palette(ash_palette[i], 49, ARRAY_SIZE(ash_palette[i]));
+    upload_palette(0);
+}
+
+static void mantis_turn_to_ash(u16 i) {
+    upload_ash_palette(i);
+    if (i < ARRAY_SIZE(ash_palette) - 1) {
+	callback(&mantis_turn_to_ash, 25, i + 1);
+    }
+}
+
 static void mantis_pepsi(u16 n) {
     fade_to_next_level();
     soldier_fist_pump();
     emit_mantis_burn(0);
     start_agonizing();
+    mantis_turn_to_ash(0);
     special_burns = 0;
 }
 
