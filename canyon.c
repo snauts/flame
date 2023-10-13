@@ -170,7 +170,7 @@ static void move_hopper(Object *obj) {
 	free_mob(obj);
     }
     else if (is_hopper_off_screen(sprite)) {
-	if (HOPPER(obj)->persistent) {
+	if (HOPPER(obj)->persistent && sprite->x >= MAX_POSITION) {
 	    sprite->x = 1;
 	    sprite->y = 1;
 	}
