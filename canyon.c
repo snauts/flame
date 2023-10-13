@@ -726,8 +726,66 @@ static void upload_ash_palette(u16 i) {
     upload_palette(0);
 }
 
-static void mantis_head_explode(u16 i) {
+static void mantis_part_explode(u16 i) {
+    Object *part = mantis[i];
+    advance_y(part, 4);
+    part->sprite->x += 4 * part->direction;
+    part->sprite->y = part->y;
+    if (part->frame++ > 4) {
+	part->sprite->cfg ^= BIT(11);
+	part->frame = 0;
+    }
+    if (part->y < SCR_HEIGHT + ON_SCREEN) {
+	callback(&mantis_part_explode, 0, i);
+    }
+    else {
+	part->sprite->y = part->y = 0;
+	Object *burn = part->private;
+	burn->life = 0;
+    }
+}
+
+static u16 get_burn_x_offset(u16 i) {
+    u16 dir = mantis[0]->direction;
+    switch (i) {
+    case 0:
+	return 8 + dir * 8;
+    case 1:
+	return 0;
+    default:
+	return 8;
+    }
+}
+
+static u16 get_burn_y_offset(Object *obj) {
+    return (obj->sprite->size & 3) == 3 ? 8 : 0;
+}
+
+static void mantis_blow_off_part(u16 i, u16 time, Object *burn, char dir) {
+    Object *obj = mantis[i];
+    obj->direction = mantis[0]->direction * dir;
+    obj->y = obj->sprite->y;
+    obj->private = burn;
+    obj->velocity = 6;
+
+    burn->life = 1;
+    burn->private = obj;
+    burn->x = get_burn_x_offset(i);
+    burn->y = get_burn_y_offset(obj);
+
+    callback(&mantis_part_explode, time, i);
+}
+
+static void finish_level(u16 i) {
     fade_to_next_level();
+}
+
+static void blow_off_legs_and_body(u16 i) {
+    mantis_blow_off_part(2, 10, burns[0], 1);
+    mantis_blow_off_part(3, 10, burns[1], -1);
+    mantis_blow_off_part(5, 40, burns[3], 1);
+    mantis_blow_off_part(6, 40, burns[2], -1);
+    schedule(&finish_level, 150);
 }
 
 static void mantis_turn_to_ash(u16 i) {
@@ -736,7 +794,11 @@ static void mantis_turn_to_ash(u16 i) {
 	callback(&mantis_turn_to_ash, 25, i + 1);
     }
     else {
-	schedule(&mantis_head_explode, 25);
+	mantis_blow_off_part(0, 25, burns[0], 1);
+	mantis_blow_off_part(4, 50, burns[1], 1);
+	mantis_blow_off_part(7, 50, burns[3], -1);
+	mantis_blow_off_part(1, 75, burns[2], 1);
+	schedule(&blow_off_legs_and_body, 150);
 	DETACHED = 1;
     }
 }
