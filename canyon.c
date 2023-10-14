@@ -758,8 +758,9 @@ static u16 get_burn_y_offset(Object *obj) {
     return (obj->sprite->size & 3) == 3 ? 8 : 0;
 }
 
-static void mantis_blow_off_part(u16 i, u16 time, Object *burn, char dir) {
+static void mantis_blow_off_part(u16 i, u16 time, u16 b_index, char dir) {
     Object *obj = mantis[i];
+    Object *burn = burns[b_index];
     obj->direction = mantis[0]->direction * dir;
     obj->y = obj->sprite->y;
     obj->private = burn;
@@ -778,10 +779,10 @@ static void finish_level(u16 i) {
 }
 
 static void blow_off_legs_and_body(u16 i) {
-    mantis_blow_off_part(2, 10, burns[0], 1);
-    mantis_blow_off_part(3, 10, burns[1], -1);
-    mantis_blow_off_part(5, 40, burns[3], 1);
-    mantis_blow_off_part(6, 40, burns[2], -1);
+    mantis_blow_off_part(2, 10, 0, 1);
+    mantis_blow_off_part(3, 10, 1, -1);
+    mantis_blow_off_part(5, 40, 3, 1);
+    mantis_blow_off_part(6, 40, 2, -1);
     schedule(&finish_level, 200);
 }
 
@@ -791,10 +792,10 @@ static void mantis_turn_to_ash(u16 i) {
 	callback(&mantis_turn_to_ash, 25, i + 1);
     }
     else {
-	mantis_blow_off_part(0, 25, burns[0], 1);
-	mantis_blow_off_part(4, 50, burns[1], 1);
-	mantis_blow_off_part(7, 50, burns[3], -1);
-	mantis_blow_off_part(1, 75, burns[2], 1);
+	mantis_blow_off_part(0, 25, 0, 1);
+	mantis_blow_off_part(4, 50, 1, 1);
+	mantis_blow_off_part(7, 50, 3, -1);
+	mantis_blow_off_part(1, 75, 2, -1);
 	schedule(&blow_off_legs_and_body, 150);
 	DETACHED = 1;
     }
