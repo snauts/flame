@@ -692,9 +692,9 @@ static void emit_mantis_burn(u16 i) {
 }
 
 static void mantis_agony_jerk(u16 delay) {
-    mantis[5]->frame = 11 - mantis[5]->frame;
+    mantis[5]->frame = random() % 12;
     set_leg_sprite(mantis[5]);
-    mantis[6]->frame = 11 - mantis[6]->frame;
+    mantis[6]->frame = random() % 12;
     set_leg_sprite(mantis[6]);
 
     callback(&mantis_agony_jerk, delay, 7 - delay);
