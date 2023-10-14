@@ -699,6 +699,7 @@ static void soldier_poison(void) {
 	soldier.sprite[1].cfg = TILE(2, SOLDIER_LEG + 32 * 6);
 	soldier.sprite[2].x = soldier.sprite[2].y = 0;
 	soldier_flip_sprites();
+	flame_noise(1);
     }
     else if (soldier.sprite[-1].y < soldier.sprite[1].y + 12) {
 	soldier.sprite[-1].y++;
@@ -737,6 +738,7 @@ void set_sprite_tile(Sprite *sprite, u16 tile) {
 
 void soldier_fist_pump() {
     soldier.life = 4;
+    flame_noise(1);
     soldier_update(soldier.x, 1);
     u16 frame = 36 + 9 * ((soldier.frame >> 4) & 1);
     set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
