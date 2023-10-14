@@ -692,9 +692,6 @@ static void emit_mantis_burn(u16 i) {
 }
 
 static void mantis_agony_jerk(u16 delay) {
-    mantis[4]->frame = 3 - mantis[4]->frame;
-    set_claw_sprite(mantis[4]);
-
     mantis[5]->frame = 11 - mantis[5]->frame;
     set_leg_sprite(mantis[5]);
     mantis[6]->frame = 11 - mantis[6]->frame;
