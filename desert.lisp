@@ -364,8 +364,8 @@
   (let ((stairs nil))
     (loop for h from 15 downto 0 by 3 do
       (with-box stairs
-	(join stairs (empty 2))
-	(join stairs (rusty-bridge 2 h))))
+	(join stairs (empty 1))
+	(join stairs (rusty-bridge 3 h))))
     stairs))
 
 (defparameter *jumps*

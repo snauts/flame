@@ -370,7 +370,7 @@ void emit_down_stair_guards(u16 pos_x) {
     for (u16 i = 0; i < 6; i++) {
 	Object *mob = setup_hopper(x, y, 0);
 	HOPPER(mob)->persistent = 1;
-	HOPPER(mob)->patrol_start = x - 32;
+	HOPPER(mob)->patrol_start = x - 40;
 	HOPPER(mob)->patrol_end = x + 32;
 	mob_fn(mob, &patrolling_hopper);
 	mob->direction = 1;
