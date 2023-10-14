@@ -688,7 +688,7 @@ static void emit_mantis_burn(u16 i) {
 	burns[i]->y = (random() & 0x07) - 4;
     }
     callback(&emit_mantis_burn, 4, i >= (BURN_COUNT - 1) ? 0 : i + 1);
-    if (i == 0) perish_sfx();
+    if (i == 0 && mantis[5]->sprite->y != 0) perish_sfx();
 }
 
 static void mantis_agony_jerk(u16 delay) {
