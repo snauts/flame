@@ -3,7 +3,7 @@
 #define MAX_BUDGET	32
 #define MOB_OFFSET	16
 
-#define MAX_TIMERS	8
+#define MAX_TIMERS	16
 
 typedef struct Mob {
     Object obj;
