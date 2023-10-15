@@ -160,7 +160,7 @@ static void mute_sound(void) {
     for (ch = 0; ch <= 6; ch++) {
 	if (ch != 3) ym2612_write(0, 0x28, ch);
     }
-    for (ch = 0; ch <= 2; ch++) {
+    for (ch = 0; ch <= 3; ch++) {
 	BYTE(PSG_ADDR) = 0x90 | (ch << 5) | 0xf;
     }
 }
