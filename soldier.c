@@ -5,6 +5,7 @@
 #include "images/flame.h"
 #include "images/blood.h"
 #include "images/walk.h"
+#include "images/hans.h"
 #include "images/gun.h"
 
 #define SOLDIER_TOP	1024
