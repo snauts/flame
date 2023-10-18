@@ -27,6 +27,15 @@ static void draw_mountains(void) {
     }
 }
 
+static const byte sky[] = {
+    36, 28, 20, 12, 36, 28, 20, 12, 36, 28, 12
+};
+static void draw_sky(void) {
+    for (u16 i = 0; i < 11; i++) {
+	fill_VRAM(0x80 * i, sky[i], 0x040);
+    }
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
@@ -37,9 +46,9 @@ void display_mountains(void) {
     reset_mobs();
 
     /* background */
-    fill_VRAM(0x000, 12, 0x300);
     fill_VRAM(0x600,  4, 0x500);
 
+    draw_sky();
     draw_mountains();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
