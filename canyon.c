@@ -76,6 +76,10 @@ static void draw_vegetation(byte more_bones) {
     }
 }
 
+u16 cacti_spacing_size(void) {
+    return ARRAY_SIZE(cacti_spacing);
+}
+
 const byte sand[] = { 72, 80, 88, 71, 79, 87, 71, 72 };
 
 static void draw_sand(void) {

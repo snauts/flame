@@ -53,6 +53,17 @@ static void draw_vegetation(void) {
     }
 }
 
+extern u16 cacti_spacing_size(void);
+extern const byte cacti_spacing[];
+
+void draw_alpine_bones(void) {
+    u16 offset = 0x700;
+    for (u16 i = 0; i < cacti_spacing_size(); i++) {
+	poke_VRAM(offset, 7 + 8 * ((i + offset) & 3));
+	offset += cacti_spacing[i];
+    }
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
@@ -68,6 +79,7 @@ void display_mountains(void) {
     draw_sky();
     draw_mountains();
     draw_vegetation();
+    draw_alpine_bones();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
