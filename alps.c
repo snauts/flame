@@ -7,7 +7,7 @@ void display_mountains(void) {
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
     update_tiles(alps_tiles, 1, ARRAY_SIZE(alps_tiles));
 
-    load_soldier_tiles();
+    load_soldier_tiles(1);
     reset_window();
     reset_mobs();
 

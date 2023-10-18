@@ -108,6 +108,9 @@ typedef struct Pos {
 #define UPDATE_CRAM_WORD(addr, data) \
     update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
 
+#define UPDATE_TILES(tile_set, offset) \
+    update_tiles(tile_set, offset, ARRAY_SIZE(tile_set));
+
 #define SCREEN_X(x) ((x) - window + ON_SCREEN)
 
 void poke_VRAM(u16 addr, u16 data);
@@ -157,7 +160,7 @@ Object *get_soldier(void);
 void advance_sprites(void);
 void fade_to_next_level(void);
 void soldier_fist_pump(void);
-void load_soldier_tiles(void);
+void load_soldier_tiles(u16 id);
 void reset_sprite_table(void);
 void setup_soldier_sprites(void);
 byte update_next_sprite(byte new_value);

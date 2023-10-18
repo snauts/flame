@@ -421,7 +421,7 @@ void display_desert(Function prepare_level, byte more_bones) {
     update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
-    load_soldier_tiles();
+    load_soldier_tiles(0);
     reset_window();
     reset_mobs();
 

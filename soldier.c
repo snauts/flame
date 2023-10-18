@@ -429,8 +429,9 @@ u16 soldier_collision(Rectangle *r) {
     return intersect(r, &s_rect);
 }
 
+static const u16 *palette;
 static void flicker_color(u16 index, u16 deviate) {
-    u16 color = soldier_palette[index] + deviate;
+    u16 color = palette[index] + deviate;
     update_color(32 + index, color);
 }
 
@@ -444,8 +445,9 @@ static void flame_noise(u16 off) {
     psg_noise(7, face && !off ? 0x4 : 0xf);
 }
 
+static byte yell_face;
 static void soldier_yelling(byte state) {
-    soldier.sprite[-1].cfg = TILE(2, state ? WEAPON : 0);
+    soldier.sprite[-1].cfg = TILE(2, state ? WEAPON + yell_face : 0);
     if (face != state) {
 	soldier_flicker(0);
 	face = state;
@@ -806,11 +808,21 @@ static void put_soldier(u16 x, u16 y) {
     soldier_sprite_update();
 }
 
-void load_soldier_tiles(void) {
-    update_palette(soldier_palette, 32, ARRAY_SIZE(soldier_palette));
-
+void load_soldier_tiles(u16 id) {
+    switch (id) {
+    case 0:
+	UPDATE_TILES(soldier_tiles, SOLDIER_TOP);
+	palette = soldier_palette;
+	yell_face = 0;
+	break;
+    case 1:
+	UPDATE_TILES(hans_tiles, SOLDIER_TOP);
+	palette = hans_palette;
+	yell_face = 16;
+	break;
+    }
+    update_palette(palette, 32, ARRAY_SIZE(soldier_palette));
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
-    update_tiles(soldier_tiles, SOLDIER_TOP, ARRAY_SIZE(soldier_tiles));
 
     update_tiles(flame_tiles, FLAME, ARRAY_SIZE(flame_tiles));
     update_tiles(flame_up_tiles, FLAME_UP, ARRAY_SIZE(flame_up_tiles));
