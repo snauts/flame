@@ -44,7 +44,8 @@ static void draw_vegetation(void) {
     set_seed(2);
     byte tile = 0;
     for (u16 i = 0; i < 0x40; i++) {
-	poke_VRAM(0x600 + (i << 1), 37 + ((random() & 3) << 3));
+	poke_VRAM(0x600 + (i << 1), 37 + (tile << 3));
+	tile = (tile + (random() % 3) + 1) & 3;
     }
     for (u16 i = 0x680; i < 0xf00; i += 2) {
 	poke_VRAM(i, 6 + (tile << 3) + flowers(tile));
