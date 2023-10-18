@@ -12,7 +12,8 @@ void display_mountains(void) {
     reset_mobs();
 
     /* background */
-    fill_VRAM(0, 0, 0x800);
+    fill_VRAM(0x000, 12, 0x300);
+    fill_VRAM(0x600,  4, 0x500);
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
