@@ -36,6 +36,18 @@ static void draw_sky(void) {
     }
 }
 
+static void draw_vegetation(void) {
+    set_seed(2);
+    byte tile = 0;
+    for (u16 i = 0; i < 0x40; i++) {
+	poke_VRAM(0x600 + (i << 1), 37 + ((random() & 3) << 3));
+    }
+    for (u16 i = 0x680; i < 0xf00; i += 2) {
+	poke_VRAM(i, 6 + (tile << 3));
+	tile = (tile + (random() % 3) + 1) & 3;
+    }
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
@@ -46,10 +58,11 @@ void display_mountains(void) {
     reset_mobs();
 
     /* background */
-    fill_VRAM(0x600,  4, 0x500);
+    fill_VRAM(0x600, 4, 0x80);
 
     draw_sky();
     draw_mountains();
+    draw_vegetation();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
