@@ -28,7 +28,7 @@ static void draw_mountains(void) {
 }
 
 static const byte sky[] = {
-    36, 28, 20, 12, 36, 28, 20, 12, 36, 28, 12
+    29, 21, 13, 5, 60, 52, 44, 36, 28, 20, 12
 };
 static void draw_sky(void) {
     for (u16 i = 0; i < 11; i++) {
