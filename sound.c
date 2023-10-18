@@ -5,6 +5,7 @@ static byte music;
 
 #define MUSIC_NONE	0
 #define MUSIC_JOHNNY	1
+#define MUSIC_ERIKA	1
 
 #define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
 void ym2612_write(byte part, byte reg, byte data) {
@@ -175,6 +176,13 @@ void music_johnny(void) {
 	do_z80_bus(&setup_johnny_intruments);
 	do_z80_bus(&load_z80_sfx);
 	music = MUSIC_JOHNNY;
+    }
+}
+
+void music_erika(void) {
+    if (music != MUSIC_ERIKA) {
+	/* TODO: ERIKA */
+	music = MUSIC_ERIKA;
     }
 }
 

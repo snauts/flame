@@ -121,6 +121,12 @@ void prepare_mantis_level(void) {
     prepare_level(mantis_level);
 }
 
+void prepare_mountain_level(void) {
+    trigger = mountain_level_triggers;
+    height = mountain_level_height;
+    prepare_level(mountain_level);
+}
+
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(window >> 1));

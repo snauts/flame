@@ -178,9 +178,11 @@ void display_ending(void);
 void display_canyon(void);
 void display_rusty(void);
 void display_mantis(void);
+void display_mountains(void);
 void prepare_desert_level(void);
 void prepare_rusty_level(void);
 void prepare_mantis_level(void);
+void prepare_mountain_level(void);
 
 u16 platform_bottom(void);
 void update_height_map(u16 pos_x);
