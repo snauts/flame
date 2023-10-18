@@ -16,8 +16,8 @@ static u16 draw_one_mountain(u16 x, byte tile) {
 }
 
 static const byte mountain_tiles[] = {
-    1, 3, 19, 51, 33, 1, 35, 33, 51, 35, 3, 1,
-    19, 35, 33, 3, 35, 1, 51, 19, 33, 19, 3, 51,
+    1, 3, 19, 51, 33, 1, 35, 33, 35, 51, 3, 1,
+    19, 35, 1, 35, 3, 33, 51, 19, 33, 19, 3, 51,
 };
 
 static void draw_mountains(void) {
