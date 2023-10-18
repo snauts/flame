@@ -36,6 +36,10 @@ static void draw_sky(void) {
     }
 }
 
+static u16 flowers(u16 tile) {
+    return ((random() & 1) << 5);
+}
+
 static void draw_vegetation(void) {
     set_seed(2);
     byte tile = 0;
@@ -43,7 +47,7 @@ static void draw_vegetation(void) {
 	poke_VRAM(0x600 + (i << 1), 37 + ((random() & 3) << 3));
     }
     for (u16 i = 0x680; i < 0xf00; i += 2) {
-	poke_VRAM(i, 6 + (tile << 3));
+	poke_VRAM(i, 6 + (tile << 3) + flowers(tile));
 	tile = (tile + (random() % 3) + 1) & 3;
     }
 }
