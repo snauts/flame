@@ -64,6 +64,9 @@
     (dotimes (i x result)
       (push (make-list y :initial-element e) result))))
 
+(defun cell (id)
+  (make 1 1 :e (tile id)))
+
 (defun join (&rest rest)
   (apply #'append rest))
 
@@ -225,9 +228,11 @@
     (format out "};~%")))
 
 (load "desert.lisp")
+(load "alps.lisp")
 
 (defun save-level ()
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
+    (save-array out "mountain_level" (mountain-level) *alps-walkable*)
     (save-array out "desert_level" (desert-level) *desert-walkable*)
     (save-array out "mantis_level" (mantis-level) *desert-walkable*)
     (save-array out "rusty_level" (rusty-level) *desert-walkable*)))
