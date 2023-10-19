@@ -408,7 +408,7 @@
 
 (defun erika-score ()
   (append
-   (erika-music 6 #'erika-slow 10)
+   (erika-music 6 #'erika-slow 15)
    (multiply '((24 (4 0 G))) 4)
    (erika-music 4 #'erika-beat)
    '((50 (2 0 X)))))
