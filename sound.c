@@ -94,6 +94,17 @@ const byte bong[] = {
     0x00, 0x00, 0x00, 0x00,
 };
 
+const byte hi_hat[] = {
+    0x3c, 0xc0,
+    0x1f, 0x3f, 0x79, 0x3f,
+    0x00, 0x04, 0x0a, 0x0b,
+    0x1f, 0x1f, 0x13, 0x1f,
+    0x1f, 0x0b, 0x11, 0x16,
+    0x05, 0x1f, 0x13, 0x1f,
+    0x2f, 0xaf, 0x5f, 0x8f,
+    0x00, 0x00, 0x00, 0x00,
+};
+
 static void setup_ym2612_channel(byte channel, const byte *instrument) {
     u16 i = 0;
     byte part = channel >> 2;
@@ -133,7 +144,8 @@ static void setup_erika_intruments(void) {
     setup_ym2612_channel(0, guitar);
     setup_ym2612_channel(1, tuba);
     setup_ym2612_channel(2, drums);
-    for (byte i = 4; i <= 6; i++) {
+    setup_ym2612_channel(4, hi_hat);
+    for (byte i = 5; i <= 6; i++) {
 	setup_ym2612_channel(i, bong);
     }
     load_score(0x1000, erika_score, ARRAY_SIZE(erika_score));
