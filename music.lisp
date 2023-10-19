@@ -363,12 +363,12 @@
     score))
 
 (defun erika-base ()
-  (let ((erika (list *erika-A* (erika-A) *erika-B* (erika-A))))
-    (apply #'append (mapcar #'copy-score erika))))
+  (append (copy-score *erika-A*) (erika-A) (copy-score *erika-B*) (erika-A)))
 
 (defun erika-score ()
   (let ((score (erika-base)))
     (scale-tempo score 8)
+    (mapc (lambda (ch) (channel-key-off score ch 12)) '(1 2 4 5))
     (adjust-octaves score '(1 2 2 x 0 0 0))
     (clean-up-score score)
     score))
