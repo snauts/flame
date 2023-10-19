@@ -405,7 +405,8 @@
 (defun erika-score ()
   (append
    (erika-music 6 #'erika-slow)
-   (erika-music 4 #'erika-beat)))
+   (erika-music 4 #'erika-beat)
+   '((50 (2 0 X)))))
 
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
