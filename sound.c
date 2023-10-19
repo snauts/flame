@@ -118,6 +118,16 @@ static void setup_johnny_intruments(void) {
     load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 
+static void setup_erika_intruments(void) {
+    setup_ym2612_channel(0, guitar);
+    setup_ym2612_channel(1, flute);
+    setup_ym2612_channel(2, drums);
+    for (byte i = 4; i <= 6; i++) {
+	setup_ym2612_channel(i, bong);
+    }
+    load_score(0x1000, erika_score, ARRAY_SIZE(erika_score));
+}
+
 #define PSG_SFX_CH0	0x18
 #define PSG_SFX_CH1	0x1A
 #define PSG_SFX_CH2	0x1C
@@ -171,19 +181,20 @@ void music_toggle(byte state) {
     if (state) do_z80_bus(&mute_sound);
 }
 
-void music_johnny(void) {
-    if (music != MUSIC_JOHNNY) {
-	do_z80_bus(&setup_johnny_intruments);
+static void setup_music(u16 id, Function setup) {
+    if (music != id) {
+	do_z80_bus(setup);
 	do_z80_bus(&load_z80_sfx);
-	music = MUSIC_JOHNNY;
+	music = id;
     }
 }
 
+void music_johnny(void) {
+    setup_music(MUSIC_JOHNNY, &setup_johnny_intruments);
+}
+
 void music_erika(void) {
-    if (music != MUSIC_ERIKA) {
-	/* TODO: ERIKA */
-	music = MUSIC_ERIKA;
-    }
+    setup_music(MUSIC_ERIKA, &setup_erika_intruments);
 }
 
 void music_none(void) {
