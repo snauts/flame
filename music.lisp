@@ -369,8 +369,8 @@
 
 (defun erika-score ()
   (let ((score (erika-base)))
-    (scale-tempo score 8)
-    (channel-key-off score '(1 2 4 5) 12)
+    (scale-tempo score 6)
+    (channel-key-off score '(1 2 4 5) 9)
     (adjust-octaves score '(1 2 2 x 0 0 0))
     (clean-up-score score)
     score))
