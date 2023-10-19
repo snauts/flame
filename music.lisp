@@ -394,17 +394,22 @@
 	(drums-B (erika-add-drums *erika-B* (erika-drums-B))))
     (copy-score (append drums-A drums-A drums-B drums-A))))
 
-(defun erika-music (speed music)
+(defun adjust-end (score duration)
+  (unless (null duration) (setf (caar (last score)) duration)))
+
+(defun erika-music (speed music &optional pause)
   (let ((score (funcall music)))
     (scale-tempo score speed)
     (channel-key-off score '(1 2 4 5) (floor (* 1.5 speed)))
     (adjust-octaves score '(1 2 2 x 0 0 0))
     (clean-up-score score)
+    (adjust-end score pause)
     score))
 
 (defun erika-score ()
   (append
-   (erika-music 6 #'erika-slow)
+   (erika-music 6 #'erika-slow 10)
+   (multiply '((24 (4 0 G))) 4)
    (erika-music 4 #'erika-beat)
    '((50 (2 0 X)))))
 
