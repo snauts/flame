@@ -236,11 +236,13 @@
     (merge-into score tmp)))
 
 (defun channel-key-off (score channel interval)
-  (let ((tmp (copy-score score)))
-    (isolate-channel tmp channel)
-    (offset-score tmp interval)
-    (key-off-all-score tmp)
-    (merge-into score tmp)))
+  (if (consp channel)
+      (mapc (lambda (x) (channel-key-off score x interval)) channel)
+      (let ((tmp (copy-score score)))
+	(isolate-channel tmp channel)
+	(offset-score tmp interval)
+	(key-off-all-score tmp)
+	(merge-into score tmp))))
 
 (defparameter *mute* '((0 0 X) (4 0 X) (5 0 X) (6 0 X)))
 
@@ -368,7 +370,7 @@
 (defun erika-score ()
   (let ((score (erika-base)))
     (scale-tempo score 8)
-    (mapc (lambda (ch) (channel-key-off score ch 12)) '(1 2 4 5))
+    (channel-key-off score '(1 2 4 5) 12)
     (adjust-octaves score '(1 2 2 x 0 0 0))
     (clean-up-score score)
     score))
