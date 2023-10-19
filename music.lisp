@@ -336,11 +336,14 @@
 (defparameter *erika-C*
   '((4 (1 0 Gs))
     (4 (1 0 A))
-    (16 (1 0 B))
+    (4 (1 0 B))
+    (4          (5 0 C))
+    (4          (5 0 C))
+    (4          (5 0 C))
 
     (6 (1 1 Cs))
     (2 (1 0 B))
-    (32 (1 0 A))))
+   (16 (1 0 A))))
 
 (defun erika-base ()
   (let ((erika (list *erika-A* *erika-A* *erika-B* *erika-A* *erika-C*)))
