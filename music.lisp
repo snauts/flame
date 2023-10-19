@@ -409,7 +409,7 @@
 (defun erika-score ()
   (append
    (erika-music 6 #'erika-slow 15)
-   (multiply '((24 (4 0 G))) 4)
+   (multiply '((24 (2 2 D) (4 0 G) (5 0 F))) 4)
    (erika-music 4 #'erika-beat)
    '((50 (2 0 X)))))
 
