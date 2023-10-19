@@ -255,6 +255,9 @@
 (defun score-length (score)
   (reduce #'+ (mapcar #'first score)))
 
+(defun multiply (score n)
+  (apply #'append (make-list n :initial-element score)))
+
 (defun johnny-mk1 ()
   (let ((flute (copy-score *johnny*)))
     (isolate-channel flute 0)
@@ -336,44 +339,52 @@
     (4          (5 0 F))))
 
 (defun erika-drum-1 ()
-  (copy-tree
-   '((4 (2 0 G))
-     (4 (2 1 D))
-     (4 (2 0 G))
-     (4 (2 1 D) (4 0 G)))))
+  '((4 (2 0 G))
+    (4 (2 1 D))
+    (4 (2 0 G))
+    (4 (2 1 D) (4 0 G))))
 
 (defun erika-drum-2 ()
-  (copy-tree
-   '((4 (2 0 G))
-     (4 (2 1 D))
-     (4 (2 0 G))
-     (4 (2 1 D) (4 0 G))
-     (4 (2 0 G) (4 0 G))
+  (append
+   (erika-drum-1)
+   '((4 (2 0 G) (4 0 G))
      (4 (2 1 D) (4 0 G)))))
 
 (defun erika-drums-A ()
-  (append
-   (erika-drum-1)
-   (erika-drum-1)
-   (erika-drum-2)
-   (erika-drum-2)
-   (erika-drum-2)))
+  (copy-tree
+   (append
+    (multiply (erika-drum-1) 2)
+    (multiply (erika-drum-2) 3))))
 
-(defun erika-A ()
-  (let ((score (copy-tree *erika-A*)))
-    (merge-into score (erika-drums-A))
+(defun erika-drums-B ()
+  nil)
+
+(defun erika-add-drums (original drums)
+  (let ((score (copy-score original)))
+    (when drums (merge-into score drums))
     score))
 
-(defun erika-base ()
-  (append (copy-score *erika-A*) (erika-A) (copy-score *erika-B*) (erika-A)))
+(defun erika-slow ()
+  (let ((drums-A (erika-add-drums *erika-A* (erika-drums-A))))
+    (copy-score (append *erika-A* drums-A *erika-B* drums-A))))
 
-(defun erika-score ()
-  (let ((score (erika-base)))
-    (scale-tempo score 6)
-    (channel-key-off score '(1 2 4 5) 9)
+(defun erika-beat ()
+  (let ((drums-A (erika-add-drums *erika-A* (erika-drums-A)))
+	(drums-B (erika-add-drums *erika-B* (erika-drums-B))))
+    (copy-score (append drums-A drums-A drums-B drums-A))))
+
+(defun erika-music (speed music)
+  (let ((score (funcall music)))
+    (scale-tempo score speed)
+    (channel-key-off score '(1 2 4 5) (floor (* 1.5 speed)))
     (adjust-octaves score '(1 2 2 x 0 0 0))
     (clean-up-score score)
     score))
+
+(defun erika-score ()
+  (append
+   (erika-music 6 #'erika-slow)
+   (erika-music 4 #'erika-beat)))
 
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
