@@ -356,8 +356,29 @@
     (multiply (erika-drum-1) 2)
     (multiply (erika-drum-2) 3))))
 
+(defun erika-drum-alt-1 ()
+  '((4 (2 0 G))
+    (4 (2 1 D) (4 0 G))))
+
+(defun erika-drum-alt-2 ()
+  (append
+   (multiply (erika-drum-alt-1) 2)
+   '((4 (2 0 G) (4 0 G))
+     (4 (2 1 D) (4 0 G)))))
+
+(defun erika-drums-alt-A ()
+  (copy-tree
+   (append
+    (multiply (erika-drum-alt-1) 4)
+    (multiply (erika-drum-alt-2) 3))))
+
+(defun erika-drums-B-part ()
+  (append
+   (multiply (erika-drum-alt-1) 3)
+   (erika-drum-alt-2)))
+
 (defun erika-drums-B ()
-  nil)
+  (copy-tree (multiply (erika-drums-B-part) 2)))
 
 (defun erika-add-drums (original drums)
   (let ((score (copy-score original)))
@@ -369,7 +390,7 @@
     (copy-score (append *erika-A* drums-A *erika-B* drums-A))))
 
 (defun erika-beat ()
-  (let ((drums-A (erika-add-drums *erika-A* (erika-drums-A)))
+  (let ((drums-A (erika-add-drums *erika-A* (erika-drums-alt-A)))
 	(drums-B (erika-add-drums *erika-B* (erika-drums-B))))
     (copy-score (append drums-A drums-A drums-B drums-A))))
 
