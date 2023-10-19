@@ -338,18 +338,18 @@
 (defun erika-drum-1 ()
   (copy-tree
    '((4 (2 0 G))
+     (4 (2 1 D))
      (4 (2 0 G))
-     (4 (2 0 G))
-     (4 (2 0 G) (4 0 G)))))
+     (4 (2 1 D) (4 0 G)))))
 
 (defun erika-drum-2 ()
   (copy-tree
    '((4 (2 0 G))
+     (4 (2 1 D))
      (4 (2 0 G))
-     (4 (2 0 G))
+     (4 (2 1 D) (4 0 G))
      (4 (2 0 G) (4 0 G))
-     (4 (2 0 G) (4 0 G))
-     (4 (2 0 G) (4 0 G)))))
+     (4 (2 1 D) (4 0 G)))))
 
 (defun erika-drums-A ()
   (append
