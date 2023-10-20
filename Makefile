@@ -78,4 +78,4 @@ z80.hex: z80.asm
 
 -include dep.inc
 
-level.inc: desert.lisp
+level.inc: desert.lisp alps.lisp

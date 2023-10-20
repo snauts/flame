@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "images/alps.h"
+#include "images/rocks.h"
 
 static u16 draw_one_mountain(u16 x, byte tile) {
     if (tile == 1 || tile == 33) {
@@ -85,11 +86,14 @@ void display_mountains(void) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
+    update_palette(rocks_palette, 16, ARRAY_SIZE(rocks_palette));
+    update_tiles(rocks_tiles, 65, ARRAY_SIZE(rocks_tiles));
+
     clear_DMA_buffer(0, 0x1000);
 
+    fill_VRAM(0, 0, 0x800);
     prepare_mountain_level();
 
-    fill_VRAM(0, 0, 0x800);
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites();
