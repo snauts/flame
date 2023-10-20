@@ -150,6 +150,7 @@ void z80_word(u16 addr, u16 data);
 void z80_poke(u16 addr, byte data);
 void psg_noise(byte type, byte vol);
 void music_toggle(byte state);
+void fade_music(u16 i);
 void music_none(void);
 void perish_sfx(void);
 

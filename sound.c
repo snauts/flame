@@ -105,6 +105,11 @@ const byte hi_hat[] = {
     0x00, 0x00, 0x00, 0x00,
 };
 
+static byte *get_level(byte part, byte reg) {
+    static byte total_levels[32];
+    return total_levels + (part << 4) + (reg & 0xf);
+}
+
 static void setup_ym2612_channel(byte channel, const byte *instrument) {
     u16 i = 0;
     byte part = channel >> 2;
@@ -113,7 +118,13 @@ static void setup_ym2612_channel(byte channel, const byte *instrument) {
     ym2612_write(part, 0xb0 + offset, instrument[i++]);
     ym2612_write(part, 0xb4 + offset, instrument[i++]);
     for (byte reg = 0x30; reg < 0xa0; reg += 0x4) {
-	ym2612_write(part, reg + offset, instrument[i++]);
+	byte value = instrument[i];
+	byte where = reg + offset;
+	ym2612_write(part, where, value);
+	if ((where & 0xf0) == 0x40) {
+	    *get_level(part, where) = value;
+	}
+	i++;
     }
 }
 
@@ -202,6 +213,25 @@ static void mute_sound(void) {
 void music_toggle(byte state) {
     z80_poke(0x10, state);
     if (state) do_z80_bus(&mute_sound);
+}
+
+static void update_total_levels(void) {
+    for (byte part = 0; part < 2; part++) {
+	for (byte reg = 0x40; reg < 0x50; reg++) {
+	    if ((reg & 3) < 3) {
+		byte *ptr = get_level(part, reg);
+		if (*ptr < 0x7f) (*ptr)++;
+		ym2612_write(part, reg, *ptr);
+	    }
+	}
+    }
+}
+
+void fade_music(u16 i) {
+    if (i < 0x7f) {
+	do_z80_bus(&update_total_levels);
+	callback(&fade_music, 1, i + 1);
+    }
 }
 
 static void setup_music(u16 id, Function setup) {
