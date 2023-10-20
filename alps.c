@@ -57,9 +57,9 @@ extern u16 cacti_spacing_size(void);
 extern const byte cacti_spacing[];
 
 void draw_alpine_bones(void) {
-    u16 offset = 0x700;
+    u16 offset = 0x680;
     for (u16 i = 0; i < cacti_spacing_size(); i++) {
-	u16 tile = random() & 0xF;
+	u16 tile = ((i / 6) + (random() & 3)) & 0xF;
 	offset += cacti_spacing[i];
 	poke_VRAM(offset, 7 + (tile >> 3) + 8 * (tile & 7));
     }
