@@ -11,4 +11,6 @@
   (multiply (crop 0 4 8 8 (rocks)) n))
 
 (defun mountain-level ()
-  (alps-walk 16))
+  (join
+   (alps-walk 16)
+   (empty 64)))
