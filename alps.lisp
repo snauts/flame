@@ -36,6 +36,7 @@
    (alps-walk :width 1 :type 1)
    (empty 2)
    (alps-walk :width 1 :type 2)
+   (trigger "emit_bee_stream")
    (empty 2)
    (alps-walk :width 8)
    (empty 64)))

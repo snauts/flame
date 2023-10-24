@@ -2,6 +2,9 @@
 
 #include "images/alps.h"
 #include "images/rocks.h"
+#include "images/bee.h"
+
+#define BEE_TILES 129
 
 static u16 draw_one_mountain(u16 x, byte tile) {
     if (tile == 1 || tile == 33) {
@@ -66,6 +69,65 @@ void draw_alpine_bones(void) {
     }
 }
 
+static u16 is_bee_off_screen(Sprite *sprite) {
+    return sprite->x >= MAX_POSITION
+	|| sprite->x < ON_SCREEN - 16
+	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
+}
+
+static u16 should_bee_sting(Sprite *sprite, char dir) {
+    Rectangle r;
+    dir = 4 * (dir + 1);
+    r.x1 = sprite->x + 2 + dir;
+    r.y1 = sprite->y + 4;
+    r.x2 = sprite->x + 6 + dir;
+    r.y2 = sprite->y + 8;
+    return soldier_collision(&r);
+}
+
+static void move_bee(Object *obj) {
+    Sprite *sprite = obj->sprite;
+
+    obj->life++;
+    obj->x += obj->direction;
+
+    sprite->x = SCREEN_X(obj->x);
+    sprite->y = obj->y + ON_SCREEN - 16;
+    obj->frame = ((obj->life >> 1) & 1);
+
+    if (should_bee_sting(sprite, obj->direction)) {
+	u16 offset = 8 * (obj->direction + 1);
+	bite_soldier(sprite->x + offset, sprite->y - 2);
+    }
+
+    sprite->cfg = TILE(3, BEE_TILES + 4 * obj->frame);
+    if (obj->direction > 0) sprite->cfg |= BIT(11);
+
+    if (is_bee_off_screen(sprite)) {
+	free_mob(obj);
+    }
+}
+
+static Object *setup_bee(short x, short y, u16 life) {
+    Object *obj = alloc_mob();
+    if (obj != NULL) {
+	obj->x = x;
+	obj->y = y;
+	obj->frame = 0;
+	obj->gravity = 0;
+	obj->velocity = 0;
+	obj->life = life;
+	obj->direction = -1;
+	obj->sprite->size = SPRITE_SIZE(2, 2);
+	mob_fn(obj, &move_bee);
+    }
+    return obj;
+}
+
+void emit_bee_stream(u16 x) {
+    setup_bee(window + SCR_WIDTH, 200, 0);
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
@@ -99,6 +161,9 @@ void display_mountains(void) {
     setup_soldier_sprites();
     void music_erika(void);
     music_erika();
+
+    update_palette(bee_palette, 48, ARRAY_SIZE(bee_palette));
+    update_tiles(bee_tiles, BEE_TILES, ARRAY_SIZE(bee_tiles));
 
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);
