@@ -141,7 +141,7 @@ u16 should_small_mob_burn(Sprite *sprite) {
     return flame_collision(&r) != NULL;
 }
 
-u16 should_small_mob_bite(Sprite *sprite, char dir) {
+static u16 should_small_mob_bite(Sprite *sprite, char dir) {
     Rectangle r;
     dir = 4 * (dir + 1);
     r.x1 = sprite->x + 2 + dir;
@@ -149,4 +149,12 @@ u16 should_small_mob_bite(Sprite *sprite, char dir) {
     r.x2 = sprite->x + 6 + dir;
     r.y2 = sprite->y + 8;
     return soldier_collision(&r);
+}
+
+void small_mob_attack(Object *obj) {
+    Sprite *sprite = obj->sprite;
+    if (should_small_mob_bite(sprite, obj->direction)) {
+	u16 offset = 8 * (obj->direction + 1);
+	bite_soldier(sprite->x + offset, sprite->y - 2);
+    }
 }

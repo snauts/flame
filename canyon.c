@@ -124,22 +124,17 @@ static void move_hopper(Object *obj) {
     if (!is_hopper_alive(obj)) {
 	if ((obj->life & 3) == 0) obj->frame++;
     }
+    else if (should_small_mob_burn(sprite)) {
+	hopper_die(obj);
+    }
     else {
-	if (should_small_mob_burn(sprite)) {
-	    hopper_die(obj);
+	if (land) {
+	    obj->frame = 3 + ((obj->life >> 2) % 6);
 	}
 	else {
-	    if (land) {
-		obj->frame = 3 + ((obj->life >> 2) % 6);
-	    }
-	    else {
-		obj->frame = 1 + ((obj->life >> 1) & 1);
-	    }
-	    if (should_small_mob_bite(sprite, obj->direction)) {
-		u16 offset = 8 * (obj->direction + 1);
-		bite_soldier(sprite->x + offset, sprite->y - 2);
-	    }
+	    obj->frame = 1 + ((obj->life >> 1) & 1);
 	}
+	small_mob_attack(obj);
     }
 
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);

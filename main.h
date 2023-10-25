@@ -212,7 +212,7 @@ Object *get_mob(u16 index);
 
 u16 is_small_mob_off_screen(Sprite *sprite);
 u16 should_small_mob_burn(Sprite *sprite);
-u16 should_small_mob_bite(Sprite *sprite, char dir);
+void small_mob_attack(Object *obj);
 
 extern u16 window;
 extern u16 counter;
