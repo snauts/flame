@@ -15,12 +15,16 @@
 (defun small-plant ()
   (crop 2 2 6 4 (rocks)))
 
+(defun flower-bush ()
+  (crop 2 0 6 2 (rocks)))
+
 (defun alpine-rocks ()
   (let ((rocks (crop 0 4 8 8 (rocks))))
     (case *rock-type*
       (0 rocks)
       (1 (place 2 3 rocks (two-leaf)))
-      (2 (place 4 3 rocks (small-plant))))))
+      (2 (place 4 3 rocks (small-plant)))
+      (3 (place 0 3 rocks (flower-bush))))))
 
 (defun alps-walk (&key (width 1) (type 0))
   (let ((*rock-type* type))
@@ -38,5 +42,7 @@
    (alps-walk :width 1 :type 2)
    (trigger "emit_bee_stream")
    (empty 2)
-   (alps-walk :width 8)
+   (alps-walk :width 1 :type 3)
+   (empty 2)
+   (alps-walk :width 4)
    (empty 64)))

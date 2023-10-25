@@ -189,6 +189,7 @@ void prepare_mantis_level(void);
 void prepare_mountain_level(void);
 
 u16 platform_bottom(void);
+void load_burn_tiles(u16 where);
 void update_height_map(u16 pos_x);
 void update_window(short direction);
 void paint_background(u16, u16, u16, u16, u16, u16);
