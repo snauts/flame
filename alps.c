@@ -5,7 +5,7 @@
 #include "images/burn.h"
 #include "images/bee.h"
 
-#define BEE_TILES	129
+#define BEE_TILES	193
 #define BURN_TILES	(BEE_TILES + 8)
 
 static u16 draw_one_mountain(u16 x, byte tile) {
