@@ -85,6 +85,20 @@ static u16 should_bee_sting(Sprite *sprite, char dir) {
     return soldier_collision(&r);
 }
 
+static u16 should_bee_burn(Sprite *sprite) {
+    Rectangle r;
+    r.x1 = sprite->x + 4;
+    r.y1 = sprite->y + 4;
+    r.x2 = sprite->x + 12;
+    r.y2 = sprite->y + 12;
+    return flame_collision(&r) != NULL;
+}
+
+static void burn_bee(Object *obj) {
+    obj->life = 0;
+    perish_sfx();
+}
+
 static void move_bee(Object *obj) {
     Sprite *sprite = obj->sprite;
 
@@ -95,7 +109,10 @@ static void move_bee(Object *obj) {
     sprite->y = obj->y + ON_SCREEN - 16;
     obj->frame = ((obj->life >> 1) & 1);
 
-    if (should_bee_sting(sprite, obj->direction)) {
+    if (should_bee_burn(sprite)) {
+	burn_bee(obj);
+    }
+    else if (should_bee_sting(sprite, obj->direction)) {
 	u16 offset = 8 * (obj->direction + 1);
 	bite_soldier(sprite->x + offset, sprite->y - 2);
     }
@@ -103,7 +120,7 @@ static void move_bee(Object *obj) {
     sprite->cfg = TILE(3, BEE_TILES + 4 * obj->frame);
     if (obj->direction > 0) sprite->cfg |= BIT(11);
 
-    if (is_bee_off_screen(sprite)) {
+    if (is_bee_off_screen(sprite) || obj->life == 0) {
 	free_mob(obj);
     }
 }
