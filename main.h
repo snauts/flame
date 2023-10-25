@@ -210,5 +210,9 @@ void free_mob(Object *obj);
 u16 mob_index(Object *obj);
 Object *get_mob(u16 index);
 
+u16 is_small_mob_off_screen(Sprite *sprite);
+u16 should_small_mob_burn(Sprite *sprite);
+u16 should_small_mob_bite(Sprite *sprite, char dir);
+
 extern u16 window;
 extern u16 counter;

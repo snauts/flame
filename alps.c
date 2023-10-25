@@ -2,9 +2,11 @@
 
 #include "images/alps.h"
 #include "images/rocks.h"
+#include "images/burn.h"
 #include "images/bee.h"
 
-#define BEE_TILES 129
+#define BURN_TILES	129
+#define BEE_TILES	(BURN_TILES + 32)
 
 static u16 draw_one_mountain(u16 x, byte tile) {
     if (tile == 1 || tile == 33) {
@@ -69,31 +71,6 @@ void draw_alpine_bones(void) {
     }
 }
 
-static u16 is_bee_off_screen(Sprite *sprite) {
-    return sprite->x >= MAX_POSITION
-	|| sprite->x < ON_SCREEN - 16
-	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
-}
-
-static u16 should_bee_sting(Sprite *sprite, char dir) {
-    Rectangle r;
-    dir = 4 * (dir + 1);
-    r.x1 = sprite->x + 2 + dir;
-    r.y1 = sprite->y + 4;
-    r.x2 = sprite->x + 6 + dir;
-    r.y2 = sprite->y + 8;
-    return soldier_collision(&r);
-}
-
-static u16 should_bee_burn(Sprite *sprite) {
-    Rectangle r;
-    r.x1 = sprite->x + 4;
-    r.y1 = sprite->y + 4;
-    r.x2 = sprite->x + 12;
-    r.y2 = sprite->y + 12;
-    return flame_collision(&r) != NULL;
-}
-
 static void burn_bee(Object *obj) {
     obj->life = 0;
     perish_sfx();
@@ -109,10 +86,10 @@ static void move_bee(Object *obj) {
     sprite->y = obj->y + ON_SCREEN - 16;
     obj->frame = ((obj->life >> 1) & 1);
 
-    if (should_bee_burn(sprite)) {
+    if (should_small_mob_burn(sprite)) {
 	burn_bee(obj);
     }
-    else if (should_bee_sting(sprite, obj->direction)) {
+    else if (should_small_mob_bite(sprite, obj->direction)) {
 	u16 offset = 8 * (obj->direction + 1);
 	bite_soldier(sprite->x + offset, sprite->y - 2);
     }
@@ -120,7 +97,7 @@ static void move_bee(Object *obj) {
     sprite->cfg = TILE(3, BEE_TILES + 4 * obj->frame);
     if (obj->direction > 0) sprite->cfg |= BIT(11);
 
-    if (is_bee_off_screen(sprite) || obj->life == 0) {
+    if (is_small_mob_off_screen(sprite) || obj->life == 0) {
 	free_mob(obj);
     }
 }
@@ -181,6 +158,7 @@ void display_mountains(void) {
 
     update_palette(bee_palette, 48, ARRAY_SIZE(bee_palette));
     update_tiles(bee_tiles, BEE_TILES, ARRAY_SIZE(bee_tiles));
+    update_tiles(burn_tiles, BURN_TILES, ARRAY_SIZE(burn_tiles));
 
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);

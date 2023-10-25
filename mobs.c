@@ -125,3 +125,28 @@ void manage_timers(void) {
 	}
     }
 }
+
+u16 is_small_mob_off_screen(Sprite *sprite) {
+    return sprite->x >= MAX_POSITION
+	|| sprite->x < ON_SCREEN - 16
+	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
+}
+
+u16 should_small_mob_burn(Sprite *sprite) {
+    Rectangle r;
+    r.x1 = sprite->x + 4;
+    r.y1 = sprite->y + 4;
+    r.x2 = sprite->x + 12;
+    r.y2 = sprite->y + 12;
+    return flame_collision(&r) != NULL;
+}
+
+u16 should_small_mob_bite(Sprite *sprite, char dir) {
+    Rectangle r;
+    dir = 4 * (dir + 1);
+    r.x1 = sprite->x + 2 + dir;
+    r.y1 = sprite->y + 4;
+    r.x2 = sprite->x + 6 + dir;
+    r.y2 = sprite->y + 8;
+    return soldier_collision(&r);
+}
