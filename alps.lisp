@@ -1,5 +1,5 @@
 (defparameter *alps-walkable*
-  '(67 75 83 91 99 107 115 123 71 79))
+  '(67 75 83 91 99 107 115 123 71 79 119 127))
 
 (defun alpine-tile (id)
   (tile id :pl 1))
@@ -24,7 +24,8 @@
       (0 rocks)
       (1 (place 2 3 rocks (two-leaf)))
       (2 (place 4 3 rocks (small-plant)))
-      (3 (place 0 3 rocks (flower-bush))))))
+      (3 (place 0 3 rocks (flower-bush)))
+      (4 (crop 6 0 8 4 (rocks))))))
 
 (defun alps-walk (&key (width 1) (type 0))
   (let ((*rock-type* type))
@@ -44,5 +45,7 @@
    (empty 2)
    (alps-walk :width 1 :type 3)
    (empty 2)
-   (alps-walk :width 4)
+   (alps-walk :width 1 :type 4)
+   (empty 2)
+   (alps-walk :width 2)
    (empty 64)))
