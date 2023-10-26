@@ -127,8 +127,12 @@ static Object *setup_bee(short x, short y, u16 life) {
     return obj;
 }
 
-void emit_bee_stream(u16 x) {
-    setup_bee(window + SCR_WIDTH, 200, 0);
+void emit_bee_block(u16 x) {
+    for (u16 y = 0; y < 3; y++) {
+	for (u16 x = 0; x < 3; x++) {
+	    setup_bee(window + SCR_WIDTH + 16 * x + 4 * y, 200 - y * 16, 0);
+	}
+    }
 }
 
 void load_burn_tiles(u16 where) {
