@@ -80,12 +80,11 @@ static u16 is_bee_alive(Object *obj) {
     return obj->frame < 2;
 }
 
-static void move_bee(Object *obj) {
+static void animate_bee(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
 
     obj->life++;
-    obj->x += obj->direction;
 
     sprite->x = SCREEN_X(obj->x);
     sprite->y = obj->y + ON_SCREEN - 16;
@@ -111,6 +110,11 @@ static void move_bee(Object *obj) {
     else {
 	small_mob_end(obj, 1);
     }
+}
+
+static void move_bee(Object *obj) {
+    obj->x += obj->direction;
+    animate_bee(obj);
 }
 
 static Object *setup_bee(short x, short y, u16 life) {
@@ -142,14 +146,11 @@ static void circling_bee(Object *obj) {
     u16 index = (2 * obj->life * obj->direction) & 0xFF;
     char dx = small_circle[index + 0];
     char dy = small_circle[index + 1];
-    char dir = obj->direction;
-    obj->direction = 0;
     obj->x += dx;
     obj->y += dy;
-    move_bee(obj);
+    animate_bee(obj);
     obj->x -= dx;
     obj->y -= dy;
-    obj->direction = dir;
 }
 
 static void emit_bee_circle(u16 x, u16 y, u16 offset, char dir) {
