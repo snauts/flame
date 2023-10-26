@@ -5,7 +5,7 @@ static byte music;
 
 #define MUSIC_NONE	0
 #define MUSIC_JOHNNY	1
-#define MUSIC_ERIKA	1
+#define MUSIC_ERIKA	2
 
 #define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
 void ym2612_write(byte part, byte reg, byte data) {
