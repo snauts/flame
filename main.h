@@ -213,6 +213,7 @@ Object *get_mob(u16 index);
 
 void small_mob_end(Object *obj, byte persistent);
 u16 should_small_mob_burn(Sprite *sprite);
+void mob_adjust_sprite_dir(Object *obj);
 void small_mob_attack(Object *obj);
 
 extern u16 window;

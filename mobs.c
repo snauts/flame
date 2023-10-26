@@ -172,3 +172,7 @@ void small_mob_attack(Object *obj) {
 	bite_soldier(sprite->x + offset, sprite->y - 2);
     }
 }
+
+void mob_adjust_sprite_dir(Object *obj) {
+    if (obj->direction > 0) obj->sprite->cfg |= BIT(11);
+}

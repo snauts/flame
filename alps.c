@@ -102,7 +102,6 @@ static void animate_bee(Object *obj) {
     }
 
     sprite->cfg = TILE(palette, BEE_TILES + 4 * obj->frame);
-    if (obj->direction > 0) sprite->cfg |= BIT(11);
 
     if (obj->frame >= 10) {
 	free_mob(obj);
@@ -112,9 +111,14 @@ static void animate_bee(Object *obj) {
     }
 }
 
+static void flip_bee(Object *obj) {
+    animate_bee(obj);
+    mob_adjust_sprite_dir(obj);
+}
+
 static void move_bee(Object *obj) {
     obj->x += obj->direction;
-    animate_bee(obj);
+    flip_bee(obj);
 }
 
 static Object *setup_bee(short x, short y, u16 life) {
@@ -169,7 +173,7 @@ void emit_bee_circles(u16 x) {
 
 static void emit_static_bee(u16 x, u16 y, char dir) {
     Object *bee = setup_bee(x, y, 0);
-    mob_fn(bee, &animate_bee);
+    mob_fn(bee, &flip_bee);
     bee->direction = dir;
 }
 

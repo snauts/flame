@@ -138,7 +138,7 @@ static void move_hopper(Object *obj) {
     }
 
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
-    if (obj->direction > 0) sprite->cfg |= BIT(11);
+    mob_adjust_sprite_dir(obj);
 
     if (obj->frame == 17) {
 	free_mob(obj);
