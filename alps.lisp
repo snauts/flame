@@ -31,13 +31,19 @@
 (defun iris-flower ()
   (crop 12 2 16 4 (rocks)))
 
+(defun narrow-rock-platform ()
+  (box-pipe
+   (place 0 2 pipe (crop 6 2 8 4 (rocks)))
+   (place 0 0 pipe (crop 0 4 1 6 (rocks)))
+   (place 1 0 pipe (crop 7 4 8 6 (rocks)))))
+
 (defun hanging-rock-platform ()
   (place 0 0 (crop 0 4 8 8 (rocks)) (crop 8 7 16 8 (rocks))))
 
 (defun alpine-base (base)
   (case base
     (0 (crop 0 4 8 8 (rocks)))
-    (1 (crop 6 0 8 4 (rocks)))
+    (1 (narrow-rock-platform))
     (2 (hanging-rock-platform))))
 
 (defun alpine-plants (rocks type)
