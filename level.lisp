@@ -94,6 +94,16 @@
 (defun palette (pl box)
   (for-all box (lambda (x) (logior (logand x #x9fff) (ash pl 13)))))
 
+(defun params (tile)
+  (if tile (logand tile (lognot #x7ff)) 0))
+
+(defun look-up (x table)
+  (let ((entry (assoc (idx x) table)))
+    (if entry (logior (params x) (second entry)) x)))
+
+(defun exchange (box table)
+  (for-all box (lambda (x) (look-up x table))))
+
 (defun place-in (a b i &optional result)
   (cond ((and (null a) (null b)) (reverse result))
 	((> i 0) (place-in (rest a) b (1- i) (cons (first a) result)))
