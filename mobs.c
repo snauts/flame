@@ -126,10 +126,24 @@ void manage_timers(void) {
     }
 }
 
-u16 is_small_mob_off_screen(Sprite *sprite) {
+static u16 is_small_mob_off_screen(Sprite *sprite) {
     return sprite->x >= MAX_POSITION
 	|| sprite->x < ON_SCREEN - 16
 	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
+}
+
+
+void small_mob_end(Object *obj, byte persistent) {
+    Sprite *sprite = obj->sprite;
+    if (is_small_mob_off_screen(sprite)) {
+	if (persistent && sprite->x >= MAX_POSITION) {
+	    sprite->x = 1;
+	    sprite->y = 1;
+	}
+	else {
+	    free_mob(obj);
+	}
+    }
 }
 
 u16 should_small_mob_burn(Sprite *sprite) {

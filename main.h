@@ -211,7 +211,7 @@ void free_mob(Object *obj);
 u16 mob_index(Object *obj);
 Object *get_mob(u16 index);
 
-u16 is_small_mob_off_screen(Sprite *sprite);
+void small_mob_end(Object *obj, byte persistent);
 u16 should_small_mob_burn(Sprite *sprite);
 void small_mob_attack(Object *obj);
 

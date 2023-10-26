@@ -106,8 +106,11 @@ static void move_bee(Object *obj) {
     sprite->cfg = TILE(palette, BEE_TILES + 4 * obj->frame);
     if (obj->direction > 0) sprite->cfg |= BIT(11);
 
-    if (is_small_mob_off_screen(sprite) || obj->frame >= 10) {
+    if (obj->frame >= 10) {
 	free_mob(obj);
+    }
+    else {
+	small_mob_end(obj, 1);
     }
 }
 

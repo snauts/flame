@@ -143,14 +143,8 @@ static void move_hopper(Object *obj) {
     if (obj->frame == 17) {
 	free_mob(obj);
     }
-    else if (is_small_mob_off_screen(sprite)) {
-	if (HOPPER(obj)->persistent && sprite->x >= MAX_POSITION) {
-	    sprite->x = 1;
-	    sprite->y = 1;
-	}
-	else {
-	    free_mob(obj);
-	}
+    else {
+	small_mob_end(obj, HOPPER(obj)->persistent);
     }
 }
 
