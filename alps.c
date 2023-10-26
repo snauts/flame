@@ -167,6 +167,23 @@ void emit_bee_circles(u16 x) {
     emit_bee_circle(x + 0x80, 140, 8,  1);
 }
 
+static void emit_static_bee(u16 x, u16 y, char dir) {
+    Object *bee = setup_bee(x, y, 0);
+    mob_fn(bee, &animate_bee);
+    bee->direction = dir;
+}
+
+void emit_static_garden_bees(u16 x) {
+    emit_static_bee(x + SCR_WIDTH + 64, 186, 1);
+    emit_static_bee(x + SCR_WIDTH + 80, 192, -1);
+
+    emit_static_bee(x + SCR_WIDTH + 112, 200, 1);
+    emit_static_bee(x + SCR_WIDTH + 130, 196, -1);
+
+    emit_static_bee(x + SCR_WIDTH + 184, 178, 1);
+    emit_static_bee(x + SCR_WIDTH + 202, 184, -1);
+}
+
 void load_burn_tiles(u16 where) {
     update_tiles(burn_tiles, where, ARRAY_SIZE(burn_tiles));
 }

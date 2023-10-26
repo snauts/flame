@@ -91,6 +91,9 @@
 	  (alpine-vegetation rocks type)
 	  (alpine-right-side base))))
 
+(defun flower-garden ()
+  (alps-walk :width 4 :type '(1 6 3 5 2 8 4 7)))
+
 (defun mountain-level ()
   (join
    (alps-walk :width 3)
@@ -121,5 +124,5 @@
    (empty 2)
 
    ;; PART 3
-   (alps-walk :width 4 :type '(1 6 3 5 2 8 4 7))
+   (inject (flower-garden) "emit_static_garden_bees" 2)
    (empty 64)))
