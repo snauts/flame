@@ -132,7 +132,7 @@ static Object *setup_bee(short x, short y, u16 life) {
 void emit_bee_block(u16 x) {
     for (u16 y = 0; y < 3; y++) {
 	for (u16 x = 0; x < 3; x++) {
-	    setup_bee(window + SCR_WIDTH + 16 * x + 4 * y, 200 - y * 16, 0);
+	    setup_bee(window + SCR_WIDTH + 16 * x + 12 * y, 168 + y * 16, 0);
 	}
     }
 }
