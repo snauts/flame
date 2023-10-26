@@ -94,9 +94,27 @@
 (defun mountain-level ()
   (join
    (alps-walk :width 3)
+
+   ;; PART 1
    (empty 2)
    (alps-walk :width 2 :type '(1 5 2 5))
    (empty 2)
    (trigger "emit_bee_block")
-   (alps-walk :width 1 :type '(2 5))
+   (alps-walk :type '(2 5))
+
+   ;; PART 2
+   (empty 2)
+   (raise 3  (alps-walk :type 1 :hang 1 :base 1))
+   (empty 2)
+   (raise 6  (alps-walk :type 2 :hang 1 :base 1))
+   (empty 2)
+   (raise 9  (alps-walk :type 6 :hang 1 :base 2))
+   (empty 2)
+   (raise 12 (alps-walk :type 3 :hang 1 :base 1))
+   (empty 2)
+   (raise 9  (alps-walk :type 7 :hang 1 :base 2))
+   (empty 2)
+   (raise 6  (alps-walk :type 4 :hang 1 :base 1))
+   (empty 2)
+   (raise 3  (alps-walk :type 8 :hang 1 :base 2))
    (empty 64)))

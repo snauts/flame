@@ -123,6 +123,9 @@
 	     (if (> x 0) b (rest b))
 	     (place-one x y a b result))))
 
+(defun raise (h box)
+  (place 0 h nil box))
+
 (defun poke (box x y tile)
   (place x y box (make 1 1 :e tile)))
 
