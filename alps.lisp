@@ -1,5 +1,5 @@
 (defparameter *alps-walkable*
-  '(67 75 83 91 99 107 115 123 71 79 119 127))
+  '(67 75 83 91 99 107 115 123 71 79))
 
 (defun alpine-tile (id)
   (tile id :pl 1))
@@ -44,7 +44,9 @@
   (case base
     (0 (crop 0 4 8 8 (rocks)))
     (1 (narrow-rock-platform))
-    (2 (hanging-rock-platform))))
+    (2 (hanging-rock-platform))
+    (3 (crop 0 4 4 8 (rocks)))
+    (4 (crop 4 4 8 8 (rocks)))))
 
 (defun alpine-plants (rocks type)
   (case type
@@ -66,15 +68,25 @@
 	 (alpine-vegetation (alpine-plants rocks (first type)) (rest type)))
 	(t (error "ALPINE-PLANT bad type"))))
 
+(defun alpine-left-side (base)
+  (place 0 2 (crop 0 0 1 3 (rocks)) (when (= base 4) (crop 6 0 7 2 (rocks)))))
+
+(defun alpine-right-side (base)
+  (place 0 2 (crop 1 0 2 3 (rocks)) (when (= base 3) (crop 7 0 8 2 (rocks)))))
+
 (defun alps-walk (&key (width 1) (type 0) (base 0))
   (let ((rocks (alpine-vegetation (alpine-base base) type)))
-    (join (crop 0 0 1 3 (rocks))
+    (join (alpine-left-side base)
 	  (multiply rocks width)
-	  (crop 1 0 2 3 (rocks)))))
+	  (alpine-right-side base))))
 
 (defun mountain-level ()
   (join
    (alps-walk :width 3)
+   (empty 2)
+   (alps-walk :width 1 :base 3)
+   (empty 2)
+   (alps-walk :width 1 :base 4)
    (empty 2)
    (alps-walk :width 1 :type 1)
    (empty 2)
