@@ -4,49 +4,59 @@
 (defun alpine-tile (id)
   (tile id :pl 1))
 
-(defun rocks ()
-  (fill-box 16 8 (alpine-tile 65)))
+(defun rocks (x1 y1 x2 y2)
+  (crop x1 y1 x2 y2 (fill-box 16 8 (alpine-tile 65))))
 
 (defun two-leaf ()
-  (crop 0 3 2 4 (rocks)))
+  (rocks 0 3 2 4))
 
 (defun small-plant ()
-  (crop 2 2 6 4 (rocks)))
+  (rocks 2 2 6 4))
 
 (defun flower-bush ()
-  (crop 2 0 6 2 (rocks)))
+  (rocks 2 0 6 2))
 
 (defun tubular-flower ()
-  (crop 8 4 12 7 (rocks)))
+  (rocks 8 4 12 7))
 
 (defun hanging-flower ()
-  (crop 12 4 16 7 (rocks)))
+  (rocks 12 4 16 7))
 
 (defun tall-plant ()
-  (crop 8 0 12 4 (rocks)))
+  (rocks 8 0 12 4))
 
 (defun cup-flower ()
-  (crop 12 0 16 2 (rocks)))
+  (rocks 12 0 16 2))
 
 (defun iris-flower ()
-  (crop 12 2 16 4 (rocks)))
+  (rocks 12 2 16 4))
 
 (defun narrow-rock-platform ()
   (box-pipe
-   (place 0 2 pipe (crop 6 2 8 4 (rocks)))
-   (place 0 0 pipe (crop 0 4 1 6 (rocks)))
-   (place 1 0 pipe (crop 7 4 8 6 (rocks)))))
+   (place 0 2 pipe (rocks 6 2 8 4))
+   (place 0 0 pipe (rocks 0 4 1 6))
+   (place 1 0 pipe (rocks 7 4 8 6))))
 
 (defun hanging-rock-platform ()
-  (place 0 0 (crop 0 4 8 8 (rocks)) (crop 8 7 16 8 (rocks))))
+  (place 0 0 (rocks 0 4 8 8) (rocks 8 7 16 8)))
 
-(defun alpine-base (base)
+(defun alpine-solid (base)
   (case base
-    (0 (crop 0 4 8 8 (rocks)))
-    (1 (narrow-rock-platform))
-    (2 (hanging-rock-platform))
-    (3 (crop 0 4 4 8 (rocks)))
-    (4 (crop 4 4 8 8 (rocks)))))
+    (0 (rocks 0 4 8 8))
+    (1 (rocks 0 4 4 8))
+    (2 (rocks 4 4 8 8))
+    (3 (narrow-rock-platform))))
+
+(defparameter *solid-to-hanging*
+  '((68  129) (76  137) (84  145) (92  153)
+    (100 161) (108 169) (116 177) (124 185)))
+
+(defun hanging (solid)
+  (exchange solid *solid-to-hanging*))
+
+(defun alpine-base (base hang)
+  (let ((solid (alpine-solid base)))
+    (if (/= hang 0) (hanging solid) solid)))
 
 (defun alpine-plants (rocks type)
   (case type
@@ -69,13 +79,13 @@
 	(t (error "ALPINE-PLANT bad type"))))
 
 (defun alpine-left-side (base)
-  (place 0 2 (crop 0 0 1 3 (rocks)) (when (= base 4) (crop 6 0 7 2 (rocks)))))
+  (place 0 2 (rocks 0 0 1 3) (when (= base 2) (rocks 6 0 7 2))))
 
 (defun alpine-right-side (base)
-  (place 0 2 (crop 1 0 2 3 (rocks)) (when (= base 3) (crop 7 0 8 2 (rocks)))))
+  (place 0 2 (rocks 1 0 2 3) (when (= base 1) (rocks 7 0 8 2))))
 
-(defun alps-walk (&key (width 1) (type 0) (base 0))
-  (let ((rocks (alpine-vegetation (alpine-base base) type)))
+(defun alps-walk (&key (width 1) (type 0) (base 0) (hang 0))
+  (let ((rocks (alpine-vegetation (alpine-base base hang) type)))
     (join (alpine-left-side base)
 	  (multiply rocks width)
 	  (alpine-right-side base))))
@@ -84,9 +94,21 @@
   (join
    (alps-walk :width 3)
    (empty 2)
-   (alps-walk :width 1 :base 3)
+   (alps-walk :width 1 :base 0 :hang 1)
    (empty 2)
-   (alps-walk :width 1 :base 4)
+   (alps-walk :width 1 :base 1 :hang 1)
+   (empty 2)
+   (alps-walk :width 1 :base 2 :hang 1)
+   (empty 2)
+   (alps-walk :width 1 :base 3 :hang 1)
+   (empty 2)
+   (place 0 3 (empty 1) (alps-walk :width 1 :type '(2 3) :hang 1))
+   (empty 2)
+   (place 0 5 (empty 1) (alps-walk :width 1 :type '(2 4) :hang 1))
+   (empty 2)
+   (alps-walk :width 1 :base 1)
+   (empty 2)
+   (alps-walk :width 1 :base 2)
    (empty 2)
    (alps-walk :width 1 :type 1)
    (empty 2)
@@ -107,13 +129,13 @@
    (empty 2)
    (alps-walk :width 1 :base 1)
    (empty 2)
-   (place 0 3 (empty 1) (alps-walk :width 1 :type '(2 3) :base 2))
+   (place 0 3 (empty 1) (alps-walk :width 1 :type '(2 3) :hang 1))
    (empty 2)
-   (place 0 5 (empty 1) (alps-walk :width 1 :type '(2 4) :base 2))
+   (place 0 5 (empty 1) (alps-walk :width 1 :type '(2 4) :hang 1))
    (empty 2)
-   (place 0 7 (empty 1) (alps-walk :width 1 :type '(3 5) :base 2))
+   (place 0 7 (empty 1) (alps-walk :width 1 :type '(3 5) :hang 1))
    (empty 2)
-   (place 0 9 (empty 1) (alps-walk :width 1 :type '(6 7) :base 2))
+   (place 0 9 (empty 1) (alps-walk :width 1 :type '(6 7) :hang 1))
    (empty 2)
-   (place 0 11 (empty 1) (alps-walk :width 1 :type '(4 8) :base 2))
+   (place 0 11 (empty 1) (alps-walk :width 1 :type '(4 8) :hang 1))
    (empty 64)))
