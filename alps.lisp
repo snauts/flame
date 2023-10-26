@@ -19,14 +19,14 @@
 (defun tubular-flower ()
   (crop 8 4 12 7 (rocks)))
 
-(defun hanging-platform ()
+(defun hanging-rock-platform ()
   (place 0 0 (crop 0 4 8 8 (rocks)) (crop 8 7 16 8 (rocks))))
 
 (defun alpine-base (base)
   (case base
     (0 (crop 0 4 8 8 (rocks)))
     (1 (crop 6 0 8 4 (rocks)))
-    (2 (hanging-platform))))
+    (2 (hanging-rock-platform))))
 
 (defun alpine-plants (rocks type)
   (case type
