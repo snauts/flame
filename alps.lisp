@@ -25,6 +25,12 @@
 (defun tall-plant ()
   (crop 8 0 12 4 (rocks)))
 
+(defun cup-flower ()
+  (crop 12 0 16 2 (rocks)))
+
+(defun iris-flower ()
+  (crop 12 2 16 4 (rocks)))
+
 (defun hanging-rock-platform ()
   (place 0 0 (crop 0 4 8 8 (rocks)) (crop 8 7 16 8 (rocks))))
 
@@ -42,7 +48,9 @@
     (3 (place 0 3 rocks (flower-bush)))
     (4 (place 0 3 rocks (tubular-flower)))
     (5 (place 4 3 rocks (hanging-flower)))
-    (6 (place 0 3 rocks (tall-plant)))))
+    (6 (place 0 3 rocks (tall-plant)))
+    (7 (place 4 3 rocks (cup-flower)))
+    (8 (place 4 3 rocks (iris-flower)))))
 
 (defun alpine-vegetation (rocks type)
   (cond ((null type) rocks)
@@ -75,6 +83,10 @@
    (empty 2)
    (alps-walk :width 1 :type 6)
    (empty 2)
+   (alps-walk :width 1 :type 7)
+   (empty 2)
+   (alps-walk :width 1 :type 8)
+   (empty 2)
    (alps-walk :width 1 :base 1)
    (empty 2)
    (place 0 3 (empty 1) (alps-walk :width 1 :type '(2 3) :base 2))
@@ -82,4 +94,8 @@
    (place 0 5 (empty 1) (alps-walk :width 1 :type '(2 4) :base 2))
    (empty 2)
    (place 0 7 (empty 1) (alps-walk :width 1 :type '(3 5) :base 2))
+   (empty 2)
+   (place 0 9 (empty 1) (alps-walk :width 1 :type '(6 7) :base 2))
+   (empty 2)
+   (place 0 11 (empty 1) (alps-walk :width 1 :type '(4 8) :base 2))
    (empty 64)))
