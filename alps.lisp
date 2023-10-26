@@ -117,4 +117,8 @@
    (raise 6  (alps-walk :type 4 :hang 1 :base 1))
    (empty 2)
    (raise 3  (alps-walk :type 8 :hang 1 :base 2))
+   (empty 2)
+
+   ;; PART 3
+   (alps-walk :width 4 :type '(1 6 3 5 2 8 4 7))
    (empty 64)))
