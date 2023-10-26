@@ -105,6 +105,7 @@
    ;; PART 2
    (empty 2)
    (raise 3  (alps-walk :type 1 :hang 1 :base 1))
+   (trigger "emit_bee_circles")
    (empty 2)
    (raise 6  (alps-walk :type 2 :hang 1 :base 1))
    (empty 2)

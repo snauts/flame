@@ -475,7 +475,7 @@
 (defun scale-and-diff (result radius)
   (mapcar (lambda (x) (floor (* radius x))) result))
 
-(defun generate-circle-table (&optional (steps 64) (radius 32))
+(defun generate-circle-table (&optional (steps 128) (radius 36))
   (let ((result nil))
     (dotimes (i steps (reverse (scale-and-diff result radius)))
       (let ((angle (* 2 pi (/ i steps))))

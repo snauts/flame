@@ -73,7 +73,6 @@ void draw_alpine_bones(void) {
 
 static void burn_bee(Object *obj) {
     obj->frame = 2;
-    obj->life = 0;
     perish_sfx();
 }
 
@@ -136,6 +135,35 @@ void emit_bee_block(u16 x) {
 	    setup_bee(window + SCR_WIDTH + 16 * x + 4 * y, 200 - y * 16, 0);
 	}
     }
+}
+
+extern const char small_circle[256];
+static void circling_bee(Object *obj) {
+    u16 index = (2 * obj->life * obj->direction) & 0xFF;
+    char dx = small_circle[index + 0];
+    char dy = small_circle[index + 1];
+    char dir = obj->direction;
+    obj->direction = 0;
+    obj->x += dx;
+    obj->y += dy;
+    move_bee(obj);
+    obj->x -= dx;
+    obj->y -= dy;
+    obj->direction = dir;
+}
+
+static void emit_bee_circle(u16 x, u16 y, u16 offset, char dir) {
+    for (u16 i = 0; i <= 96; i += 32) {
+	Object *bee = setup_bee(x + SCR_WIDTH + 96, y, i + offset);
+	mob_fn(bee, &circling_bee);
+	bee->direction = dir;
+    }
+}
+
+void emit_bee_circles(u16 x) {
+    emit_bee_circle(x + 0x00, 140, 0,  1);
+    emit_bee_circle(x + 0x40, 120, 4, -1);
+    emit_bee_circle(x + 0x80, 140, 8,  1);
 }
 
 void load_burn_tiles(u16 where) {
