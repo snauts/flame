@@ -214,14 +214,14 @@ static void diagonal_bee(Object *obj) {
     obj->y += BEE(obj)->v_direction;
     move_bee(obj);
     if (sprite->x >= SCR_WIDTH + ON_SCREEN - 16) {
-	obj->direction = -2;
+	obj->direction = -abs(obj->direction);
     }
     if (sprite->y <= ON_SCREEN) {
 	BEE(obj)->v_direction = 1;
     }
     if (!BEE(obj)->relinquish) {
 	if (sprite->x <= ON_SCREEN) {
-	    obj->direction = 2;
+	    obj->direction = abs(obj->direction);
 	}
 	if (sprite->y >= SCR_HEIGHT + ON_SCREEN - 16) {
 	    BEE(obj)->v_direction = -1;
