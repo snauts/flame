@@ -71,6 +71,14 @@ void draw_alpine_bones(void) {
     }
 }
 
+typedef struct Bee {
+    char v_direction;
+} Bee;
+
+static Bee *b_obj;
+
+#define BEE(obj) ((Bee *) (obj->private))
+
 static void burn_bee(Object *obj) {
     obj->frame = 2;
     perish_sfx();
@@ -131,6 +139,7 @@ static Object *setup_bee(short x, short y, u16 life) {
 	obj->velocity = 0;
 	obj->life = life;
 	obj->direction = -1;
+	obj->private = b_obj + mob_index(obj);
 	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_bee);
     }
@@ -192,6 +201,40 @@ void load_burn_tiles(u16 where) {
     update_tiles(burn_tiles, where, ARRAY_SIZE(burn_tiles));
 }
 
+void emit_xonix_bees(u16 x) {
+    emit_static_bee(x + SCR_WIDTH + 0x00, 20,  -1);
+    emit_static_bee(x + SCR_WIDTH + 0x14, 216, -1);
+    emit_static_bee(x + SCR_WIDTH + 0x2C, 216,  1);
+    emit_static_bee(x + SCR_WIDTH + 0x40, 20,   1);
+}
+
+static void diagonal_bee(Object *obj) {
+    Sprite *sprite = obj->sprite;
+    obj->y += BEE(obj)->v_direction;
+    move_bee(obj);
+    if (sprite->y <= 128) {
+	BEE(obj)->v_direction = 1;
+    }
+    else if (sprite->y >= 336) {
+	BEE(obj)->v_direction = -1;
+    }
+    if (sprite->x <= 128) {
+	obj->direction = 1;
+    }
+    else if (sprite->x >= 432) {
+	obj->direction = -1;
+    }
+}
+
+static void kick_bees(Object *obj) {
+    BEE(obj)->v_direction = 1;
+    mob_fn(obj, &diagonal_bee);
+}
+
+void kick_xonix_bees(u16 x) {
+    apply_to_all_mobs(&kick_bees);
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
@@ -232,4 +275,6 @@ void display_mountains(void) {
 
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);
+
+    b_obj = malloc(sizeof(Bee) * MAX_MOBS);
 }

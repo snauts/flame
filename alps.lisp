@@ -125,4 +125,19 @@
 
    ;; PART 3
    (inject (flower-garden) "emit_static_garden_bees" 2)
+   (empty 2)
+
+   ;; PART 4
+   (raise 2  (alps-walk :type 8 :hang 1 :base 2))
+   (empty 2)
+   (raise 5  (alps-walk :type 7 :hang 1 :base 2))
+   (empty 2)
+   (trigger "emit_xonix_bees")
+   (raise 8  (alps-walk :type '(3 6) :hang 1))
+   (empty 2)
+   (raise 5  (alps-walk :type 2 :hang 1 :base 1))
+   (empty 2)
+   (trigger "kick_xonix_bees")
+   (raise 2  (alps-walk :type 1 :hang 1 :base 1))
+
    (empty 64)))
