@@ -232,10 +232,13 @@ static void kick_bees(Object *obj) {
 }
 
 static void kick_single_xonix_bee(u16 i) {
-    if (i < MAX_MOBS) {
-	Object *bee = get_mob(i);
-	if (bee->place != -1) kick_bees(bee);
-	callback(&kick_single_xonix_bee, 4, i + 1);
+    while (i < MAX_MOBS) {
+	Object *bee = get_mob(i++);
+	if (bee->place != -1) {
+	    callback(&kick_single_xonix_bee, 8, i);
+	    kick_bees(bee);
+	    break;
+	}
     }
 }
 
