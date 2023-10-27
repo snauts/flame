@@ -73,6 +73,7 @@ void draw_alpine_bones(void) {
 
 typedef struct Bee {
     char v_direction;
+    char relinquish;
 } Bee;
 
 static Bee *b_obj;
@@ -212,21 +213,32 @@ static void diagonal_bee(Object *obj) {
     Sprite *sprite = obj->sprite;
     obj->y += BEE(obj)->v_direction;
     move_bee(obj);
-    if (sprite->y <= 128) {
+    if (sprite->x >= SCR_WIDTH + ON_SCREEN - 16) {
+	obj->direction = -1;
+    }
+    if (sprite->y <= ON_SCREEN) {
 	BEE(obj)->v_direction = 1;
     }
-    else if (sprite->y >= 336) {
-	BEE(obj)->v_direction = -1;
-    }
-    if (sprite->x <= 128) {
-	obj->direction = 1;
-    }
-    else if (sprite->x >= 432) {
-	obj->direction = -1;
+    if (!BEE(obj)->relinquish) {
+	if (sprite->x <= ON_SCREEN) {
+	    obj->direction = 1;
+	}
+	if (sprite->y >= SCR_HEIGHT + ON_SCREEN - 16) {
+	    BEE(obj)->v_direction = -1;
+	}
     }
 }
 
+static void relinquish_bee(Object *obj) {
+    BEE(obj)->relinquish = 1;
+}
+
+static void relinquish_all_bees(void) {
+    apply_to_all_mobs(&relinquish_bee);
+}
+
 static void kick_bees(Object *obj) {
+    BEE(obj)->relinquish = 0;
     BEE(obj)->v_direction = 1;
     mob_fn(obj, &diagonal_bee);
 }
