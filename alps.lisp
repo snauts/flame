@@ -145,6 +145,6 @@
    (empty 2)
 
    ;; PART 5
-   (inject (flower-meadow) "relinquish_all_bees" 26)
+   (inject (flower-meadow) "relinquish_all_bees" 24)
 
    (empty 64)))
