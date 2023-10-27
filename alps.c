@@ -233,7 +233,7 @@ static void relinquish_bee(Object *obj) {
     BEE(obj)->relinquish = 1;
 }
 
-void relinquish_all_bees(u16 x) {
+static void relinquish_all_bees(void) {
     apply_to_all_mobs(&relinquish_bee);
 }
 
@@ -256,6 +256,26 @@ static void kick_single_xonix_bee(u16 i) {
 
 void kick_xonix_bees(u16 x) {
     kick_single_xonix_bee(0);
+}
+
+static void emit_single_xonix_bee(u16 x, u16 y, char dir) {
+    Object *bee = setup_bee(x, y, 0);
+    mob_fn(bee, &diagonal_bee);
+    BEE(bee)->v_direction = dir;
+    bee->direction = -2;
+}
+
+static void emit_xonix_stream_bee(u16 left) {
+    u16 y = 16 + 96 * (left & 1) + 16 * (left >> 1);
+    emit_single_xonix_bee(window + SCR_WIDTH, y, (y >= 112) ? -1 : 1);
+    if (left < 8) {
+	callback(&emit_xonix_stream_bee, 24, left + 1);
+    }
+}
+
+void emit_xonix_stream(u16 x) {
+    relinquish_all_bees();
+    emit_xonix_stream_bee(0);
 }
 
 void display_mountains(void) {

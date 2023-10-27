@@ -145,6 +145,6 @@
    (empty 2)
 
    ;; PART 5
-   (inject (flower-meadow) "relinquish_all_bees" 26)
+   (inject (flower-meadow) "emit_xonix_stream" 26)
 
    (empty 64)))
