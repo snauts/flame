@@ -113,11 +113,11 @@
    (raise 3  (alps-walk :type 1 :hang 1 :base 1))
    (trigger "emit_bee_circles")
    (empty 2)
-   (raise 6  (alps-walk :type 2 :hang 1 :base 1))
+   (raise 6  (alps-walk :type 3 :hang 1 :base 1))
    (empty 2)
    (raise 9  (alps-walk :type 6 :hang 1 :base 2))
    (empty 2)
-   (raise 12 (alps-walk :type 3 :hang 1 :base 1))
+   (raise 12 (alps-walk :type 2 :hang 1 :base 1))
    (empty 2)
    (raise 9  (alps-walk :type 7 :hang 1 :base 2))
    (empty 2)
@@ -145,6 +145,6 @@
    (empty 2)
 
    ;; PART 5
-   (inject (flower-meadow) "relinquish_all_bees" 24)
+   (inject (flower-meadow) "relinquish_all_bees" 26)
 
    (empty 64)))
