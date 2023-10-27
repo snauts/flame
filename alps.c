@@ -203,10 +203,10 @@ void load_burn_tiles(u16 where) {
 }
 
 void emit_xonix_bees(u16 x) {
-    emit_static_bee(x + SCR_WIDTH + 0x00, 20,  -1);
-    emit_static_bee(x + SCR_WIDTH + 0x14, 216, -1);
-    emit_static_bee(x + SCR_WIDTH + 0x2C, 216,  1);
-    emit_static_bee(x + SCR_WIDTH + 0x40, 20,   1);
+    emit_static_bee(x + SCR_WIDTH + 0x00, 20,  -2);
+    emit_static_bee(x + SCR_WIDTH + 0x14, 216, -2);
+    emit_static_bee(x + SCR_WIDTH + 0x2C, 216,  2);
+    emit_static_bee(x + SCR_WIDTH + 0x40, 20,   2);
 }
 
 static void diagonal_bee(Object *obj) {
@@ -214,14 +214,14 @@ static void diagonal_bee(Object *obj) {
     obj->y += BEE(obj)->v_direction;
     move_bee(obj);
     if (sprite->x >= SCR_WIDTH + ON_SCREEN - 16) {
-	obj->direction = -1;
+	obj->direction = -2;
     }
     if (sprite->y <= ON_SCREEN) {
 	BEE(obj)->v_direction = 1;
     }
     if (!BEE(obj)->relinquish) {
 	if (sprite->x <= ON_SCREEN) {
-	    obj->direction = 1;
+	    obj->direction = 2;
 	}
 	if (sprite->y >= SCR_HEIGHT + ON_SCREEN - 16) {
 	    BEE(obj)->v_direction = -1;
@@ -233,7 +233,7 @@ static void relinquish_bee(Object *obj) {
     BEE(obj)->relinquish = 1;
 }
 
-static void relinquish_all_bees(void) {
+void relinquish_all_bees(u16 x) {
     apply_to_all_mobs(&relinquish_bee);
 }
 

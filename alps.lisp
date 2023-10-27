@@ -94,6 +94,9 @@
 (defun flower-garden ()
   (alps-walk :width 4 :type '(1 6 3 5 2 8 4 7)))
 
+(defun flower-meadow ()
+  (alps-walk :width 6 :type '(3 6 2 7 3 6 2 7 3 6 2 7)))
+
 (defun mountain-level ()
   (join
    (alps-walk :width 3)
@@ -142,6 +145,6 @@
    (empty 2)
 
    ;; PART 5
-   (flower-garden)
+   (inject (flower-meadow) "relinquish_all_bees" 26)
 
    (empty 64)))
