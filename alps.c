@@ -239,7 +239,7 @@ void relinquish_all_bees(u16 x) {
 
 static void kick_bees(Object *obj) {
     BEE(obj)->relinquish = 0;
-    BEE(obj)->v_direction = 1;
+    BEE(obj)->v_direction = -1;
     mob_fn(obj, &diagonal_bee);
 }
 
@@ -247,7 +247,7 @@ static void kick_single_xonix_bee(u16 i) {
     while (i < MAX_MOBS) {
 	Object *bee = get_mob(i++);
 	if (bee->place != -1) {
-	    callback(&kick_single_xonix_bee, 8, i);
+	    callback(&kick_single_xonix_bee, 16, i);
 	    kick_bees(bee);
 	    break;
 	}
