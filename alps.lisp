@@ -95,7 +95,10 @@
   (alps-walk :width 4 :type '(1 6 3 5 2 8 4 7)))
 
 (defun flower-meadow ()
-  (alps-walk :width 6 :type '(3 6 2 7 3 6 2 7 3 6 2 7)))
+  (alps-walk :width 8 :type '(3 6 2 7 3 6 2 7 3 6 2 7 1 5 4 8)))
+
+(defun flower-pathway ()
+  (alps-walk :width 6 :type '(3 7 2 7 3 7 2 7 3 7 2 7)))
 
 (defun mountain-level ()
   (join
@@ -146,5 +149,9 @@
 
    ;; PART 5
    (inject (flower-meadow) "emit_xonix_stream" 26)
+   (empty 3)
+   (trigger "relinquish_all_bees")
 
-   (empty 64)))
+   ;; NEXT LEVEL
+   (inject (flower-pathway) "level_done" 38)
+   (empty 32)))

@@ -233,7 +233,7 @@ static void relinquish_bee(Object *obj) {
     BEE(obj)->relinquish = 1;
 }
 
-static void relinquish_all_bees(void) {
+void relinquish_all_bees(u16 x) {
     apply_to_all_mobs(&relinquish_bee);
 }
 
@@ -274,7 +274,7 @@ static void emit_xonix_stream_bee(u16 left) {
 }
 
 void emit_xonix_stream(u16 x) {
-    relinquish_all_bees();
+    relinquish_all_bees(0);
     emit_xonix_stream_bee(0);
 }
 
