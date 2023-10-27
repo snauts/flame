@@ -231,8 +231,16 @@ static void kick_bees(Object *obj) {
     mob_fn(obj, &diagonal_bee);
 }
 
+static void kick_single_xonix_bee(u16 i) {
+    if (i < MAX_MOBS) {
+	Object *bee = get_mob(i);
+	if (bee->place != -1) kick_bees(bee);
+	callback(&kick_single_xonix_bee, 4, i + 1);
+    }
+}
+
 void kick_xonix_bees(u16 x) {
-    apply_to_all_mobs(&kick_bees);
+    kick_single_xonix_bee(0);
 }
 
 void display_mountains(void) {

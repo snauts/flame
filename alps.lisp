@@ -137,7 +137,11 @@
    (empty 2)
    (raise 5  (alps-walk :type 2 :hang 1 :base 1))
    (empty 2)
-   (trigger "kick_xonix_bees")
    (raise 2  (alps-walk :type 1 :hang 1 :base 1))
+   (trigger "kick_xonix_bees")
+   (empty 2)
+
+   ;; PART 5
+   (flower-garden)
 
    (empty 64)))

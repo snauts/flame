@@ -84,12 +84,6 @@ static void call_mob_functions(void) {
     }
 }
 
-void apply_to_all_mobs(void (*fn)(Object *)) {
-    for (char i = available_mobs; i < MAX_MOBS; i++) {
-	fn(&mobs[free_mobs[i]].obj);
-    }
-}
-
 void manage_mobs(void) {
     call_mob_functions();
     for (char i = available_mobs; i < MAX_MOBS; i++) {
