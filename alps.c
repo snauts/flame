@@ -74,6 +74,7 @@ void draw_alpine_bones(void) {
 typedef struct Bee {
     char v_direction;
     char relinquish;
+    char dx, dy;
 } Bee;
 
 static Bee *b_obj;
@@ -95,8 +96,8 @@ static void animate_bee(Object *obj) {
 
     obj->life++;
 
-    sprite->x = SCREEN_X(obj->x);
-    sprite->y = obj->y + ON_SCREEN - 16;
+    sprite->x = SCREEN_X(obj->x + BEE(obj)->dx);
+    sprite->y = obj->y + BEE(obj)->dy + ON_SCREEN - 16;
 
     if (!is_bee_alive(obj)) {
 	if ((obj->life & 3) == 0) obj->frame++;
@@ -143,6 +144,8 @@ static Object *setup_bee(short x, short y, u16 life) {
 	obj->private = b_obj + mob_index(obj);
 	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_bee);
+	BEE(obj)->dx = 0;
+	BEE(obj)->dy = 0;
     }
     return obj;
 }
@@ -158,13 +161,9 @@ void emit_bee_block(u16 x) {
 extern const char small_circle[256];
 static void circling_bee(Object *obj) {
     u16 index = (2 * obj->life * obj->direction) & 0xFF;
-    char dx = small_circle[index + 0];
-    char dy = small_circle[index + 1];
-    obj->x += dx;
-    obj->y += dy;
+    BEE(obj)->dx = small_circle[index + 0];
+    BEE(obj)->dy = small_circle[index + 1];
     animate_bee(obj);
-    obj->x -= dx;
-    obj->y -= dy;
 }
 
 static void emit_bee_circle(u16 x, u16 y, u16 offset, char dir) {
