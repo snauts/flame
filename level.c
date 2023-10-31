@@ -134,7 +134,7 @@ void level_scroll(void) {
 
 static void execute_triggers(u16 x) {
     while (window >= trigger->distance && trigger->fn != NULL) {
-	trigger->fn(window);
+	trigger->fn(trigger->distance);
 	trigger++;
     }
 }
