@@ -390,8 +390,8 @@ void display_desert(Function prepare_level, byte more_bones) {
     update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
 
     load_soldier_tiles(0);
-    reset_window();
     reset_mobs();
+    reset_window();
 
     /* background */
     fill_VRAM(0x000,  1, 0x300);

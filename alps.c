@@ -284,8 +284,8 @@ void display_mountains(void) {
     update_tiles(alps_tiles, 1, ARRAY_SIZE(alps_tiles));
 
     load_soldier_tiles(1);
-    reset_window();
     reset_mobs();
+    reset_window();
 
     /* background */
     fill_VRAM(0x600, 4, 0x80);

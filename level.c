@@ -132,7 +132,15 @@ void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(window >> 1));
 }
 
+static void execute_triggers(u16 x) {
+    while (window >= trigger->distance && trigger->fn != NULL) {
+	trigger->fn(window);
+	trigger++;
+    }
+}
+
 void reset_window(void) {
+    schedule(&execute_triggers, 0);
     window = WINDOW_MIN;
     level_scroll();
 }
@@ -152,10 +160,7 @@ void update_window(short direction) {
     if (prev > next) {
 	update_column_backward();
     }
-    if (window >= trigger->distance && trigger->fn != NULL) {
-	trigger->fn(window);
-	trigger++;
-    }
+    execute_triggers(0);
 }
 
 static u16 get_snap_from_height(u16 prev, u16 next, const byte *map) {
