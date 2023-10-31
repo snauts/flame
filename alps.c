@@ -169,7 +169,7 @@ static void circling_bee(Object *obj) {
 
 static void emit_bee_circle(u16 x, u16 y, u16 offset, char dir) {
     for (u16 i = 0; i <= 96; i += 32) {
-	Object *bee = setup_bee(x + SCR_WIDTH + 96, y, i + offset);
+	Object *bee = setup_bee(x + 96, y, i + offset);
 	mob_fn(bee, &circling_bee);
 	bee->direction = dir;
     }
@@ -188,14 +188,14 @@ static void emit_static_bee(u16 x, u16 y, char dir) {
 }
 
 void emit_static_garden_bees(u16 x) {
-    emit_static_bee(x + SCR_WIDTH + 64, 186, 1);
-    emit_static_bee(x + SCR_WIDTH + 80, 192, -1);
+    emit_static_bee(x + 64, 186, 1);
+    emit_static_bee(x + 80, 192, -1);
 
-    emit_static_bee(x + SCR_WIDTH + 112, 200, 1);
-    emit_static_bee(x + SCR_WIDTH + 130, 196, -1);
+    emit_static_bee(x + 112, 200, 1);
+    emit_static_bee(x + 130, 196, -1);
 
-    emit_static_bee(x + SCR_WIDTH + 184, 178, 1);
-    emit_static_bee(x + SCR_WIDTH + 202, 184, -1);
+    emit_static_bee(x + 184, 178, 1);
+    emit_static_bee(x + 202, 184, -1);
 }
 
 void load_burn_tiles(u16 where) {
@@ -203,10 +203,10 @@ void load_burn_tiles(u16 where) {
 }
 
 void emit_xonix_bees(u16 x) {
-    emit_static_bee(x + SCR_WIDTH + 0x00, 20,  -2);
-    emit_static_bee(x + SCR_WIDTH + 0x14, 216, -2);
-    emit_static_bee(x + SCR_WIDTH + 0x2C, 216,  2);
-    emit_static_bee(x + SCR_WIDTH + 0x40, 20,   2);
+    emit_static_bee(x + 0x00, 20,  -2);
+    emit_static_bee(x + 0x14, 216, -2);
+    emit_static_bee(x + 0x2C, 216,  2);
+    emit_static_bee(x + 0x40, 20,   2);
 }
 
 static void diagonal_bee(Object *obj) {

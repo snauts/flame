@@ -229,7 +229,7 @@ void emit_next_hopper_stream(u16 i) {
 	mob_fn(mob, &periodic_high_hopper);
 	HOPPER(mob)->jump_amount = 4;
     }
-    if (window < stream_x + 160) {
+    if (window < stream_x - 160) {
 	callback(&emit_next_hopper_stream, 0, mob_index(mob));
     }
 }
@@ -254,7 +254,7 @@ static void emit_next_hole_hopper(u16 count) {
 }
 
 void emit_hole_hoppers(u16 pos_x) {
-    hole_x = pos_x + SCR_WIDTH + 18;
+    hole_x = pos_x + 18;
     emit_next_hole_hopper(0);
 }
 
@@ -273,7 +273,7 @@ static void emit_next_sky_hopper(u16 delay) {
 }
 
 void emit_sky_hoppers(u16 pos_x) {
-    sky_x = pos_x + SCR_WIDTH - 40;
+    sky_x = pos_x - 40;
     emit_next_sky_hopper(64);
 }
 
@@ -290,10 +290,10 @@ static void patrolling_hopper(Object *obj) {
 void emit_plateau_patrollers(u16 pos_x) {
     for (u16 y = 160; y >= 64; y -= 48) {
 	for (u16 x = 16; x <= 48; x += 32) {
-	    Object *mob = setup_hopper(pos_x + SCR_WIDTH + x, y, 0);
+	    Object *mob = setup_hopper(pos_x + x, y, 0);
 	    HOPPER(mob)->persistent = 1;
-	    HOPPER(mob)->patrol_start = pos_x + SCR_WIDTH;
-	    HOPPER(mob)->patrol_end = pos_x + SCR_WIDTH + 64;
+	    HOPPER(mob)->patrol_start = pos_x;
+	    HOPPER(mob)->patrol_end = pos_x + 64;
 	    mob->direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
 	    mob_fn(mob, &patrolling_hopper);
 	}
@@ -309,6 +309,7 @@ static void emit_charging_hoppers(u16 pos_x) {
 
 void emit_chasing_hoppers(u16 pos_x) {
     purge_mobs();
+    pos_x -= SCR_WIDTH;
     for (short i = 0; i <= 32; i += 16) {
 	Object *mob = setup_hopper(pos_x + i, -16, 0);
 	mob->direction = 1;
@@ -320,7 +321,7 @@ void emit_marta_platform_patrollers(u16 pos_x) {
     for (u16 y = 184; y >= 88; y -= 24) {
 	for (u16 x = 0; x <= 32; x += 16) {
 	    u16 skew = y & BIT(3);
-	    u16 offset = pos_x + SCR_WIDTH + (skew ? 64 : 32);
+	    u16 offset = pos_x + (skew ? 64 : 32);
 	    Object *mob = setup_hopper(offset + x, y, 0);
 	    HOPPER(mob)->persistent = 1;
 	    HOPPER(mob)->patrol_start = offset - 16;
@@ -333,8 +334,8 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 
 void emit_down_stair_guards(u16 pos_x) {
     purge_mobs();
-    u16 x = pos_x + SCR_WIDTH + 48, y = 88;
-    emit_row_of_sky_hoppers(pos_x + SCR_WIDTH - 24);
+    u16 x = pos_x + 48, y = 88;
+    emit_row_of_sky_hoppers(pos_x - 24);
     for (u16 i = 0; i < 6; i++) {
 	Object *mob = setup_hopper(x, y, 0);
 	HOPPER(mob)->persistent = 1;
