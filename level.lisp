@@ -213,8 +213,7 @@
       (format out "~%"))))
 
 (defun save-trigger-entry (out distance name &optional (prefix ""))
-  (format out "{ distance: 0x~4,'0x, fn: ~A~A },~%"
-	  (max 0 (- distance 320)) prefix name))
+  (format out "{ distance: 0x~4,'0x, fn: ~A~A },~%" distance prefix name))
 
 (defun save-triggers (out level &optional (distance 0))
   (cond ((null level)
