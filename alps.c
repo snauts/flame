@@ -296,6 +296,12 @@ void emit_bee_upstream(u16 pos_x) {
     }
 }
 
+void level_done_burn_bees(void) {
+    apply_to_all_mobs(&burn_bee);
+    void level_done(u16);
+    level_done(0);
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));

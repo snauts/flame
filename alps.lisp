@@ -166,5 +166,5 @@
    (trigger "relinquish_all_bees")
 
    ;; NEXT LEVEL
-   (inject (flower-pathway) "level_done" 38)
+   (inject (flower-pathway) "level_done_burn_bees" 38)
    (empty 32)))
