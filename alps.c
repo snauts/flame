@@ -277,6 +277,25 @@ void emit_xonix_stream(u16 x) {
     emit_xonix_stream_bee(0);
 }
 
+static void piston_bee(Object *obj) {
+    u16 index = (2 * obj->life) & 0xFF;
+    BEE(obj)->dy = small_circle[index + 1];
+    (obj->life >= 128 ? free_mob : animate_bee)(obj);
+}
+
+static void emit_piston_bee(u16 x) {
+    Object *bee = setup_bee(x, SCR_HEIGHT - 20, 0);
+    mob_fn(bee, &piston_bee);
+    bee->direction = 0;
+}
+
+void emit_bee_upstream(u16 pos_x) {
+    emit_piston_bee(pos_x);
+    if (get_soldier()->x < pos_x) {
+	callback(emit_bee_upstream, 63, pos_x);
+    }
+}
+
 void display_mountains(void) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
