@@ -110,9 +110,9 @@
    (empty 2)
    (trigger "emit_bee_block")
    (alps-walk :type '(2 5))
+   (empty 2)
 
    ;; PART 2
-   (empty 2)
    (raise 3  (alps-walk :type 1 :hang 1 :base 1))
    (trigger "emit_bee_circles")
    (empty 2)
@@ -131,6 +131,19 @@
 
    ;; PART 3
    (inject (flower-garden) "emit_static_garden_bees" 2)
+   (empty 2)
+
+   ;; PISTONS
+   (alps-walk :type '(3 6))
+   (trigger "emit_bee_upstream")
+   (empty 2)
+   (alps-walk :type '(3 5))
+   (trigger "emit_bee_upstream")
+   (empty 2)
+   (alps-walk :type '(2 7))
+   (trigger "emit_bee_upstream")
+   (empty 2)
+   (alps-walk :type '(3 8))
    (empty 2)
 
    ;; PART 4
