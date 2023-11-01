@@ -185,8 +185,15 @@
 (defun isolate-channel (score channel)
   (mapc (lambda (chord) (remove-channel chord channel :test #'/=)) score))
 
-(defun key-off-all-score (score)
+(defun replace-notes-with-key-off (score)
   (adjust-note score 'X (lambda (note data) (setf (third note) data))))
+
+(defun remove-hold-keys (chord)
+  (setf (rest chord) (remove :hold (rest chord) :key #'fourth :test #'eq)))
+
+(defun key-off-all-score (score)
+  (replace-notes-with-key-off score)
+  (mapc #'remove-hold-keys score))
 
 (defun rename-channels (score channel)
   (adjust-note score channel (lambda (note data) (setf (first note) data))))
@@ -414,36 +421,36 @@
 (defparameter *doves*
   '((8  (0 0 B))
     (8  (0 0 B))
-    (12 (0 0 B))
+    (12 (0 0 B  :hold))
     (4  (0 0 Fs))
 
     (8  (0 0 A))
     (8  (0 0 A))
-    (12 (0 0 A))
+    (12 (0 0 A  :hold))
     (4  (0 0 Fs))
 
     (4  (0 0 G))
     (4  (0 0 Fs))
     (8  (0 0 E))
-    (12 (0 0 B))
+    (12 (0 0 B  :hold))
     (4  (0 0 G))
 
     (8  (0 0 Fs))
     (8  (0 0 Fs))
     (16 (0 0 Fs))
 
-    (16 (0 1 D))
-    (16 (0 1 Cs))
+    (16 (0 1 D  :hold))
+    (16 (0 1 Cs :hold))
 
     (4  (0 1 D))
     (4  (0 1 Cs))
     (4  (0 0 B))
     (4  (0 0 As))
-    (16 (0 0 B))
+    (16 (0 0 B  :hold))
 
     (8  (0 0 A))
     (8  (0 0 A))
-    (12 (0 0 B))
+    (12 (0 0 B  :hold))
     (4  (0 0 G))
 
     (8  (0 0 Fs))
@@ -498,7 +505,7 @@
 (defun doves-score ()
   (let ((score (copy-score *doves*)))
     (copy-channel score 0 2)
-    (channel-key-off score 2 3)
+    (channel-key-off score 2 2)
     (scale-tempo score 4)
     (merge-into score (dove-drum-score))
     (adjust-octaves score '(2 5 2 x 0 0 0))
