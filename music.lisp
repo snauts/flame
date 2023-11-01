@@ -256,7 +256,7 @@
   (reduce #'+ (mapcar #'first score)))
 
 (defun multiply (score n)
-  (apply #'append (make-list n :initial-element score)))
+  (copy-score (apply #'append (make-list n :initial-element score))))
 
 (defun johnny-mk1 ()
   (let ((flute (copy-score *johnny*)))
@@ -351,10 +351,9 @@
      (4 (2 1 D) (4 0 G)))))
 
 (defun erika-drums-A ()
-  (copy-tree
-   (append
-    (multiply (erika-drum-1) 2)
-    (multiply (erika-drum-2) 3))))
+  (append
+   (multiply (erika-drum-1) 2)
+   (multiply (erika-drum-2) 3)))
 
 (defun erika-drum-alt-1 ()
   '((4 (2 0 G))
@@ -367,10 +366,9 @@
      (4 (2 1 D) (4 0 G)))))
 
 (defun erika-drums-alt-A ()
-  (copy-tree
-   (append
-    (multiply (erika-drum-alt-1) 4)
-    (multiply (erika-drum-alt-2) 3))))
+  (append
+   (multiply (erika-drum-alt-1) 4)
+   (multiply (erika-drum-alt-2) 3)))
 
 (defun erika-drums-B-part ()
   (append
@@ -378,7 +376,7 @@
    (erika-drum-alt-2)))
 
 (defun erika-drums-B ()
-  (copy-tree (multiply (erika-drums-B-part) 2)))
+  (multiply (erika-drums-B-part) 2))
 
 (defun erika-add-drums (original drums)
   (let ((score (copy-score original)))
@@ -452,11 +450,60 @@
     (8  (0 0 Fs))
     (16 (0 0 B))))
 
+(defun dove-drum-1 ()
+  (copy-score
+   '((8  (1 0 C))
+     (8  (1 0 C))
+     (16 (1 0 C)))))
+
+(defun dove-drum-2 ()
+  (copy-score
+   '((4  (1 0 C))
+     (4  (1 0 C))
+     (8  (1 0 C))
+     (16 (1 0 C)))))
+
+(defun dove-drum-alt ()
+  (copy-score
+   '((16 (1 0 C))
+     (16 (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (16 (1 0 C)))))
+
+(defun dove-drum-score ()
+  (append
+   (multiply (dove-drum-1) 2)
+   (multiply (dove-drum-2) 2)
+   (multiply (dove-drum-1) 2)
+   (dove-drum-alt)
+
+   (multiply (dove-drum-1) 2)
+   (multiply (dove-drum-2) 2)
+   (multiply (dove-drum-1) 2)
+   (dove-drum-alt)
+
+   (multiply (dove-drum-2) 2)
+   (multiply (dove-drum-2) 2)
+   (dove-drum-alt)
+   (dove-drum-alt)
+
+   (multiply (dove-drum-1) 2)
+   (multiply (dove-drum-2) 2)
+   (multiply (dove-drum-1) 2)
+   (dove-drum-alt)))
+
 (defun doves-score ()
   (let ((score (copy-score *doves*)))
-    (adjust-octaves score '(3 2 2 x 0 0 0))
+    (copy-channel score 0 2)
+    (channel-key-off score 2 3)
     (scale-tempo score 4)
+    (merge-into score (dove-drum-score))
+    (adjust-octaves score '(2 5 2 x 0 0 0))
     (clean-up-score score)
+    (adjust-end score 16)
     score))
 
 (defun psg-value (frequency volume)
