@@ -1,11 +1,14 @@
 #include "main.h"
 #include "music.inc"
 
-static byte music;
+enum Music {
+    MUSIC_NONE,
+    MUSIC_JOHNNY,
+    MUSIC_ERIKA,
+    MUSIC_DOVES,
+};
 
-#define MUSIC_NONE	0
-#define MUSIC_JOHNNY	1
-#define MUSIC_ERIKA	2
+static enum Music music;
 
 #define YM2612(part, x) BYTE(YM2612_REG + (part) + (x))
 void ym2612_write(byte part, byte reg, byte data) {
@@ -141,7 +144,7 @@ static void load_score(u16 offset, const byte *ptr, u16 size) {
     BYTE(Z80_RAM + 0x10) = 0;
 }
 
-static void setup_johnny_intruments(void) {
+static void setup_johnny(void) {
     setup_ym2612_channel(0, guitar);
     setup_ym2612_channel(1, flute);
     setup_ym2612_channel(2, drums);
@@ -151,7 +154,7 @@ static void setup_johnny_intruments(void) {
     load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
 }
 
-static void setup_erika_intruments(void) {
+static void setup_erika(void) {
     setup_ym2612_channel(0, guitar);
     setup_ym2612_channel(1, tuba);
     setup_ym2612_channel(2, drums);
@@ -160,6 +163,10 @@ static void setup_erika_intruments(void) {
 	setup_ym2612_channel(i, bong);
     }
     load_score(0x1000, erika_score, ARRAY_SIZE(erika_score));
+}
+
+static void setup_doves(void) {
+    setup_ym2612_channel(0, guitar);
 }
 
 #define PSG_SFX_CH0	0x18
@@ -234,7 +241,7 @@ void fade_music(u16 i) {
     }
 }
 
-static void setup_music(u16 id, Function setup) {
+static void setup_music(enum Music id, Function setup) {
     if (music != id) {
 	do_z80_bus(setup);
 	do_z80_bus(&load_z80_sfx);
@@ -243,11 +250,15 @@ static void setup_music(u16 id, Function setup) {
 }
 
 void music_johnny(void) {
-    setup_music(MUSIC_JOHNNY, &setup_johnny_intruments);
+    setup_music(MUSIC_JOHNNY, &setup_johnny);
 }
 
 void music_erika(void) {
-    setup_music(MUSIC_ERIKA, &setup_erika_intruments);
+    setup_music(MUSIC_ERIKA, &setup_erika);
+}
+
+void music_doves(void) {
+    setup_music(MUSIC_DOVES, &setup_doves);
 }
 
 void music_none(void) {

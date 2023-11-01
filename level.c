@@ -258,4 +258,6 @@ static void end_game_text(void) {
 
 void display_ending(void) {
     display_simple_screen(&end_game_text, 4);
+    extern void music_doves(void);
+    music_doves();
 }

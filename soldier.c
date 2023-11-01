@@ -594,6 +594,7 @@ static void wait_for_start_loop(void) {
     manage_timers();
     if (!started && BUTTON_START(read_gamepad())) {
 	fade_to_next_level();
+	fade_music(0);
 	started = 1;
     }
 }
