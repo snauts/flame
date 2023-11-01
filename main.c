@@ -294,6 +294,7 @@ static const Function loader_table[] = {
     &display_canyon,
     &display_rusty,
     &display_mantis,
+    &display_mountains,
     &display_ending,
     NULL,
 };
