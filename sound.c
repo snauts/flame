@@ -167,6 +167,7 @@ static void setup_erika(void) {
 
 static void setup_doves(void) {
     setup_ym2612_channel(0, guitar);
+    load_score(0x1000, doves_score, ARRAY_SIZE(doves_score));
 }
 
 #define PSG_SFX_CH0	0x18

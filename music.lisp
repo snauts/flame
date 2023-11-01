@@ -413,6 +413,52 @@
    (erika-music 4 #'erika-beat)
    '((50 (2 0 X)))))
 
+(defparameter *doves*
+  '((8  (0 0 B))
+    (8  (0 0 B))
+    (12 (0 0 B))
+    (4  (0 0 Fs))
+
+    (8  (0 0 A))
+    (8  (0 0 A))
+    (12 (0 0 A))
+    (4  (0 0 Fs))
+
+    (4  (0 0 G))
+    (4  (0 0 Fs))
+    (8  (0 0 E))
+    (12 (0 0 B))
+    (4  (0 0 G))
+
+    (8  (0 0 Fs))
+    (8  (0 0 Fs))
+    (16 (0 0 Fs))
+
+    (16 (0 1 D))
+    (16 (0 1 Cs))
+
+    (4  (0 1 D))
+    (4  (0 1 Cs))
+    (4  (0 0 B))
+    (4  (0 0 As))
+    (16 (0 0 B))
+
+    (8  (0 0 A))
+    (8  (0 0 A))
+    (12 (0 0 B))
+    (4  (0 0 G))
+
+    (8  (0 0 Fs))
+    (8  (0 0 Fs))
+    (16 (0 0 B))))
+
+(defun doves-score ()
+  (let ((score (copy-score *doves*)))
+    (adjust-octaves score '(3 2 2 x 0 0 0))
+    (scale-tempo score 4)
+    (clean-up-score score)
+    score))
+
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
 
@@ -486,6 +532,7 @@
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
     (save-array out "johnny_score" (save-score (johnny-score)))
     (save-array out "erika_score" (save-score (erika-score)))
+    (save-array out "doves_score" (save-score (doves-score)))
     (save-array out "decople_table" (generate-decople-table))
     (save-char-array out "small_circle" (generate-circle-table))
     (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
