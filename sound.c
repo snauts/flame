@@ -147,7 +147,7 @@ static void load_score(u16 offset, const byte *ptr, u16 size) {
 static void setup_johnny(void) {
     setup_ym2612_channel(0, guitar);
     setup_ym2612_channel(1, flute);
-    setup_ym2612_channel(2, drums);
+    setup_ym2612_channel(2, hi_hat);
     for (byte i = 4; i <= 6; i++) {
 	setup_ym2612_channel(i, bong);
     }

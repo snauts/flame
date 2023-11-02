@@ -69,12 +69,10 @@
 
 (defun drum-roll ()
   (copy-tree
-   '((2 (2 0 G))
-     (2 (2 0 G))
-     (2 (2 0 G))
-     (2 (2 0 G))
-     (2 (2 0 G))
-     (20 (2 0 G))
+   '((4 (2 0 G))
+     (4 (2 0 G))
+     (4 (2 0 G))
+     (18 (2 0 G))
      (10 (2 0 G) (6 0 F))
      (20 (2 0 G) (6 0 F)))))
 
@@ -317,14 +315,15 @@
 (defun johnny-mk2 ()
   (let ((score (copy-score *johnny*)))
     (copy-channel score 0 1)
-    (channel-key-off score 2 1)
     (scale-tempo score 5)
     (merge-into score (drum-score))
     score))
 
 (defun johnny-score ()
   (let ((score (append (johnny-mk1) (johnny-mk2))))
-    (adjust-octaves score '(1 2 2 x 0 0 0))
+    (adjust-octaves score '(1 2 5 x 0 0 0))
+    (channel-key-off score 0 9/10)
+    (channel-key-off score 1 3/4)
     (clean-up-score score)
     score))
 
