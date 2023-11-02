@@ -270,6 +270,7 @@
   (let ((tmp (copy-score score)))
     (delete-channel score channel)
     (isolate-channel tmp channel)
+    (clean-up-score tmp)
     (key-off-fraction tmp fraction)
     (merge-into score tmp)))
 
@@ -591,7 +592,7 @@
     (copy-channel score 0 2)
     (channel-key-off score 2 2)
     (scale-tempo score 4)
-    (channel-key-off score 0 15/16)
+    (channel-key-off score 0 7/8)
     (merge-into score (dove-drum-score))
     (adjust-octaves score '(2 5 2 x 0 0 0))
     (clean-up-score score)
