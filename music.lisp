@@ -517,6 +517,21 @@
      (4  (1 0 C))
      (16 (1 0 C)))))
 
+(defun dove-drum-drop ()
+  (copy-score
+   '((16 (1 0 C))
+     (16 (1 0 C))
+     (16 (1 0 C))
+     (16 (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (8  (1 0 C))
+     (8  (1 0 C))
+     (16 (1 0 C))
+     (16 (1 0 C)))))
+
 (defun dove-drum-score-old ()
   (append
    (multiply (dove-drum-1) 2)
@@ -566,8 +581,7 @@
 
    (multiply (dove-drum-2) 2)
    (multiply (dove-drum-2) 2)
-   (dove-drum-alt)
-   (dove-drum-alt)
+   (dove-drum-drop)
 
    (dove-drum-a)
    (dove-drum-b)))
@@ -577,6 +591,7 @@
     (copy-channel score 0 2)
     (channel-key-off score 2 2)
     (scale-tempo score 4)
+    (channel-key-off score 0 15/16)
     (merge-into score (dove-drum-score))
     (adjust-octaves score '(2 5 2 x 0 0 0))
     (clean-up-score score)
