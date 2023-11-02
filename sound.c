@@ -155,7 +155,7 @@ static void setup_johnny(void) {
 }
 
 static void setup_erika(void) {
-    setup_ym2612_channel(0, guitar);
+    setup_ym2612_channel(0, flute);
     setup_ym2612_channel(1, tuba);
     setup_ym2612_channel(2, drums);
     setup_ym2612_channel(4, hi_hat);
