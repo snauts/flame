@@ -185,6 +185,9 @@
 (defun isolate-channel (score channel)
   (mapc (lambda (chord) (remove-channel chord channel :test #'/=)) score))
 
+(defun delete-channel (score channel)
+  (mapc (lambda (chord) (remove-channel chord channel)) score))
+
 (defun replace-notes-with-key-off (score)
   (adjust-note score 'X (lambda (note data) (setf (third note) data))))
 
@@ -194,6 +197,27 @@
 (defun key-off-all-score (score)
   (replace-notes-with-key-off score)
   (mapc #'remove-hold-keys score))
+
+(defun key-off-chord (chord)
+  (mapcar (lambda (note) (setf (third note) 'X) note) (copy-tree chord)))
+
+(defun fraction-delay (period fraction)
+  (max 1 (min (1- period) (floor (* period fraction)))))
+
+(defun key-off-after (chord period)
+  (cons (- period (first chord)) (key-off-chord (rest chord))))
+
+(defun key-off-head (score fraction)
+  (let* ((chord (first score))
+	 (period (first chord)))
+    (unless (null (remove-hold-keys (copy-tree chord)))
+      (setf (first chord) (fraction-delay period fraction))
+      (push (key-off-after chord period) (rest score)))))
+
+(defun key-off-fraction (score fraction)
+  (unless (null score)
+    (key-off-fraction (rest score) fraction)
+    (key-off-head score fraction)))
 
 (defun rename-channels (score channel)
   (adjust-note score channel (lambda (note data) (setf (first note) data))))
@@ -242,14 +266,27 @@
     (rename-channels tmp dst)
     (merge-into score tmp)))
 
+(defun key-off-channel-fraction (score channel fraction)
+  (let ((tmp (copy-score score)))
+    (delete-channel score channel)
+    (isolate-channel tmp channel)
+    (key-off-fraction tmp fraction)
+    (merge-into score tmp)))
+
+(defun key-off-channel-interval (score channel interval)
+  (let ((tmp (copy-score score)))
+    (isolate-channel tmp channel)
+    (offset-score tmp interval)
+    (key-off-all-score tmp)
+    (merge-into score tmp)))
+
 (defun channel-key-off (score channel interval)
-  (if (consp channel)
-      (mapc (lambda (x) (channel-key-off score x interval)) channel)
-      (let ((tmp (copy-score score)))
-	(isolate-channel tmp channel)
-	(offset-score tmp interval)
-	(key-off-all-score tmp)
-	(merge-into score tmp))))
+  (cond ((consp channel)
+	 (mapc (lambda (x) (channel-key-off score x interval)) channel))
+	((>= interval 1)
+	 (key-off-channel-interval score channel interval))
+	((< interval 1)
+	 (key-off-channel-fraction score channel interval))))
 
 (defparameter *mute* '((0 0 X) (4 0 X) (5 0 X) (6 0 X)))
 
