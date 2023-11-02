@@ -480,7 +480,7 @@
      (4  (1 0 C))
      (16 (1 0 C)))))
 
-(defun dove-drum-score ()
+(defun dove-drum-score-old ()
   (append
    (multiply (dove-drum-1) 2)
    (multiply (dove-drum-2) 2)
@@ -502,6 +502,39 @@
    (multiply (dove-drum-1) 2)
    (dove-drum-alt)))
 
+(defun dove-drum-a ()
+  (copy-score
+   '((32 (1 0 C))
+     (32 (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (4  (1 0 C))
+     (32 (1 0 C))
+     (8 (1 0 C))
+     (8 (1 0 C)))))
+
+(defun dove-drum-b ()
+  (copy-score
+   '((32  (1 0 C))
+     (32  (1 0 C))
+     (64  (1 0 C)))))
+
+(defun dove-drum-score ()
+  (append
+   (dove-drum-a)
+   (dove-drum-a)
+   (dove-drum-a)
+   (dove-drum-b)
+
+   (multiply (dove-drum-2) 2)
+   (multiply (dove-drum-2) 2)
+   (dove-drum-alt)
+   (dove-drum-alt)
+
+   (dove-drum-a)
+   (dove-drum-b)))
+
 (defun doves-score ()
   (let ((score (copy-score *doves*)))
     (copy-channel score 0 2)
@@ -510,7 +543,7 @@
     (merge-into score (dove-drum-score))
     (adjust-octaves score '(2 5 2 x 0 0 0))
     (clean-up-score score)
-    (adjust-end score 16)
+    ;(adjust-end score 16) ; for dove-drum-score-old
     score))
 
 (defun psg-value (frequency volume)
