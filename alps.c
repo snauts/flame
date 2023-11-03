@@ -266,7 +266,7 @@ static void emit_single_xonix_bee(u16 x, u16 y, char dir) {
 
 static void emit_xonix_stream_bee(u16 left) {
     u16 y = 32 + 96 * (left & 1) + 16 * (left >> 1);
-    emit_single_xonix_bee(window + SCR_WIDTH, y, (y >= 128) ? -1 : 1);
+    emit_single_xonix_bee(window + SCR_WIDTH, y, (y >= 128) ? 1 : -1);
     if (left < 8) {
 	callback(&emit_xonix_stream_bee, 24, left + 1);
     }
