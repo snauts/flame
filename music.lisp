@@ -600,13 +600,187 @@
     ;(adjust-end score 16) ; for dove-drum-score-old
     score))
 
-(defparameter *battotai*
-  '((8  (0 0 B))))
+(defparameter *battotai-1*
+  '((4  (0 0 A))
+    (4  (0 1 E))
+    (8  (0 1 E))
+
+    (8  (0 1 E))
+    (8  (0 1 E))
+
+    (4  (0 1 F))
+    (4  (0 1 F))
+    (4  (0 1 D))
+    (4  (0 1 F))
+
+    (12 (0 1 E))
+    (4  (0 0 X))
+
+    (4  (0 1 D))
+    (8  (0 0 B))
+    (4  (0 1 D))
+
+    (4  (0 1 E))
+    (4  (0 1 E))
+    (4  (0 1 E))
+    (4  (0 1 E))
+
+    (8  (0 0 B))
+    (6  (0 1 C))
+    (2  (0 0 B))
+
+    (8  (0 0 A))
+    (8  (0 0 X))))
+
+(defparameter *battotai-2*
+  '((4  (0 1 A))
+    (8  (0 1 A))
+    (4  (0 1 B))
+
+    (4  (0 2 C))
+    (4  (0 2 C))
+    (8  (0 2 C))
+
+    (4  (0 2 C))
+    (4  (0 1 B))
+    (4  (0 1 A))
+    (4  (0 1 B))
+
+    (12 (0 1 E))
+    (4  (0 0 X))
+
+    (8  (0 1 D))
+    (4  (0 1 E))
+    (4  (0 1 F))
+
+    (6  (0 1 G))
+    (2  (0 1 G))
+    (4  (0 1 G))
+    (4  (0 1 G))
+
+    (6  (0 1 D))
+    (2  (0 1 D))
+    (4  (0 1 E))
+    (4  (0 1 D))
+
+    (4  (0 1 C))
+    (12 (0 0 X))))
+
+(defparameter *battotai-3*
+  '((4  (0 2 C))
+    (4  (0 2 C))
+    (4  (0 1 B))
+    (4  (0 1 A))
+
+    (6  (0 1 G))
+    (2  (0 1 G))
+    (8  (0 1 G))
+
+    (4  (0 1 A))
+    (4  (0 1 A))
+    (4  (0 1 G))
+    (4  (0 1 F))
+
+    (12 (0 1 E))
+    (4  (0 0 X))
+
+    (4  (0 0 A))
+    (4  (0 0 B))
+    (4  (0 1 C))
+    (4  (0 1 D))
+
+    (4  (0 1 E))
+    (4  (0 1 E))
+    (8  (0 1 E))
+
+    (4  (0 1 A))
+    (4  (0 1 A))
+    (4  (0 1 Gs))
+    (4  (0 1 A))
+
+    (12 (0 1 B))
+    (4  (0 0 X))))
+
+(defparameter *battotai-4*
+  '((8  (0 2 Cs))
+    (6  (0 1 B))
+    (2  (0 1 A))
+
+    (4  (0 1 A))
+    (4  (0 1 A))
+    (4  (0 1 A))
+    (4  (0 1 A))
+
+    (4  (0 1 Fs))
+    (4  (0 1 Fs))
+    (4  (0 1 A))
+    (4  (0 1 A))
+
+    (12 (0 2 Cs))
+    (4  (0 0 X))
+
+    (4  (0 1 A))
+    (4  (0 1 A))
+    (6  (0 1 Gs))
+    (2  (0 1 A))
+
+    (8  (0 1 Fs))
+    (4  (0 1 Gs))
+    (4  (0 1 A))
+
+    (6  (0 1 B))
+    (2  (0 1 B))
+    (4  (0 1 B))
+    (4  (0 1 B))
+
+    (12 (0 1 B))
+    (4  (0 0 X))))
+
+(defparameter *battotai-5*
+  '((4  (0 2 Cs))
+    (4  (0 2 Cs))
+    (4  (0 1 B))
+    (4  (0 1 A))
+
+    (4  (0 1 A))
+    (4  (0 1 A))
+    (8  (0 1 A))
+
+    (4  (0 1 Fs))
+    (4  (0 1 Fs))
+    (4  (0 2 D))
+    (4  (0 2 D))
+
+    (12 (0 2 Cs))
+    (4  (0 0 X))
+
+    (8  (0 1 B))
+    (4  (0 2 Cs))
+    (4  (0 2 D))
+
+    (4  (0 2 E))
+    (4  (0 2 Cs))
+    (4  (0 1 A))
+    (4  (0 2 D))
+
+    (8  (0 2 Cs))
+    (6  (0 1 B))
+    (2  (0 2 Cs))
+
+    (8  (0 1 A))
+    (4  (0 1 A))
+    (4  (0 0 X))
+))
+
+(defun battotai-flute ()
+  (append *battotai-1* *battotai-1* *battotai-2* *battotai-2*
+	  *battotai-3* *battotai-4* *battotai-5*))
 
 (defun battotai-score ()
-  (let ((score (copy-score *battotai*)))
+  (let ((score (copy-score (battotai-flute))))
     (scale-tempo score 4)
-    (adjust-octaves score '(2))
+    (adjust-octaves score '(1))
+    (channel-key-off score 0 3/4)
     (clean-up-score score)
     score))
 
