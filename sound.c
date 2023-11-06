@@ -188,6 +188,9 @@ static void setup_battotai(void) {
     setup_ym2612_channel(0, flute);
     setup_ym2612_channel(1, hi_hat);
     setup_ym2612_channel(2, tuba);
+    setup_ym2612_channel(4, horn);
+    setup_ym2612_channel(5, tuba);
+    setup_ym2612_channel(6, bong);
     load_score(0x1000, battotai_score, ARRAY_SIZE(battotai_score));
 }
 
