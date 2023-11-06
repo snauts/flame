@@ -187,6 +187,7 @@ static void setup_doves(void) {
 static void setup_battotai(void) {
     setup_ym2612_channel(0, flute);
     setup_ym2612_channel(1, hi_hat);
+    setup_ym2612_channel(2, tuba);
     load_score(0x1000, battotai_score, ARRAY_SIZE(battotai_score));
 }
 

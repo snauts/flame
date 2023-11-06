@@ -831,12 +831,18 @@
    (multiply *battotai-2* 2)
    *battotai-3* *battotai-4* *battotai-5*))
 
+(defun oom-pah ()
+  '((32 (2 1 C))
+    (32 (2 0 G))))
+
 (defun battotai-score ()
   (let ((score (copy-score (battotai-flute))))
     (scale-tempo score 4)
-    (adjust-octaves score '(1))
+    (merge-into score (multiply (oom-pah) 56))
     (merge-into score (battotai-drums))
+    (adjust-octaves score '(1 5 2))
     (channel-key-off score 0 3/4)
+    (channel-key-off score 2 1/4)
     (clean-up-score score)
     score))
 
