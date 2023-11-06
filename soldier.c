@@ -1,6 +1,8 @@
 #include "main.h"
 
 #include "images/soldier.h"
+#include "images/hiroshi.h"
+#include "images/french.h"
 #include "images/flame_up.h"
 #include "images/flame.h"
 #include "images/blood.h"
@@ -820,6 +822,16 @@ void load_soldier_tiles(u16 id) {
 	UPDATE_TILES(hans_tiles, SOLDIER_TOP);
 	palette = hans_palette;
 	yell_face = 16;
+	break;
+    case 2:
+	UPDATE_TILES(hiroshi_tiles, SOLDIER_TOP);
+	palette = hiroshi_palette;
+	yell_face = 17;
+	break;
+    case 3:
+	UPDATE_TILES(french_tiles, SOLDIER_TOP);
+	palette = french_palette;
+	yell_face = 18;
 	break;
     }
     update_palette(palette, 32, ARRAY_SIZE(soldier_palette));
