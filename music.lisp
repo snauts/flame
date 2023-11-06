@@ -861,7 +861,7 @@
 
 (defun onions-score ()
   (let ((score (copy-score (onions-flute))))
-    (scale-tempo score 4)
+    (scale-tempo score 3)
     (adjust-octaves score '(2))
     (channel-key-off score 0 3/4)
     (clean-up-score score)
