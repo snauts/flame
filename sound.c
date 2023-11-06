@@ -5,6 +5,8 @@ enum Music {
     MUSIC_NONE,
     MUSIC_JOHNNY,
     MUSIC_ERIKA,
+    MUSIC_BATTOTAI,
+    MUSIC_ONIONS,
     MUSIC_DOVES,
 };
 
@@ -182,6 +184,16 @@ static void setup_doves(void) {
     load_score(0x1000, doves_score, ARRAY_SIZE(doves_score));
 }
 
+static void setup_battotai(void) {
+    setup_ym2612_channel(0, flute);
+    load_score(0x1000, battotai_score, ARRAY_SIZE(battotai_score));
+}
+
+static void setup_onions(void) {
+    setup_ym2612_channel(0, flute);
+    load_score(0x1000, onions_score, ARRAY_SIZE(onions_score));
+}
+
 #define PSG_SFX_CH0	0x18
 #define PSG_SFX_CH1	0x1A
 #define PSG_SFX_CH2	0x1C
@@ -272,6 +284,14 @@ void music_erika(void) {
 
 void music_doves(void) {
     setup_music(MUSIC_DOVES, &setup_doves);
+}
+
+void music_battotai(void) {
+    setup_music(MUSIC_BATTOTAI, &setup_battotai);
+}
+
+void music_onions(void) {
+    setup_music(MUSIC_ONIONS, &setup_onions);
 }
 
 void music_none(void) {

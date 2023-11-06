@@ -600,6 +600,26 @@
     ;(adjust-end score 16) ; for dove-drum-score-old
     score))
 
+(defparameter *battotai*
+  '((8  (0 0 B))))
+
+(defun battotai-score ()
+  (let ((score (copy-score *battotai*)))
+    (scale-tempo score 4)
+    (adjust-octaves score '(2))
+    (clean-up-score score)
+    score))
+
+(defparameter *onions*
+  '((8  (0 0 B))))
+
+(defun onions-score ()
+  (let ((score (copy-score *onions*)))
+    (scale-tempo score 4)
+    (adjust-octaves score '(2))
+    (clean-up-score score)
+    score))
+
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
 
@@ -674,6 +694,8 @@
     (save-array out "johnny_score" (save-score (johnny-score)))
     (save-array out "erika_score" (save-score (erika-score)))
     (save-array out "doves_score" (save-score (doves-score)))
+    (save-array out "battotai_score" (save-score (battotai-score)))
+    (save-array out "onions_score" (save-score (onions-score)))
     (save-array out "decople_table" (generate-decople-table))
     (save-char-array out "small_circle" (generate-circle-table))
     (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
