@@ -772,14 +772,70 @@
     (4  (0 0 X))
 ))
 
+(defun battotai-drums-a ()
+  '((4  (1 0 C))
+    (4  (1 0 C))
+    (4  (1 0 C))
+    (4  (1 0 C))
+    (8  (1 0 C))
+    (8  (1 0 C))
+    (16 (1 0 C))
+    (16 (1 0 C))))
+
+(defun battotai-drums-b ()
+  (multiply '((8 (1 0 C)) (8 (1 0 C)) (16 (1 0 C))) 2))
+
+(defun battotai-drums-c ()
+  '((4  (1 0 C))
+    (4  (1 0 C))
+    (8  (1 0 C))
+    (16 (1 0 C))
+    (16 (1 0 C))
+    (4  (1 0 C))
+    (4  (1 0 C))
+    (8  (1 0 C))))
+
+(defun battotai-drums-d ()
+  (reverse (battotai-drums-a)))
+
+(defun battotai-drums-r ()
+  (multiply '((4 (1 0 C)) (4 (1 0 C)) (8 (1 0 C))) 4))
+
+(defun battotai-drums-z ()
+  '((16 (1 0 C)) (16 (1 0 C)) (32 (1 0 C))))
+
+(defun battotai-select-drum (x)
+  (case x
+    (a (battotai-drums-a))
+    (b (battotai-drums-b))
+    (c (battotai-drums-c))
+    (d (battotai-drums-d))
+    (r (battotai-drums-r))
+    (z (battotai-drums-z))))
+
+(defun battotai-drum-row (row)
+  (apply #'append (mapcar #'battotai-select-drum row)))
+
+(defun battotai-drums ()
+  (copy-score
+   (append
+    (multiply (battotai-drum-row '(a b r z c r d z)) 2)
+    (multiply (battotai-drum-row '(c a r z d d r z)) 2)
+    (battotai-drum-row '(r a r z r a r z))
+    (battotai-drum-row '(d r r z r a r z))
+    (battotai-drum-row '(r a r z d r d z)))))
+
 (defun battotai-flute ()
-  (append *battotai-1* *battotai-1* *battotai-2* *battotai-2*
-	  *battotai-3* *battotai-4* *battotai-5*))
+  (append
+   (multiply *battotai-1* 2)
+   (multiply *battotai-2* 2)
+   *battotai-3* *battotai-4* *battotai-5*))
 
 (defun battotai-score ()
   (let ((score (copy-score (battotai-flute))))
     (scale-tempo score 4)
     (adjust-octaves score '(1))
+    (merge-into score (battotai-drums))
     (channel-key-off score 0 3/4)
     (clean-up-score score)
     score))
