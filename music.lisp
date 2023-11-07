@@ -1010,7 +1010,7 @@
     (4  (6 0 C))
     (4  (6 0 C))))
 
-(defun onion-drums-2 ()
+(defun onion-drums-2 (&optional ending)
   (append
    '((4  (6 0 C)))
    (onion-roll)
@@ -1022,11 +1022,19 @@
    (onion-slow-roll)
    (onion-slow-roll)
    (onion-roll)
-   '((12 (6 0 C)))))
+   (if (not ending)
+       '((12 (6 0 C)))
+       '((1  (6 0 C))
+	 (1  (6 0 C))
+	 (1  (6 0 C))
+	 (1  (6 0 C))
+	 (2  (6 0 C))
+	 (2  (6 0 C))
+	 (4  (6 0 C))))))
 
 (defun onion-drums ()
   (let ((p1 (append-score (onion-drums-1a) (onion-drums-1b)))
-	(p2 (multiply (onion-drums-2) 2)))
+	(p2 (append-score (onion-drums-2) (onion-drums-2 t))))
     (scale-tempo p1 3)
     (scale-tempo p2 4)
     (append-score
