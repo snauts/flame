@@ -217,6 +217,22 @@
     (key-off-fraction (rest score) fraction)
     (key-off-head score fraction)))
 
+(defun next-note (note)
+  (first (rest (member (third note) *notes* :key #'first))))
+
+(defun bump-up-note (note)
+  (setf (third note) (first (next-note note))))
+
+(defun transpone-note (note channel)
+  (when (and (not (is-key-off note)) (= channel (first note)))
+    (cond ((eq 'b (third note))
+	   (setf (third note) 'c)
+	   (incf (second note)))
+	  (t (bump-up-note note)))))
+
+(defun transpone-channel (score channel &optional (steps 1))
+  (dotimes (i steps) (adjust-note score channel #'transpone-note)))
+
 (defun rename-channels (score channel)
   (adjust-note score channel (lambda (note data) (setf (first note) data))))
 
