@@ -196,6 +196,11 @@ static void setup_battotai(void) {
 
 static void setup_onions(void) {
     setup_ym2612_channel(0, flute);
+    setup_ym2612_channel(1, horn);
+    setup_ym2612_channel(2, tuba);
+    setup_ym2612_channel(4, bong);
+    setup_ym2612_channel(5, bong);
+    setup_ym2612_channel(6, hi_hat);
     load_score(0x1000, onions_score, ARRAY_SIZE(onions_score));
 }
 

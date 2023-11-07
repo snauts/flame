@@ -896,47 +896,47 @@
 
 (defparameter *onions-2a*
   '((4  (0 1 D))
-    (4  (0 0 B))
+    (4  (0 0 B) (4 0 C))
     (2  (0 0 B))
     (2  (0 0 B))
     (4  (0 0 B))
     (4  (0 1 D))
 
-    (4  (0 0 B))
+    (4  (0 0 B) (4 0 C))
     (2  (0 0 B))
     (2  (0 0 B))
     (4  (0 0 B))
     (4  (0 1 D))
 
-    (4  (0 1 E))
+    (4  (0 1 E) (4 0 C))
     (4  (0 1 D))
-    (4  (0 1 C))
+    (4  (0 1 C) (4 0 C))
     (4  (0 0 B))
-    (12 (0 1 C))
+    (12 (0 1 C) (4 0 C))
 
     (4  (0 1 C))
-    (4  (0 0 A))
-    (2  (0 0 A))
-    (2  (0 0 A))
-    (4  (0 0 A))
-    (4  (0 1 C))
-
-    (4  (0 0 A))
+    (4  (0 0 A) (4 0 C))
     (2  (0 0 A))
     (2  (0 0 A))
     (4  (0 0 A))
     (4  (0 1 C))
 
-    (4  (0 1 D))
+    (4  (0 0 A) (4 0 C))
+    (2  (0 0 A))
+    (2  (0 0 A))
+    (4  (0 0 A))
     (4  (0 1 C))
-    (4  (0 0 B))
+
+    (4  (0 1 D) (4 0 C))
+    (4  (0 1 C))
+    (4  (0 0 B) (4 0 C))
     (4  (0 0 A))))
 
 (defparameter *onions-2b*
-  '((12 (0 0 B))))
+  '((12 (0 0 B) (4 0 C))))
 
 (defparameter *onions-2c*
-  '((16 (0 0 G))))
+  '((16 (0 0 G) (4 0 C))))
 
 (defun onions-flute ()
   (append *onions-1a* *onions-1b* *onions-1a* *onions-1c*
@@ -945,8 +945,15 @@
 (defun onions-score ()
   (let ((score (copy-score (onions-flute))))
     (scale-tempo score 3)
-    (adjust-octaves score '(2))
+    (copy-channel score 0 1)
+    (copy-channel score 0 2)
+    (copy-channel score 4 5)
+    (adjust-octaves score '(2 1 2 x 0 0 5))
+    (transpone-channel score 1 4)
+    (transpone-channel score 2 2)
     (channel-key-off score 0 3/4)
+    (channel-key-off score 1 2/3)
+    (channel-key-off score '(2 4 5) 1/2)
     (clean-up-score score)
     score))
 
