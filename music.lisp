@@ -945,7 +945,7 @@
   (let ((p1 (append-score *onions-1a* *onions-1b* *onions-1a* *onions-1c*))
 	(p2 (append-score *onions-2a* *onions-2b* *onions-2a* *onions-2c*)))
     (scale-tempo p1 12)
-    (scale-tempo p2 6)
+    (scale-tempo p2 8)
     (append-score p1 p2)))
 
 (defun onion-drums-1 ()
@@ -1003,7 +1003,7 @@
   (let ((p1 (multiply (onion-drums-1) 2))
 	(p2 (multiply (onion-drums-2) 4)))
     (scale-tempo p1 3)
-    (scale-tempo p2 3)
+    (scale-tempo p2 4)
     (append-score p1 p2)))
 
 (defun onions-score ()
