@@ -941,13 +941,17 @@
 (defparameter *onions-2c*
   '((8  (0 0 G) (4 0 C))))
 
+(defparameter *onion-pause* '((6)))
+
 (defun onions-flute ()
   (let ((p1 (append-score *onions-1a* *onions-1b* *onions-1a* *onions-1c*))
 	(p2 (append-score *onions-2a* *onions-2b* *onions-2a* *onions-2c*)))
     (scale-tempo p1 12)
     (scale-tempo p2 8)
     (transpone-channel p2 0)
-    (append-score p1 p2)))
+    (append-score
+     p1 *onion-pause*
+     p2 *onion-pause*)))
 
 (defun onion-drums-1 ()
   '((1  (6 0 C))
@@ -1011,7 +1015,9 @@
 	(p2 (multiply (onion-drums-2) 2)))
     (scale-tempo p1 3)
     (scale-tempo p2 4)
-    (append-score p1 p2)))
+    (append-score
+     p1 *onion-pause*
+     p2 *onion-pause*)))
 
 (defun onion-score-common (score)
   (merge-into score (onion-drums))
