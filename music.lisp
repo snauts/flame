@@ -942,12 +942,41 @@
   (append *onions-1a* *onions-1b* *onions-1a* *onions-1c*
 	  *onions-2a* *onions-2b* *onions-2a* *onions-2c*))
 
+(defun onion-drums-1 ()
+  '((3  (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (6  (6 0 C))
+    (6  (6 0 C))
+    (12 (6 0 C))
+
+    (36 (6 0 C))
+    (24 (6 0 C))
+    (12 (6 0 C))
+    (24 (6 0 C))
+
+    (12 (6 0 C))
+    (12 (6 0 C))
+    (12 (6 0 C))
+    (12 (6 0 C))
+
+    (24 (6 0 C))
+    (12 (6 0 C))
+    (24 (6 0 C))
+    (12 (6 0 C))
+    (36 (6 0 C))))
+
+(defun onion-drums ()
+  (multiply (onion-drums-1) 2))
+
 (defun onions-score ()
   (let ((score (copy-score (onions-flute))))
     (scale-tempo score 3)
     (copy-channel score 0 1)
     (copy-channel score 0 2)
     (copy-channel score 4 5)
+    (merge-into score (onion-drums))
     (adjust-octaves score '(2 1 2 x 0 0 5))
     (transpone-channel score 1 4)
     (transpone-channel score 2 2)
