@@ -967,8 +967,36 @@
     (12 (6 0 C))
     (36 (6 0 C))))
 
+(defun onion-drums-2 ()
+  '((12 (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (6  (6 0 C))
+    (6  (6 0 C))
+    (12 (6 0 C))
+    (12 (6 0 C))
+
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (3  (6 0 C))
+    (6  (6 0 C))
+    (6  (6 0 C))
+    (12 (6 0 C))
+    (12 (6 0 C))
+
+    (12 (6 0 C))
+    (12 (6 0 C))
+    (12 (6 0 C))
+    (12 (6 0 C))
+    (36 (6 0 C))))
+
 (defun onion-drums ()
-  (multiply (onion-drums-1) 2))
+  (append
+   (multiply (onion-drums-1) 2)
+   (multiply (onion-drums-2) 4)))
 
 (defun onions-score ()
   (let ((score (copy-score (onions-flute))))
