@@ -601,11 +601,11 @@ static void wait_for_start_loop(void) {
     }
 }
 
-void wait_for_start(void) {
-    started = 0;
+void wait_for_start(byte disable_start_button) {
     reset_mobs();
     callback(&fade_in, 0, 6);
     switch_frame(&wait_for_start_loop);
+    started = disable_start_button;
 }
 
 #define BAR_OFFSET (16 + 40 - (BAR_SIZE + 2))

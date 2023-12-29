@@ -220,13 +220,16 @@ static void display_text(const char *text, u16 offset) {
 	else if ('0' <= text[i] && text[i] <= '9') {
 	    tile = 1 + text[i] - '0' + 26;
 	}
+	else if (text[i] == '-') {
+	    tile = 26 + 10 + 1;
+	}
 	poke_VRAM(i << 1, tile);
 	i++;
     }
     copy_to_VRAM(VRAM_PLANE_A + offset, 2 * strlen(text));
 }
 
-static void display_simple_screen(Function paint_screen, u16 offset) {
+static void simple_screen(Function paint_screen, u16 offset, byte start) {
     window = offset;
     level_scroll();
     music_none();
@@ -234,7 +237,7 @@ static void display_simple_screen(Function paint_screen, u16 offset) {
     reset_sprite_table();
     clear_screen_to_black();
     paint_screen();
-    wait_for_start();
+    wait_for_start(start);
 }
 
 static void flammenwerfer_text(void) {
@@ -249,7 +252,7 @@ static void flammenwerfer_text(void) {
 }
 
 void display_title(void) {
-    display_simple_screen(&flammenwerfer_text, 0);
+    simple_screen(&flammenwerfer_text, 0, 0);
 }
 
 static void end_game_text(void) {
@@ -257,7 +260,35 @@ static void end_game_text(void) {
 }
 
 void display_ending(void) {
-    display_simple_screen(&end_game_text, 4);
+    simple_screen(&end_game_text, 4, 0);
     extern void music_doves(void);
     music_doves();
+}
+
+static void start_level(u16 tmp) {
+    fade_to_next_level();
+    fade_music(0);
+}
+
+static void announcement(Function paint_screen) {
+    simple_screen(paint_screen, 0, 1);
+    schedule(&start_level, 150);
+}
+
+static void johnny_text(void) {
+    display_text("- PART 1 -", 0x19e);
+    display_text("JOHNNY", 0x6a2);
+}
+
+void announce_johnny(void) {
+    announcement(&johnny_text);
+}
+
+static void hans_text(void) {
+    display_text("- PART 2 -", 0x19e);
+    display_text("HANS", 0x6a4);
+}
+
+void announce_hans(void) {
+    announcement(&hans_text);
 }
