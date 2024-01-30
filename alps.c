@@ -2,11 +2,13 @@
 
 #include "images/alps.h"
 #include "images/rocks.h"
+#include "images/queen.h"
 #include "images/burn.h"
 #include "images/bee.h"
 
 #define BEE_TILES	193
 #define BURN_TILES	(BEE_TILES + 8)
+#define QUEEN_TILES	(BURN_TILES + 32)
 
 static u16 draw_one_mountain(u16 x, byte tile) {
     if (tile == 1 || tile == 33) {
@@ -350,8 +352,46 @@ void display_mountains(void) {
     display_alps(&prepare_mountain_level);
 }
 
+#define QUEEN_PARTS 4
+static Object **queen;
+
+struct Pos queen_layout[QUEEN_PARTS] = {
+    { x:  0, y:  0 },
+    { x: 32, y:  0 },
+    { x:  0, y: 32 },
+    { x: 32, y: 32 },
+};
+
+static void queen_update(Object *obj) {
+    for (u16 i = 0; i < QUEEN_PARTS; i++) {
+	Sprite *sprite = queen[i]->sprite;
+	sprite->x = obj->x + queen_layout[i].x;
+	sprite->y = obj->y + queen_layout[i].y;
+    }
+}
+
+static void setup_queen(u16 i) {
+    queen = malloc(QUEEN_PARTS * sizeof(Object*));
+    for (u16 i = 0; i < QUEEN_PARTS; i++) {
+	queen[i] = alloc_mob();
+	Sprite *sprite = queen[i]->sprite;
+	sprite->size = SPRITE_SIZE(4, 4);
+	sprite->cfg = TILE(3, QUEEN_TILES + (i << 4));
+	queen[i]->frame = 0;
+	queen[i]->life = 0;
+    }
+
+    queen[0]->x = ON_SCREEN + 128;
+    queen[0]->y = ON_SCREEN + 16;
+    mob_fn(queen[0], &queen_update);
+}
+
 void display_queen(void) {
+    update_tiles(queen_tiles, QUEEN_TILES, ARRAY_SIZE(queen_tiles));
+
     display_alps(&prepare_queen_level);
     display_progress_bar();
     lock_screen(1);
+
+    schedule(&setup_queen, 0);
 }
