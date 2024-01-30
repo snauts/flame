@@ -183,12 +183,14 @@ void display_canyon(void);
 void display_rusty(void);
 void display_mantis(void);
 void display_mountains(void);
+void display_queen(void);
 void announce_johnny(void);
 void announce_hans(void);
 void prepare_desert_level(void);
 void prepare_rusty_level(void);
 void prepare_mantis_level(void);
 void prepare_mountain_level(void);
+void prepare_queen_level(void);
 
 u16 platform_bottom(void);
 void load_burn_tiles(u16 where);

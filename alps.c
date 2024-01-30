@@ -302,7 +302,7 @@ void level_done_burn_bees(void) {
     level_done(0);
 }
 
-void display_mountains(void) {
+void display_alps(Function prepare_level) {
     /* load tiles */
     update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
     update_tiles(alps_tiles, 1, ARRAY_SIZE(alps_tiles));
@@ -328,7 +328,7 @@ void display_mountains(void) {
     clear_DMA_buffer(0, 0x1000);
 
     fill_VRAM(0, 0, 0x800);
-    prepare_mountain_level();
+    prepare_level();
 
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
@@ -344,4 +344,14 @@ void display_mountains(void) {
     switch_frame(&update_game);
 
     b_obj = malloc(sizeof(Bee) * MAX_MOBS);
+}
+
+void display_mountains(void) {
+    display_alps(&prepare_mountain_level);
+}
+
+void display_queen(void) {
+    display_alps(&prepare_queen_level);
+    display_progress_bar();
+    lock_screen(1);
 }

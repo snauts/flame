@@ -168,3 +168,8 @@
    ;; NEXT LEVEL
    (inject (flower-pathway) "level_done_burn_bees" 38)
    (empty 32)))
+
+(defun queen-level ()
+  (setf *seed* 1918)
+  (box-pipe
+   (alps-walk :width 10)))

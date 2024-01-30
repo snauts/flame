@@ -127,6 +127,12 @@ void prepare_mountain_level(void) {
     prepare_level(mountain_level);
 }
 
+void prepare_queen_level(void) {
+    trigger = queen_level_triggers;
+    height = queen_level_height;
+    prepare_level(queen_level);
+}
+
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, -(window >> 1));
