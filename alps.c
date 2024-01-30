@@ -355,18 +355,30 @@ void display_mountains(void) {
 #define QUEEN_PARTS 4
 static Object **queen;
 
-struct Pos queen_layout[QUEEN_PARTS] = {
-    { x:  0, y:  0 },
-    { x: 32, y:  0 },
-    { x:  0, y: 32 },
-    { x: 32, y: 32 },
+struct Queen {
+    byte x, y;
+    u16 frame[2];
+};
+
+#define QUEEN_FRAME(offset, flip) \
+    ((flip) | TILE(3, QUEEN_TILES + (offset)))
+
+struct Queen queen_layout[QUEEN_PARTS] = {
+    { x:  0, y:  0, frame: { QUEEN_FRAME( 0, 0), QUEEN_FRAME(16, BIT(11)) } },
+    { x: 32, y:  0, frame: { QUEEN_FRAME(16, 0), QUEEN_FRAME( 0, BIT(11)) } },
+    { x:  0, y: 32, frame: { QUEEN_FRAME(32, 0), QUEEN_FRAME(48, BIT(11)) } },
+    { x: 32, y: 32, frame: { QUEEN_FRAME(48, 0), QUEEN_FRAME(32, BIT(11)) } },
 };
 
 static void queen_update(Object *obj) {
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
+	u16 frame = (queen[i]->frame >> 2) & 1;
 	Sprite *sprite = queen[i]->sprite;
 	sprite->x = obj->x + queen_layout[i].x;
 	sprite->y = obj->y + queen_layout[i].y;
+	sprite->cfg = queen_layout[i].frame[frame];
+	queen[i]->frame++;
+	queen[i]->life++;
     }
 }
 
@@ -377,7 +389,7 @@ static void setup_queen(u16 i) {
 	Sprite *sprite = queen[i]->sprite;
 	sprite->size = SPRITE_SIZE(4, 4);
 	sprite->cfg = TILE(3, QUEEN_TILES + (i << 4));
-	queen[i]->frame = 0;
+	queen[i]->frame = i;
 	queen[i]->life = 0;
     }
 
