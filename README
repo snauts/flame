@@ -1,1 +1,8 @@
-Sega Genesis / Mega Drive
+Flammenwerfer
+=============
+
+This is a video game for Sega Genesis / Mega Drive console
+It is inspired by internet meme "Hans get ze Flammenwerfer"
+
+To build this you would need:
+    make, m68k-elf toolchain, host gcc, sbcl, zasm, xxd
