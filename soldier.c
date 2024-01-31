@@ -752,6 +752,11 @@ void soldier_fist_pump() {
     soldier.frame++;
 }
 
+static void upload_sprite_data(void) {
+    sprite[0].next = update_next_sprite(0);
+    copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
+}
+
 void advance_sprites(void) {
     update_next_sprite(SOLDIER_BASE - 1);
 
@@ -780,10 +785,7 @@ void advance_sprites(void) {
     manage_mobs();
     manage_blood();
     manage_flames();
-
-    sprite[0].next = update_next_sprite(0);
-
-    copy_to_VRAM_ptr(VRAM_SPRITE, sizeof(sprite), sprite);
+    upload_sprite_data();
 }
 
 static void put_soldier(u16 x, u16 y) {
@@ -846,6 +848,45 @@ static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
 
 void load_soldier_tiles(u16 id) {
     load_soldier_tiles_at_offset(id, SOLDIER_TOP);
+}
+
+static void march(u16 n) {
+    Sprite *army = get_sprite(SOLDIER_BASE);
+    army[7].next = update_next_sprite(SOLDIER_BASE);
+
+    u16 id;
+    for (id = 1; id < 8; id += 2) {
+	u16 color = (army[id].cfg >> 13) & 3;
+	army[id].cfg = TILE(color, SOLDIER_LEG + (18 + n) * 6);
+    }
+
+    upload_sprite_data();
+    callback(&march, 4, n < 11 ? n + 1 : 0);
+}
+
+void all_soldiers_march(void) {
+    Sprite *sprite = get_sprite(SOLDIER_BASE);
+    update_palette(soldier_palette, 16, ARRAY_SIZE(soldier_palette));
+
+    u16 id, of = 0;
+    for (id = 0; id < 4; id++) {
+	u16 top = 64 + (id << 6);
+	u16 color = 1 + (id & 1);
+	load_soldier_tiles_at_offset(id, top);
+
+	sprite[of].x = ON_SCREEN + 124 + id * 16;
+	sprite[of].y = ON_SCREEN + 128;
+	sprite[of].cfg = TILE(color, top + 9);
+	sprite[of].size = SPRITE_SIZE(3, 3);
+	sprite[of].next = SOLDIER_BASE + (++of);
+
+	sprite[of].x = sprite[of - 1].x;
+	sprite[of].y = sprite[of - 1].y + 24;
+	sprite[of].cfg = TILE(color, SOLDIER_LEG + 18 * 6);
+	sprite[of].size = SPRITE_SIZE(3, 2);
+	sprite[of].next = SOLDIER_BASE + (++of);
+    }
+    march(0);
 }
 
 Sprite *get_sprite(u16 offset) {

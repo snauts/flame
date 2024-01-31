@@ -268,6 +268,7 @@ static void end_game_text(void) {
 void display_ending(void) {
     simple_screen(&end_game_text, 4, 0);
     extern void music_doves(void);
+    all_soldiers_march();
     music_doves();
 }
 
