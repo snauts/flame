@@ -222,6 +222,8 @@ void small_mob_end(Object *obj, byte persistent);
 u16 should_small_mob_burn(Sprite *sprite);
 void mob_adjust_sprite_dir(Object *obj);
 void small_mob_attack(Object *obj);
+void setup_burns(u16 count, u16 tiles);
+void flame_burn(Object *obj, u16 i);
 
 extern u16 window;
 extern u16 counter;

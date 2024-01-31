@@ -388,6 +388,7 @@ static void check_queen_hitbox(void) {
 	    if (QUEEN_HP == 0) {
 		/* die */
 	    }
+	    flame_burn(flame, 0);
 	    perish_sfx();
 	}
 	if (soldier_collision(box + i) && QUEEN_HP) {
@@ -409,6 +410,8 @@ static void queen_update(Object *obj) {
 }
 
 static void setup_queen(u16 i) {
+    setup_burns(4, BURN_TILES);
+
     queen = malloc(QUEEN_PARTS * sizeof(Object*));
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
 	queen[i] = alloc_mob();

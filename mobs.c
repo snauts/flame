@@ -191,3 +191,51 @@ void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n) {
 	dst[i].y2 = obj->y + src[i].y2;
     }
 }
+
+static u16 burn_count;
+static u16 burn_tiles;
+static Object **burns;
+
+static void update_burns(u16 i) {
+    for (i = 0; i < burn_count; i++) {
+	Object *burn = burns[i];
+	Object *parent = (Object *) burn->private;
+	if (parent != NULL) {
+	    burn->sprite->x = parent->sprite->x + burn->x;
+	    burn->sprite->y = parent->sprite->y + burn->y;
+	}
+	if (burn->frame >= 8) {
+	    burn->sprite->x = burn->sprite->y = 0;
+	}
+	else {
+	    burn->frame++;
+	}
+	u16 tile = TILE(2, burn_tiles + 4 * burn->frame);
+	if (burn->direction < 0) tile |= BIT(11);
+	set_sprite_tile(burn->sprite, tile);
+    }
+    schedule(&update_burns, 2);
+}
+
+void setup_burns(u16 count, u16 tiles) {
+    burn_tiles = tiles;
+    burn_count = count;
+    burns = malloc(count * sizeof(Object*));
+    for (u16 i = 0; i < count; i++) {
+	burns[i] = alloc_mob();
+	burns[i]->sprite->size = SPRITE_SIZE(2, 2);
+	burns[i]->private = NULL;
+	burns[i]->life = 0;
+    }
+    schedule(&update_burns, 0);
+}
+
+void flame_burn(Object *obj, u16 i) {
+    Object *burn = burns[i];
+    burn->frame = 0;
+    burn->private = NULL;
+    burn->direction = obj->direction;
+    burn->sprite->x = obj->sprite->x;
+    burn->sprite->y = obj->sprite->y - 4;
+    set_sprite_tile(burn->sprite, TILE(2, burn_tiles));
+}
