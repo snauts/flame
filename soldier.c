@@ -811,25 +811,25 @@ static void put_soldier(u16 x, u16 y) {
     soldier_sprite_update();
 }
 
-void load_soldier_tiles(u16 id) {
+static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
     switch (id) {
     case 0:
-	UPDATE_TILES(soldier_tiles, SOLDIER_TOP);
+	UPDATE_TILES(soldier_tiles, offset);
 	palette = soldier_palette;
 	yell_face = 0;
 	break;
     case 1:
-	UPDATE_TILES(hans_tiles, SOLDIER_TOP);
+	UPDATE_TILES(hans_tiles, offset);
 	palette = hans_palette;
 	yell_face = 16;
 	break;
     case 2:
-	UPDATE_TILES(hiroshi_tiles, SOLDIER_TOP);
+	UPDATE_TILES(hiroshi_tiles, offset);
 	palette = hiroshi_palette;
 	yell_face = 17;
 	break;
     case 3:
-	UPDATE_TILES(french_tiles, SOLDIER_TOP);
+	UPDATE_TILES(french_tiles, offset);
 	palette = french_palette;
 	yell_face = 18;
 	break;
@@ -842,6 +842,10 @@ void load_soldier_tiles(u16 id) {
 
     update_tiles(blood_tiles, BLOOD, ARRAY_SIZE(blood_tiles));
     update_tiles(gun_tiles, WEAPON, ARRAY_SIZE(gun_tiles));
+}
+
+void load_soldier_tiles(u16 id) {
+    load_soldier_tiles_at_offset(id, SOLDIER_TOP);
 }
 
 Sprite *get_sprite(u16 offset) {
