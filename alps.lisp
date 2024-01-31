@@ -171,5 +171,9 @@
 
 (defun queen-level ()
   (setf *seed* 1918)
-  (box-pipe
-   (alps-walk :width 10)))
+  (join
+   (trunc (alps-walk :width 3 :type '(0 0 0 5 3 2)) 2)
+   (empty 1)
+   (raise 2  (alps-walk :type 1 :hang 1 :base 1))
+   (empty 1)
+   (alps-walk :width 3 :type '(5 3 7 0 0 0))))

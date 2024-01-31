@@ -135,6 +135,9 @@
 (defun crop (x1 y1 x2 y2 box)
   (mapcar (lambda (column) (cut column y1 y2)) (cut box x1 x2)))
 
+(defun trunc (list n)
+  (nthcdr n list))
+
 (defun multiply (box n)
   (let ((result nil))
     (dotimes (i n result)
