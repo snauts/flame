@@ -355,6 +355,8 @@ void display_mountains(void) {
 #define QUEEN_PARTS 4
 static Object **queen;
 
+#define QUEEN_HP	queen[0]->life
+
 struct Queen {
     byte x, y;
     u16 frame[2];
@@ -370,7 +372,32 @@ struct Queen queen_layout[QUEEN_PARTS] = {
     { x: 32, y: 32, frame: { QUEEN_FRAME(48, 0), QUEEN_FRAME(32, BIT(11)) } },
 };
 
+const Rectangle q_box[] = {
+    { x1: 20, y1:  4, x2: 44, y2: 60 },
+    { x1:  8, y1: 24, x2: 56, y2: 40 },
+};
+
+static void check_queen_hitbox(void) {
+    Sprite *soldier = get_soldier()->sprite;
+    Rectangle box[ARRAY_SIZE(q_box)];
+    update_hitbox(*queen, box, q_box, ARRAY_SIZE(q_box));
+    for (u16 i = 0; i < ARRAY_SIZE(q_box); i++) {
+	Object *flame = flame_collision(box + i);
+	if (flame != NULL && get_soldier()->life == 0) {
+	    QUEEN_HP = decrement_progress_bar();
+	    if (QUEEN_HP == 0) {
+		/* die */
+	    }
+	    perish_sfx();
+	}
+	if (soldier_collision(box + i) && QUEEN_HP) {
+	    bite_soldier(soldier->x + 8, soldier->y);
+	}
+    }
+}
+
 static void queen_update(Object *obj) {
+    if (QUEEN_HP > 0) check_queen_hitbox();
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
 	u16 frame = (queen[i]->frame >> 2) & 1;
 	Sprite *sprite = queen[i]->sprite;
@@ -378,7 +405,6 @@ static void queen_update(Object *obj) {
 	sprite->y = obj->y + queen_layout[i].y;
 	sprite->cfg = queen_layout[i].frame[frame];
 	queen[i]->frame++;
-	queen[i]->life++;
     }
 }
 
@@ -393,6 +419,7 @@ static void setup_queen(u16 i) {
 	queen[i]->life = 0;
     }
 
+    QUEEN_HP = BAR_HEALTH;
     queen[0]->x = ON_SCREEN + 128;
     queen[0]->y = ON_SCREEN + 16;
     mob_fn(queen[0], &queen_update);
