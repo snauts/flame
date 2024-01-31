@@ -182,3 +182,12 @@ void small_mob_attack(Object *obj) {
 void mob_adjust_sprite_dir(Object *obj) {
     if (obj->direction > 0) obj->sprite->cfg |= BIT(11);
 }
+
+void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n) {
+    for (u16 i = 0; i < n; i++) {
+	dst[i].x1 = obj->x + src[i].x1;
+	dst[i].y1 = obj->y + src[i].y1;
+	dst[i].x2 = obj->x + src[i].x2;
+	dst[i].y2 = obj->y + src[i].y2;
+    }
+}

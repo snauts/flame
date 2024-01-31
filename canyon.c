@@ -578,12 +578,7 @@ const Rectangle b_box[] = {
 
 static void get_mantis_hitbox(Object *obj, Rectangle *box) {
     const Rectangle *box_offset = obj->direction > 0 ? b_box : f_box;
-    for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
-	box[i].x1 = obj->x + box_offset[i].x1;
-	box[i].y1 = obj->y + box_offset[i].y1;
-	box[i].x2 = obj->x + box_offset[i].x2;
-	box[i].y2 = obj->y + box_offset[i].y2;
-    }
+    update_hitbox(obj, box, box_offset, ARRAY_SIZE(f_box));
 }
 
 static void mantis_flicker_color(u16 upd) {
