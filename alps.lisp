@@ -169,11 +169,23 @@
    (inject (flower-pathway) "level_done_burn_bees" 38)
    (empty 32)))
 
-(defun queen-level ()
-  (setf *seed* 1918)
+(defun queen-ground ()
   (join
    (trunc (alps-walk :width 3 :type '(0 0 0 5 3 2)) 2)
-   (empty 1)
-   (raise 2  (alps-walk :type 1 :hang 1 :base 1))
-   (empty 1)
+   (empty 8)
    (alps-walk :width 3 :type '(5 3 7 0 0 0))))
+
+(defparameter *queen-platforms*
+  '((17 6) (13 11) (17 16) (25 19) (25 3) (33 6) (37 11) (33 16)))
+
+(defun place-queen-platform (pos pipe)
+  (destructuring-bind (x y) pos
+    (let ((type (1+ (logand y 1))))
+      (place x y pipe (alps-walk :type type :hang 1 :base 1)))))
+
+(defun queen-level ()
+  (setf *seed* 1918)
+  (box-pipe
+   (queen-ground)
+   (dolist (pos *queen-platforms* pipe)
+     (setf pipe (place-queen-platform pos pipe)))))
