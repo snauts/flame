@@ -1123,11 +1123,11 @@
 (defun scale-and-diff (result radius)
   (mapcar (lambda (x) (floor (* radius x))) result))
 
-(defun generate-circle-table (&optional (steps 128) (radius 36))
+(defun generate-circle-table (&optional (steps 128) (radius 36) (ratio 1.0))
   (let ((result nil))
     (dotimes (i steps (reverse (scale-and-diff result radius)))
       (let ((angle (* 2 pi (/ i steps))))
-	(push (sin angle) result)
+	(push (* ratio (sin angle)) result)
 	(push (cos angle) result)))))
 
 (defun save-music ()
