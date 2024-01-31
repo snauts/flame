@@ -440,7 +440,7 @@ void display_rusty(void) {
 #define MANTIS_PARTS	8
 #define BURN_COUNT	4
 static Object **mantis;
-static Object **burns;
+extern Object **burns;
 
 typedef struct Mantis {
     char x, y, size;
@@ -610,44 +610,12 @@ static void adjust_mantis_height(Object *obj) {
     }
 }
 
-static void add_mantis_burn(Object *obj) {
-    set_sprite_tile(obj->sprite, TILE(2, 289 + 4 * 12));
-    obj->frame = 0;
-}
-
-static void burn_mantis(Object *obj) {
-    add_mantis_burn(burns[0]);
-    burns[0]->private = NULL;
-    burns[0]->sprite->x = obj->sprite->x;
-    burns[0]->sprite->y = obj->sprite->y - 4;
-}
-
-static void mantis_burner(u16 i) {
-    for (i = 0; i < BURN_COUNT; i++) {
-	Object *burn = burns[i];
-	Object *parent = (Object *) burn->private;
-	if (parent != NULL) {
-	    burn->sprite->x = parent->sprite->x + burn->x;
-	    burn->sprite->y = parent->sprite->y + burn->y;
-	}
-	if (burn->frame >= 9) {
-	    burn->sprite->x = burn->sprite->y = 0;
-	}
-	else {
-	    burn->frame++;
-	}
-	u16 tile = TILE(2, 289 + 4 * (12 + (burn->frame >> 1)));
-	set_sprite_tile(burn->sprite, tile);
-	burn->sprite->cfg ^= BIT(11);
-    }
-    schedule(&mantis_burner, 2);
-}
-
 static void emit_mantis_burn(u16 i) {
-    add_mantis_burn(burns[i]);
+    init_burn(burns[i]);
     if (!burns[i]->life) {
 	burns[i]->private = mantis[2];
 	u16 dx = (mantis[0]->direction < 0) ? -8 : -40;
+	burns[i]->direction = (i & 1) ? -1 : 1;
 	burns[i]->x = (random() & 0x3F) + dx;
 	burns[i]->y = (random() & 0x07) - 4;
     }
@@ -790,7 +758,7 @@ static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
 		FLICKERING = (FLICKERING + 1) & 1;
 		mantis_flicker_color(0x222);
 	    }
-	    burn_mantis(flame);
+	    flame_burn(flame, 0);
 	    IS_AGITATED = 1;
 	    perish_sfx();
 	}
@@ -856,14 +824,7 @@ static void walk_mantis(Object *obj) {
 }
 
 static void setup_mantis(u16 i) {
-    burns = malloc(BURN_COUNT * sizeof(Object*));
-    for (u16 i = 0; i < BURN_COUNT; i++) {
-	burns[i] = alloc_mob();
-	burns[i]->sprite->size = SPRITE_SIZE(2, 2);
-	burns[i]->private = NULL;
-	burns[i]->life = 0;
-    }
-    schedule(&mantis_burner, 0);
+    setup_burns(BURN_COUNT, 577);
 
     mantis = malloc(MANTIS_PARTS * sizeof(Object*));
     for (u16 i = 0; i < MANTIS_PARTS; i++) {
@@ -893,6 +854,8 @@ void display_mantis(void) {
     update_tiles(mantis_claw_tiles, 385, ARRAY_SIZE(mantis_claw_tiles));
     update_tiles(mantis_leg_tiles, 449, ARRAY_SIZE(mantis_leg_tiles));
     update_tiles(mantis_wing_tiles, 545, ARRAY_SIZE(mantis_wing_tiles));
+
+    load_burn_tiles(577);
 
     display_desert(&prepare_mantis_level, 1);
     display_progress_bar();

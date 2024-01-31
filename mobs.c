@@ -194,7 +194,7 @@ void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n) {
 
 static u16 burn_count;
 static u16 burn_tiles;
-static Object **burns;
+Object **burns;
 
 static void update_burns(u16 i) {
     for (i = 0; i < burn_count; i++) {
@@ -230,12 +230,16 @@ void setup_burns(u16 count, u16 tiles) {
     schedule(&update_burns, 0);
 }
 
+void init_burn(Object *obj) {
+    set_sprite_tile(obj->sprite, TILE(2, burn_tiles));
+    obj->frame = 0;
+}
+
 void flame_burn(Object *obj, u16 i) {
     Object *burn = burns[i];
-    burn->frame = 0;
     burn->private = NULL;
     burn->direction = obj->direction;
     burn->sprite->x = obj->sprite->x;
     burn->sprite->y = obj->sprite->y - 4;
-    set_sprite_tile(burn->sprite, TILE(2, burn_tiles));
+    init_burn(burn);
 }
