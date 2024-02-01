@@ -76,6 +76,7 @@ void draw_alpine_bones(void) {
 typedef struct Bee {
     char v_direction;
     char relinquish;
+    char persistent;
     char dx, dy;
 } Bee;
 
@@ -119,7 +120,7 @@ static void animate_bee(Object *obj) {
 	free_mob(obj);
     }
     else {
-	small_mob_end(obj, 1);
+	small_mob_end(obj, BEE(obj)->persistent);
     }
 }
 
@@ -146,6 +147,7 @@ static Object *setup_bee(short x, short y, u16 life) {
 	obj->private = b_obj + mob_index(obj);
 	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_bee);
+	BEE(obj)->persistent = 1;
 	BEE(obj)->dx = 0;
 	BEE(obj)->dy = 0;
     }
