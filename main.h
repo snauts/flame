@@ -218,6 +218,7 @@ u16 mob_index(Object *obj);
 Object *get_mob(u16 index);
 
 void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n);
+u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip);
 void small_mob_end(Object *obj, byte persistent);
 u16 should_small_mob_burn(Sprite *sprite);
 void mob_adjust_sprite_dir(Object *obj);

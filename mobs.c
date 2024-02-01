@@ -243,3 +243,23 @@ void flame_burn(Object *obj, u16 i) {
     burn->sprite->y = obj->sprite->y - 4;
     init_burn(burn);
 }
+
+u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
+    u16 ret = 0;
+    Rectangle box[size];
+    Sprite *soldier = get_soldier()->sprite;
+    update_hitbox(obj, box, base, size);
+    for (u16 i = 0; i < size; i++) {
+	Object *flame = flame_collision(box + i);
+	if (flame != NULL && get_soldier()->life == 0) {
+	    obj->life = decrement_progress_bar();
+	    flame_burn(flame, 0);
+	    perish_sfx();
+	    ret = 1;
+	}
+	if (i < skip && obj->life > 0 && soldier_collision(box + i)) {
+	    bite_soldier(soldier->x + 8, soldier->y);
+	}
+    }
+    return ret;
+}

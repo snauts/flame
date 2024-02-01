@@ -377,28 +377,20 @@ const Rectangle q_box[] = {
     { x1: -16, y1:  -8, x2: 16, y2:  8 },
 };
 
-static void check_queen_hitbox(void) {
-    Sprite *soldier = get_soldier()->sprite;
-    Rectangle box[ARRAY_SIZE(q_box)];
-    update_hitbox(*queen, box, q_box, ARRAY_SIZE(q_box));
-    for (u16 i = 0; i < ARRAY_SIZE(q_box); i++) {
-	Object *flame = flame_collision(box + i);
-	if (flame != NULL && get_soldier()->life == 0) {
-	    QUEEN_HP = decrement_progress_bar();
-	    if (QUEEN_HP == 0) {
-		/* die */
-	    }
-	    flame_burn(flame, 0);
-	    perish_sfx();
+static void queen_check_hitbox(void) {
+    u16 size = ARRAY_SIZE(q_box);
+    if (QUEEN_HP > 0 && boss_hitbox(*queen, q_box, size, size)) {
+	if (QUEEN_HP == 0) {
+	    /* queen dies */
 	}
-	if (soldier_collision(box + i) && QUEEN_HP) {
-	    bite_soldier(soldier->x + 8, soldier->y);
+	else {
+	    /* flicker */
 	}
     }
 }
 
 static void queen_update(Object *obj) {
-    if (QUEEN_HP > 0) check_queen_hitbox();
+    queen_check_hitbox();
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
 	u16 frame = (queen[i]->frame >> 2) & 1;
 	Sprite *sprite = queen[i]->sprite;

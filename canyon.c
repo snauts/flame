@@ -576,11 +576,6 @@ const Rectangle b_box[] = {
     { x1: 24, y1: 40, x2: 64, y2: 64 },
 };
 
-static void get_mantis_hitbox(Object *obj, Rectangle *box) {
-    const Rectangle *box_offset = obj->direction > 0 ? b_box : f_box;
-    update_hitbox(obj, box, box_offset, ARRAY_SIZE(f_box));
-}
-
 static void mantis_flicker_color(u16 upd) {
     update_color(54 + FLICKERING, mantis_body_palette[FLICKERING + 6] + upd);
 }
@@ -742,29 +737,19 @@ static void mantis_pepsi(u16 n) {
     mantis_turn_to_ash(0);
 }
 
-static void mantis_check_hitbox(Object *obj, Sprite *soldier) {
-    Rectangle box[ARRAY_SIZE(f_box)];
-    get_mantis_hitbox(obj, box);
+static void mantis_check_hitbox(Object *obj) {
+    const Rectangle *box_offset = obj->direction > 0 ? b_box : f_box;
 
     mantis_flicker_color(0);
-    for (u16 i = 0; i < ARRAY_SIZE(f_box); i++) {
-	Object *flame = flame_collision(box + i);
-	if (flame != NULL && get_soldier()->life == 0) {
-	    MANTIS_HP = decrement_progress_bar();
-	    if (!MANTIS_HP) {
-		schedule(&mantis_pepsi, 0);
-	    }
-	    else {
-		FLICKERING = (FLICKERING + 1) & 1;
-		mantis_flicker_color(0x222);
-	    }
-	    flame_burn(flame, 0);
-	    IS_AGITATED = 1;
-	    perish_sfx();
+    if (boss_hitbox(obj, box_offset, ARRAY_SIZE(f_box), 2)) {
+	if (!MANTIS_HP) {
+	    schedule(&mantis_pepsi, 0);
 	}
-	if (i != 2 && soldier_collision(box + i) && MANTIS_HP) {
-	    bite_soldier(soldier->x + 8, soldier->y);
+	else {
+	    FLICKERING = (FLICKERING + 1) & 1;
+	    mantis_flicker_color(0x222);
 	}
+	IS_AGITATED = 1;
     }
 }
 
@@ -819,7 +804,7 @@ static void walk_mantis(Object *obj) {
     adjust_manits_position(obj);
     adjust_mantis_height(obj);
 
-    mantis_check_hitbox(obj, soldier);
+    mantis_check_hitbox(obj);
     mantis_gets_angry(obj, soldier);
 }
 
