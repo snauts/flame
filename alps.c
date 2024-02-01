@@ -356,6 +356,7 @@ void display_mountains(void) {
 static Object **queen;
 
 #define QUEEN_HP	queen[0]->life
+#define QUEEN_TIME	queen[1]->life
 
 struct Queen {
     char x, y;
@@ -377,9 +378,9 @@ const Rectangle q_box[] = {
     { x1: -16, y1:  -8, x2: 16, y2:  8 },
 };
 
-static void queen_check_hitbox(void) {
+static void queen_check_hitbox(Object *obj) {
     u16 size = ARRAY_SIZE(q_box);
-    if (QUEEN_HP > 0 && boss_hitbox(*queen, q_box, size, size)) {
+    if (QUEEN_HP > 0 && boss_hitbox(obj, q_box, size, size)) {
 	if (QUEEN_HP == 0) {
 	    /* queen dies */
 	}
@@ -389,8 +390,16 @@ static void queen_check_hitbox(void) {
     }
 }
 
+extern const char larger_circle[512];
+static void queen_fly_around(Object *obj) {
+    obj->x = ON_SCREEN + 160 + larger_circle[QUEEN_TIME + 0];
+    obj->y = ON_SCREEN + 120 + larger_circle[QUEEN_TIME + 1];
+    QUEEN_TIME = (QUEEN_TIME + 2) & 0x1FF;
+}
+
 static void queen_update(Object *obj) {
-    queen_check_hitbox();
+    queen_fly_around(obj);
+    queen_check_hitbox(obj);
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
 	u16 frame = (queen[i]->frame >> 2) & 1;
 	Sprite *sprite = queen[i]->sprite;
@@ -415,8 +424,6 @@ static void setup_queen(u16 i) {
     }
 
     QUEEN_HP = BAR_HEALTH;
-    queen[0]->x = ON_SCREEN + 160;
-    queen[0]->y = ON_SCREEN + 48;
     mob_fn(queen[0], &queen_update);
 }
 
