@@ -358,7 +358,7 @@ static Object **queen;
 #define QUEEN_HP	queen[0]->life
 
 struct Queen {
-    byte x, y;
+    char x, y;
     u16 frame[2];
 };
 
@@ -366,15 +366,15 @@ struct Queen {
     ((flip) | TILE(3, QUEEN_TILES + (offset)))
 
 struct Queen queen_layout[QUEEN_PARTS] = {
-    { x:  0, y:  0, frame: { QUEEN_FRAME( 0, 0), QUEEN_FRAME(16, BIT(11)) } },
-    { x: 32, y:  0, frame: { QUEEN_FRAME(16, 0), QUEEN_FRAME( 0, BIT(11)) } },
-    { x:  0, y: 32, frame: { QUEEN_FRAME(32, 0), QUEEN_FRAME(48, BIT(11)) } },
-    { x: 32, y: 32, frame: { QUEEN_FRAME(48, 0), QUEEN_FRAME(32, BIT(11)) } },
+    { x:-32, y:-32, frame: { QUEEN_FRAME( 0, 0), QUEEN_FRAME(16, BIT(11)) } },
+    { x:  0, y:-32, frame: { QUEEN_FRAME(16, 0), QUEEN_FRAME( 0, BIT(11)) } },
+    { x:-32, y:  0, frame: { QUEEN_FRAME(32, 0), QUEEN_FRAME(48, BIT(11)) } },
+    { x:  0, y:  0, frame: { QUEEN_FRAME(48, 0), QUEEN_FRAME(32, BIT(11)) } },
 };
 
 const Rectangle q_box[] = {
-    { x1: 20, y1:  4, x2: 44, y2: 60 },
-    { x1:  8, y1: 24, x2: 56, y2: 40 },
+    { x1:  -6, y1: -28, x2:  6, y2: 28 },
+    { x1: -16, y1:  -8, x2: 16, y2:  8 },
 };
 
 static void check_queen_hitbox(void) {
@@ -423,8 +423,8 @@ static void setup_queen(u16 i) {
     }
 
     QUEEN_HP = BAR_HEALTH;
-    queen[0]->x = ON_SCREEN + 128;
-    queen[0]->y = ON_SCREEN + 16;
+    queen[0]->x = ON_SCREEN + 160;
+    queen[0]->y = ON_SCREEN + 48;
     mob_fn(queen[0], &queen_update);
 }
 
