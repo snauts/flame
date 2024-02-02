@@ -131,6 +131,7 @@ static void flip_bee(Object *obj) {
 
 static void move_bee(Object *obj) {
     obj->x += obj->direction;
+    obj->y += BEE(obj)->v_direction;
     flip_bee(obj);
 }
 
@@ -147,6 +148,7 @@ static Object *setup_bee(short x, short y, u16 life) {
 	obj->private = b_obj + mob_index(obj);
 	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_bee);
+	BEE(obj)->v_direction = 0;
 	BEE(obj)->persistent = 1;
 	BEE(obj)->dx = 0;
 	BEE(obj)->dy = 0;
@@ -214,7 +216,6 @@ void emit_xonix_bees(u16 x) {
 
 static void diagonal_bee(Object *obj) {
     Sprite *sprite = obj->sprite;
-    obj->y += BEE(obj)->v_direction;
     move_bee(obj);
     if (sprite->x >= SCR_WIDTH + ON_SCREEN - 16) {
 	obj->direction = -abs(obj->direction);
@@ -397,6 +398,13 @@ static void queen_fly_around(Object *obj) {
     obj->x = ON_SCREEN + 160 + larger_circle[QUEEN_TIME + 0];
     obj->y = ON_SCREEN + 120 + larger_circle[QUEEN_TIME + 1];
     QUEEN_TIME = (QUEEN_TIME + 2) & 0x1FF;
+}
+
+static void emit_drone(short x, short y, char dx, char dy) {
+    Object *obj = setup_bee(x, y, 0);
+    obj->direction = dx;
+    BEE(obj)->v_direction = dy;
+    BEE(obj)->persistent = 0;
 }
 
 static void queen_update(Object *obj) {
