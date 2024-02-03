@@ -400,13 +400,29 @@ static void queen_fly_around(Object *obj) {
     QUEEN_TIME = (QUEEN_TIME + 2) & 0x1FF;
 }
 
-static void emit_drone(Object *parent, char dx, char dy) {
+static Object *emit_drone(Object *parent, char dx, char dy) {
     short x = parent->x - window;
     short y = parent->y - ON_SCREEN + 32;
     Object *obj = setup_bee(x, y, 0);
     obj->direction = dx;
     BEE(obj)->v_direction = dy;
     BEE(obj)->persistent = 0;
+    return obj;
+}
+
+static void drone_dive(Object *obj) {
+    move_bee(obj);
+    u16 bx = obj->sprite->x;
+    u16 sx = get_soldier()->sprite->x;
+    if (bx >= sx + 2 && bx <= sx + 6) {
+	obj->direction = 0;
+	BEE(obj)->v_direction = 1;
+	mob_fn(obj, &move_bee);
+    }
+}
+
+static void emit_diving_drone(Object *parent, char dx, char dy) {
+    mob_fn(emit_drone(parent, dx, dy), &drone_dive);
 }
 
 static void first_stage_attack(Object *obj) {
@@ -416,8 +432,8 @@ static void first_stage_attack(Object *obj) {
 	emit_drone(obj,  1, 0);
     }
     else if (QUEEN_TIME == 256) {
-	emit_drone(obj, -1, 1);
-	emit_drone(obj,  1, 1);
+	emit_diving_drone(obj, -1, 0);
+	emit_diving_drone(obj,  1, 0);
     }
 }
 
