@@ -400,7 +400,9 @@ static void queen_fly_around(Object *obj) {
     QUEEN_TIME = (QUEEN_TIME + 2) & 0x1FF;
 }
 
-static void emit_drone(short x, short y, char dx, char dy) {
+static void emit_drone(Object *parent, char dx, char dy) {
+    short x = parent->x - window;
+    short y = parent->y - ON_SCREEN + 24;
     Object *obj = setup_bee(x, y, 0);
     obj->direction = dx;
     BEE(obj)->v_direction = dy;
