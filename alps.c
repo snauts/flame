@@ -402,11 +402,23 @@ static void queen_fly_around(Object *obj) {
 
 static void emit_drone(Object *parent, char dx, char dy) {
     short x = parent->x - window;
-    short y = parent->y - ON_SCREEN + 24;
+    short y = parent->y - ON_SCREEN + 32;
     Object *obj = setup_bee(x, y, 0);
     obj->direction = dx;
     BEE(obj)->v_direction = dy;
     BEE(obj)->persistent = 0;
+}
+
+static void first_stage_attack(Object *obj) {
+    Sprite *soldier = get_soldier()->sprite;
+    if (QUEEN_TIME == 0) {
+	emit_drone(obj, -1, 0);
+	emit_drone(obj,  1, 0);
+    }
+    else if (QUEEN_TIME == 256) {
+	emit_drone(obj, -1, 1);
+	emit_drone(obj,  1, 1);
+    }
 }
 
 static void queen_update(Object *obj) {
@@ -419,6 +431,9 @@ static void queen_update(Object *obj) {
 	sprite->y = obj->y + queen_layout[i].y;
 	sprite->cfg = queen_layout[i].frame[frame];
 	queen[i]->frame++;
+    }
+    if (QUEEN_HP < BAR_HEALTH) {
+	first_stage_attack(obj);
     }
 }
 

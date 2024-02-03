@@ -25,7 +25,7 @@
 #define SCR_WIDTH	320
 #define SCR_HEIGHT	224
 #define MAX_MOBS	16
-#define MAX_POSITION	512
+#define MAX_POSITION	496
 #define BAR_SIZE	24
 #define BAR_HEALTH	(8 * BAR_SIZE)
 
