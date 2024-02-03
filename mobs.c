@@ -134,6 +134,7 @@ void manage_timers(void) {
 
 static u16 is_small_mob_off_screen(Sprite *sprite) {
     return sprite->x >= MAX_POSITION
+	|| sprite->y < ON_SCREEN - 32
 	|| sprite->x < ON_SCREEN - 16
 	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
 }
