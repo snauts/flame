@@ -476,19 +476,23 @@ static u16 queen_in_center(Object *obj) {
 
 static void queen_third_stage(Object *obj) {
     if (obj->x >= ON_SCREEN + 320 - 24) {
+	emit_drone(obj, -1, -1);
+	emit_drone(obj,  0, -1);
 	obj->direction = -1;
     }
     else if (obj->x <= ON_SCREEN + 24) {
+	emit_drone(obj,  1, -1);
+	emit_drone(obj,  0, -1);
 	obj->direction = 1;
     }
     if (QUEEN_TIME <= ARRAY_SIZE(larger_circle)) {
 	queen_fly_around(obj);
-	QUEEN_TIME -= 2 * obj->direction;
+	QUEEN_TIME += 2 * obj->direction;
     }
     else {
 	obj->x += 2 * obj->direction;
 	if (queen_in_center(obj)) {
-	    QUEEN_TIME -= 2 * obj->direction;
+	    QUEEN_TIME += 2 * obj->direction;
 	}
     }
 }
@@ -496,7 +500,7 @@ static void queen_third_stage(Object *obj) {
 static void queen_stages(Object *obj) {
     const u16 third = BAR_HEALTH / 3;
     if (QUEEN_STAGE < 3 && QUEEN_HP < third && queen_in_center(obj)) {
-	QUEEN_TIME = obj->direction > 0 ? ARRAY_SIZE(larger_circle) : 0;
+	QUEEN_TIME = obj->direction > 0 ? 0 : ARRAY_SIZE(larger_circle);
 	QUEEN_STAGE = 3;
     }
     else if (QUEEN_STAGE < 2 && QUEEN_HP < 2 * third && QUEEN_TIME == 0) {
