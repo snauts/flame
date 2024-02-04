@@ -439,32 +439,42 @@ static void first_stage_attack(Object *obj) {
 }
 
 static void queen_first_stage(Object *obj) {
-    queen_fly_around(obj);
     if (QUEEN_HP < BAR_HEALTH) {
 	first_stage_attack(obj);
     }
+    queen_fly_around(obj);
 }
 
-static u16 queen_at_bottom(Object *obj) {
-    return obj->y == ON_SCREEN + 120 + larger_circle[1];
+static void queen_second_stage(Object *obj) {
+    if (obj->x >= ON_SCREEN + 320 - 24) {
+	obj->direction = -1;
+    }
+    else if (obj->x <= ON_SCREEN + 24) {
+	obj->direction = 1;
+    }
+    obj->x += obj->direction;
 }
 
 static u16 queen_in_center(Object *obj) {
-    return obj->x == ON_SCREEN + 160 + larger_circle[0];
+    return obj->x == ON_SCREEN + 160;
 }
 
 static void queen_stages(Object *obj) {
-    u16 third = BAR_HEALTH / 3;
+    const u16 third = BAR_HEALTH / 3;
     if (QUEEN_STAGE < 3 && QUEEN_HP < third && queen_in_center(obj)) {
 	QUEEN_STAGE = 3;
     }
-    else if (QUEEN_STAGE < 2 && QUEEN_HP < 2 * third && queen_at_bottom(obj)) {
+    else if (QUEEN_STAGE < 2 && QUEEN_HP < 2 * third && QUEEN_TIME == 0) {
+	obj->direction = get_soldier()->x < obj->x ? 1 : -1;
 	QUEEN_STAGE = 2;
     }
 
     switch (QUEEN_STAGE) {
     case 1:
 	queen_first_stage(obj);
+	break;
+    case 2:
+	queen_second_stage(obj);
 	break;
     default:
 	break;
