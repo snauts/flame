@@ -360,6 +360,7 @@ static Object **queen;
 
 #define QUEEN_HP	queen[0]->life
 #define QUEEN_TIME	queen[1]->life
+#define QUEEN_STAGE	queen[2]->life
 
 struct Queen {
     char x, y;
@@ -437,19 +438,49 @@ static void first_stage_attack(Object *obj) {
     }
 }
 
-static void queen_update(Object *obj) {
+static void queen_first_stage(Object *obj) {
     queen_fly_around(obj);
+    if (QUEEN_HP < BAR_HEALTH) {
+	first_stage_attack(obj);
+    }
+}
+
+static u16 queen_at_bottom(Object *obj) {
+    return obj->y == ON_SCREEN + 120 + larger_circle[1];
+}
+
+static u16 queen_in_center(Object *obj) {
+    return obj->x == ON_SCREEN + 160 + larger_circle[0];
+}
+
+static void queen_stages(Object *obj) {
+    u16 third = BAR_HEALTH / 3;
+    if (QUEEN_STAGE < 3 && QUEEN_HP < third && queen_in_center(obj)) {
+	QUEEN_STAGE = 3;
+    }
+    else if (QUEEN_STAGE < 2 && QUEEN_HP < 2 * third && queen_at_bottom(obj)) {
+	QUEEN_STAGE = 2;
+    }
+
+    switch (QUEEN_STAGE) {
+    case 1:
+	queen_first_stage(obj);
+	break;
+    default:
+	break;
+    }
+}
+
+static void queen_update(Object *obj) {
+    queen_stages(obj);
     queen_check_hitbox(obj);
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
-	u16 frame = (queen[i]->frame >> 2) & 1;
+	u16 frame = (queen[i]->frame >> (4 - QUEEN_STAGE)) & 1;
 	Sprite *sprite = queen[i]->sprite;
 	sprite->x = obj->x + queen_layout[i].x;
 	sprite->y = obj->y + queen_layout[i].y;
 	sprite->cfg = queen_layout[i].frame[frame];
 	queen[i]->frame++;
-    }
-    if (QUEEN_HP < BAR_HEALTH) {
-	first_stage_attack(obj);
     }
 }
 
@@ -466,6 +497,7 @@ static void setup_queen(u16 i) {
 	queen[i]->life = 0;
     }
 
+    QUEEN_STAGE = 1;
     QUEEN_HP = BAR_HEALTH;
     mob_fn(queen[0], &queen_update);
 }
