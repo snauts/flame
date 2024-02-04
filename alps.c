@@ -396,9 +396,9 @@ static void queen_check_hitbox(Object *obj) {
 
 extern const char larger_circle[512];
 static void queen_fly_around(Object *obj) {
-    obj->x = ON_SCREEN + 160 + larger_circle[QUEEN_TIME + 0];
-    obj->y = ON_SCREEN + 120 + larger_circle[QUEEN_TIME + 1];
-    QUEEN_TIME = (QUEEN_TIME + 2) & 0x1FF;
+    u16 time = (QUEEN_TIME & 0x1FF);
+    obj->x = ON_SCREEN + 160 + larger_circle[time + 0];
+    obj->y = ON_SCREEN + 120 + larger_circle[time + 1];
 }
 
 static Object *emit_drone(Object *parent, char dx, char dy) {
@@ -443,6 +443,7 @@ static void queen_first_stage(Object *obj) {
 	first_stage_attack(obj);
     }
     queen_fly_around(obj);
+    QUEEN_TIME = (QUEEN_TIME + 2) & 0x1FF;
 }
 
 static void queen_second_stage(Object *obj) {
@@ -473,9 +474,29 @@ static u16 queen_in_center(Object *obj) {
     return obj->x == ON_SCREEN + 160;
 }
 
+static void queen_third_stage(Object *obj) {
+    if (obj->x >= ON_SCREEN + 320 - 24) {
+	obj->direction = -1;
+    }
+    else if (obj->x <= ON_SCREEN + 24) {
+	obj->direction = 1;
+    }
+    if (QUEEN_TIME <= ARRAY_SIZE(larger_circle)) {
+	queen_fly_around(obj);
+	QUEEN_TIME -= 2 * obj->direction;
+    }
+    else {
+	obj->x += 2 * obj->direction;
+	if (queen_in_center(obj)) {
+	    QUEEN_TIME -= 2 * obj->direction;
+	}
+    }
+}
+
 static void queen_stages(Object *obj) {
     const u16 third = BAR_HEALTH / 3;
     if (QUEEN_STAGE < 3 && QUEEN_HP < third && queen_in_center(obj)) {
+	QUEEN_TIME = obj->direction > 0 ? ARRAY_SIZE(larger_circle) : 0;
 	QUEEN_STAGE = 3;
     }
     else if (QUEEN_STAGE < 2 && QUEEN_HP < 2 * third && QUEEN_TIME == 0) {
@@ -489,6 +510,9 @@ static void queen_stages(Object *obj) {
 	break;
     case 2:
 	queen_second_stage(obj);
+	break;
+    case 3:
+	queen_third_stage(obj);
 	break;
     default:
 	break;
