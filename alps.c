@@ -453,6 +453,20 @@ static void queen_second_stage(Object *obj) {
 	obj->direction = 1;
     }
     obj->x += obj->direction;
+
+    if (QUEEN_TIME == 0) {
+	u16 bx = obj->sprite->x;
+	u16 sx = get_soldier()->sprite->x;
+	if (bx >= sx - 30 && bx <= sx - 26) {
+	    emit_drone(obj, -1, -1);
+	    emit_drone(obj,  0, -1);
+	    emit_drone(obj,  1, -1);
+	    QUEEN_TIME = 16;
+	}
+    }
+    else {
+	QUEEN_TIME--;
+    }
 }
 
 static u16 queen_in_center(Object *obj) {
