@@ -497,14 +497,19 @@ static void queen_third_stage(Object *obj) {
     }
 }
 
+static char opposite_direction(Object *obj) {
+    return get_soldier()->x < obj->x - window ? 1 : -1;
+}
+
 static void queen_stages(Object *obj) {
     const u16 third = BAR_HEALTH / 3;
     if (QUEEN_STAGE < 3 && QUEEN_HP <= third && queen_in_center(obj)) {
+	obj->direction = opposite_direction(obj);
 	QUEEN_TIME = obj->direction > 0 ? 0 : ARRAY_SIZE(larger_circle);
 	QUEEN_STAGE = 3;
     }
     else if (QUEEN_STAGE < 2 && QUEEN_HP <= 2 * third && QUEEN_TIME == 0) {
-	obj->direction = get_soldier()->x < obj->x ? 1 : -1;
+	obj->direction = opposite_direction(obj);
 	QUEEN_STAGE = 2;
     }
 
