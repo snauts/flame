@@ -405,9 +405,11 @@ static Object *emit_drone(Object *parent, char dx, char dy) {
     short x = parent->x - window;
     short y = parent->y - ON_SCREEN + 32;
     Object *obj = setup_bee(x, y, 0);
-    obj->direction = dx;
-    BEE(obj)->v_direction = dy;
-    BEE(obj)->persistent = 0;
+    if (obj != NULL) {
+	obj->direction = dx;
+	BEE(obj)->v_direction = dy;
+	BEE(obj)->persistent = 0;
+    }
     return obj;
 }
 
@@ -423,7 +425,8 @@ static void drone_dive(Object *obj) {
 }
 
 static void emit_diving_drone(Object *parent, char dx, char dy) {
-    mob_fn(emit_drone(parent, dx, dy), &drone_dive);
+    Object *obj = emit_drone(parent, dx, dy);
+    if (obj != NULL) mob_fn(obj, &drone_dive);
 }
 
 static void first_stage_attack(Object *obj) {
@@ -462,7 +465,7 @@ static void queen_second_stage(Object *obj) {
 	    emit_drone(obj, -1, -1);
 	    emit_drone(obj,  0, -1);
 	    emit_drone(obj,  1, -1);
-	    QUEEN_TIME = 16;
+	    QUEEN_TIME = 32;
 	}
     }
     else {
