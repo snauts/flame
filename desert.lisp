@@ -52,7 +52,7 @@
   (mapcar #'desert-tile '(225 226 249 250)))
 
 (defun random-elt (list)
-  (elt list (random (length list))))
+  (elt list (xor-random (length list))))
 
 (defun random-decoration (flip)
   (tile (random-elt *decorations*) :h flip :v flip))
@@ -408,6 +408,7 @@
    (rusty-platform-right)))
 
 (defun desert-level ()
+  (setf *seed* 1943)
   (join (aloe) ;; reference
 	(ground :x2 2)
 

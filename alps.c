@@ -362,26 +362,42 @@ void display_plateau(void) {
     prev = NULL;
 }
 
-static void emit_bee_at_height(u16 y) {
+static u16 emit_bee_at_height(u16 y, u16 distance) {
     u16 x = window + SCR_WIDTH;
-    if (prev == NULL || x - prev->x > 32) {
+    if (prev == NULL || x - prev->x > distance) {
 	prev = setup_bee(x, y, 0);
+	return (prev != NULL);
     }
+    return 0;
 }
 
 void emit_bee_row(u16 i) {
-    emit_bee_at_height(204);
+    emit_bee_at_height(208, 32);
     schedule(&emit_bee_row, 0);
 }
 
-void bee_head_row(u16 i) {
-    emit_bee_at_height(188);
+static void bee_head_row(u16 i) {
+    emit_bee_at_height(180, 32);
     schedule(&bee_head_row, 0);
 }
 
 void emit_bee_head(u16 i) {
     cancel_timer(&emit_bee_row);
     bee_head_row(0);
+}
+
+static void bee_alternate(u16 y) {
+    if (emit_bee_at_height(y, 40)) y = 380 - y;
+    callback(&bee_alternate, 0, y);
+}
+
+void emit_bee_alt(u16 i) {
+    cancel_timer(&bee_head_row);
+    bee_alternate(200);
+}
+
+void end_bee_rush(u16 y) {
+    cancel_timer(&bee_alternate);
 }
 
 #define QUEEN_PARTS	4

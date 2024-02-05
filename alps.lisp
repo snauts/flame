@@ -190,11 +190,18 @@
    (dolist (pos *queen-platforms* pipe)
      (setf pipe (place-queen-platform pos pipe)))))
 
-(defun plateau-terrain ()
-  (alps-walk :width 256))
+(defun random-plants (width)
+  (when (> width 0)
+    (cons (- 8 (min 8 (xor-random 12))) (random-plants (1- width)))))
+
+(defun plateau-terrain (&optional (width 256))
+  (alps-walk :width width :type (random-plants width)))
 
 (defun plateau-level ()
+  (setf *seed* 1969)
   (box-pipe
    (plateau-terrain)
-   (inject pipe "emit_bee_row" 16)
-   (inject pipe "emit_bee_head" 64)))
+   (inject pipe "end_bee_rush" 128)
+   (inject pipe "emit_bee_alt" 96)
+   (inject pipe "emit_bee_head" 64)
+   (inject pipe "emit_bee_row" 16)))
