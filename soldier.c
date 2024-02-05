@@ -70,13 +70,17 @@ static void update_soldier_rectangle(void) {
     s_rect.y2 = soldier.sprite->y + 36;
 }
 
-static u16 is_soldier_on_screen(void) {
+static u16 is_soldier_off_screen(void) {
     return soldier.sprite->y >= 200 + ON_SCREEN;
+}
+
+static u16 is_sinkable_state(void) {
+    return soldier.life == 0 || soldier.life == 2 || soldier.life == 4;
 }
 
 static void should_sink(void) {
     /* if we are bitten in mid air and fall into pit, do the sinking */
-    if ((soldier.life == 0 || soldier.life == 2) && is_soldier_on_screen()) {
+    if (is_soldier_off_screen() && is_sinkable_state()) {
 	soldier.sprite->cfg = TILE(2, SOLDIER_TOP + 18);
 	soldier.life = 1;
     }
@@ -746,10 +750,12 @@ void soldier_fist_pump() {
     soldier.life = 4;
     flame_noise(1);
     soldier_update(soldier.x, 1);
-    u16 frame = 36 + 9 * ((soldier.frame >> 4) & 1);
-    set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
-    set_sprite_tile(soldier.sprite - 1, TILE(2, WEAPON));
-    soldier.frame++;
+    if (soldier.life != 1) {
+	u16 frame = 36 + 9 * ((soldier.frame >> 4) & 1);
+	set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
+	set_sprite_tile(soldier.sprite - 1, TILE(2, WEAPON + yell_face));
+	soldier.frame++;
+    }
 }
 
 static void upload_sprite_data(void) {
