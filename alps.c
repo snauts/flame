@@ -387,7 +387,10 @@ void emit_bee_head(u16 i) {
 }
 
 static void bee_alternate(u16 y) {
-    if (emit_bee_at_height(y, 40)) y = 380 - y;
+    if (emit_bee_at_height(y, 40)) {
+	if (y == 200) setup_bee(window + SCR_WIDTH + 20, 148, 0);
+	y = 380 - y;
+    }
     callback(&bee_alternate, 0, y);
 }
 
