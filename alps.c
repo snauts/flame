@@ -356,7 +356,7 @@ void display_mountains(void) {
 }
 
 #define QUEEN_PARTS 4
-#define QUEEN_SLICES 12
+#define QUEEN_SLICES 16
 static Object **queen;
 
 #define QUEEN_HP	queen[0]->life
@@ -420,12 +420,56 @@ static void queen_animate(Object *obj) {
 }
 
 static void queen_piece_falling(Object *obj) {
+    if (obj->sprite->y >= ON_SCREEN + SCR_HEIGHT + 32) {
+	free_mob(obj);
+    }
+    else {
+	if (obj->gravity > 0) advance_y(obj, obj->gravity);
+    }
 }
 
+struct Queen dying_layout[QUEEN_SLICES] = {
+    { x:-32, y:-32, frame: { QUEEN_FRAME( 0, 0), SPRITE_SIZE(2, 4) } },
+    { x: 16, y:-32, frame: { QUEEN_FRAME(24, 0), SPRITE_SIZE(2, 4) } },
+    { x:-32, y:  0, frame: { QUEEN_FRAME(32, 0), SPRITE_SIZE(2, 4) } },
+    { x: 16, y:  0, frame: { QUEEN_FRAME(56, 0), SPRITE_SIZE(2, 4) } },
+
+    { x:-16, y:-32, frame: { QUEEN_FRAME( 8, 0), SPRITE_SIZE(1, 4) } },
+    { x:  8, y:-32, frame: { QUEEN_FRAME(20, 0), SPRITE_SIZE(1, 4) } },
+    { x:-16, y:  0, frame: { QUEEN_FRAME(40, 0), SPRITE_SIZE(1, 4) } },
+    { x:  8, y:  0, frame: { QUEEN_FRAME(52, 0), SPRITE_SIZE(1, 4) } },
+
+    { x: -8, y:-32, frame: { QUEEN_FRAME(12, 0), SPRITE_SIZE(1, 2) } },
+    { x: -8, y:-16, frame: { QUEEN_FRAME(14, 0), SPRITE_SIZE(1, 2) } },
+    { x: -8, y:  0, frame: { QUEEN_FRAME(44, 0), SPRITE_SIZE(1, 2) } },
+    { x: -8, y: 16, frame: { QUEEN_FRAME(46, 0), SPRITE_SIZE(1, 2) } },
+
+    { x:  0, y:-32, frame: { QUEEN_FRAME(16, 0), SPRITE_SIZE(1, 2) } },
+    { x:  0, y:-16, frame: { QUEEN_FRAME(18, 0), SPRITE_SIZE(1, 2) } },
+    { x:  0, y:  0, frame: { QUEEN_FRAME(48, 0), SPRITE_SIZE(1, 2) } },
+    { x:  0, y: 16, frame: { QUEEN_FRAME(50, 0), SPRITE_SIZE(1, 2) } },
+};
+
 static void emit_queen_burn(u16 i);
-static void queen_falls_to_pieces(void) {
-    mob_fn(queen[0], &queen_piece_falling);
-    cancel_timer(&emit_queen_burn);
+static void queen_falls_to_pieces(Object *obj) {
+    free_burns();
+    u16 x = obj->x;
+    u16 y = obj->y;
+    for (u16 i = QUEEN_PARTS; i < QUEEN_SLICES; i++) {
+	queen[i] = alloc_mob();
+    }
+    for (u16 i = 0; i < QUEEN_SLICES; i++) {
+	struct Queen *layout = dying_layout + i;
+	Sprite *sprite = queen[i]->sprite;
+	queen[i]->x = x + layout->x;
+	queen[i]->y = y + layout->y;
+	queen[i]->gravity = 0;
+	sprite->x = queen[i]->x;
+	sprite->y = queen[i]->y;
+	sprite->cfg = layout->frame[0];
+	sprite->size = layout->frame[1];
+	mob_fn(queen[i], &queen_piece_falling);
+    }
 }
 
 static void dying_update(Object *obj) {
@@ -434,9 +478,12 @@ static void dying_update(Object *obj) {
     if (obj->y > ON_SCREEN + 48) obj->y--;
 
     if (QUEEN_TIME > 0x7F) {
-	queen_falls_to_pieces();
+	queen_falls_to_pieces(obj);
     }
     else {
+	if (QUEEN_TIME == 112) {
+	    cancel_timer(&emit_queen_burn);
+	}
 	upload_ash_palette(QUEEN_TIME >> 5);
 	QUEEN_TIME++;
     }
