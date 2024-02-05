@@ -466,7 +466,7 @@ static void trigger_falldown(u16 i) {
 	u16 j = fall_order[i];
 	queen[j]->velocity = -1;
 	queen[j]->gravity = QUEEN_GRAVITY;
-	callback(&trigger_falldown, 16, ++i);
+	callback(&trigger_falldown, 8, ++i);
     }
 }
 
