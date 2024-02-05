@@ -356,63 +356,62 @@ void display_mountains(void) {
 }
 
 static Object *prev;
+static Callback generator;
 void display_plateau(void) {
     void prepare_plateau_level(void);
     display_alps(&prepare_plateau_level);
+    generator = NULL;
     prev = NULL;
 }
 
-static u16 emit_bee_at_height(u16 y, u16 distance) {
+static void generate(Callback fn, u16 timeout, u16 cookie) {
+    if (generator != NULL) cancel_timer(generator);
+    callback(fn, timeout, cookie);
+    generator = fn;
+}
+
+static Object *emit_bee_at_height(u16 y, u16 distance) {
     u16 x = window + SCR_WIDTH;
     if (prev == NULL || x - prev->x > distance) {
 	prev = setup_bee(x, y, 0);
-	return (prev != NULL);
+	return prev;
     }
-    return 0;
+    return NULL;
 }
 
 void emit_bee_row(u16 i) {
     emit_bee_at_height(208, 40);
-    schedule(&emit_bee_row, 0);
-}
-
-static void bee_head_row(u16 i) {
-    emit_bee_at_height(180, 40);
-    schedule(&bee_head_row, 0);
+    generate(&emit_bee_row, 0, 0);
 }
 
 void emit_bee_head(u16 i) {
-    cancel_timer(&emit_bee_row);
-    bee_head_row(0);
+    emit_bee_at_height(180, 40);
+    generate(&emit_bee_head, 0, 0);
 }
 
-static void bee_alternate(u16 y) {
+void emit_bee_alt(u16 y) {
+    if (y != 200 && y != 180) y = 200;
     if (emit_bee_at_height(y, 40)) {
-	if (y == 200) setup_bee(window + SCR_WIDTH + 20, 148, 0);
+	if (y == 200) {
+	    u16 x = window + SCR_WIDTH;
+	    setup_bee(x + 20, 148, 0);
+	}
 	y = 380 - y;
     }
-    callback(&bee_alternate, 0, y);
-}
-
-void emit_bee_alt(u16 i) {
-    cancel_timer(&bee_head_row);
-    bee_alternate(200);
-}
-
-static void bee_wave(u16 i) {
-    if (emit_bee_at_height(192 + (small_circle[i] >> 1), 24)) {
-	i = (i + 32) & 0xff;
-    }
-    callback(&bee_wave, 0, i);
+    generate(&emit_bee_alt, 0, y);
 }
 
 void emit_bee_wave(u16 i) {
-    cancel_timer(&bee_alternate);
-    bee_wave(129);
+    if (i > 0xff) i = 129;
+    u16 y = 192 + (small_circle[i] >> 1);
+    if (emit_bee_at_height(y, 24)) {
+	i = (i + 32) & 0xff;
+    }
+    generate(&emit_bee_wave, 0, i);
 }
 
 void end_bee_rush(u16 y) {
-    cancel_timer(&bee_wave);
+    cancel_timer(generator);
 }
 
 #define QUEEN_PARTS	4
