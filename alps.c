@@ -425,6 +425,11 @@ static const byte fall_order[] = {
     2, 3, 7, 6, 15, 0, 11, 10, 1, 4, 14, 9, 5, 8, 13, 12
 };
 
+static char cinder_dance[] = {
+     0,  1,  0,  1,  1,  0,  1,  0,
+     0, -1,  0, -1, -1,  0, -1,  0,
+};
+
 static void queen_piece_falling(Object *obj) {
     if (obj->sprite->y >= ON_SCREEN + SCR_HEIGHT + 32) {
 	free_mob(obj);
@@ -435,7 +440,10 @@ static void queen_piece_falling(Object *obj) {
     }
     else if (obj->velocity < 0) {
 	advance_y(obj, QUEEN_GRAVITY);
+	obj->x += cinder_dance[(obj->frame >> 1) & 0xf];
 	obj->sprite->y = obj->y;
+	obj->sprite->x = obj->x;
+	obj->frame++;
     }
 }
 
@@ -484,6 +492,7 @@ static void queen_falls_to_pieces(Object *obj) {
 	queen[i]->x = x + layout->x;
 	queen[i]->y = y + layout->y;
 	queen[i]->velocity = 0;
+	queen[i]->frame = i;
 	sprite->x = queen[i]->x;
 	sprite->y = queen[i]->y;
 	sprite->cfg = layout->frame[0];
