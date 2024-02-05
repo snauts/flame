@@ -436,11 +436,25 @@ static void burn_drones(Object *obj) {
     }
 }
 
+static void emit_queen_burn(u16 i) {
+    extern Object **burns;
+    init_burn(burns[i]);
+    if (!burns[i]->life) {
+	burns[i]->private = queen[0];
+	burns[i]->direction = (i & 1) ? -1 : 1;
+	burns[i]->x = (random() % 48);
+	burns[i]->y = (random() % 48);
+    }
+    callback(&emit_queen_burn, 4, i >= 3 ? 0 : i + 1);
+    if (i == 0) perish_sfx();
+}
+
 static void queen_dies(u16 i) {
     set_seed(1792);
     soldier_fist_pump();
     mob_fn(queen[0], &dying_update);
     apply_to_all_mobs(&burn_drones);
+    emit_queen_burn(0);
     QUEEN_TIME = 0;
 }
 
