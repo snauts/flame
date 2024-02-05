@@ -361,6 +361,7 @@ static Object **queen;
 #define QUEEN_HP	queen[0]->life
 #define QUEEN_TIME	queen[1]->life
 #define QUEEN_STAGE	queen[2]->life
+#define QUEEN_FLICK	queen[3]->life
 
 struct Queen {
     char x, y;
@@ -382,14 +383,27 @@ const Rectangle q_box[] = {
     { x1: -16, y1:  -8, x2: 16, y2:  8 },
 };
 
+static void queen_flicker_color(u16 flicker) {
+    u16 color;
+    if (!flicker) {
+	color = bee_palette[QUEEN_FLICK + 2];
+    }
+    else {
+	QUEEN_FLICK = (QUEEN_FLICK + 2) & 3;
+	color = QUEEN_FLICK ? 0x26e : 0x2ae;
+    }
+    update_color(50 + QUEEN_FLICK, color);
+}
+
 static void queen_check_hitbox(Object *obj) {
     u16 size = ARRAY_SIZE(q_box);
+    queen_flicker_color(0);
     if (QUEEN_HP > 0 && boss_hitbox(obj, q_box, size, size)) {
 	if (QUEEN_HP == 0) {
 	    /* queen dies */
 	}
 	else {
-	    /* flicker */
+	    queen_flicker_color(1);
 	}
     }
 }
