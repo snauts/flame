@@ -595,6 +595,10 @@ void fade_to_next_level(void) {
     next_level();
 }
 
+void finish_level(u16 i) {
+    fade_to_next_level();
+}
+
 static byte started;
 static void wait_for_start_loop(void) {
     manage_timers();

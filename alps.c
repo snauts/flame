@@ -428,6 +428,9 @@ static const byte fall_order[] = {
 static void queen_piece_falling(Object *obj) {
     if (obj->sprite->y >= ON_SCREEN + SCR_HEIGHT + 32) {
 	free_mob(obj);
+	if (obj == queen[fall_order[15]]) {
+	    schedule(&finish_level, 50);
+	}
     }
     else if (obj->velocity < 0) {
 	advance_y(obj, QUEEN_GRAVITY);

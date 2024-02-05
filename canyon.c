@@ -701,10 +701,6 @@ static void mantis_blow_off_part(u16 i, u16 time, u16 b_index, char dir) {
     callback(&mantis_part_explode, time, i);
 }
 
-static void finish_level(u16 i) {
-    fade_to_next_level();
-}
-
 static void blow_off_legs_and_body(u16 i) {
     mantis_blow_off_part(2, 10, 0, 1);
     mantis_blow_off_part(3, 10, 1, -1);
