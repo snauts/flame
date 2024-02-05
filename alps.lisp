@@ -195,12 +195,13 @@
     (cons (- 8 (min 8 (xor-random 12))) (random-plants (1- width)))))
 
 (defun plateau-terrain (&optional (width 64))
-  (alps-walk :width width :type (random-plants width)))
+  (alps-walk :width width :type (random-plants (* 2 width))))
 
 (defun plateau-level ()
   (setf *seed* 1969)
   (box-pipe
    (plateau-terrain)
+   (inject pipe "level_done" 480)
    (inject pipe "end_bee_rush" 128)
    (inject pipe "emit_bee_alt" 96)
    (inject pipe "emit_bee_head" 64)
