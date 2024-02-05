@@ -190,7 +190,11 @@
    (dolist (pos *queen-platforms* pipe)
      (setf pipe (place-queen-platform pos pipe)))))
 
+(defun plateau-terrain ()
+  (alps-walk :width 256))
+
 (defun plateau-level ()
-  (join
-   (alps-walk :width 4)
-   (empty 64)))
+  (box-pipe
+   (plateau-terrain)
+   (inject pipe "emit_bee_row" 16)
+   (inject pipe "emit_bee_head" 64)))

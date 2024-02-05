@@ -355,9 +355,33 @@ void display_mountains(void) {
     display_alps(&prepare_mountain_level);
 }
 
+static Object *prev;
 void display_plateau(void) {
     void prepare_plateau_level(void);
     display_alps(&prepare_plateau_level);
+    prev = NULL;
+}
+
+static void emit_bee_at_height(u16 y) {
+    u16 x = window + SCR_WIDTH;
+    if (prev == NULL || x - prev->x > 32) {
+	prev = setup_bee(x, y, 0);
+    }
+}
+
+void emit_bee_row(u16 i) {
+    emit_bee_at_height(204);
+    schedule(&emit_bee_row, 0);
+}
+
+void bee_head_row(u16 i) {
+    emit_bee_at_height(188);
+    schedule(&bee_head_row, 0);
+}
+
+void emit_bee_head(u16 i) {
+    cancel_timer(&emit_bee_row);
+    bee_head_row(0);
 }
 
 #define QUEEN_PARTS	4
