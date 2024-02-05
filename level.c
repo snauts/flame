@@ -103,35 +103,18 @@ static void prepare_level(const u16 *level) {
     forward_platform();
 }
 
-void prepare_desert_level(void) {
-    trigger = desert_level_triggers;
-    height = desert_level_height;
-    prepare_level(desert_level);
+#define PREPARE_LEVEL(name)		\
+void prepare_##name##_level(void) {	\
+    trigger = name##_level_triggers;	\
+    height = name##_level_height;	\
+    prepare_level(name##_level);	\
 }
 
-void prepare_rusty_level(void) {
-    trigger = rusty_level_triggers;
-    height = rusty_level_height;
-    prepare_level(rusty_level);
-}
-
-void prepare_mantis_level(void) {
-    trigger = mantis_level_triggers;
-    height = mantis_level_height;
-    prepare_level(mantis_level);
-}
-
-void prepare_mountain_level(void) {
-    trigger = mountain_level_triggers;
-    height = mountain_level_height;
-    prepare_level(mountain_level);
-}
-
-void prepare_queen_level(void) {
-    trigger = queen_level_triggers;
-    height = queen_level_height;
-    prepare_level(queen_level);
-}
+PREPARE_LEVEL(desert);
+PREPARE_LEVEL(rusty);
+PREPARE_LEVEL(mantis);
+PREPARE_LEVEL(mountain);
+PREPARE_LEVEL(queen);
 
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
