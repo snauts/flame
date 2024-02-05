@@ -356,6 +356,7 @@ void display_mountains(void) {
 }
 
 #define QUEEN_PARTS 4
+#define QUEEN_SLICES 12
 static Object **queen;
 
 #define QUEEN_HP	queen[0]->life
@@ -395,12 +396,60 @@ static void queen_flicker_color(u16 flicker) {
     update_color(50 + QUEEN_FLICK, color);
 }
 
+static const u16 ash_palette[][7] = {
+    { 0x0224,0x0246,0x0268,0x028a,0x02ac,0x068a,0x022c },
+    { 0x0244,0x0266,0x0288,0x04aa,0x04cc,0x08ac,0x0668 },
+    { 0x0222,0x0444,0x0466,0x0688,0x06aa,0x0acc,0x0444 },
+    { 0x0000,0x0222,0x0444,0x0666,0x0888,0x0aaa,0x0222 },
+};
+
+static void upload_ash_palette(u16 i) {
+    update_palette(ash_palette[i], 49, ARRAY_SIZE(ash_palette[i]));
+    upload_palette(0);
+}
+
+static void queen_animate(Object *obj) {
+    for (u16 i = 0; i < QUEEN_PARTS; i++) {
+	u16 frame = (queen[i]->frame >> (4 - QUEEN_STAGE)) & 1;
+	Sprite *sprite = queen[i]->sprite;
+	sprite->x = obj->x + queen_layout[i].x;
+	sprite->y = obj->y + queen_layout[i].y;
+	sprite->cfg = queen_layout[i].frame[frame];
+	queen[i]->frame++;
+    }
+}
+
+static void dying_update(Object *obj) {
+    queen_animate(obj);
+    obj->x += ((obj->frame & 1) << 2) - 2;
+    if (obj->y > ON_SCREEN + 48) obj->y--;
+
+    if (QUEEN_TIME <= 48) {
+	upload_ash_palette(QUEEN_TIME >> 4);
+	QUEEN_TIME++;
+    }
+}
+
+static void burn_drones(Object *obj) {
+    if (obj->private != NULL) {
+	burn_bee(obj);
+    }
+}
+
+static void queen_dies(u16 i) {
+    set_seed(1792);
+    soldier_fist_pump();
+    mob_fn(queen[0], &dying_update);
+    apply_to_all_mobs(&burn_drones);
+    QUEEN_TIME = 0;
+}
+
 static void queen_check_hitbox(Object *obj) {
     u16 size = ARRAY_SIZE(q_box);
     queen_flicker_color(0);
     if (QUEEN_HP > 0 && boss_hitbox(obj, q_box, size, size)) {
 	if (QUEEN_HP == 0) {
-	    /* queen dies */
+	    schedule(&queen_dies, 0);
 	}
 	else {
 	    queen_flicker_color(1);
@@ -548,20 +597,13 @@ static void queen_stages(Object *obj) {
 static void queen_update(Object *obj) {
     queen_stages(obj);
     queen_check_hitbox(obj);
-    for (u16 i = 0; i < QUEEN_PARTS; i++) {
-	u16 frame = (queen[i]->frame >> (4 - QUEEN_STAGE)) & 1;
-	Sprite *sprite = queen[i]->sprite;
-	sprite->x = obj->x + queen_layout[i].x;
-	sprite->y = obj->y + queen_layout[i].y;
-	sprite->cfg = queen_layout[i].frame[frame];
-	queen[i]->frame++;
-    }
+    queen_animate(obj);
 }
 
 static void setup_queen(u16 i) {
     setup_burns(4, BURN_TILES);
 
-    queen = malloc(QUEEN_PARTS * sizeof(Object*));
+    queen = malloc(QUEEN_SLICES * sizeof(Object*));
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
 	queen[i] = alloc_mob();
 	Sprite *sprite = queen[i]->sprite;
