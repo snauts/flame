@@ -127,8 +127,17 @@ void manage_timers(void) {
 	}
 	else {
 	    release_timer(i, n);
-	    timer->fn(timer->cookie);
+	    if (timer->fn != NULL) {
+		timer->fn(timer->cookie);
+	    }
 	}
+    }
+}
+
+void cancel_timer(Callback fn) {
+    for (u16 n = available_timers; n < MAX_TIMERS; n++) {
+	Timer *timer = timers + free_timers[n];
+	if (timer->fn == fn) timer->fn = NULL;
     }
 }
 

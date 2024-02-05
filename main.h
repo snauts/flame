@@ -209,6 +209,7 @@ void schedule(Callback, u16 ticks);
 void callback(Callback, u16 timeout, u16 cookie);
 void mob_fn(Object *obj, void (*fn)(Object *));
 void apply_to_all_mobs(void (*fn)(Object *));
+void cancel_timer(Callback fn);
 void manage_timers(void);
 void manage_mobs(void);
 void purge_mobs(void);
