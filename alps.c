@@ -419,13 +419,25 @@ static void queen_animate(Object *obj) {
     }
 }
 
+static void queen_piece_falling(Object *obj) {
+}
+
+static void emit_queen_burn(u16 i);
+static void queen_falls_to_pieces(void) {
+    mob_fn(queen[0], &queen_piece_falling);
+    cancel_timer(&emit_queen_burn);
+}
+
 static void dying_update(Object *obj) {
     queen_animate(obj);
     obj->x += ((obj->frame & 1) << 2) - 2;
     if (obj->y > ON_SCREEN + 48) obj->y--;
 
-    if (QUEEN_TIME <= 48) {
-	upload_ash_palette(QUEEN_TIME >> 4);
+    if (QUEEN_TIME > 0x7F) {
+	queen_falls_to_pieces();
+    }
+    else {
+	upload_ash_palette(QUEEN_TIME >> 5);
 	QUEEN_TIME++;
     }
 }
