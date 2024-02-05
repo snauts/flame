@@ -399,8 +399,20 @@ void emit_bee_alt(u16 i) {
     bee_alternate(200);
 }
 
-void end_bee_rush(u16 y) {
+static void bee_wave(u16 i) {
+    if (emit_bee_at_height(192 + (small_circle[i] >> 1), 24)) {
+	i = (i + 32) & 0xff;
+    }
+    callback(&bee_wave, 0, i);
+}
+
+void emit_bee_wave(u16 i) {
     cancel_timer(&bee_alternate);
+    bee_wave(129);
+}
+
+void end_bee_rush(u16 y) {
+    cancel_timer(&bee_wave);
 }
 
 #define QUEEN_PARTS	4
