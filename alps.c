@@ -645,7 +645,7 @@ static void queen_second_stage(Object *obj) {
 }
 
 static u16 queen_in_center(Object *obj) {
-    return obj->x == ON_SCREEN + 160;
+    return obj->x == ON_SCREEN + 160 && obj->y > ON_SCREEN + 120;
 }
 
 static void queen_third_stage(Object *obj) {
