@@ -245,6 +245,15 @@ void init_burn(Object *obj) {
     obj->frame = 0;
 }
 
+void free_burns(void) {
+    cancel_timer(&update_burns);
+    for (u16 i = 0; i < burn_count; i++) {
+	burns[i]->sprite->x = 0;
+	burns[i]->sprite->y = 0;
+	free_mob(burns[i]);
+    }
+}
+
 void flame_burn(Object *obj, u16 i) {
     Object *burn = burns[i];
     burn->private = NULL;
