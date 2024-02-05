@@ -189,3 +189,8 @@
    (queen-ground)
    (dolist (pos *queen-platforms* pipe)
      (setf pipe (place-queen-platform pos pipe)))))
+
+(defun plateau-level ()
+  (join
+   (alps-walk :width 4)
+   (empty 64)))

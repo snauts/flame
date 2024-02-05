@@ -355,6 +355,11 @@ void display_mountains(void) {
     display_alps(&prepare_mountain_level);
 }
 
+void display_plateau(void) {
+    void prepare_plateau_level(void);
+    display_alps(&prepare_plateau_level);
+}
+
 #define QUEEN_PARTS	4
 #define QUEEN_SLICES	16
 #define QUEEN_GRAVITY	12

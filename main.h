@@ -185,6 +185,7 @@ void display_canyon(void);
 void display_rusty(void);
 void display_mantis(void);
 void display_mountains(void);
+void display_plateau(void);
 void display_queen(void);
 void announce_johnny(void);
 void announce_hans(void);

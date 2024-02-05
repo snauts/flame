@@ -114,6 +114,7 @@ PREPARE_LEVEL(desert);
 PREPARE_LEVEL(rusty);
 PREPARE_LEVEL(mantis);
 PREPARE_LEVEL(mountain);
+PREPARE_LEVEL(plateau);
 PREPARE_LEVEL(queen);
 
 void level_scroll(void) {
