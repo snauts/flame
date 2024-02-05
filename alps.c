@@ -429,7 +429,8 @@ static void queen_piece_falling(Object *obj) {
     if (obj->sprite->y >= ON_SCREEN + SCR_HEIGHT + 32) {
 	free_mob(obj);
 	if (obj == queen[fall_order[15]]) {
-	    schedule(&finish_level, 50);
+	    schedule(&finish_level, 100);
+	    fade_music(0);
 	}
     }
     else if (obj->velocity < 0) {
