@@ -372,12 +372,12 @@ static u16 emit_bee_at_height(u16 y, u16 distance) {
 }
 
 void emit_bee_row(u16 i) {
-    emit_bee_at_height(208, 32);
+    emit_bee_at_height(208, 40);
     schedule(&emit_bee_row, 0);
 }
 
 static void bee_head_row(u16 i) {
-    emit_bee_at_height(180, 32);
+    emit_bee_at_height(180, 40);
     schedule(&bee_head_row, 0);
 }
 
