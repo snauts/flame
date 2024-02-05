@@ -216,6 +216,8 @@ static void clear_screen_to_black(void) {
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 }
 
+const char special[] = "-!";
+
 static void display_text(const char *text, u16 offset) {
     u16 i = 0;
     while (text[i] != 0) {
@@ -226,8 +228,13 @@ static void display_text(const char *text, u16 offset) {
 	else if ('0' <= text[i] && text[i] <= '9') {
 	    tile = 1 + text[i] - '0' + 26;
 	}
-	else if (text[i] == '-') {
-	    tile = 26 + 10 + 1;
+	else {
+	    for (u16 j = 0; j < ARRAY_SIZE(special); j++) {
+		if (text[i] == special[j]) {
+		    tile = 26 + 10 + 1 + j;
+		    break;
+		}
+	    }
 	}
 	poke_VRAM(i << 1, tile);
 	i++;
