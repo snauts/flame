@@ -355,8 +355,10 @@ void display_mountains(void) {
     display_alps(&prepare_mountain_level);
 }
 
-#define QUEEN_PARTS 4
-#define QUEEN_SLICES 16
+#define QUEEN_PARTS	4
+#define QUEEN_SLICES	16
+#define QUEEN_GRAVITY	12
+
 static Object **queen;
 
 #define QUEEN_HP	queen[0]->life
@@ -419,12 +421,17 @@ static void queen_animate(Object *obj) {
     }
 }
 
+static const byte fall_order[] = {
+    2, 3, 7, 6, 15, 0, 11, 10, 1, 4, 14, 9, 5, 8, 13, 12
+};
+
 static void queen_piece_falling(Object *obj) {
     if (obj->sprite->y >= ON_SCREEN + SCR_HEIGHT + 32) {
 	free_mob(obj);
     }
-    else {
-	if (obj->gravity > 0) advance_y(obj, obj->gravity);
+    else if (obj->velocity < 0) {
+	advance_y(obj, QUEEN_GRAVITY);
+	obj->sprite->y = obj->y;
     }
 }
 
@@ -450,6 +457,15 @@ struct Queen dying_layout[QUEEN_SLICES] = {
     { x:  0, y: 16, frame: { QUEEN_FRAME(50, 0), SPRITE_SIZE(1, 2) } },
 };
 
+static void trigger_falldown(u16 i) {
+    if (i < QUEEN_SLICES) {
+	u16 j = fall_order[i];
+	queen[j]->velocity = -1;
+	queen[j]->gravity = QUEEN_GRAVITY;
+	callback(&trigger_falldown, 16, ++i);
+    }
+}
+
 static void emit_queen_burn(u16 i);
 static void queen_falls_to_pieces(Object *obj) {
     free_burns();
@@ -463,13 +479,14 @@ static void queen_falls_to_pieces(Object *obj) {
 	Sprite *sprite = queen[i]->sprite;
 	queen[i]->x = x + layout->x;
 	queen[i]->y = y + layout->y;
-	queen[i]->gravity = 0;
+	queen[i]->velocity = 0;
 	sprite->x = queen[i]->x;
 	sprite->y = queen[i]->y;
 	sprite->cfg = layout->frame[0];
 	sprite->size = layout->frame[1];
 	mob_fn(queen[i], &queen_piece_falling);
     }
+    callback(&trigger_falldown, 0, 0);
 }
 
 static void dying_update(Object *obj) {
