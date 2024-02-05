@@ -218,8 +218,8 @@ static void clear_screen_to_black(void) {
 
 const char special[] = "-!";
 
-static void display_text(const char *text, u16 offset) {
-    u16 i = 0;
+static void display_text(const char *text, u16 x, u16 y) {
+    u16 i = 0, offset = (y << 7)  + (x << 1);
     while (text[i] != 0) {
 	u16 tile = 0;
 	if ('A' <= text[i] && text[i] <= 'Z') {
@@ -261,7 +261,7 @@ static void flammenwerfer_text(void) {
     paint_background(0, 0, 40, 8, TILE(1, 256), 0);
     copy_to_VRAM(VRAM_PLANE_A + 0x400, 80 * 8 * 2);
 
-    display_text("PRESS START", 0x81e);
+    display_text("PRESS START", 15, 16);
 }
 
 void display_title(void) {
@@ -269,7 +269,8 @@ void display_title(void) {
 }
 
 static void end_game_text(void) {
-    display_text("THE END", 0x6a2);
+    display_text("THE END", 17, 12);
+    display_text("BEER FOREVER!", 14, 14);
 }
 
 void display_ending(void) {
@@ -290,8 +291,8 @@ static void announcement(Function paint_screen) {
 }
 
 static void johnny_text(void) {
-    display_text("- PART 1 -", 0x19e);
-    display_text("JOHNNY", 0x6a2);
+    display_text("- PART 1 -", 15, 3);
+    display_text("JOHNNY", 17, 13);
 }
 
 void announce_johnny(void) {
@@ -299,8 +300,8 @@ void announce_johnny(void) {
 }
 
 static void hans_text(void) {
-    display_text("- PART 2 -", 0x19e);
-    display_text("HANS", 0x6a4);
+    display_text("- PART 2 -", 15, 3);
+    display_text("HANS", 18, 13);
 }
 
 void announce_hans(void) {
