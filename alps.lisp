@@ -187,6 +187,8 @@
   (setf *seed* 1918)
   (box-pipe
    (queen-ground)
+   (place 10 5 pipe (alps-walk :base 3 :hang 1))
+   (place 42 5 pipe (alps-walk :base 3 :hang 1))
    (dolist (pos *queen-platforms* pipe)
      (setf pipe (place-queen-platform pos pipe)))))
 
