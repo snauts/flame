@@ -414,16 +414,16 @@ static void oscilate_bee(Object *obj) {
     if (obj->y > 208) {
 	BEE(obj)->v_direction = -1;
     }
-    else if (obj->y < 180) {
+    else if (obj->y < 140) {
 	BEE(obj)->v_direction = 1;
     }
     move_bee(obj);
 }
 
 void emit_bee_loom(u16 i) {
-    short y = 194, dir = 1;
+    short y = 164, dir = 1;
     if (prev != NULL) {
-	y = 388 - prev->y;
+	y = 348 - prev->y;
 	dir = BEE(prev)->v_direction > 0 ? -1 : 1;
     }
     Object *obj = emit_bee_at_height(y, 32);
