@@ -928,4 +928,5 @@ void setup_soldier_sprites(void) {
     button_down = 0;
     soldier.life = 0;
     locked = 0;
+    face = 0;
 }
