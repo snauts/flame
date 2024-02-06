@@ -434,6 +434,17 @@ void emit_bee_loom(u16 i) {
     generate(&emit_bee_loom, 0, 0);
 }
 
+void emit_bee_dive(u16 i) {
+    const u16 y = 80;
+    Object *obj = emit_bee_at_height(y, 40);
+    if (obj != NULL) {
+	BEE(obj)->v_direction = 1;
+	obj = setup_bee(obj->x, y + 40, 0);
+	BEE(obj)->v_direction = 1;
+     }
+    generate(&emit_bee_dive, 0, 0);
+}
+
 void end_bee_rush(u16 y) {
     cancel_timer(generator);
 }
