@@ -196,7 +196,7 @@
   (when (> width 0)
     (cons (- 8 (min 8 (xor-random 12))) (random-plants (1- width)))))
 
-(defun plateau-terrain (&optional (width 64))
+(defun plateau-terrain (&optional (width 40))
   (alps-walk :width width :type (random-plants (* 2 width))))
 
 (defun plateau-level ()
