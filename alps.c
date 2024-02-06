@@ -451,12 +451,12 @@ static void jump_bee(Object *obj) {
 	obj->gravity = 0;
 	obj->y = 208;
     }
-    advance_y(obj, 6);
+    advance_y(obj, 8);
     move_bee(obj);
 }
 
 void emit_bee_jump(u16 i) {
-    Object *obj = emit_bee_at_height(208, 40);
+    Object *obj = emit_bee_at_height(100, 40);
     if (obj != NULL) {
 	mob_fn(obj, &jump_bee);
     }
