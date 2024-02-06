@@ -699,8 +699,10 @@ static void drone_dive(Object *obj) {
     u16 bx = obj->sprite->x;
     u16 sx = get_soldier()->sprite->x;
     if (bx >= sx + 2 && bx <= sx + 6) {
+	u16 by = obj->sprite->y;
+	u16 sy = get_soldier()->sprite->y;
+	BEE(obj)->v_direction = sy > by ? 1 : -1;
 	obj->direction = 0;
-	BEE(obj)->v_direction = 1;
 	mob_fn(obj, &move_bee);
     }
 }
@@ -713,8 +715,8 @@ static void emit_diving_drone(Object *parent, char dx, char dy) {
 static void first_stage_attack(Object *obj) {
     Sprite *soldier = get_soldier()->sprite;
     if (QUEEN_TIME == 0) {
-	emit_drone(obj, -1, 0);
-	emit_drone(obj,  1, 0);
+	emit_diving_drone(obj, -1, 0);
+	emit_diving_drone(obj,  1, 0);
     }
     else if (QUEEN_TIME == 256) {
 	emit_diving_drone(obj, -1, 0);
