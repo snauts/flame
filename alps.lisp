@@ -202,7 +202,8 @@
   (box-pipe
    (plateau-terrain)
    (inject pipe "level_done" 480)
-   (inject pipe "end_bee_rush" 160)
+   (inject pipe "end_bee_rush" 192)
+   (inject pipe "emit_bee_loom" 160)
    (inject pipe "emit_bee_wave" 128)
    (inject pipe "emit_bee_alt" 96)
    (inject pipe "emit_bee_head" 64)

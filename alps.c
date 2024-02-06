@@ -410,6 +410,30 @@ void emit_bee_wave(u16 i) {
     generate(&emit_bee_wave, 0, i);
 }
 
+static void oscilate_bee(Object *obj) {
+    if (obj->y > 208) {
+	BEE(obj)->v_direction = -1;
+    }
+    else if (obj->y < 180) {
+	BEE(obj)->v_direction = 1;
+    }
+    move_bee(obj);
+}
+
+void emit_bee_loom(u16 i) {
+    short y = 194, dir = 1;
+    if (prev != NULL) {
+	y = 388 - prev->y;
+	dir = BEE(prev)->v_direction > 0 ? -1 : 1;
+    }
+    Object *obj = emit_bee_at_height(y, 32);
+    if (obj != NULL) {
+	mob_fn(obj, &oscilate_bee);
+	BEE(obj)->v_direction = dir;
+    }
+    generate(&emit_bee_loom, 0, 0);
+}
+
 void end_bee_rush(u16 y) {
     cancel_timer(generator);
 }
