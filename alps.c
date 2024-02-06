@@ -445,6 +445,24 @@ void emit_bee_dive(u16 i) {
     generate(&emit_bee_dive, 0, 0);
 }
 
+static void jump_bee(Object *obj) {
+    if (obj->y >= 208) {
+	obj->velocity = 4;
+	obj->gravity = 0;
+	obj->y = 208;
+    }
+    advance_y(obj, 6);
+    move_bee(obj);
+}
+
+void emit_bee_jump(u16 i) {
+    Object *obj = emit_bee_at_height(208, 40);
+    if (obj != NULL) {
+	mob_fn(obj, &jump_bee);
+    }
+    generate(&emit_bee_jump, 0, 0);
+}
+
 void end_bee_rush(u16 y) {
     cancel_timer(generator);
 }
