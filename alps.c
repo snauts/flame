@@ -435,7 +435,7 @@ void emit_bee_loom(u16 i) {
 }
 
 void emit_bee_dive(u16 i) {
-    const u16 y = 80;
+    const u16 y = 84;
     Object *obj = emit_bee_at_height(y, 40);
     if (obj != NULL) {
 	BEE(obj)->v_direction = 1;
