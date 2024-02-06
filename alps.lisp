@@ -201,7 +201,7 @@
   (setf *seed* 1969)
   (box-pipe
    (plateau-terrain)
-   (inject pipe "level_done" 480)
+   (inject pipe "level_done" 272)
    (inject pipe "end_bee_rush" 256)
    (inject pipe "emit_bee_jump" 224)
    (inject pipe "emit_bee_dive" 192)

@@ -447,7 +447,7 @@ void emit_bee_dive(u16 i) {
 
 static void jump_bee(Object *obj) {
     if (obj->y >= 208) {
-	obj->velocity = 4;
+	obj->velocity = BEE(obj)->dy;
 	obj->gravity = 0;
 	obj->y = 208;
     }
@@ -456,11 +456,14 @@ static void jump_bee(Object *obj) {
 }
 
 void emit_bee_jump(u16 i) {
-    Object *obj = emit_bee_at_height(100, 40);
+    if (i != 3 && i != 5) i = 5;
+    Object *obj = emit_bee_at_height(120, 40);
     if (obj != NULL) {
 	mob_fn(obj, &jump_bee);
+	BEE(obj)->dy = i;
+	i = 8 - i;
     }
-    generate(&emit_bee_jump, 0, 0);
+    generate(&emit_bee_jump, 0, i);
 }
 
 void end_bee_rush(u16 y) {
