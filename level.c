@@ -116,6 +116,7 @@ PREPARE_LEVEL(mantis);
 PREPARE_LEVEL(mountain);
 PREPARE_LEVEL(plateau);
 PREPARE_LEVEL(queen);
+PREPARE_LEVEL(beach);
 
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);

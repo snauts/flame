@@ -3,7 +3,7 @@ PREFIX	= m68k-elf-
 LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CFLAGS	= -fomit-frame-pointer -fno-builtin
-CSRC	= main.c canyon.c soldier.c sound.c level.c mobs.c alps.c
+CSRC	= main.c canyon.c soldier.c sound.c level.c mobs.c alps.c beach.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 
 ifneq ($(LTO),)

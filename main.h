@@ -187,6 +187,7 @@ void display_mantis(void);
 void display_mountains(void);
 void display_plateau(void);
 void display_queen(void);
+void display_beach(void);
 void announce_johnny(void);
 void announce_hans(void);
 void announce_hiroshi(void);
