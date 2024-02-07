@@ -202,7 +202,7 @@ static void clear_screen_to_black(void) {
 
 const char special[] = "-!";
 
-static void display_text(const char *text, u16 x, u16 y) {
+static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
     u16 i = 0, offset = (y << 7)  + (x << 1);
     while (text[i] != 0) {
 	u16 tile = 0;
@@ -223,7 +223,11 @@ static void display_text(const char *text, u16 x, u16 y) {
 	poke_VRAM(i << 1, tile);
 	i++;
     }
-    copy_to_VRAM(VRAM_PLANE_A + offset, 2 * strlen(text));
+    copy_to_VRAM(plane + offset, 2 * strlen(text));
+}
+
+static void display_text(const char *text, u16 x, u16 y) {
+    display_text_plane(text, x, y, VRAM_PLANE_A);
 }
 
 static void simple_screen(Function paint_screen, u16 offset, byte start) {
@@ -290,4 +294,14 @@ static void hans_text(void) {
 
 void announce_hans(void) {
     announcement(&hans_text);
+}
+
+static void hiroshi_text(void) {
+    display_text("- PART 3 -", 15, 3);
+    display_text_plane("HIROSHI", 16, 13, VRAM_PLANE_B);
+    UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
+}
+
+void announce_hiroshi(void) {
+    announcement(&hiroshi_text);
 }

@@ -189,6 +189,7 @@ void display_plateau(void);
 void display_queen(void);
 void announce_johnny(void);
 void announce_hans(void);
+void announce_hiroshi(void);
 void prepare_desert_level(void);
 void prepare_rusty_level(void);
 void prepare_mantis_level(void);
