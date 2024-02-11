@@ -875,26 +875,28 @@ static void march(u16 n) {
 }
 
 void all_soldiers_march(void) {
-    Sprite *sprite = get_sprite(SOLDIER_BASE);
+    Sprite *sprite;
     update_palette(soldier_palette, 16, ARRAY_SIZE(soldier_palette));
 
-    u16 id, of = 0;
+    u16 id, offset = SOLDIER_BASE;
     for (id = 0; id < 4; id++) {
 	u16 top = 64 + (id << 6);
 	u16 color = 1 + (id & 1);
 	load_soldier_tiles_at_offset(id, top);
 
-	sprite[of].x = ON_SCREEN + 124 + id * 16;
-	sprite[of].y = ON_SCREEN + 128;
-	sprite[of].cfg = TILE(color, top + 9);
-	sprite[of].size = SPRITE_SIZE(3, 3);
-	sprite[of].next = SOLDIER_BASE + (++of);
+	sprite = get_sprite(offset);
+	sprite->x = ON_SCREEN + 124 + id * 16;
+	sprite->y = ON_SCREEN + 128;
+	sprite->cfg = TILE(color, top + 9);
+	sprite->size = SPRITE_SIZE(3, 3);
+	sprite->next = ++offset;
 
-	sprite[of].x = sprite[of - 1].x;
-	sprite[of].y = sprite[of - 1].y + 24;
-	sprite[of].cfg = TILE(color, SOLDIER_LEG + 18 * 6);
-	sprite[of].size = SPRITE_SIZE(3, 2);
-	sprite[of].next = SOLDIER_BASE + (++of);
+	sprite = get_sprite(offset);
+	sprite->x = sprite[-1].x;
+	sprite->y = sprite[-1].y + 24;
+	sprite->cfg = TILE(color, SOLDIER_LEG + 18 * 6);
+	sprite->size = SPRITE_SIZE(3, 2);
+	sprite->next = ++offset;
     }
     march(0);
 }
