@@ -61,7 +61,7 @@ static void draw_vegetation(byte more_bones) {
     u16 i, offset = 0x700, tile = 0;
     for (i = 0; i < ARRAY_SIZE(cacti_spacing); i++) {
 	offset += cacti_spacing[i];
-	u16 tile = cacti[(tile + offset) & 7];
+	tile = cacti[(tile + offset) & 7];
 	if (!more_bones) {
 	    if (i == 60 || i == 40 || i == 20) tile = 95;
 	}
@@ -560,7 +560,7 @@ static void place_mantis(u16 x, u16 y, u16 flip) {
 	Sprite *sprite = mantis[i]->sprite;
 	sprite->x = x + mantis_sprite_x(i, flip);
 	sprite->y = y + mantis_layout[i].y;
-	flip_sprite(sprite, (flip == 0 ^ i == 6));
+	flip_sprite(sprite, ((flip == 0) ^ (i == 6)));
     }
 }
 

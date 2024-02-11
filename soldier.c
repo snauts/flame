@@ -408,7 +408,7 @@ static void manage_flames(void) {
     }
 }
 
-static Rectangle flame_rectangle(Rectangle *r, Object *f) {
+static void flame_rectangle(Rectangle *r, Object *f) {
     r->x1 = f->sprite->x + 1;
     r->x2 = r->x1 + 14;
     r->y1 = f->sprite->y + 2;

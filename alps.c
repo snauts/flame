@@ -713,7 +713,6 @@ static void emit_diving_drone(Object *parent, char dx, char dy) {
 }
 
 static void first_stage_attack(Object *obj) {
-    Sprite *soldier = get_soldier()->sprite;
     if (QUEEN_TIME == 0) {
 	emit_diving_drone(obj, -1, 0);
 	emit_diving_drone(obj,  1, 0);
