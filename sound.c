@@ -227,7 +227,7 @@ enum {
     SFX_LASTONE,
 };
 
-static u16 sfx[SFX_LASTONE];
+static u16 sfx[SFX_LASTONE + 1];
 
 static void load_sfx(u16 i, const byte *ptr, u16 size) {
     memcpy((void *) Z80_RAM + sfx[i], ptr, size);
