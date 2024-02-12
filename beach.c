@@ -1,6 +1,10 @@
 #include "main.h"
+#include "images/beach.h"
 
 void display_nippon(Function prepare_level) {
+    update_palette(beach_palette, 0, ARRAY_SIZE(beach_palette));
+    update_tiles(beach_tiles, 1, ARRAY_SIZE(beach_tiles));
+
     /* load tiles */
     load_soldier_tiles(2);
     reset_window();
