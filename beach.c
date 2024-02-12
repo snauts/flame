@@ -1,6 +1,12 @@
 #include "main.h"
 #include "images/beach.h"
 
+static void draw_sky(void) {
+    for (u16 i = 0; i < 28; i++) {
+	fill_VRAM(0x80 * i, TILE(0, i + 1), 0x040);
+    }
+}
+
 void display_nippon(Function prepare_level) {
     update_palette(beach_palette, 0, ARRAY_SIZE(beach_palette));
     update_tiles(beach_tiles, 1, ARRAY_SIZE(beach_tiles));
@@ -12,6 +18,8 @@ void display_nippon(Function prepare_level) {
 
     /* background */
     fill_VRAM(0, 0, 0x800);
+    draw_sky();
+
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
