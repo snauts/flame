@@ -181,7 +181,7 @@ static void select_torso(u16 aim_up) {
 
 static void soldier_flip_sprites(void) {
     if (soldier.direction < 0) {
-	for (char i = -1; i <= 2; i++) {
+	for (signed char i = -1; i <= 2; i++) {
 	    soldier.sprite[i].cfg |= BIT(11);
 	}
     }
@@ -217,9 +217,9 @@ typedef struct Flame {
 } Flame;
 
 static u16 cooldown;
-static char available_flames;
+static signed char available_flames;
 static Flame flame[FLAME_COUNT];
-static char free_flames[FLAME_COUNT];
+static signed char free_flames[FLAME_COUNT];
 extern const byte decople_table[FLAME_LIFE];
 
 #define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
@@ -299,8 +299,8 @@ static void emit_flame(u16 index, u16 aim_up) {
 }
 
 static void remove_flame(Object *obj) {
-    char index = free_flames[obj->place];
-    char other = free_flames[available_flames];
+    signed char index = free_flames[obj->place];
+    signed char other = free_flames[available_flames];
     free_flames[available_flames++] = index;
     free_flames[obj->place] = other;
     flame[other].obj.place = obj->place;
@@ -373,7 +373,7 @@ static void update_total_rectange(Object *f) {
 }
 
 static void remove_old_flames(void) {
-    for (char i = available_flames; i < FLAME_COUNT; i++) {
+    for (signed char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
 	Object *f = &flame[index].obj;
 	if (flame_expired(f)) {
@@ -392,7 +392,7 @@ byte update_next_sprite(byte new_value) {
 static void manage_flames(void) {
     remove_old_flames();
     clear_rectangle(&f_rect);
-    for (char i = available_flames; i < FLAME_COUNT; i++) {
+    for (signed char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
 	Object *f = &flame[index].obj;
 	advance_flame(f);

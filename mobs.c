@@ -10,9 +10,9 @@ typedef struct Mob {
     void (*fn)(Object *);
 } Mob;
 
-static char available_mobs;
+static signed char available_mobs;
 static Mob mobs[MAX_MOBS];
-static char free_mobs[MAX_MOBS];
+static signed char free_mobs[MAX_MOBS];
 
 typedef struct Timer {
     u16 cookie;
@@ -20,9 +20,9 @@ typedef struct Timer {
     Callback fn;
 } Timer;
 
-static char available_timers;
+static signed char available_timers;
 static Timer timers[MAX_TIMERS];
-static char free_timers[MAX_TIMERS];
+static signed char free_timers[MAX_TIMERS];
 
 Object *get_mob(u16 index) {
     return (index < MAX_MOBS) ? &mobs[index].obj : NULL;
@@ -49,8 +49,8 @@ Object *alloc_mob(void) {
 }
 
 void free_mob(Object *obj) {
-    char index = free_mobs[obj->place];
-    char other = free_mobs[available_mobs];
+    signed char index = free_mobs[obj->place];
+    signed char other = free_mobs[available_mobs];
     free_mobs[available_mobs++] = index;
     free_mobs[obj->place] = other;
     mobs[other].obj.place = obj->place;
@@ -65,34 +65,34 @@ void purge_mobs(void) {
 
 void reset_mobs(void) {
     available_mobs = MAX_MOBS;
-    for (char i = 0; i < MAX_MOBS; i++) {
+    for (signed char i = 0; i < MAX_MOBS; i++) {
 	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
 	mobs[i].obj.place = -1;
 	free_mobs[i] = i;
     }
 
     available_timers = MAX_TIMERS;
-    for (char i = 0; i < available_timers; i++) {
+    for (signed char i = 0; i < available_timers; i++) {
 	free_timers[i] = i;
     }
 }
 
 static void call_mob_functions(void) {
-    for (char i = available_mobs; i < MAX_MOBS; i++) {
+    for (signed char i = available_mobs; i < MAX_MOBS; i++) {
 	Mob *mob = mobs + free_mobs[i];
 	if (mob->fn) mob->fn(&mob->obj);
     }
 }
 
 void apply_to_all_mobs(void (*fn)(Object *)) {
-    for (char i = available_mobs; i < MAX_MOBS; i++) {
+    for (signed char i = available_mobs; i < MAX_MOBS; i++) {
 	fn(&mobs[free_mobs[i]].obj);
     }
 }
 
 void manage_mobs(void) {
     call_mob_functions();
-    for (char i = available_mobs; i < MAX_MOBS; i++) {
+    for (signed char i = available_mobs; i < MAX_MOBS; i++) {
 	u16 index = free_mobs[i];
 	Mob *mob = mobs + index;
 	mob->obj.sprite->next = update_next_sprite(index + MOB_OFFSET);
@@ -101,7 +101,7 @@ void manage_mobs(void) {
 
 void callback(Callback fn, u16 timeout, u16 cookie) {
     if (available_timers > 0) {
-	char i = free_timers[--available_timers];
+	signed char i = free_timers[--available_timers];
 	timers[i].timeout = timeout;
 	timers[i].cookie = cookie;
 	timers[i].fn = fn;
@@ -112,8 +112,8 @@ void schedule(Callback fn, u16 ticks) {
     callback(fn, ticks, 0);
 }
 
-static void release_timer(char i, char n) {
-    char j = free_timers[available_timers];
+static void release_timer(signed char i, signed char n) {
+    signed char j = free_timers[available_timers];
     free_timers[available_timers++] = i;
     free_timers[n] = j;
 }

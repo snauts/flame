@@ -2,8 +2,7 @@ NAME	= flammenwerfer
 PREFIX	= m68k-elf-
 LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
-CWARNS	= -Wall -Wno-char-subscripts
-CFLAGS	= -fomit-frame-pointer -fno-builtin -Os
+CFLAGS	= -Wall -fomit-frame-pointer -fno-builtin -Os
 CSRC	= main.c canyon.c soldier.c sound.c level.c mobs.c alps.c beach.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 
@@ -67,7 +66,7 @@ z80.hex: z80.asm
 
 %.o: %.c
 	@echo Compile $<
-	@$(PREFIX)gcc $(CFLAGS) $(CWARNS) -c $< -o $@
+	@$(PREFIX)gcc $(CFLAGS) -c $< -o $@
 
 %.O: %.S
 	@echo Compile $<

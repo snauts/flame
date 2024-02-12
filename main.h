@@ -61,10 +61,10 @@ typedef struct Sprite {
 
 typedef struct Object {
     short x, y;
-    char place;
-    char gravity;
-    char velocity;
-    char direction;
+    signed char place;
+    signed char gravity;
+    signed char velocity;
+    signed char direction;
     Sprite *sprite;
     void *private;
     u16 frame;
