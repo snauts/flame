@@ -335,6 +335,7 @@ void display_alps(Function prepare_level) {
     fill_VRAM(0, 0, 0x800);
     prepare_level();
 
+    fill_bottom_row();
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites();

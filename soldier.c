@@ -469,6 +469,10 @@ void lock_screen(byte state) {
     locked = state;
 }
 
+void fill_bottom_row(void) {
+    fill_VRAM(0xe00, TILE(3, WEAPON + 19) | BIT(15), 0x80);
+}
+
 static void soldier_forward(void) {
     soldier.direction = 1;
     soldier.x++;

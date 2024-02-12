@@ -176,6 +176,7 @@ u16 decrement_progress_bar(void);
 void bite_soldier(u16 x, u16 y);
 Sprite *get_sprite(u16 offset);
 void lock_screen(byte state);
+void fill_bottom_row(void);
 void finish_level(u16 i);
 void fade_in(u16 fade);
 

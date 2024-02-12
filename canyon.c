@@ -414,7 +414,7 @@ void display_desert(Function prepare_level, byte more_bones) {
 
     prepare_level();
 
-    fill_VRAM(0xe00, TILE(1, 1) | BIT(15), 0x80);
+    fill_bottom_row();
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
     setup_soldier_sprites();
