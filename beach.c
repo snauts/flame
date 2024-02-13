@@ -2,10 +2,18 @@
 #include "images/beach.h"
 
 static void draw_sky(void) {
-    u16 i, k = 0;
-    for (i = 0; i < 11; i++) {
+    for (u16 i = 0; i < 11; i++) {
 	fill_VRAM(0x80 * i, TILE(0, i + 1), 0x040);
     }
+    paint_background(10, 2, 8, 2, 65, 6);
+    paint_background(50, 2, 8, 2, 65, 6);
+    paint_background(20, 4, 8, 2, 67, 6);
+    paint_background( 6, 5, 8, 2, 67, 6);
+    paint_background(37, 7, 8, 2, 69, 6);
+}
+
+static void draw_sea(void) {
+    u16 i, k = 0;
     for (i = 0; i < 8; i++) {
 	for (u16 n = 0; n < 0x80; n += 2) {
 	    k += (random() & 1) + 1;
@@ -13,7 +21,10 @@ static void draw_sky(void) {
 	    poke_VRAM(((i + 11) << 7) + n, (i + 17) + (k << 3));
 	}
     }
-    for (i = 0; i < 9; i++) {
+}
+
+static void draw_sand(void) {
+    for (u16 i = 0; i < 9; i++) {
 	fill_VRAM(0x80 * (i + 19), TILE(0, 12), 0x040);
     }
 }
@@ -45,6 +56,8 @@ void display_nippon(Function prepare_level) {
     /* background */
     fill_VRAM(0, 0, 0x800);
     draw_sky();
+    draw_sea();
+    draw_sand();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
