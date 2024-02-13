@@ -3,8 +3,28 @@
 
 static void draw_sky(void) {
     for (u16 i = 0; i < 28; i++) {
-	fill_VRAM(0x80 * i, TILE(0, i + 1), 0x040);
+	u16 tile;
+	if (i <= 12) {
+	    tile = i + 1;
+	}
+	else {
+	    tile = 13 + (i % 3);
+	}
+	fill_VRAM(0x80 * i, TILE(0, tile), 0x040);
     }
+}
+
+static const u16 sea_palette[][3] = {
+    { 0x0aa6, 0x0aa4, 0x0aa2 },
+    { 0x0aa4, 0x0aa2, 0x0aa6 },
+    { 0x0aa2, 0x0aa6, 0x0aa4 },
+};
+
+static void sea_rotate(u16 i) {
+    update_palette(sea_palette[i], 4, ARRAY_SIZE(sea_palette[i]));
+    upload_palette(0);
+
+    callback(&sea_rotate, 4, i < 2 ? i + 1 : 0);
 }
 
 void display_nippon(Function prepare_level) {
@@ -36,6 +56,7 @@ void display_nippon(Function prepare_level) {
     music_battotai();
 
     callback(&fade_in, 0, 6);
+    callback(&sea_rotate, 30, 0);
     switch_frame(&update_game);
 }
 
