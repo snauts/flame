@@ -17,15 +17,15 @@ static void draw_sky(void) {
     for (u16 i = 0; i < 11; i++) {
 	fill_VRAM(0x80 * i, TILE(0, i + 1), 0x040);
     }
-    paint_background(10, 2, 8, 2, 65, 6);
-    paint_background(50, 2, 8, 2, 65, 6);
-    paint_background(20, 4, 8, 2, 67, 6);
-    paint_background( 6, 5, 8, 2, 67, 6);
-    paint_background(37, 7, 8, 2, 69, 6);
+    paint_background(15, 2, 8, 2, 65, 6);
+    paint_background(56, 2, 8, 2, 65, 6);
+    paint_background(25, 4, 8, 2, 67, 6);
+    paint_background( 5, 5, 8, 2, 67, 6);
+    paint_background(44, 7, 8, 2, 69, 6);
 
-    trail_could( 5, 9, 3, 4);
-    trail_could(24, 8, 2, 1);
-    trail_could(42, 9, 4, 2);
+    trail_could(10, 9, 3, 4);
+    trail_could(30, 8, 2, 1);
+    trail_could(49, 9, 4, 2);
 }
 
 static void draw_sea(void) {
