@@ -1,6 +1,18 @@
 #include "main.h"
 #include "images/beach.h"
 
+static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
+    for (u16 i = 0; i < 8; i++) {
+	u16 count = 1;
+	if (i == 2) count = l1;
+	if (i == 3) count = l2;
+	for (u16 j = 0; j < count; j++) {
+	    paint_background(x, y, 1, 2, 71 + (i << 3), 6);
+	    x++;
+	}
+    }
+}
+
 static void draw_sky(void) {
     for (u16 i = 0; i < 11; i++) {
 	fill_VRAM(0x80 * i, TILE(0, i + 1), 0x040);
@@ -10,6 +22,10 @@ static void draw_sky(void) {
     paint_background(20, 4, 8, 2, 67, 6);
     paint_background( 6, 5, 8, 2, 67, 6);
     paint_background(37, 7, 8, 2, 69, 6);
+
+    trail_could( 5, 9, 3, 4);
+    trail_could(24, 8, 2, 1);
+    trail_could(42, 9, 4, 2);
 }
 
 static void draw_sea(void) {
