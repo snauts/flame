@@ -2,32 +2,38 @@
 #include "images/beach.h"
 
 static void draw_sky(void) {
-    for (u16 i = 0; i < 28; i++) {
-	u16 tile;
-	if (i <= 12) {
-	    tile = i + 1;
+    u16 i, k = 0;
+    for (i = 0; i < 11; i++) {
+	fill_VRAM(0x80 * i, TILE(0, i + 1), 0x040);
+    }
+    for (i = 0; i < 8; i++) {
+	for (u16 n = 0; n < 0x80; n += 2) {
+	    k += (random() & 1) + 1;
+	    if (k >= 3) k = k - 3;
+	    poke_VRAM(((i + 11) << 7) + n, (i + 17) + (k << 3));
 	}
-	else {
-	    tile = 13 + (i % 3);
-	}
-	fill_VRAM(0x80 * i, TILE(0, tile), 0x040);
+    }
+    for (i = 0; i < 9; i++) {
+	fill_VRAM(0x80 * (i + 19), TILE(0, 12), 0x040);
     }
 }
 
-static const u16 sea_palette[][3] = {
-    { 0x0aa6, 0x0aa4, 0x0aa2 },
-    { 0x0aa4, 0x0aa2, 0x0aa6 },
-    { 0x0aa2, 0x0aa6, 0x0aa4 },
+static const u16 sea_palette[][4] = {
+    { 0x0aa6, 0x0aa4, 0x0aa2, 0x08ce },
+    { 0x0aa4, 0x0aa2, 0x0aa6, 0x0cc8 },
+    { 0x0aa2, 0x0aa6, 0x0aa4, 0x0aa6 },
 };
 
 static void sea_rotate(u16 i) {
     update_palette(sea_palette[i], 4, ARRAY_SIZE(sea_palette[i]));
     upload_palette(0);
 
-    callback(&sea_rotate, 4, i < 2 ? i + 1 : 0);
+    callback(&sea_rotate, 12, i < 2 ? i + 1 : 0);
 }
 
 void display_nippon(Function prepare_level) {
+    set_seed(1877);
+
     update_palette(beach_palette, 0, ARRAY_SIZE(beach_palette));
     update_tiles(beach_tiles, 1, ARRAY_SIZE(beach_tiles));
 
