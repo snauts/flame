@@ -1,5 +1,6 @@
 #include "main.h"
 #include "images/beach.h"
+#include "images/dunes.h"
 
 static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
     for (u16 i = 0; i < 8; i++) {
@@ -105,6 +106,9 @@ static void display_nippon(Function prepare_level) {
 
     update_palette(beach_palette, 0, ARRAY_SIZE(beach_palette));
     update_tiles(beach_tiles, 1, ARRAY_SIZE(beach_tiles));
+
+    update_palette(dunes_palette, 16, ARRAY_SIZE(dunes_palette));
+    update_tiles(dunes_tiles, 129, ARRAY_SIZE(dunes_tiles));
 
     /* load tiles */
     load_soldier_tiles(2);
