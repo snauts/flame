@@ -1,0 +1,9 @@
+*.o
+*.inc
+*.bin
+cksum
+pcx2h
+rom_header.O
+z80.hex
+z80.rom
+images/*.h
