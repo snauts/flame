@@ -31,7 +31,7 @@ static void draw_sky(void) {
 static void draw_sea(void) {
     static const byte tiles[] = {
 	17, 18, 19, 20, 21, 22, 23, 24,		/* sea */
-	41, 41, 42, 42, 43, 43, 44, 44, 44	/* sand */
+	41, 42, 42, 43, 43, 43, 44, 44, 44	/* sand */
     };
     u16 i, k = 0;
     for (i = 0; i < 17; i++) {
@@ -41,6 +41,51 @@ static void draw_sea(void) {
 	    poke_VRAM(((i + 11) << 7) + n, tiles[i] + (k << 3));
 	}
     }
+}
+
+static u16 flip(u16 tile, u16 condition) {
+    return condition ? tile | BIT(11) : tile;
+}
+
+static void decoration(byte x, byte y, byte type) {
+    switch(type) {
+    case 0:
+    case 1:
+	paint_background(x, y, 2 + type, 2, type == 0 ? 53 : 47, 6);
+	break;
+    case 2:
+    case 3:
+	paint_background(x, y, 1, 2, flip(45, type == 3), 6);
+	break;
+    default:
+	paint_background(x, y, 1, 1, flip(15 + (type & 1), type >= 6), 0);
+	break;
+    }
+}
+
+static void draw_bones(void) {
+    u16 tile = 12, offset = 0x80 * 20;
+    while (offset < 0x80 * 21) {
+	u16 y = random() & 1;
+	poke_VRAM(offset + y * 0x80, TILE(0, tile));
+	tile = (tile == 14) ? 12 : tile + 1;
+	offset += 2 * (3 + (random() & 3));
+    }
+
+    decoration( 5, 25, 2);
+    decoration(15, 24, 0);
+    decoration(17, 24, 1);
+    decoration(27, 25, 2);
+    decoration(35, 23, 0);
+    decoration(37, 23, 2);
+    decoration(34, 23, 3);
+    decoration(46, 25, 3);
+    decoration(55, 24, 2);
+    decoration(56, 24, 1);
+    decoration(59, 24, 3);
+
+    decoration(24, 23, 4);
+    decoration(31, 22, 5);
 }
 
 static const u16 sea_palette[][4] = {
@@ -56,7 +101,7 @@ static void sea_rotate(u16 i) {
     callback(&sea_rotate, 12, i < 2 ? i + 1 : 0);
 }
 
-void display_nippon(Function prepare_level) {
+static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
     update_palette(beach_palette, 0, ARRAY_SIZE(beach_palette));
@@ -71,6 +116,7 @@ void display_nippon(Function prepare_level) {
     fill_VRAM(0, 0, 0x800);
     draw_sky();
     draw_sea();
+    draw_bones();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
