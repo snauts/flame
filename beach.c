@@ -23,9 +23,9 @@ static void draw_sky(void) {
     paint_background( 5, 5, 8, 2, 67, 6);
     paint_background(44, 7, 8, 2, 69, 6);
 
-    trail_could(10, 9, 3, 4);
+    trail_could(10, 9, 5, 8);
+    trail_could(35, 9, 7, 9);
     trail_could(30, 8, 2, 1);
-    trail_could(49, 9, 4, 2);
 }
 
 static void draw_sea(void) {
