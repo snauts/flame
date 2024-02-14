@@ -84,8 +84,14 @@ static void draw_bones(void) {
     decoration(56, 24, 1);
     decoration(59, 24, 3);
 
+    decoration(10, 24, 5);
     decoration(24, 23, 4);
     decoration(31, 22, 5);
+    decoration(41, 24, 6);
+    decoration(42, 24, 7);
+    decoration(49, 24, 6);
+    decoration(52, 23, 4);
+    decoration(64, 22, 7);
 }
 
 static const u16 sea_palette[][4] = {
