@@ -29,19 +29,17 @@ static void draw_sky(void) {
 }
 
 static void draw_sea(void) {
+    static const byte tiles[] = {
+	17, 18, 19, 20, 21, 22, 23, 24,		/* sea */
+	41, 41, 42, 42, 43, 43, 44, 44, 44	/* sand */
+    };
     u16 i, k = 0;
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 17; i++) {
 	for (u16 n = 0; n < 0x80; n += 2) {
 	    k += (random() & 1) + 1;
 	    if (k >= 3) k = k - 3;
-	    poke_VRAM(((i + 11) << 7) + n, (i + 17) + (k << 3));
+	    poke_VRAM(((i + 11) << 7) + n, tiles[i] + (k << 3));
 	}
-    }
-}
-
-static void draw_sand(void) {
-    for (u16 i = 0; i < 9; i++) {
-	fill_VRAM(0x80 * (i + 19), TILE(0, 12), 0x040);
     }
 }
 
@@ -73,7 +71,6 @@ void display_nippon(Function prepare_level) {
     fill_VRAM(0, 0, 0x800);
     draw_sky();
     draw_sea();
-    draw_sand();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
