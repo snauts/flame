@@ -72,26 +72,18 @@ static void draw_bones(void) {
 	offset += 2 * (3 + (random() & 3));
     }
 
-    decoration( 5, 25, 2);
-    decoration(15, 24, 0);
-    decoration(17, 24, 1);
-    decoration(27, 25, 2);
-    decoration(35, 23, 0);
-    decoration(37, 23, 2);
-    decoration(34, 23, 3);
-    decoration(46, 25, 3);
-    decoration(55, 24, 2);
-    decoration(56, 24, 1);
-    decoration(59, 24, 3);
-
-    decoration(10, 24, 5);
-    decoration(24, 23, 4);
-    decoration(31, 22, 5);
-    decoration(41, 24, 6);
-    decoration(42, 24, 7);
-    decoration(49, 24, 6);
-    decoration(52, 23, 4);
-    decoration(64, 22, 7);
+    static const byte data[] = {
+	69, 24, 2, 15, 24, 0, 17, 24, 1, 27, 25, 2, 35, 23, 0,
+	37, 23, 2, 34, 23, 3, 46, 25, 3, 55, 24, 2, 56, 24, 1,
+	59, 24, 3, 10, 24, 5, 24, 23, 4, 31, 22, 5, 41, 24, 6,
+	42, 24, 7, 49, 24, 6, 52, 23, 4, 64, 22, 7,
+    };
+    u16 i = 0;
+    while (i < ARRAY_SIZE(data)) {
+	const byte *ptr = data + i;
+	decoration(ptr[0], ptr[1], ptr[2]);
+	i += 3;
+    }
 }
 
 static const u16 sea_palette[][4] = {
