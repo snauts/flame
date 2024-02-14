@@ -14,7 +14,7 @@ void paint_background(u16 x, u16 y, u16 w, u16 h, u16 i, u16 n) {
     u16 dx, dy;
     for (dx = 0; dx < w; dx++) {
 	for (dy = 0; dy < h; dy++) {
-	    poke_VRAM(((x + dx) * 2) + ((y + dy) * 128), i);
+	    poke_VRAM((((x + dx) * 2) % 0x80) + ((y + dy) * 128), i);
 	    i += 1;
 	}
 	i += n;
