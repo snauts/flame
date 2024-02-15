@@ -262,10 +262,30 @@ static void end_game_text(void) {
     display_text("BEER FOREVER!", 14, 14);
 }
 
+static const byte sing_intervals[] = {
+    32 + 32,
+    48, 16 + 32 + 32,
+    48, 16 + 16 + 16 + 32,
+    48, 16 + 32 + 32 + 64,
+    48, 16, 48, 16,
+    16, 16, 16, 16,
+    48, 16 + 32 + 32,
+    48, 16 + 32 + 32,
+    48, 16,
+};
+
+static void lip_sync_doves(u16 i) {
+    soldiers_sing(i & 1);
+    u16 wait = sing_intervals[i] - 1;
+    i = (i == ARRAY_SIZE(sing_intervals) - 1 ? 0 : i + 1);
+    callback(&lip_sync_doves, wait, i);
+}
+
 void display_ending(void) {
     simple_screen(&end_game_text, 4, 0);
     extern void music_doves(void);
     all_soldiers_march();
+    lip_sync_doves(0);
     music_doves();
 }
 
