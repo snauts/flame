@@ -866,10 +866,10 @@ void load_soldier_tiles(u16 id) {
 
 static void march(u16 n) {
     Sprite *army = get_sprite(SOLDIER_BASE);
-    army[7].next = update_next_sprite(SOLDIER_BASE);
+    army[11].next = update_next_sprite(SOLDIER_BASE);
 
     u16 id;
-    for (id = 1; id < 8; id += 2) {
+    for (id = 2; id < 12; id += 3) {
 	u16 color = (army[id].cfg >> 13) & 3;
 	army[id].cfg = TILE(color, SOLDIER_LEG + (18 + n) * 6);
     }
@@ -889,8 +889,15 @@ void all_soldiers_march(void) {
 	load_soldier_tiles_at_offset(id, top);
 
 	sprite = get_sprite(offset);
-	sprite->x = ON_SCREEN + 124 + id * 16;
-	sprite->y = ON_SCREEN + 128;
+	sprite->x = ON_SCREEN + 124 + 8 + id * 16;
+	sprite->y = ON_SCREEN + 128 + 8;
+	sprite->cfg = TILE(color, 0);
+	sprite->size = SPRITE_SIZE(1, 1);
+	sprite->next = ++offset;
+
+	sprite = get_sprite(offset);
+	sprite->x = sprite[-1].x - 8;
+	sprite->y = sprite[-1].y - 8;
 	sprite->cfg = TILE(color, top + 9);
 	sprite->size = SPRITE_SIZE(3, 3);
 	sprite->next = ++offset;
