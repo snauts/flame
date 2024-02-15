@@ -95,9 +95,11 @@ static const u16 sea_palette[][5] = {
 };
 
 static void sea_rotate(u16 i) {
-    update_palette(sea_palette[i], 4, ARRAY_SIZE(sea_palette[i]));
-    upload_palette(0);
-
+    extern byte total_dimming;
+    if (total_dimming == 0) {
+	update_palette(sea_palette[i], 4, ARRAY_SIZE(sea_palette[i]));
+	upload_palette(0);
+    }
     callback(&sea_rotate, 12, i < 2 ? i + 1 : 0);
 }
 

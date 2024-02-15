@@ -146,7 +146,7 @@ u16 dim_color(u16 color, u16 dim) {
 }
 
 /* dimming is expensive, use with care */
-static byte total_dimming;
+byte total_dimming;
 void upload_palette(u16 dim) {
     total_dimming = dim;
     for (u16 i = 0; i < 64; i++) {
