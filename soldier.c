@@ -827,29 +827,29 @@ static void put_soldier(u16 x, u16 y) {
     soldier_sprite_update();
 }
 
+static const byte yell_map[] = { 0, 16, 17, 18 };
 static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
     switch (id) {
     case 0:
 	UPDATE_TILES(soldier_tiles, offset);
 	palette = soldier_palette;
-	yell_face = 0;
 	break;
     case 1:
 	UPDATE_TILES(hans_tiles, offset);
 	palette = hans_palette;
-	yell_face = 16;
 	break;
     case 2:
 	UPDATE_TILES(hiroshi_tiles, offset);
 	palette = hiroshi_palette;
-	yell_face = 17;
 	break;
     case 3:
 	UPDATE_TILES(french_tiles, offset);
 	palette = french_palette;
-	yell_face = 18;
 	break;
     }
+
+    yell_face = yell_map[id];
+
     update_palette(palette, 32, ARRAY_SIZE(soldier_palette));
     update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
 
@@ -910,6 +910,13 @@ void all_soldiers_march(void) {
 	sprite->next = ++offset;
     }
     march(0);
+}
+
+void soldiers_sing(int sing) {
+    for (u16 id = 0; id < 4; id++) {
+	Sprite *face = get_sprite(SOLDIER_BASE + id * 3);
+	face->cfg = (face->cfg & ~0x7FF) | (sing ? WEAPON + yell_map[id] : 0);
+    }
 }
 
 Sprite *get_sprite(u16 offset) {

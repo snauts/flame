@@ -161,6 +161,7 @@ Object *get_soldier(void);
 void advance_sprites(void);
 void fade_to_next_level(void);
 void soldier_fist_pump(void);
+void soldiers_sing(int state);
 void all_soldiers_march(void);
 void load_soldier_tiles(u16 id);
 void reset_sprite_table(void);
