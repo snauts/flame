@@ -270,8 +270,7 @@ static const byte sing_intervals[] = {
     48, 16, 48, 16,
     16, 16, 16, 16,
     48, 16 + 32 + 32,
-    48, 16 + 32 + 32,
-    48, 16,
+    48, 16 + 32 + 32 + 48 + 16 + 8,
 };
 
 static void lip_sync_doves(u16 i) {
