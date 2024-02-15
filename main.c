@@ -95,7 +95,7 @@ static void init_z80(void) {
 }
 
 static void init_sys(void) {
-    signed char i;
+    byte i;
     for (i = 0; i < ARRAY_SIZE(VDP_regs); i++) {
 	WORD(VDP_CTRL) = VDP_CTRL_REG(i, VDP_regs[i]);
     }

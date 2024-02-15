@@ -34,7 +34,7 @@ const byte ym2612_reg_init[] = {
 };
 
 static void setup_ym2612_regs(void) {
-    for (int i = 0; i < ARRAY_SIZE(ym2612_reg_init); i += 2) {
+    for (byte i = 0; i < ARRAY_SIZE(ym2612_reg_init); i += 2) {
 	const byte *ptr = ym2612_reg_init + i;
 	ym2612_write(0, ptr[0], ptr[1]);
     }
