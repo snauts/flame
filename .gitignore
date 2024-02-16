@@ -1,6 +1,7 @@
 *.o
 *.inc
 *.bin
+*.fasl
 cksum
 pcx2h
 rom_header.O
