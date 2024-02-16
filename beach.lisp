@@ -9,10 +9,10 @@
   (crop x1 y1 x2 y2 (fill-box 16 8 (beach-tile 129))))
 
 (defun dune-R ()
-  (beach-rocks 4 4 6 6))
+  (beach-rocks 2 4 4 6))
 
 (defun dune-L ()
-  (beach-rocks 6 4 8 6))
+  (beach-rocks 4 4 6 6))
 
 (defun dune-2 ()
   (beach-rocks 0 4 2 6))
