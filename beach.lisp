@@ -53,7 +53,7 @@
      (incf pos))))
 
 (defun simple-cross ()
-  (beach-rocks 8 0 10 2))
+  (beach-rocks 6 0 8 2))
 
 (defun dimmed-V ()
   (beach-rocks 2 1 4 2))
@@ -77,9 +77,9 @@
 	 (setf pipe (place 0 (1+ y) pipe L-cell))
 	 (setf pipe (place cx (1+ y) pipe R-cell))))
      (place 0 0 pipe (cell (beach-tile 175 :h 1)))
-     (place 0 cy pipe (cell (beach-tile 192)))
+     (place 0 cy pipe (cell (beach-tile 143)))
      (place cx 0 pipe (cell (beach-tile 175)))
-     (place cx cy pipe (cell (beach-tile 192 :h 1))))))
+     (place cx cy pipe (cell (beach-tile 143 :h 1))))))
 
 (defun single-bamboo-platform (width height)
   (box-pipe
