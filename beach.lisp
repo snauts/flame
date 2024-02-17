@@ -39,7 +39,7 @@
 
 (defun toping-map (n)
   (case n
-    (0 (list nil))
+    (0 (list nil nil))
     (1 (list 164 172))
     (2 (list 163 171))))
 
@@ -89,10 +89,10 @@
       (s-place 0 0 (bamboo-side)))
     (s-pop)))
 
-(defun single-bamboo-platform (w h &key (side 0))
+(defun single-bamboo-platform (w h &key (side 0) (top nil))
   (let ((px (- (* 2 side) 1)))
     (s-push (bamboo-latice w h :side side))
-    (s-place px (* 2 h) (bamboo-platform :width w))
+    (s-place px (* 2 h) (bamboo-platform :width w :toping top))
     (s-pop)))
 
 (defun beach-level ()
