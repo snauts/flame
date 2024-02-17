@@ -236,12 +236,16 @@
   (on-top (stack (crop 13 3 15 4 (cliffs)) h)
 	  (crop 9 0 11 3 (cliffs))))
 
+(defun rusty-select-side (tile x)
+  (if (= tile 280)
+      (rusty-platform-left x)
+      (rusty-platform-right x)))
+
 (defun rusty-platform-side (tile h &optional base (x 0))
-  (top-pipe (and base (desert-cell base))
-	    (stack (desert-cell tile) h)
-	    (if (= tile 280)
-		(rusty-platform-left x)
-		(rusty-platform-right x))))
+  (s-push (and base (desert-cell base)))
+  (s-top (stack (desert-cell tile) h))
+  (s-top (rusty-select-side tile x))
+  (s-pop))
 
 (defun base-cross (&optional (y 5))
   (let ((half (crop 13 y 15 (1+ y) (cliffs))))
@@ -265,11 +269,11 @@
 	(rusty-platform-side 272 h)))
 
 (defun rusty-over-platform-middle (&optional (n 1) (h 0))
-  (labels ((n-times (x) (multiply x n)))
-    (n-times (top-pipe (crop 13 2 15 3 (cliffs))
-		       (stack (crop 13 0 15 1 (cliffs)) h)
-		       (crop 13 1 15 2 (cliffs))
-		       (crop 9 2 11 3 (cliffs))))))
+  (s-push (crop 13 2 15 3 (cliffs)))
+  (s-top (stack (crop 13 0 15 1 (cliffs)) h))
+  (s-top (crop 13 1 15 2 (cliffs)))
+  (s-top (crop 9 2 11 3 (cliffs)))
+  (multiply (s-pop) n))
 
 (defun over-cross ()
   (let ((half (crop 13 4 15 5 (cliffs))))

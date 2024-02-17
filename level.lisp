@@ -8,11 +8,6 @@
      ,@(mapcar (lambda (x) `(setf ,box ,x)) forms)
      ,box))
 
-(defmacro top-pipe (&rest forms)
-  `(let ((pipe ,(first forms)))
-     ,@(mapcar (lambda (x) `(setf pipe (on-top pipe ,x))) (rest forms))
-     pipe))
-
 (defparameter *seed* 0)
 
 (defun xor-seed (shift)
@@ -161,6 +156,9 @@
 
 (defun s-place (x y box)
   (setf (first *stack*) (place x y (first *stack*) box)))
+
+(defun s-top (x)
+  (setf (first *stack*) (on-top (first *stack*) x)))
 
 (defun zero-first (box)
   (substitute 0 nil (first box)))
