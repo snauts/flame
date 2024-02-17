@@ -158,6 +158,9 @@
 (defun s-join (x)
   (setf (first *stack*) (join (first *stack*) x)))
 
+(defun s-inject (fn pos)
+  (setf (first *stack*) (inject (first *stack*) fn pos)))
+
 (defun zero-first (box)
   (substitute 0 nil (first box)))
 

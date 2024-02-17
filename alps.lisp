@@ -32,10 +32,10 @@
   (rocks 12 2 16 4))
 
 (defun narrow-rock-platform ()
-  (box-pipe
-   (place 0 2 pipe (rocks 6 2 8 4))
-   (place 0 0 pipe (rocks 0 4 1 6))
-   (place 1 0 pipe (rocks 7 4 8 6))))
+  (s-push (rocks 0 4 1 6))
+  (s-place 0 2 (rocks 6 2 8 4))
+  (s-place 1 0 (rocks 7 4 8 6))
+  (s-pop))
 
 (defun hanging-rock-platform ()
   (place 0 0 (rocks 0 4 8 8) (rocks 8 7 16 8)))
@@ -178,19 +178,18 @@
 (defparameter *queen-platforms*
   '((17 6) (13 11) (17 16) (25 19) (25 3) (33 6) (37 11) (33 16)))
 
-(defun place-queen-platform (pos pipe)
+(defun place-queen-platform (pos)
   (destructuring-bind (x y) pos
     (let ((type (1+ (logand y 1))))
-      (place x y pipe (alps-walk :type type :hang 1 :base 1)))))
+      (s-place x y (alps-walk :type type :hang 1 :base 1)))))
 
 (defun queen-level ()
   (setf *seed* 1918)
-  (box-pipe
-   (queen-ground)
-   (place 10 5 pipe (alps-walk :base 3 :hang 1))
-   (place 42 5 pipe (alps-walk :base 3 :hang 1))
-   (dolist (pos *queen-platforms* pipe)
-     (setf pipe (place-queen-platform pos pipe)))))
+  (s-push (queen-ground))
+  (s-place 10 5 (alps-walk :base 3 :hang 1))
+  (s-place 42 5 (alps-walk :base 3 :hang 1))
+  (dolist (pos *queen-platforms* (s-pop))
+    (place-queen-platform pos)))
 
 (defun random-plants (width)
   (when (> width 0)
@@ -201,14 +200,14 @@
 
 (defun plateau-level ()
   (setf *seed* 1969)
-  (box-pipe
-   (plateau-terrain)
-   (inject pipe "level_done" 272)
-   (inject pipe "end_bee_rush" 256)
-   (inject pipe "emit_bee_jump" 224)
-   (inject pipe "emit_bee_dive" 192)
-   (inject pipe "emit_bee_loom" 160)
-   (inject pipe "emit_bee_wave" 128)
-   (inject pipe "emit_bee_alt" 96)
-   (inject pipe "emit_bee_head" 64)
-   (inject pipe "emit_bee_row" 16)))
+  (s-push (plateau-terrain))
+  (s-inject "level_done" 272)
+  (s-inject "end_bee_rush" 256)
+  (s-inject "emit_bee_jump" 224)
+  (s-inject "emit_bee_dive" 192)
+  (s-inject "emit_bee_loom" 160)
+  (s-inject "emit_bee_wave" 128)
+  (s-inject "emit_bee_alt" 96)
+  (s-inject "emit_bee_head" 64)
+  (s-inject "emit_bee_row" 16)
+  (s-pop))
