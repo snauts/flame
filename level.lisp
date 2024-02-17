@@ -117,7 +117,7 @@
   (place 0 h nil box))
 
 (defun poke (box x y tile)
-  (place x y box (make 1 1 :e tile)))
+  (place x y box (cell tile)))
 
 (defun cut (list a b)
   (butlast (nthcdr a list) (max 0 (- (length list) b))))
@@ -160,6 +160,9 @@
 
 (defun s-inject (fn pos)
   (setf (first *stack*) (inject (first *stack*) fn pos)))
+
+(defun s-poke (x y tile)
+  (setf (first *stack*) (poke (first *stack*) x y tile)))
 
 (defun zero-first (box)
   (substitute 0 nil (first box)))
