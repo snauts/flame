@@ -1,13 +1,14 @@
 (defparameter *beach-walkable*
   '(130 138 146 154 162 170 178 186
     132 140 148 156
-    134 142 150 158 166 174))
+    134 142 150 158 166 174
+    204 212))
 
-(defun beach-tile (id &key (v 0) (h 0))
-  (tile id :pl 1 :v v :h h))
+(defun beach-tile (id &key (v 0) (h 0) (pr 0))
+  (tile id :pl 1 :v v :h h :pr pr))
 
-(defun beach-cell (id &key (v 0) (h 0))
-  (cell (beach-tile id :v v :h h)))
+(defun beach-cell (id &key (v 0) (h 0) (pr 0))
+  (cell (beach-tile id :v v :h h :pr pr)))
 
 (defun beach-rocks (x1 y1 x2 y2)
   (crop x1 y1 x2 y2 (fill-box 16 8 (beach-tile 129))))
@@ -118,9 +119,31 @@
     (s-place px (* 2 h) (bamboo-platform :width w :toping top))
     (s-pop)))
 
+(defun stalk-tile (h)
+  (cond ((evenp h) 196)
+	((> h 1) 195)
+	(t 194)))
+
+(defun single-stalk (x y pr h)
+  (loop while (> (decf h) 0) do
+    (s-place x (incf y) (beach-cell (stalk-tile h) :pr pr))))
+
+(defun bamboo-stalks (&key (width 2) (height 5) (variation 2))
+  (s-push (dune-platform :width width :type 8))
+  (dotimes (i (* 4 width) (s-pop))
+    (let* ((x (+ 3 (* i 2)))
+	   (y (logand i 1))
+	   (pr (- 1 (logand i 1)))
+	   (id (elt '(204 203 212 211) (logand i 3))))
+      (s-place x y (beach-cell id :pr pr))
+      (single-stalk x y pr (+ height (xor-random variation))))))
+
 (defun beach-level ()
+  (setf *seed* (* 1905 05 27))
   (join
    (dune-platform :width 2)
+   (empty 3)
+   (bamboo-stalks :width 3)
    (empty 1)
    (single-bamboo-platform 1 2 :side 1)
    (empty 1)
