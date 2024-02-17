@@ -1,8 +1,3 @@
-(defmacro box-pipe (&rest forms)
-  `(let ((pipe (empty 1)))
-     ,@(mapcar (lambda (x) `(setf pipe ,x)) forms)
-     pipe))
-
 (defparameter *seed* 0)
 
 (defun xor-seed (shift)
