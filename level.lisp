@@ -151,6 +151,17 @@
 (defun on-top (box1 box2)
   (place 0 (height box1) box1 box2))
 
+(defvar *stack* nil)
+
+(defun s-push (x)
+  (push x *stack*))
+
+(defun s-pop ()
+  (pop *stack*))
+
+(defun s-place (x y box)
+  (setf (first *stack*) (place x y (first *stack*) box)))
+
 (defun zero-first (box)
   (substitute 0 nil (first box)))
 
