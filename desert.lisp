@@ -179,17 +179,16 @@
     (cond ((= n 0) (list h0 3 (- b1 2) 3 (- b2 2)))
 	  ((= n 1) (list h0 (+ 2 b1) (- h1 b1 4) (+ 2 b2) (- h2 b2 4))))))
 
-(defun place-cacti (garden fn x y)
-  (place x (1+ y) garden (apply fn (cacti-params y x))))
+(defun place-cacti (fn x y)
+  (s-place x (1+ y) (apply fn (cacti-params y x))))
 
 (defun cacti-garden (&optional (n 6))
   (setf *seed* 1940)
-  (let* ((garden (ground :n n)))
-    (loop for i from 0 to (- (* n 8) 8) by 6 do
-      (with-box garden
-	(place-cacti garden #'front-cacti (+ i 1) 0)
-	(place-cacti garden #'back-cacti (+ i 4) 1)))
-    garden))
+  (s-push (ground :n n))
+  (loop for i from 0 to (- (* n 8) 8) by 6 do
+    (place-cacti #'front-cacti (+ i 1) 0)
+    (place-cacti #'back-cacti (+ i 4) 1))
+  (s-pop))
 
 (defun tripple-sandwich ()
   (box-pipe
@@ -209,10 +208,9 @@
    (tripple-sandwich)))
 
 (defun plateau (n)
-  (let ((pillars (plateau-pillars n)))
-    (dotimes (i n pillars)
-      (with-box pillars
-	(place (+ 9 (* 8 i)) 15 pillars (hanging-platform))))))
+  (s-push (plateau-pillars n))
+  (dotimes (i n (s-pop))
+    (s-place (+ 9 (* 8 i)) 15 (hanging-platform))))
 
 (defun rusty-walkway (&optional (n 1))
   (multiply (crop 9 0 11 3 (cliffs)) n))
@@ -365,12 +363,11 @@
    (place 3 (+ h 2) pipe (desert-cell 238))))
 
 (defun rusty-down-stairs ()
-  (let ((stairs nil))
-    (loop for h from 15 downto 0 by 3 do
-      (with-box stairs
-	(join stairs (empty 1))
-	(join stairs (rusty-bridge 3 h))))
-    stairs))
+  (s-push nil)
+  (loop for h from 15 downto 0 by 3 do
+    (s-join (empty 1))
+    (s-join (rusty-bridge 3 h)))
+  (s-pop))
 
 (defparameter *jumps*
   '(((2 0) 2) ((1 1) 1) ((2 0) 2) ((1 1) 3)

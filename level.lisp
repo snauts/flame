@@ -3,11 +3,6 @@
      ,@(mapcar (lambda (x) `(setf pipe ,x)) forms)
      pipe))
 
-(defmacro with-box (box &rest forms)
-  `(progn
-     ,@(mapcar (lambda (x) `(setf ,box ,x)) forms)
-     ,box))
-
 (defparameter *seed* 0)
 
 (defun xor-seed (shift)
@@ -159,6 +154,9 @@
 
 (defun s-top (x)
   (setf (first *stack*) (on-top (first *stack*) x)))
+
+(defun s-join (x)
+  (setf (first *stack*) (join (first *stack*) x)))
 
 (defun zero-first (box)
   (substitute 0 nil (first box)))
