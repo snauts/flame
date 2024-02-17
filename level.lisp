@@ -67,6 +67,9 @@
   (labels ((manipulate (x) (unless (null x) (funcall fn x))))
     (mapcar (lambda (column) (mapcar #'manipulate column)) box)))
 
+(defun transpone (box)
+  (mapcar #'reverse (apply #'mapcar (cons #'list box))))
+
 (defun flip (box)
   (for-all (reverse box) (lambda (x) (logxor x (ash 1 11)))))
 

@@ -67,6 +67,27 @@
   (s-place 2 1 (beach-cell (if (= flip 1) 160 152) :h flip))
   (if (= 0 flip) (s-pop) (flip (s-pop))))
 
+(defun latice-damage-F ()
+  '((190 182)
+    (189 181)))
+
+(defun latice-damage-L ()
+  '((160 180)
+    (187 136)))
+
+(defun latice-damage-R ()
+  '((188 152)
+    (144 179)))
+
+(defun select-damage (type)
+  (case type
+    (0 (latice-damage-F))
+    (1 (latice-damage-L))
+    (2 (latice-damage-R))))
+
+(defun latice-damage (type)
+  (for-all (transpone (select-damage type)) #'beach-tile))
+
 (defun bamboo-latice (w h &key (side 0))
   (let ((cx (1+ (* w 2)))
 	(cy (1- (* h 2))))
