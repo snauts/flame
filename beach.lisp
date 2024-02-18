@@ -180,6 +180,7 @@
    (dune-platform :width 2)
    (empty 3)
    (collapsed-scaffold)
+   (trigger "emit_crabs")
    (empty 3)
    (bamboo-stalks :width 3)
    (empty 1)

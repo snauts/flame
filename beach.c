@@ -1,4 +1,5 @@
 #include "main.h"
+#include "images/crab.h"
 #include "images/beach.h"
 #include "images/dunes.h"
 
@@ -103,6 +104,81 @@ static void sea_rotate(u16 i) {
     callback(&sea_rotate, 12, i < 2 ? i + 1 : 0);
 }
 
+typedef struct Crab {
+    byte persistent;
+} Crab;
+
+Crab *c_obj;
+
+#define CRAB(obj) ((Crab *) (obj->private))
+
+static void crab_die(Object *obj) {
+    obj->frame = 6;
+    obj->life = 0;
+    perish_sfx();
+}
+
+static u16 is_crab_alive(Object *obj) {
+    return obj->frame < 6;
+}
+
+static void move_crab(Object *obj) {
+    u16 palette = 2;
+    Sprite *sprite = obj->sprite;
+
+    obj->life++;
+    obj->x += obj->direction;
+    advance_obj(obj, 4, 12);
+
+    sprite->x = SCREEN_X(obj->x);
+    sprite->y = obj->y + ON_SCREEN - 16;
+
+    if (!is_crab_alive(obj)) {
+	if ((obj->life & 3) == 0) obj->frame++;
+    }
+    else if (should_small_mob_burn(sprite)) {
+	crab_die(obj);
+    }
+    else {
+	obj->frame = ((obj->life >> 2) % 6);
+	small_mob_attack(obj);
+	palette = 3;
+    }
+
+    sprite->cfg = TILE(palette, 257 + 4 * obj->frame);
+    mob_adjust_sprite_dir(obj);
+
+    if (obj->frame == 14) {
+	free_mob(obj);
+    }
+    else {
+	small_mob_end(obj, CRAB(obj)->persistent);
+    }
+}
+
+static Object *setup_crab(short x, short y) {
+    Object *obj = alloc_mob();
+    if (obj != NULL) {
+	obj->x = x;
+	obj->y = y;
+	obj->life = 0;
+	obj->frame = 0;
+	obj->gravity = 0;
+	obj->velocity = 0;
+	obj->direction = -1;
+	obj->private = c_obj + mob_index(obj);
+	obj->sprite->size = SPRITE_SIZE(2, 2);
+	mob_fn(obj, &move_crab);
+	CRAB(obj)->persistent = 0;
+    }
+    return obj;
+}
+
+void emit_crabs(u16 i) {
+    setup_crab(window + SCR_WIDTH, 128);
+    schedule(&emit_crabs, 32);
+}
+
 static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
@@ -111,6 +187,11 @@ static void display_nippon(Function prepare_level) {
 
     update_palette(dunes_palette, 16, ARRAY_SIZE(dunes_palette));
     update_tiles(dunes_tiles, 129, ARRAY_SIZE(dunes_tiles));
+
+    update_palette(crab_palette, 48, ARRAY_SIZE(crab_palette));
+    update_tiles(crab_tiles, 257, ARRAY_SIZE(crab_tiles));
+
+    load_burn_tiles(281);
 
     /* load tiles */
     load_soldier_tiles(2);
@@ -140,6 +221,8 @@ static void display_nippon(Function prepare_level) {
     callback(&fade_in, 0, 6);
     callback(&sea_rotate, 30, 0);
     switch_frame(&update_game);
+
+    c_obj = malloc(sizeof(Crab) * MAX_MOBS);
 }
 
 void display_beach(void) {
