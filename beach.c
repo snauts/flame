@@ -116,7 +116,6 @@ static void move_crab(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
 
-    obj->life++;
     obj->x += obj->direction;
     advance_obj(obj, 4, 12);
 

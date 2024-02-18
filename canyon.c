@@ -103,7 +103,6 @@ Hopper *h_obj;
 static void move_hopper(Object *obj) {
     Sprite *sprite = obj->sprite;
 
-    obj->life++;
     obj->x += obj->direction;
     u16 land = advance_obj(obj, 4, 12);
 

@@ -87,8 +87,6 @@ static void animate_bee(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
 
-    obj->life++;
-
     sprite->x = SCREEN_X(obj->x + BEE(obj)->dx);
     sprite->y = obj->y + BEE(obj)->dy + ON_SCREEN - 16;
 

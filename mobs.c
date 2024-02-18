@@ -314,6 +314,8 @@ char is_small_mob_alive(Object *obj) {
 
 char small_mob_cycle(Object *obj) {
     char ret = 0;
+    obj->life++;
+
     if (!is_small_mob_alive(obj)) {
 	if ((obj->life & 3) == 0) obj->frame++;
     }
