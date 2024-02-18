@@ -148,9 +148,9 @@ static u16 is_small_mob_off_screen(Sprite *sprite) {
 	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
 }
 
-void small_mob_end(Object *obj, u16 last) {
+static void small_mob_end(Object *obj, u16 last_frame) {
     Sprite *sprite = obj->sprite;
-    if (obj->frame >= last) {
+    if (obj->frame >= last_frame) {
 	free_mob(obj);
     }
     else if (is_small_mob_off_screen(sprite)) {
@@ -312,7 +312,7 @@ char is_small_mob_alive(Object *obj) {
     return obj->frame < obj->death;
 }
 
-char small_mob_cycle(Object *obj, char dx, char dy) {
+char small_mob_cycle(Object *obj, char dx, char dy, u16 last_frame) {
     Sprite *sprite = obj->sprite;
     char ret = 0;
     obj->life++;
@@ -330,5 +330,7 @@ char small_mob_cycle(Object *obj, char dx, char dy) {
 	small_mob_attack(obj);
 	ret = 1;
     }
+
+    small_mob_end(obj, last_frame);
     return ret;
 }

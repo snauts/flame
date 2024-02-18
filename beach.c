@@ -119,15 +119,13 @@ static void move_crab(Object *obj) {
     obj->x += obj->direction;
     advance_obj(obj, 4, 12);
 
-    if (small_mob_cycle(obj, 0, 0)) {
+    if (small_mob_cycle(obj, 0, 0, 14)) {
 	obj->frame = ((obj->life >> 2) % 6);
 	palette = 3;
     }
 
     sprite->cfg = TILE(palette, 257 + 4 * obj->frame);
     mob_adjust_sprite_dir(obj);
-
-    small_mob_end(obj, 14);
 }
 
 static Object *setup_crab(short x, short y) {

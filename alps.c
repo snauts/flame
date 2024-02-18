@@ -87,13 +87,12 @@ static void animate_bee(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
 
-    if (small_mob_cycle(obj, BEE(obj)->dx, BEE(obj)->dy)) {
+    if (small_mob_cycle(obj, BEE(obj)->dx, BEE(obj)->dy, 10)) {
 	obj->frame = ((obj->life >> 1) & 1);
 	palette = 3;
     }
 
     sprite->cfg = TILE(palette, BEE_TILES + 4 * obj->frame);
-    small_mob_end(obj, 10);
 }
 
 static void flip_bee(Object *obj) {
