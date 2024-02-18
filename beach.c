@@ -1,5 +1,6 @@
 #include "main.h"
 #include "images/crab.h"
+#include "images/spit.h"
 #include "images/beach.h"
 #include "images/dunes.h"
 
@@ -155,6 +156,8 @@ static void display_nippon(Function prepare_level) {
     update_tiles(crab_tiles, 257, ARRAY_SIZE(crab_tiles));
 
     load_burn_tiles(281);
+
+    update_tiles(spit_tiles, 313, ARRAY_SIZE(spit_tiles));
 
     /* load tiles */
     load_soldier_tiles(2);
