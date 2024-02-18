@@ -107,7 +107,6 @@ static u16 is_hopper_alive(Object *obj) {
 
 static void hopper_die(Object *obj) {
     obj->frame = 9;
-    obj->life = 0;
     perish_sfx();
 }
 
