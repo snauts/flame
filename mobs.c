@@ -282,3 +282,18 @@ u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
     }
     return ret;
 }
+
+Object *setup_small_mob(short x, short y, u16 life) {
+    Object *obj = alloc_mob();
+    if (obj != NULL) {
+	obj->x = x;
+	obj->y = y;
+	obj->frame = 0;
+	obj->gravity = 0;
+	obj->velocity = 0;
+	obj->life = life;
+	obj->direction = -1;
+	obj->sprite->size = SPRITE_SIZE(2, 2);
+    }
+    return obj;
+}

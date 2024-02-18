@@ -136,17 +136,9 @@ static void move_bee(Object *obj) {
 }
 
 static Object *setup_bee(short x, short y, u16 life) {
-    Object *obj = alloc_mob();
+    Object *obj = setup_small_mob(x, y, life);
     if (obj != NULL) {
-	obj->x = x;
-	obj->y = y;
-	obj->frame = 0;
-	obj->gravity = 0;
-	obj->velocity = 0;
-	obj->life = life;
-	obj->direction = -1;
 	obj->private = b_obj + mob_index(obj);
-	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_bee);
 	BEE(obj)->v_direction = 0;
 	BEE(obj)->persistent = 1;

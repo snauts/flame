@@ -179,17 +179,9 @@ static void immediate_hopper(Object *mob) {
 }
 
 static Object *setup_hopper(short x, short y, u16 life) {
-    Object *obj = alloc_mob();
+    Object *obj = setup_small_mob(x, y, life);
     if (obj != NULL) {
-	obj->x = x;
-	obj->y = y;
-	obj->frame = 0;
-	obj->gravity = 0;
-	obj->velocity = 0;
-	obj->life = life;
-	obj->direction = -1;
 	obj->private = h_obj + mob_index(obj);
-	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_hopper);
 
 	HOPPER(obj)->persistent = 0;

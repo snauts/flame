@@ -157,17 +157,9 @@ static void move_crab(Object *obj) {
 }
 
 static Object *setup_crab(short x, short y) {
-    Object *obj = alloc_mob();
+    Object *obj = setup_small_mob(x, y, 0);
     if (obj != NULL) {
-	obj->x = x;
-	obj->y = y;
-	obj->life = 0;
-	obj->frame = 0;
-	obj->gravity = 0;
-	obj->velocity = 0;
-	obj->direction = -1;
 	obj->private = c_obj + mob_index(obj);
-	obj->sprite->size = SPRITE_SIZE(2, 2);
 	mob_fn(obj, &move_crab);
 	CRAB(obj)->persistent = 0;
     }
