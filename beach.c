@@ -112,16 +112,6 @@ Crab *c_obj;
 
 #define CRAB(obj) ((Crab *) (obj->private))
 
-static void crab_die(Object *obj) {
-    obj->frame = 6;
-    obj->life = 0;
-    perish_sfx();
-}
-
-static u16 is_crab_alive(Object *obj) {
-    return obj->frame < 6;
-}
-
 static void move_crab(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
@@ -133,15 +123,8 @@ static void move_crab(Object *obj) {
     sprite->x = SCREEN_X(obj->x);
     sprite->y = obj->y + ON_SCREEN - 16;
 
-    if (!is_crab_alive(obj)) {
-	if ((obj->life & 3) == 0) obj->frame++;
-    }
-    else if (should_small_mob_burn(sprite)) {
-	crab_die(obj);
-    }
-    else {
+    if (small_mob_cycle(obj)) {
 	obj->frame = ((obj->life >> 2) % 6);
-	small_mob_attack(obj);
 	palette = 3;
     }
 
@@ -157,7 +140,7 @@ static void move_crab(Object *obj) {
 }
 
 static Object *setup_crab(short x, short y) {
-    Object *obj = setup_small_mob(x, y, 0);
+    Object *obj = setup_small_mob(x, y, 0, 6);
     if (obj != NULL) {
 	obj->private = c_obj + mob_index(obj);
 	mob_fn(obj, &move_crab);

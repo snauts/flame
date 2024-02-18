@@ -283,7 +283,7 @@ u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
     return ret;
 }
 
-Object *setup_small_mob(short x, short y, u16 life) {
+Object *setup_small_mob(short x, short y, u16 life, byte death) {
     Object *obj = alloc_mob();
     if (obj != NULL) {
 	obj->x = x;
@@ -292,9 +292,34 @@ Object *setup_small_mob(short x, short y, u16 life) {
 	obj->frame = 0;
 	obj->gravity = 0;
 	obj->velocity = 0;
+	obj->death = death;
 	obj->life = life;
 	obj->direction = -1;
 	obj->sprite->size = SPRITE_SIZE(2, 2);
     }
     return obj;
+}
+
+void kill_small_mob(Object *obj) {
+    obj->frame = obj->death;
+    perish_sfx();
+}
+
+char is_small_mob_alive(Object *obj) {
+    return obj->frame < obj->death;
+}
+
+char small_mob_cycle(Object *obj) {
+    char ret = 0;
+    if (!is_small_mob_alive(obj)) {
+	if ((obj->life & 3) == 0) obj->frame++;
+    }
+    else if (should_small_mob_burn(obj->sprite)) {
+	kill_small_mob(obj);
+    }
+    else {
+	small_mob_attack(obj);
+	ret = 1;
+    }
+    return ret;
 }

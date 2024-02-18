@@ -83,15 +83,6 @@ static Bee *b_obj;
 
 #define BEE(obj) ((Bee *) (obj->private))
 
-static void burn_bee(Object *obj) {
-    obj->frame = 2;
-    perish_sfx();
-}
-
-static u16 is_bee_alive(Object *obj) {
-    return obj->frame < 2;
-}
-
 static void animate_bee(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
@@ -101,15 +92,8 @@ static void animate_bee(Object *obj) {
     sprite->x = SCREEN_X(obj->x + BEE(obj)->dx);
     sprite->y = obj->y + BEE(obj)->dy + ON_SCREEN - 16;
 
-    if (!is_bee_alive(obj)) {
-	if ((obj->life & 3) == 0) obj->frame++;
-    }
-    else if (should_small_mob_burn(sprite)) {
-	burn_bee(obj);
-    }
-    else {
+    if (small_mob_cycle(obj)) {
 	obj->frame = ((obj->life >> 1) & 1);
-	small_mob_attack(obj);
 	palette = 3;
     }
 
@@ -135,7 +119,7 @@ static void move_bee(Object *obj) {
 }
 
 static Object *setup_bee(short x, short y, u16 life) {
-    Object *obj = setup_small_mob(x, y, life);
+    Object *obj = setup_small_mob(x, y, life, 2);
     if (obj != NULL) {
 	obj->private = b_obj + mob_index(obj);
 	mob_fn(obj, &move_bee);
@@ -293,7 +277,7 @@ void emit_bee_upstream(u16 pos_x) {
 }
 
 void level_done_burn_bees(void) {
-    apply_to_all_mobs(&burn_bee);
+    apply_to_all_mobs(&kill_small_mob);
     void level_done(u16);
     level_done(0);
 }
@@ -628,7 +612,7 @@ static void dying_update(Object *obj) {
 
 static void burn_drones(Object *obj) {
     if (obj->private != NULL) {
-	burn_bee(obj);
+	kill_small_mob(obj);
     }
 }
 

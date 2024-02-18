@@ -100,15 +100,6 @@ Hopper *h_obj;
 
 #define HOPPER(obj) ((Hopper *) (obj->private))
 
-static u16 is_hopper_alive(Object *obj) {
-    return obj->frame < 9;
-}
-
-static void hopper_die(Object *obj) {
-    obj->frame = 9;
-    perish_sfx();
-}
-
 static void move_hopper(Object *obj) {
     Sprite *sprite = obj->sprite;
 
@@ -119,20 +110,13 @@ static void move_hopper(Object *obj) {
     sprite->x = SCREEN_X(obj->x);
     sprite->y = obj->y + ON_SCREEN - 16;
 
-    if (!is_hopper_alive(obj)) {
-	if ((obj->life & 3) == 0) obj->frame++;
-    }
-    else if (should_small_mob_burn(sprite)) {
-	hopper_die(obj);
-    }
-    else {
+    if (small_mob_cycle(obj)) {
 	if (land) {
 	    obj->frame = 3 + ((obj->life >> 2) % 6);
 	}
 	else {
 	    obj->frame = 1 + ((obj->life >> 1) & 1);
 	}
-	small_mob_attack(obj);
     }
 
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
@@ -147,7 +131,7 @@ static void move_hopper(Object *obj) {
 }
 
 static void jump_hopper(Object *obj, u16(*jump_condition)(Object *)) {
-    if (is_hopper_alive(obj) && jump_condition(obj)) {
+    if (is_small_mob_alive(obj) && jump_condition(obj)) {
 	obj->velocity = HOPPER(obj)->jump_amount;
     }
     move_hopper(obj);
@@ -178,7 +162,7 @@ static void immediate_hopper(Object *mob) {
 }
 
 static Object *setup_hopper(short x, short y, u16 life) {
-    Object *obj = setup_small_mob(x, y, life);
+    Object *obj = setup_small_mob(x, y, life, 9);
     if (obj != NULL) {
 	obj->private = h_obj + mob_index(obj);
 	mob_fn(obj, &move_hopper);
@@ -352,7 +336,7 @@ static void chasing_swarm(u16 info) {
 	callback(&chasing_swarm, 0, (mob_index(mob) << 8) | n);
     }
     else if (mob->place >= 0) {
-	hopper_die(mob);
+	kill_small_mob(mob);
     }
 }
 

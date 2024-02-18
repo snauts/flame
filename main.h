@@ -67,6 +67,7 @@ typedef struct Object {
     signed char direction;
     Sprite *sprite;
     void *private;
+    byte death;
     u16 flags;
     u16 frame;
     u16 life;
@@ -227,15 +228,19 @@ void free_mob(Object *obj);
 u16 mob_index(Object *obj);
 Object *get_mob(u16 index);
 
-Object *setup_small_mob(short x, short y, u16 life);
+Object *setup_small_mob(short x, short y, u16 life, byte death);
 void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n);
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip);
+char small_mob_alive(Object *obj, u16 death_frame);
 u16 should_small_mob_burn(Sprite *sprite);
 void mob_adjust_sprite_dir(Object *obj);
 void small_mob_attack(Object *obj);
 void setup_burns(u16 count, u16 tiles);
 void flame_burn(Object *obj, u16 i);
+char is_small_mob_alive(Object *obj);
+void kill_small_mob(Object *obj);
 void small_mob_end(Object *obj);
+char small_mob_cycle(Object *obj);
 void init_burn(Object *obj);
 void free_burns(void);
 
