@@ -87,10 +87,7 @@ static void animate_bee(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
 
-    sprite->x = SCREEN_X(obj->x + BEE(obj)->dx);
-    sprite->y = obj->y + BEE(obj)->dy + ON_SCREEN - 16;
-
-    if (small_mob_cycle(obj)) {
+    if (small_mob_cycle(obj, BEE(obj)->dx, BEE(obj)->dy)) {
 	obj->frame = ((obj->life >> 1) & 1);
 	palette = 3;
     }

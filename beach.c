@@ -119,10 +119,7 @@ static void move_crab(Object *obj) {
     obj->x += obj->direction;
     advance_obj(obj, 4, 12);
 
-    sprite->x = SCREEN_X(obj->x);
-    sprite->y = obj->y + ON_SCREEN - 16;
-
-    if (small_mob_cycle(obj)) {
+    if (small_mob_cycle(obj, 0, 0)) {
 	obj->frame = ((obj->life >> 2) % 6);
 	palette = 3;
     }

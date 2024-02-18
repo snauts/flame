@@ -312,14 +312,18 @@ char is_small_mob_alive(Object *obj) {
     return obj->frame < obj->death;
 }
 
-char small_mob_cycle(Object *obj) {
+char small_mob_cycle(Object *obj, char dx, char dy) {
+    Sprite *sprite = obj->sprite;
     char ret = 0;
     obj->life++;
+
+    sprite->x = SCREEN_X(obj->x + dx);
+    sprite->y = obj->y + dy + ON_SCREEN - 16;
 
     if (!is_small_mob_alive(obj)) {
 	if ((obj->life & 3) == 0) obj->frame++;
     }
-    else if (should_small_mob_burn(obj->sprite)) {
+    else if (should_small_mob_burn(sprite)) {
 	kill_small_mob(obj);
     }
     else {

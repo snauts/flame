@@ -106,10 +106,7 @@ static void move_hopper(Object *obj) {
     obj->x += obj->direction;
     u16 land = advance_obj(obj, 4, 12);
 
-    sprite->x = SCREEN_X(obj->x);
-    sprite->y = obj->y + ON_SCREEN - 16;
-
-    if (small_mob_cycle(obj)) {
+    if (small_mob_cycle(obj, 0, 0)) {
 	if (land) {
 	    obj->frame = 3 + ((obj->life >> 2) % 6);
 	}
