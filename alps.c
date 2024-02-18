@@ -98,13 +98,7 @@ static void animate_bee(Object *obj) {
     }
 
     sprite->cfg = TILE(palette, BEE_TILES + 4 * obj->frame);
-
-    if (obj->frame >= 10) {
-	free_mob(obj);
-    }
-    else {
-	small_mob_end(obj);
-    }
+    small_mob_end(obj, 10);
 }
 
 static void flip_bee(Object *obj) {

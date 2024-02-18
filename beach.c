@@ -131,12 +131,7 @@ static void move_crab(Object *obj) {
     sprite->cfg = TILE(palette, 257 + 4 * obj->frame);
     mob_adjust_sprite_dir(obj);
 
-    if (obj->frame == 14) {
-	free_mob(obj);
-    }
-    else {
-	small_mob_end(obj);
-    }
+    small_mob_end(obj, 14);
 }
 
 static Object *setup_crab(short x, short y) {

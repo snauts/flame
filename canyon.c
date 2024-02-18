@@ -122,12 +122,7 @@ static void move_hopper(Object *obj) {
     sprite->cfg = TILE(2, 289 + 4 * obj->frame);
     mob_adjust_sprite_dir(obj);
 
-    if (obj->frame == 17) {
-	free_mob(obj);
-    }
-    else {
-	small_mob_end(obj);
-    }
+    small_mob_end(obj, 17);
 }
 
 static void jump_hopper(Object *obj, u16(*jump_condition)(Object *)) {
