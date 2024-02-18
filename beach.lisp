@@ -171,6 +171,7 @@
   (s-place  9 3 (beach-rocks  0 0  2 1))
   (s-place 14 1 (beach-rocks 12 7 14 8))
   (s-place 14 2 (beach-rocks  0 0  2 1))
+  (s-place 17 3 (beach-rocks 11 5 12 7))
   (s-pop))
 
 (defun beach-level ()
