@@ -94,7 +94,6 @@ typedef struct Hopper {
     u16 patrol_start;
     u16 patrol_end;
     byte jump_amount;
-    byte persistent;
 } Hopper;
 
 Hopper *h_obj;
@@ -143,7 +142,7 @@ static void move_hopper(Object *obj) {
 	free_mob(obj);
     }
     else {
-	small_mob_end(obj, HOPPER(obj)->persistent);
+	small_mob_end(obj);
     }
 }
 
@@ -183,8 +182,6 @@ static Object *setup_hopper(short x, short y, u16 life) {
     if (obj != NULL) {
 	obj->private = h_obj + mob_index(obj);
 	mob_fn(obj, &move_hopper);
-
-	HOPPER(obj)->persistent = 0;
     }
     return obj;
 }
@@ -282,7 +279,7 @@ void emit_plateau_patrollers(u16 pos_x) {
     for (u16 y = 160; y >= 64; y -= 48) {
 	for (u16 x = 16; x <= 48; x += 32) {
 	    Object *mob = setup_hopper(pos_x + x, y, 0);
-	    HOPPER(mob)->persistent = 1;
+	    mob->flags |= O_PERSISTENT;
 	    HOPPER(mob)->patrol_start = pos_x;
 	    HOPPER(mob)->patrol_end = pos_x + 64;
 	    mob->direction = ((y == 112) ? -1 : 1) * (2 - (x >> 4));
@@ -314,7 +311,7 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 	    u16 skew = y & BIT(3);
 	    u16 offset = pos_x + (skew ? 64 : 32);
 	    Object *mob = setup_hopper(offset + x, y, 0);
-	    HOPPER(mob)->persistent = 1;
+	    mob->flags |= O_PERSISTENT;
 	    HOPPER(mob)->patrol_start = offset - 16;
 	    HOPPER(mob)->patrol_end = offset + 48;
 	    mob->direction = skew ? -1 : 1;
@@ -329,7 +326,7 @@ void emit_down_stair_guards(u16 pos_x) {
     emit_row_of_sky_hoppers(pos_x - 24);
     for (u16 i = 0; i < 6; i++) {
 	Object *mob = setup_hopper(x, y, 0);
-	HOPPER(mob)->persistent = 1;
+	mob->flags |= O_PERSISTENT;
 	HOPPER(mob)->patrol_start = x - 40;
 	HOPPER(mob)->patrol_end = x + 32;
 	mob_fn(mob, &patrolling_hopper);

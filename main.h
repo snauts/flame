@@ -67,9 +67,12 @@ typedef struct Object {
     signed char direction;
     Sprite *sprite;
     void *private;
+    u16 flags;
     u16 frame;
     u16 life;
 } Object;
+
+#define O_PERSISTENT	BIT(0)
 
 typedef void(*Callback)(u16);
 typedef void(*Function)(void);
@@ -227,12 +230,12 @@ Object *get_mob(u16 index);
 Object *setup_small_mob(short x, short y, u16 life);
 void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n);
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip);
-void small_mob_end(Object *obj, byte persistent);
 u16 should_small_mob_burn(Sprite *sprite);
 void mob_adjust_sprite_dir(Object *obj);
 void small_mob_attack(Object *obj);
 void setup_burns(u16 count, u16 tiles);
 void flame_burn(Object *obj, u16 i);
+void small_mob_end(Object *obj);
 void init_burn(Object *obj);
 void free_burns(void);
 

@@ -105,7 +105,7 @@ static void sea_rotate(u16 i) {
 }
 
 typedef struct Crab {
-    byte persistent;
+    short spit;
 } Crab;
 
 Crab *c_obj;
@@ -152,7 +152,7 @@ static void move_crab(Object *obj) {
 	free_mob(obj);
     }
     else {
-	small_mob_end(obj, CRAB(obj)->persistent);
+	small_mob_end(obj);
     }
 }
 
@@ -161,7 +161,6 @@ static Object *setup_crab(short x, short y) {
     if (obj != NULL) {
 	obj->private = c_obj + mob_index(obj);
 	mob_fn(obj, &move_crab);
-	CRAB(obj)->persistent = 0;
     }
     return obj;
 }
