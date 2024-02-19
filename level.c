@@ -201,7 +201,7 @@ static void clear_screen_to_black(void) {
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 }
 
-const char special[] = "-!";
+const char special[] = "-!:";
 
 static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
     u16 i = 0, offset = (y << 7)  + (x << 1);
