@@ -152,11 +152,11 @@ static void immediate_hopper(Object *mob) {
 
 static Object *setup_hopper(short x, short y) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
-    if (obj != NULL) {
-	obj->death = 9;
-	obj->private = h_obj + mob_index(obj);
-	mob_fn(obj, &move_hopper);
-    }
+    mob_fn(obj, &move_hopper);
+
+    obj->private = h_obj + mob_index(obj);
+    obj->death = 9;
+
     return obj;
 }
 

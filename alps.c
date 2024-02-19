@@ -108,15 +108,16 @@ static void move_bee(Object *obj) {
 
 static Object *setup_bee(short x, short y) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
-    if (obj != NULL) {
-	obj->death = 2;
-	obj->private = b_obj + mob_index(obj);
-	obj->flags |= O_PERSISTENT;
-	mob_fn(obj, &move_bee);
-	BEE(obj)->v_direction = 0;
-	BEE(obj)->dx = 0;
-	BEE(obj)->dy = 0;
-    }
+    mob_fn(obj, &move_bee);
+
+    obj->private = b_obj + mob_index(obj);
+    obj->flags |= O_PERSISTENT;
+    obj->death = 2;
+
+    BEE(obj)->v_direction = 0;
+    BEE(obj)->dx = 0;
+    BEE(obj)->dy = 0;
+
     return obj;
 }
 
