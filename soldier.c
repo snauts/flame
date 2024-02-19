@@ -64,7 +64,7 @@ static u16 read_gamepad(void) {
 static Rectangle s_rect;
 
 static void update_soldier_rectangle(void) {
-    s_rect.x1 = soldier.sprite->x + 4;
+    s_rect.x1 = soldier.sprite->x + 8;
     s_rect.y1 = soldier.sprite->y + 4;
     s_rect.x2 = soldier.sprite->x + 16;
     s_rect.y2 = soldier.sprite->y + 36;
