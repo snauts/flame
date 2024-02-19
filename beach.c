@@ -130,8 +130,9 @@ static void move_crab(Object *obj) {
 }
 
 static Object *setup_crab(short x, short y) {
-    Object *obj = setup_small_mob(x, y, 0, 6);
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
     if (obj != NULL) {
+	obj->death = 6;
 	obj->private = c_obj + mob_index(obj);
 	mob_fn(obj, &move_crab);
     }

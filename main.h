@@ -228,7 +228,7 @@ void free_mob(Object *obj);
 u16 mob_index(Object *obj);
 Object *get_mob(u16 index);
 
-Object *setup_small_mob(short x, short y, u16 life, byte death);
+Object *setup_obj(short x, short y, byte size);
 void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n);
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip);
 char small_mob_cycle(Object *obj, char dx, char dy, u16 last_frame);

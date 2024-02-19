@@ -150,9 +150,10 @@ static void immediate_hopper(Object *mob) {
     jump_hopper(mob, &is_on_ground);
 }
 
-static Object *setup_hopper(short x, short y, u16 life) {
-    Object *obj = setup_small_mob(x, y, life, 9);
+static Object *setup_hopper(short x, short y) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
     if (obj != NULL) {
+	obj->death = 9;
 	obj->private = h_obj + mob_index(obj);
 	mob_fn(obj, &move_hopper);
     }
@@ -163,7 +164,8 @@ static byte squad_members;
 static void emit_hopper_squad_next(u16 i) {
     Object *mob = get_mob(i);
     if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 16) {
-	mob = setup_hopper(window + SCR_WIDTH, 208, i * 4);
+	mob = setup_hopper(window + SCR_WIDTH, 208);
+	mob->life = i * 4;
 	squad_members--;
     }
     if (mob) {
@@ -184,7 +186,8 @@ static u16 stream_x;
 void emit_next_hopper_stream(u16 i) {
     Object *mob = get_mob(i);
     if (mob == NULL || mob->sprite->x <= SCR_WIDTH + ON_SCREEN - 32) {
-	mob = setup_hopper(window + SCR_WIDTH, 208, 112);
+	mob = setup_hopper(window + SCR_WIDTH, 208);
+	mob->life = 112;
     }
     if (mob) {
 	mob_fn(mob, &periodic_high_hopper);
@@ -204,7 +207,7 @@ static u16 hole_x;
 static void emit_next_hole_hopper(u16 count) {
     u16 delay = 0;
     if (window < hole_x - 112) {
-	Object *mob = setup_hopper(hole_x, SCR_HEIGHT + 16, 0);
+	Object *mob = setup_hopper(hole_x, SCR_HEIGHT + 16);
 	if (mob != NULL) {
 	    mob->velocity = 4;
 	    delay = (count == 7 ? 128 : 24);
@@ -221,7 +224,7 @@ void emit_hole_hoppers(u16 pos_x) {
 
 static void emit_row_of_sky_hoppers(u16 pos_x) {
     for (u16 i = 0; i < 4; i++) {
-	setup_hopper(pos_x + (i << 4), -16 + (i << 2), 0);
+	setup_hopper(pos_x + (i << 4), -16 + (i << 2));
     }
 }
 
@@ -251,7 +254,7 @@ static void patrolling_hopper(Object *obj) {
 void emit_plateau_patrollers(u16 pos_x) {
     for (u16 y = 160; y >= 64; y -= 48) {
 	for (u16 x = 16; x <= 48; x += 32) {
-	    Object *mob = setup_hopper(pos_x + x, y, 0);
+	    Object *mob = setup_hopper(pos_x + x, y);
 	    mob->flags |= O_PERSISTENT;
 	    HOPPER(mob)->patrol_start = pos_x;
 	    HOPPER(mob)->patrol_end = pos_x + 64;
@@ -263,7 +266,7 @@ void emit_plateau_patrollers(u16 pos_x) {
 
 static void emit_charging_hoppers(u16 pos_x) {
     if (window < pos_x + 152) {
-	setup_hopper(window + SCR_WIDTH, 32, 0);
+	setup_hopper(window + SCR_WIDTH, 32);
 	callback(&emit_charging_hoppers, 48, pos_x);
     }
 }
@@ -272,7 +275,7 @@ void emit_chasing_hoppers(u16 pos_x) {
     purge_mobs();
     pos_x -= SCR_WIDTH;
     for (short i = 0; i <= 32; i += 16) {
-	Object *mob = setup_hopper(pos_x + i, -16, 0);
+	Object *mob = setup_hopper(pos_x + i, -16);
 	mob->direction = 1;
     }
     emit_charging_hoppers(pos_x);
@@ -283,7 +286,7 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 	for (u16 x = 0; x <= 32; x += 16) {
 	    u16 skew = y & BIT(3);
 	    u16 offset = pos_x + (skew ? 64 : 32);
-	    Object *mob = setup_hopper(offset + x, y, 0);
+	    Object *mob = setup_hopper(offset + x, y);
 	    mob->flags |= O_PERSISTENT;
 	    HOPPER(mob)->patrol_start = offset - 16;
 	    HOPPER(mob)->patrol_end = offset + 48;
@@ -298,7 +301,7 @@ void emit_down_stair_guards(u16 pos_x) {
     u16 x = pos_x + 48, y = 88;
     emit_row_of_sky_hoppers(pos_x - 24);
     for (u16 i = 0; i < 6; i++) {
-	Object *mob = setup_hopper(x, y, 0);
+	Object *mob = setup_hopper(x, y);
 	mob->flags |= O_PERSISTENT;
 	HOPPER(mob)->patrol_start = x - 40;
 	HOPPER(mob)->patrol_end = x + 32;
@@ -317,7 +320,7 @@ static void chasing_swarm(u16 info) {
     Object *mob = get_mob(index);
     if (swarm_on) {
 	if (mob == NULL || mob->place < 0) {
-	    mob = setup_hopper(window + 16 * n, -16, 0);
+	    mob = setup_hopper(window + 16 * n, -16);
 	}
 	mob->direction = 1;
 	mob_fn(mob, &immediate_hopper);

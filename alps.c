@@ -106,13 +106,14 @@ static void move_bee(Object *obj) {
     flip_bee(obj);
 }
 
-static Object *setup_bee(short x, short y, u16 life) {
-    Object *obj = setup_small_mob(x, y, life, 2);
+static Object *setup_bee(short x, short y) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
     if (obj != NULL) {
+	obj->death = 2;
 	obj->private = b_obj + mob_index(obj);
+	obj->flags |= O_PERSISTENT;
 	mob_fn(obj, &move_bee);
 	BEE(obj)->v_direction = 0;
-	obj->flags |= O_PERSISTENT;
 	BEE(obj)->dx = 0;
 	BEE(obj)->dy = 0;
     }
@@ -122,7 +123,7 @@ static Object *setup_bee(short x, short y, u16 life) {
 void emit_bee_block(u16 x) {
     for (u16 y = 0; y < 3; y++) {
 	for (u16 x = 0; x < 3; x++) {
-	    setup_bee(window + SCR_WIDTH + 16 * x + 12 * y, 168 + y * 16, 0);
+	    setup_bee(window + SCR_WIDTH + 16 * x + 12 * y, 168 + y * 16);
 	}
     }
 }
@@ -137,8 +138,9 @@ static void circling_bee(Object *obj) {
 
 static void emit_bee_circle(u16 x, u16 y, u16 offset, char dir) {
     for (u16 i = 0; i <= 96; i += 32) {
-	Object *bee = setup_bee(x + 96, y, i + offset);
+	Object *bee = setup_bee(x + 96, y);
 	mob_fn(bee, &circling_bee);
+	bee->life = i + offset;
 	bee->direction = dir;
     }
 }
@@ -150,7 +152,7 @@ void emit_bee_circles(u16 x) {
 }
 
 static void emit_static_bee(u16 x, u16 y, char dir) {
-    Object *bee = setup_bee(x, y, 0);
+    Object *bee = setup_bee(x, y);
     mob_fn(bee, &flip_bee);
     bee->direction = dir;
 }
@@ -226,7 +228,7 @@ void kick_xonix_bees(u16 x) {
 }
 
 static void emit_single_xonix_bee(u16 x, u16 y, char dir) {
-    Object *bee = setup_bee(x, y, 0);
+    Object *bee = setup_bee(x, y);
     mob_fn(bee, &diagonal_bee);
     BEE(bee)->v_direction = dir;
     bee->direction = -2;
@@ -252,7 +254,7 @@ static void piston_bee(Object *obj) {
 }
 
 static void emit_piston_bee(u16 x) {
-    Object *bee = setup_bee(x, SCR_HEIGHT - 20, 0);
+    Object *bee = setup_bee(x, SCR_HEIGHT - 20);
     mob_fn(bee, &piston_bee);
     bee->direction = 0;
 }
@@ -337,7 +339,7 @@ static void generate(Callback fn, u16 timeout, u16 cookie) {
 static Object *emit_bee_at_height(u16 y, u16 distance) {
     u16 x = window + SCR_WIDTH;
     if (prev == NULL || x - prev->x > distance) {
-	prev = setup_bee(x, y, 0);
+	prev = setup_bee(x, y);
 	return prev;
     }
     return NULL;
@@ -358,7 +360,7 @@ void emit_bee_alt(u16 y) {
     if (emit_bee_at_height(y, 40)) {
 	if (y == 200) {
 	    u16 x = window + SCR_WIDTH;
-	    setup_bee(x + 20, 148, 0);
+	    setup_bee(x + 20, 148);
 	}
 	y = 380 - y;
     }
@@ -403,7 +405,7 @@ void emit_bee_dive(u16 i) {
     Object *obj = emit_bee_at_height(y, 40);
     if (obj != NULL) {
 	BEE(obj)->v_direction = 1;
-	obj = setup_bee(obj->x, y + 40, 0);
+	obj = setup_bee(obj->x, y + 40);
 	BEE(obj)->v_direction = 1;
      }
     generate(&emit_bee_dive, 0, 0);
@@ -649,7 +651,7 @@ static void queen_fly_around(Object *obj) {
 static Object *emit_drone(Object *parent, char dx, char dy) {
     short x = parent->x - window;
     short y = parent->y - ON_SCREEN + 32;
-    Object *obj = setup_bee(x, y, 0);
+    Object *obj = setup_bee(x, y);
     if (obj != NULL) {
 	obj->direction = dx;
 	BEE(obj)->v_direction = dy;
