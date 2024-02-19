@@ -121,7 +121,9 @@ static void move_crab(Object *obj) {
     advance_obj(obj, 4, 12);
 
     if (small_mob_cycle(obj, 0, 0, 14)) {
-	obj->frame = ((obj->life >> 2) % 6);
+	if (obj->direction != 0) {
+	    obj->frame = ((obj->life >> 2) % 6);
+	}
 	palette = 3;
     }
 
