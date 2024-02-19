@@ -185,35 +185,44 @@
     (s-pop)))
 
 (defun watchtower-and-sentinel (distance)
-  (s-push (dune-platform :width distance))
+  (s-push (dune-platform :width (- distance 1)))
   (let ((offset (+ 2 (* 8 (- distance 2)))))
     (s-place offset 1 (watchtower))
     (s-inject "emit_sentinel" (+ 3 offset))
     (s-pop)))
+
+(defun stepping-platform (type)
+  (case type
+    (0 (single-bamboo-platform 3 1))
+    (1 (single-bamboo-platform 1 2 :side 1))
+    (2 (single-bamboo-platform 2 3 :side 1 :dmg '((nil 1) nil (4))))
+    (3 (single-bamboo-platform 4 2 :side 1 :dmg '((nil 2 nil 3))))))
 
 (defun beach-level ()
   (setf *seed* (* 1905 05 27))
   (join
    ;; PART1 watchtower with sentinel
    (watchtower-and-sentinel 8)
+   (stepping-platform 1)
 
-   ;; SANDBOX
-   (empty 3)
+   ;; PART2 collapsed-scaffold
    (collapsed-scaffold)
-   (empty 3)
+   (empty 1)
+   (stepping-platform 1)
+   (empty 1)
+   (stepping-platform 2)
+   (empty 1)
+   (stepping-platform 1)
+   (empty 1)
+
+   ;; PART3 bamboo stalks
    (bamboo-stalks :width 3)
-   (empty 1)
-   (single-bamboo-platform 1 2 :side 1)
-   (empty 1)
-   (single-bamboo-platform 2 3 :side 1 :dmg '((nil 1) nil (4)))
-   (empty 1)
-   (single-bamboo-platform 3 1)
-   (empty 1)
-   (single-bamboo-platform 4 2 :side 1 :dmg '((nil 2 nil 3)))
-   (empty 1)
-   (dune-platform :width 2 :type 4)
    (empty 2)
-   (dune-platform :width 2 :type 4)
+   (stepping-platform 0)
    (empty 2)
-   (dune-platform :width 10)
+   (stepping-platform 3)
+   (empty 2)
+
+   ;; ENDING
+   (inject (dune-platform :width 10) "level_done" 48)
    (empty 48)))
