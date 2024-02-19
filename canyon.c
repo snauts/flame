@@ -283,7 +283,7 @@ void emit_chasing_hoppers(u16 pos_x) {
 
 void emit_marta_platform_patrollers(u16 pos_x) {
     for (u16 y = 184; y >= 88; y -= 24) {
-	for (u16 x = 0; x <= 32; x += 16) {
+	for (u16 x = 0; x <= 32; x += 32) {
 	    u16 skew = y & BIT(3);
 	    u16 offset = pos_x + (skew ? 64 : 32);
 	    Object *mob = setup_hopper(offset + x, y);
