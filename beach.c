@@ -108,6 +108,7 @@ static void sea_rotate(u16 i) {
 typedef struct Crab {
     byte counter;
     byte rate;
+    byte hold;
 } Crab;
 
 Crab *c_obj;
@@ -145,22 +146,25 @@ static Object *setup_crab(short x, short y) {
 static void move_spit(Object *obj) {
     Sprite *sprite = obj->sprite;
     Object *parent = obj->private;
+    byte hold = CRAB(parent)->hold;
 
-    if (obj->life < 24) {
+    if (obj->life < hold) {
 	obj->x = parent->x + 4;
 	obj->y = parent->y - 4;
     }
     else {
-	if (obj->life == 24) {
+	if (obj->life == hold) {
 	    parent->frame = 2 - parent->frame;
 	    obj->direction = parent->frame != 0 ? -1 : 1;
 	}
-	obj->x += obj->direction;
-	advance_y(obj, 12);
+	if (is_small_mob_alive(obj)) {
+	    obj->x += obj->direction;
+	    advance_y(obj, 12);
+	}
     }
 
     if (mob_move(obj, 8)) {
-	obj->frame = obj->life < 24 ? 0 : ((obj->life >> 2) & 3);
+	obj->frame = obj->life < hold ? 0 : ((obj->life >> 2) & 3);
     }
 
     sprite->cfg = TILE(3, 313 + obj->frame);
@@ -190,6 +194,7 @@ void emit_sentinel(u16 x) {
     mob_fn(obj, &spit_crab);
     CRAB(obj)->counter = 40;
     CRAB(obj)->rate = 48;
+    CRAB(obj)->hold = 24;
     obj->direction = 0;
 }
 
