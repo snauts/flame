@@ -141,8 +141,35 @@ static Object *setup_crab(short x, short y) {
     return obj;
 }
 
+static void move_spit(Object *obj) {
+    Sprite *sprite = obj->sprite;
+
+    if (small_mob_cycle(obj, 0, 0, 8)) {
+	obj->frame = ((obj->life >> 2) & 3);
+    }
+
+    sprite->cfg = TILE(3, 313 + obj->frame);
+}
+
+static Object *setup_spit(Object *parent) {
+    Object *obj = setup_obj(parent->x + 4, parent->y - 4, SPRITE_SIZE(1, 1));
+    mob_fn(obj, &move_spit);
+    obj->flags |= O_PROJECTILE;
+    obj->private = parent;
+    obj->death = 4;
+    return obj;
+}
+
+static void spit_crab(Object *obj) {
+    if (obj->life == 128) {
+	setup_spit(obj);
+    }
+    move_crab(obj);
+}
+
 void emit_sentinel(u16 x) {
     Object *obj = setup_crab(x, 72);
+    mob_fn(obj, &spit_crab);
     obj->direction = 0;
 }
 
