@@ -181,37 +181,33 @@ static u16 should_mob_burn(Sprite *sprite) {
     return flame_collision(&r) != NULL;
 }
 
-static u16 should_small_mob_bite(Sprite *sprite, char dir) {
-    Rectangle r;
-    dir = 4 * (dir + 1);
-    r.x1 = sprite->x + 2 + dir;
-    r.y1 = sprite->y + 4;
-    r.x2 = sprite->x + 6 + dir;
-    r.y2 = sprite->y + 8;
-    return soldier_collision(&r);
-}
+const Rectangle bite_P = { x1:  3, y1:  3, x2:  5, y2:  5 };
+const Rectangle bite_L = { x1:  2, y1:  4, x2:  6, y2:  8 };
+const Rectangle bite_R = { x1: 10, y1:  4, x2: 14, y2:  8 };
 
-static u16 projectile_strike(Sprite *sprite) {
+static u16 mob_bite_box(Sprite *sprite, const Rectangle *ofs) {
     Rectangle r;
-    r.x1 = sprite->x + 3;
-    r.y1 = sprite->y + 3;
-    r.x2 = sprite->x + 5;
-    r.y2 = sprite->y + 5;
+    r.x1 = sprite->x + ofs->x1;
+    r.y1 = sprite->y + ofs->y1;
+    r.x2 = sprite->x + ofs->x2;
+    r.y2 = sprite->y + ofs->y2;
     return soldier_collision(&r);
 }
 
 static char mob_attack(Object *obj) {
     Sprite *sprite = obj->sprite;
     if (is_projectile(obj)) {
-	if (projectile_strike(sprite)) {
+	if (mob_bite_box(sprite, &bite_P)) {
 	    bite_soldier(sprite->x, sprite->y - 8);
 	    kill_small_mob(obj);
 	    return 0;
 	}
     }
-    else if (should_small_mob_bite(sprite, obj->direction)) {
-	u16 offset = 8 * (obj->direction + 1);
-	bite_soldier(sprite->x + offset, sprite->y - 2);
+    else if (obj->direction < 0 && mob_bite_box(sprite, &bite_L)) {
+	bite_soldier(sprite->x, sprite->y - 2);
+    }
+    else if (obj->direction > 0 && mob_bite_box(sprite, &bite_R)) {
+	bite_soldier(sprite->x + 16, sprite->y - 2);
     }
     return 1;
 }
