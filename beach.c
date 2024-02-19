@@ -153,7 +153,7 @@ static void move_spit(Object *obj) {
     else {
 	if (obj->life == 24) {
 	    parent->frame = 2 - parent->frame;
-	    obj->direction = parent->frame == 0 ? -1 : 1;
+	    obj->direction = parent->frame != 0 ? -1 : 1;
 	}
 	obj->x += obj->direction;
 	advance_y(obj, 12);
@@ -188,7 +188,7 @@ static void spit_crab(Object *obj) {
 void emit_sentinel(u16 x) {
     Object *obj = setup_crab(x, 72);
     mob_fn(obj, &spit_crab);
-    CRAB(obj)->counter = 0;
+    CRAB(obj)->counter = 40;
     CRAB(obj)->rate = 48;
     obj->direction = 0;
 }
