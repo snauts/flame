@@ -106,7 +106,7 @@ static void move_hopper(Object *obj) {
     obj->x += obj->direction;
     u16 land = advance_obj(obj, 4, 12);
 
-    if (small_mob_cycle(obj, 0, 0, 17)) {
+    if (mob_move(obj, 17)) {
 	if (land) {
 	    obj->frame = 3 + ((obj->life >> 2) % 6);
 	}

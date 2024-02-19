@@ -120,7 +120,7 @@ static void move_crab(Object *obj) {
     obj->x += obj->direction;
     advance_obj(obj, 4, 12);
 
-    if (small_mob_cycle(obj, 0, 0, 14)) {
+    if (mob_move(obj, 14)) {
 	if (obj->direction != 0) {
 	    obj->frame = ((obj->life >> 2) % 6);
 	}
@@ -144,7 +144,7 @@ static Object *setup_crab(short x, short y) {
 static void move_spit(Object *obj) {
     Sprite *sprite = obj->sprite;
 
-    if (small_mob_cycle(obj, 0, 0, 8)) {
+    if (mob_move(obj, 8)) {
 	obj->frame = ((obj->life >> 2) & 3);
     }
 
