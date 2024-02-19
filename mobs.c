@@ -200,17 +200,20 @@ static u16 projectile_strike(Sprite *sprite) {
     return soldier_collision(&r);
 }
 
-static void small_mob_attack(Object *obj) {
+static char mob_attack(Object *obj) {
     Sprite *sprite = obj->sprite;
     if (is_projectile(obj)) {
 	if (projectile_strike(sprite)) {
 	    bite_soldier(sprite->x, sprite->y - 8);
+	    kill_small_mob(obj);
+	    return 0;
 	}
     }
     else if (should_small_mob_bite(sprite, obj->direction)) {
 	u16 offset = 8 * (obj->direction + 1);
 	bite_soldier(sprite->x + offset, sprite->y - 2);
     }
+    return 1;
 }
 
 void mob_adjust_sprite_dir(Object *obj) {
@@ -341,8 +344,7 @@ char mob_cycle(Object *obj, u16 last_frame) {
 	kill_small_mob(obj);
     }
     else {
-	small_mob_attack(obj);
-	ret = 1;
+	ret = mob_attack(obj);
     }
 
     small_mob_end(obj, last_frame);
