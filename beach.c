@@ -184,7 +184,7 @@ static Object *setup_spit(Object *parent) {
 
 static void spit_crab(Object *obj) {
     CRAB(obj)->counter++;
-    if (CRAB(obj)->counter == CRAB(obj)->rate) {
+    if (CRAB(obj)->counter >= CRAB(obj)->rate) {
 	CRAB(obj)->spit = setup_spit(obj);
 	CRAB(obj)->counter = 0;
     }
