@@ -106,6 +106,7 @@ static void sea_rotate(u16 i) {
 }
 
 typedef struct Crab {
+    Object *spit;
     byte counter;
     byte rate;
     byte hold;
@@ -154,6 +155,7 @@ static void move_spit(Object *obj) {
     }
     else {
 	if (obj->life == hold) {
+	    CRAB(parent)->spit = NULL;
 	    parent->frame = 2 - parent->frame;
 	    obj->direction = parent->frame != 0 ? -1 : 1;
 	}
@@ -183,8 +185,8 @@ static Object *setup_spit(Object *parent) {
 static void spit_crab(Object *obj) {
     CRAB(obj)->counter++;
     if (CRAB(obj)->counter == CRAB(obj)->rate) {
+	CRAB(obj)->spit = setup_spit(obj);
 	CRAB(obj)->counter = 0;
-	setup_spit(obj);
     }
     move_crab(obj);
 }
