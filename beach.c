@@ -139,9 +139,9 @@ static Object *setup_crab(short x, short y) {
     return obj;
 }
 
-void emit_crabs(u16 i) {
-    setup_crab(window + SCR_WIDTH, 128);
-    schedule(&emit_crabs, 32);
+void emit_sentinel(u16 x) {
+    Object *obj = setup_crab(x, 72);
+    obj->direction = 0;
 }
 
 static void display_nippon(Function prepare_level) {

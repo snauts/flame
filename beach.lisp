@@ -81,8 +81,11 @@
     (5 '((190 #x0) (189 #x0)))
     (6 '((#x0 #x0) (#x0 #x0)))))
 
+(defun beach-map (map)
+  (for-all (transpone map) #'beach-tile))
+
 (defun latice-damage (type)
-  (for-all (transpone (select-damage type)) #'beach-tile))
+  (beach-map (select-damage type)))
 
 (defun bamboo-damage (dmg)
   (let ((y 1))
@@ -174,13 +177,29 @@
   (s-place 17 3 (beach-rocks 11 5 12 7))
   (s-pop))
 
+(defun watchtower ()
+  (let ((dmg '(nil (2) nil nil (4) nil nil (3) nil nil (nil 5))))
+    (s-push (beach-rocks  8 7 16 8))
+    (s-place 0 1 (single-bamboo-platform 1 8 :side 1 :dmg dmg))
+    (s-place 0 1 (beach-map '((181 nil 179 191 183 187 nil 189))))
+    (s-pop)))
+
+(defun watchtower-and-sentinel (distance)
+  (s-push (dune-platform :width distance))
+  (let ((offset (+ 2 (* 8 (- distance 2)))))
+    (s-place offset 1 (watchtower))
+    (s-inject "emit_sentinel" (+ 3 offset))
+    (s-pop)))
+
 (defun beach-level ()
   (setf *seed* (* 1905 05 27))
   (join
-   (dune-platform :width 2)
+   ;; PART1 watchtower with sentinel
+   (watchtower-and-sentinel 8)
+
+   ;; SANDBOX
    (empty 3)
    (collapsed-scaffold)
-   (trigger "emit_crabs")
    (empty 3)
    (bamboo-stalks :width 3)
    (empty 1)
