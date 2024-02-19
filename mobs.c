@@ -155,6 +155,10 @@ static inline u16 is_persistent(Object *obj) {
     return obj->flags & O_PERSISTENT;
 }
 
+static inline u16 is_projectile(Object *obj) {
+    return obj->flags & O_PROJECTILE;
+}
+
 static void small_mob_end(Object *obj, u16 last_frame) {
     Sprite *sprite = obj->sprite;
     if (obj->frame >= last_frame) {
@@ -168,7 +172,7 @@ static void small_mob_end(Object *obj, u16 last_frame) {
     }
 }
 
-u16 should_small_mob_burn(Sprite *sprite) {
+static u16 should_mob_burn(Sprite *sprite) {
     Rectangle r;
     r.x1 = sprite->x + 4;
     r.y1 = sprite->y + 4;
@@ -187,7 +191,7 @@ static u16 should_small_mob_bite(Sprite *sprite, char dir) {
     return soldier_collision(&r);
 }
 
-void small_mob_attack(Object *obj) {
+static void small_mob_attack(Object *obj) {
     Sprite *sprite = obj->sprite;
     if (should_small_mob_bite(sprite, obj->direction)) {
 	u16 offset = 8 * (obj->direction + 1);
@@ -323,7 +327,7 @@ char small_mob_cycle(Object *obj, char dx, char dy, u16 last_frame) {
     if (!is_small_mob_alive(obj)) {
 	if ((obj->life & 3) == 0) obj->frame++;
     }
-    else if (should_small_mob_burn(sprite)) {
+    else if (!is_projectile(obj) && should_mob_burn(sprite)) {
 	kill_small_mob(obj);
     }
     else {

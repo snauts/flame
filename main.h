@@ -74,6 +74,7 @@ typedef struct Object {
 } Object;
 
 #define O_PERSISTENT	BIT(0)
+#define O_PROJECTILE	BIT(1)
 
 typedef void(*Callback)(u16);
 typedef void(*Function)(void);
@@ -233,9 +234,7 @@ Object *setup_obj(short x, short y, byte size);
 void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n);
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip);
 char small_mob_cycle(Object *obj, char dx, char dy, u16 last_frame);
-u16 should_small_mob_burn(Sprite *sprite);
 void mob_adjust_sprite_dir(Object *obj);
-void small_mob_attack(Object *obj);
 void setup_burns(u16 count, u16 tiles);
 void flame_burn(Object *obj, u16 i);
 char is_small_mob_alive(Object *obj);
