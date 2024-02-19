@@ -209,6 +209,7 @@ void update_height_map(u16 pos_x);
 void update_window(short direction);
 void paint_background(u16, u16, u16, u16, u16, u16);
 u16 get_snap(u16 pos_x, u16 prev, u16 next);
+void error(const char *str);
 void reset_window(void);
 void level_scroll(void);
 u16 is_rightmost(void);

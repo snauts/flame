@@ -28,10 +28,6 @@ short clamp(short value, short max) {
     }
 }
 
-static void addr_VDP(u32 flags, u16 addr) {
-    LONG(VDP_CTRL) = VDP_CTRL_VALUE(flags, addr);
-}
-
 static void tmss(void) {
     if ((BYTE(HW_VER) & 0xf) != 0) {
 	LONG(TMSS_ADDR) = 0x53454741; /* "SEGA" */
@@ -330,16 +326,6 @@ static void setup_game(void) {
     wait_vblank_done();
 }
 
-static void alert(u16 color) {
-    u16 i;
-    for (;;) {
-	addr_VDP(VDP_CRAM_WRITE, 0);
-	for (i = 0; i < 64; i++) {
-	    WORD(VDP_DATA) = color;
-	}
-    }
-}
-
 static u16 vram_idx;
 static u32 vram_addr[VRAM_BUF_SIZE];
 static u16 vram_data[VRAM_BUF_SIZE];
@@ -359,7 +345,7 @@ void switch_frame(Function fn) {
 }
 
 static void panic_on_draw(void) {
-    if (!is_vblank()) alert(7 << 1);
+    if (!is_vblank()) error("VBLANK");
 }
 
 static void transfer_to_VRAM(void) {

@@ -325,3 +325,19 @@ static void hiroshi_text(void) {
 void announce_hiroshi(void) {
     announcement(&hiroshi_text);
 }
+
+const char *error_str;
+static void error_text(void) {
+    display_text("ERROR:", 2, 0);
+    display_text(error_str, 9, 0);
+}
+
+static void display_error(void) {
+    simple_screen(&error_text, 4, 0);
+}
+
+void error(const char *str) {
+    error_str = str;
+    upload_palette(8);
+    switch_frame(display_error);
+}
