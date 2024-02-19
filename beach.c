@@ -106,7 +106,8 @@ static void sea_rotate(u16 i) {
 }
 
 typedef struct Crab {
-    short spit;
+    byte counter;
+    byte rate;
 } Crab;
 
 Crab *c_obj;
@@ -143,25 +144,42 @@ static Object *setup_crab(short x, short y) {
 
 static void move_spit(Object *obj) {
     Sprite *sprite = obj->sprite;
+    Object *parent = obj->private;
+
+    if (obj->life < 24) {
+	obj->x = parent->x + 4;
+	obj->y = parent->y - 4;
+    }
+    else {
+	if (obj->life == 24) {
+	    parent->frame = 2 - parent->frame;
+	    obj->direction = parent->frame == 0 ? -1 : 1;
+	}
+	obj->x += obj->direction;
+	advance_y(obj, 12);
+    }
 
     if (mob_move(obj, 8)) {
-	obj->frame = ((obj->life >> 2) & 3);
+	obj->frame = obj->life < 24 ? 0 : ((obj->life >> 2) & 3);
     }
 
     sprite->cfg = TILE(3, 313 + obj->frame);
 }
 
 static Object *setup_spit(Object *parent) {
-    Object *obj = setup_obj(parent->x + 4, parent->y - 4, SPRITE_SIZE(1, 1));
+    Object *obj = setup_obj(0, 0, SPRITE_SIZE(1, 1));
     mob_fn(obj, &move_spit);
     obj->flags |= O_PROJECTILE;
     obj->private = parent;
+    obj->velocity = 2;
     obj->death = 4;
     return obj;
 }
 
 static void spit_crab(Object *obj) {
-    if (obj->life == 128) {
+    CRAB(obj)->counter++;
+    if (CRAB(obj)->counter == CRAB(obj)->rate) {
+	CRAB(obj)->counter = 0;
 	setup_spit(obj);
     }
     move_crab(obj);
@@ -170,6 +188,8 @@ static void spit_crab(Object *obj) {
 void emit_sentinel(u16 x) {
     Object *obj = setup_crab(x, 72);
     mob_fn(obj, &spit_crab);
+    CRAB(obj)->counter = 0;
+    CRAB(obj)->rate = 48;
     obj->direction = 0;
 }
 
