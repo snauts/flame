@@ -148,20 +148,20 @@ static u16 is_small_mob_off_screen(Sprite *sprite) {
 	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
 }
 
+static inline u16 is_persistent(Object *obj) {
+    return obj->flags & O_PERSISTENT;
+}
+
 static void small_mob_end(Object *obj, u16 last_frame) {
     Sprite *sprite = obj->sprite;
     if (obj->frame >= last_frame) {
 	free_mob(obj);
     }
+    else if (is_persistent(obj) && sprite->x >= MAX_POSITION) {
+	sprite->x = sprite->y = 1;
+    }
     else if (is_small_mob_off_screen(sprite)) {
-	byte persistent = (obj->flags & O_PERSISTENT);
-	if (persistent && sprite->x >= MAX_POSITION) {
-	    sprite->x = 1;
-	    sprite->y = 1;
-	}
-	else {
-	    free_mob(obj);
-	}
+	free_mob(obj);
     }
 }
 
