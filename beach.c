@@ -145,6 +145,10 @@ static Object *setup_crab(short x, short y) {
     return obj;
 }
 
+static inline u16 spittle_animation(u16 life, u16 hold) {
+    return (life < hold) ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
+}
+
 static void move_spit(Object *obj) {
     Sprite *sprite = obj->sprite;
     Object *parent = obj->private;
@@ -159,8 +163,8 @@ static void move_spit(Object *obj) {
 	CRAB(parent)->throw(obj, life == hold);
     }
 
-    if (mob_move(obj, 8)) {
-	obj->frame = life < hold ? 0 : ((life >> 2) & 3);
+    if (mob_move(obj, 12)) {
+	obj->frame = spittle_animation(life, hold);
     }
 
     sprite->cfg = TILE(3, 313 + obj->frame);
@@ -172,7 +176,7 @@ static Object *setup_spit(Object *parent) {
     obj->flags |= O_PROJECTILE;
     obj->private = parent;
     obj->velocity = 2;
-    obj->death = 4;
+    obj->death = 8;
     return obj;
 }
 
