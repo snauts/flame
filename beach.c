@@ -288,7 +288,6 @@ static void display_nippon(Function prepare_level) {
     switch_frame(&update_game);
 
     c_obj = malloc(sizeof(Crab) * MAX_MOBS);
-    emit_crab_squad(256);
 }
 
 void display_beach(void) {
