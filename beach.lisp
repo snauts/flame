@@ -182,6 +182,12 @@
     (s-push (beach-rocks  8 7 16 8))
     (s-place 0 1 (single-bamboo-platform 1 8 :side 1 :dmg dmg))
     (s-place 0 1 (beach-map '((181 nil 179 191 183 187 nil 189))))
+    (s-place 7 7 (bamboo-platform :width 0))
+    (s-place 5 3 (diagonal-stick 3))
+    (s-place 5 3 (beach-cell 144))
+    (s-place 5 4 (beach-cell 188))
+    (s-place 8 6 (beach-cell 167 :h 1))
+    (s-place 9 6 (beach-cell 143 :h 1))
     (s-pop)))
 
 (defun watchtower-and-sentinel (distance)
