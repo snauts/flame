@@ -106,7 +106,7 @@ static void sea_rotate(u16 i) {
 }
 
 typedef struct Crab {
-    void (*throw)(Object *obj, byte detach);
+    void (*throw)(Object *obj);
     Object *spit;
     byte counter;
     byte rate;
@@ -116,6 +116,13 @@ typedef struct Crab {
 Crab *c_obj;
 
 #define CRAB(obj) ((Crab *) (obj->private))
+
+static void spit_cleanup(Crab *crab) {
+    if (crab->spit != NULL) {
+	kill_small_mob(crab->spit);
+	crab->spit = NULL;
+    }
+}
 
 static void move_crab(Object *obj) {
     u16 palette = 2;
@@ -129,6 +136,9 @@ static void move_crab(Object *obj) {
 	    obj->frame = ((obj->life >> 2) % 6);
 	}
 	palette = 3;
+    }
+    else {
+	spit_cleanup(CRAB(obj));
     }
 
     sprite->cfg = TILE(palette, 257 + 4 * obj->frame);
@@ -145,29 +155,47 @@ static Object *setup_crab(short x, short y) {
     return obj;
 }
 
-static inline u16 spittle_animation(u16 life, u16 hold) {
-    return (life < hold) ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
+static inline u16 spittle_animation(u16 life, Object *parent) {
+    return parent ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
+}
+
+static void throw_LR(Object *obj) {
+    Object *parent = obj->private;
+    parent->frame = 2 - parent->frame;
+    obj->direction = parent->frame != 0 ? -1 : 1;
+}
+
+static void throw_spittle(Object *obj) {
+    Object *parent = obj->private;
+    if (parent != NULL) {
+	Crab *crab = CRAB(parent);
+	crab->throw(obj);
+	crab->spit = NULL;
+	obj->private = NULL;
+    }
+    else {
+	obj->x += obj->direction;
+	advance_y(obj, 12);
+    }
 }
 
 static void move_spit(Object *obj) {
-    Sprite *sprite = obj->sprite;
     Object *parent = obj->private;
-    u16 hold = CRAB(parent)->hold;
     u16 life = obj->life;
 
-    if (life < hold) {
+    if (parent && life < CRAB(parent)->hold) {
 	obj->x = parent->x + 4;
 	obj->y = parent->y - 4;
     }
-    else {
-	CRAB(parent)->throw(obj, life == hold);
+    else if (is_small_mob_alive(obj)) {
+	throw_spittle(obj);
     }
 
     if (mob_move(obj, 12)) {
-	obj->frame = spittle_animation(life, hold);
+	obj->frame = spittle_animation(life, parent);
     }
 
-    sprite->cfg = TILE(3, 313 + obj->frame);
+    obj->sprite->cfg = TILE(3, 313 + obj->frame);
 }
 
 static Object *setup_spit(Object *parent) {
@@ -189,27 +217,29 @@ static void spit_crab(Object *obj) {
     move_crab(obj);
 }
 
-static void left_right(Object *obj, byte detach) {
-    Object *parent = obj->private;
-    if (detach) {
-	obj->direction = parent->frame == 0 ? -1 : 1;
-	parent->frame = 2 - parent->frame;
-	CRAB(parent)->spit = NULL;
-    }
-    if (is_small_mob_alive(obj)) {
-	obj->x += obj->direction;
-	advance_y(obj, 12);
-    }
-}
-
 void emit_sentinel(u16 x) {
     Object *obj = setup_crab(x, 72);
     mob_fn(obj, &spit_crab);
-    CRAB(obj)->throw = &left_right;
+    CRAB(obj)->throw = &throw_LR;
     CRAB(obj)->counter = 40;
     CRAB(obj)->rate = 48;
     CRAB(obj)->hold = 24;
     obj->direction = 0;
+}
+
+void emit_crab_squad(u16 x) {
+    byte cnt = 40;
+    for (u16 i = 0; i < 6; i++) {
+	Object *obj = setup_crab(x, 216);
+	mob_fn(obj, &spit_crab);
+	CRAB(obj)->throw = &throw_LR;
+	CRAB(obj)->counter = cnt;
+	CRAB(obj)->rate = 48;
+	CRAB(obj)->hold = 24;
+	obj->direction = 0;
+	cnt -= 4;
+	x += 18;
+    }
 }
 
 static void display_nippon(Function prepare_level) {
