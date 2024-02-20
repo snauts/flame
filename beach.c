@@ -112,6 +112,7 @@ typedef struct Crab {
     byte force;
     byte rate;
     byte hold;
+    u16 pA, pB;
 } Crab;
 
 Crab *c_obj;
@@ -220,7 +221,9 @@ static void spit_crab(Object *obj) {
     Crab *crab = CRAB(obj);
     crab->counter++;
     if (is_mob_alive(obj) && crab->counter >= crab->rate) {
-	crab->spit = setup_spit(obj);
+	if (crab->spit == NULL) {
+	    crab->spit = setup_spit(obj);
+	}
 	crab->counter = 0;
     }
     move_crab(obj);
@@ -233,6 +236,17 @@ static void sentinel_crab(Object *obj) {
 	obj->direction = 1;
 	spit_cleanup(obj);
     }
+}
+
+static void patrol_crab(Object *obj) {
+    Crab *crab = CRAB(obj);
+    if (obj->x <= crab->pA) {
+	obj->direction = 1;
+    }
+    else if (obj->x >= crab->pB) {
+	obj->direction = -1;
+    }
+    spit_crab(obj);
 }
 
 static Crab *emit_spiter(u16 x, u16 y, Operator updater) {
