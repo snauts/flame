@@ -78,6 +78,7 @@ typedef struct Object {
 
 typedef void(*Callback)(u16);
 typedef void(*Function)(void);
+typedef void(*Operator)(Object *);
 
 typedef struct Trigger {
     u16 distance;

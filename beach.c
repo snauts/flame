@@ -225,16 +225,24 @@ static void spit_crab(Object *obj) {
     move_crab(obj);
 }
 
-static Crab *emit_spiter(u16 x, u16 y) {
+static void sentinel_crab(Object *obj) {
+    spit_crab(obj);
+    if (obj->sprite->x == ON_SCREEN) {
+	mob_fn(obj, &move_crab);
+	obj->direction = 1;
+    }
+}
+
+static Crab *emit_spiter(u16 x, u16 y, Operator updater) {
     Object *obj = setup_crab(x, y);
-    mob_fn(obj, &spit_crab);
+    mob_fn(obj, updater);
     CRAB(obj)->hold = 24;
     obj->direction = 0;
     return CRAB(obj);
 }
 
 void emit_sentinel(u16 x) {
-    Crab *crab = emit_spiter(x, 72);
+    Crab *crab = emit_spiter(x, 72, &sentinel_crab);
     crab->throw = &sentinel_throw;
     crab->counter = 40;
     crab->force = 2;
@@ -242,7 +250,7 @@ void emit_sentinel(u16 x) {
 }
 
 static void emit_squad_member(u16 x, u16 i) {
-    Crab *crab = emit_spiter(x, 216);
+    Crab *crab = emit_spiter(x, 216, &spit_crab);
     crab->throw = &left_throw;
     crab->counter = 40 - (i << 2);
     crab->force = 3;
