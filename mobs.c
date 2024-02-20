@@ -204,10 +204,10 @@ static char mob_attack(Object *obj) {
 	}
     }
     else if (obj->direction <= 0 && mob_bite_box(sprite, &bite_L)) {
-	bite_soldier(sprite->x, sprite->y - 2);
+	bite_soldier(sprite->x, sprite->y - 6);
     }
     else if (obj->direction >= 0 && mob_bite_box(sprite, &bite_R)) {
-	bite_soldier(sprite->x + 16, sprite->y - 2);
+	bite_soldier(sprite->x + 12, sprite->y - 6);
     }
     return 1;
 }
