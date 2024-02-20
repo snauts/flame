@@ -222,7 +222,7 @@
    (empty 1)
 
    ;; PART3 bamboo stalks
-   (bamboo-stalks :width 3)
+   (inject (bamboo-stalks :width 3) "emit_stalk_patrol" 1)
    (empty 2)
    (stepping-platform 0)
    (empty 2)

@@ -297,6 +297,14 @@ static void emit_patrol_crab(u16 x, u16 y, char dir, u16 pA, u16 pB) {
     crab->pB = pB;
 }
 
+void emit_stalk_patrol(u16 x) {
+    for (u16 i = 0; i < 5; i++) {
+	u16 w = i * 20;
+	emit_patrol_crab(x + w, 216, 1, x, x + 192);
+	emit_patrol_crab(x + 192 - w, 216, -1, x, x + 192);
+    }
+}
+
 void emit_crab_squad(u16 x) {
     for (u16 i = 0; i < 6; i++) {
 	emit_squad_member(x, i);
