@@ -145,8 +145,7 @@ void cancel_timer(Callback fn) {
 }
 
 static u16 is_mob_off_screen(Sprite *sprite) {
-    return sprite->x >= MAX_POSITION
-	|| sprite->y < ON_SCREEN - 32
+    return sprite->y < ON_SCREEN - 32
 	|| sprite->x < ON_SCREEN - 16
 	|| sprite->y > ON_SCREEN + SCR_HEIGHT;
 }
@@ -159,16 +158,22 @@ static inline u16 is_projectile(Object *obj) {
     return obj->flags & O_PROJECTILE;
 }
 
-static void mob_end(Object *obj, u16 last_frame) {
-    Sprite *sprite = obj->sprite;
-    if (obj->frame >= last_frame) {
-	free_mob(obj);
-    }
-    else if (is_persistent(obj) && sprite->x >= MAX_POSITION) {
+static void too_far_right(Object *obj, Sprite *sprite) {
+    if (is_persistent(obj)) {
 	sprite->x = sprite->y = 1;
     }
-    else if (is_mob_off_screen(sprite)) {
+    else {
 	free_mob(obj);
+    }
+}
+
+static void mob_end(Object *obj, u16 last_frame) {
+    Sprite *sprite = obj->sprite;
+    if (obj->frame >= last_frame || is_mob_off_screen(sprite)) {
+	free_mob(obj);
+    }
+    else if (sprite->x >= MAX_POSITION) {
+	too_far_right(obj, sprite);
     }
 }
 
