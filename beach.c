@@ -106,7 +106,7 @@ static void sea_rotate(u16 i) {
 }
 
 typedef struct Crab {
-    void (*throw)(Object *obj);
+    char (*throw)(Object *obj);
     Object *spit;
     byte counter;
     byte force;
@@ -162,23 +162,28 @@ static inline u16 spittle_animation(u16 life, Object *parent) {
     return parent ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
 }
 
-static void sentinel_throw(Object *obj) {
+static char sentinel_throw(Object *obj) {
     Object *parent = obj->private;
     parent->frame = 2 - parent->frame;
     obj->direction = parent->frame != 0 ? -1 : 1;
+    return 1;
 }
 
-static void left_throw(Object *obj) {
+static char left_throw(Object *obj) {
     obj->direction = -1;
+    return 1;
 }
 
-static void throw_spittle(Object *obj) {
-    Object *parent = obj->private;
+static void throw_spittle(Object *obj, Object *parent) {
     if (parent != NULL) {
+	obj->x = parent->x + 4;
+	obj->y = parent->y - 4;
+
 	Crab *crab = CRAB(parent);
-	crab->throw(obj);
-	crab->spit = NULL;
-	obj->private = NULL;
+	if (obj->life >= crab->hold && crab->throw(obj)) {
+	    obj->private = NULL;
+	    crab->spit = NULL;
+	}
     }
     else {
 	obj->x += obj->direction;
@@ -188,18 +193,13 @@ static void throw_spittle(Object *obj) {
 
 static void move_spit(Object *obj) {
     Object *parent = obj->private;
-    u16 life = obj->life;
 
-    if (parent && life < CRAB(parent)->hold) {
-	obj->x = parent->x + 4;
-	obj->y = parent->y - 4;
-    }
-    else if (is_mob_alive(obj)) {
-	throw_spittle(obj);
+    if (is_mob_alive(obj)) {
+	throw_spittle(obj, parent);
     }
 
     if (mob_move(obj, 12)) {
-	obj->frame = spittle_animation(life, parent);
+	obj->frame = spittle_animation(obj->life, parent);
     }
 
     obj->sprite->cfg = TILE(3, 313 + obj->frame);
