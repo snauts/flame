@@ -150,6 +150,7 @@ static Object *setup_crab(short x, short y) {
     mob_fn(obj, &move_crab);
 
     obj->private = c_obj + mob_index(obj);
+    obj->flags |= O_PERSISTENT;
     obj->death = 6;
 
     return obj;

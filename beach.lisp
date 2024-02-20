@@ -206,7 +206,7 @@
    (stepping-platform 1)
 
    ;; PART2 collapsed-scaffold
-   (collapsed-scaffold)
+   (inject (collapsed-scaffold) "emit_crab_squad" 4)
    (empty 1)
    (stepping-platform 1)
    (empty 1)
