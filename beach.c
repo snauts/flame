@@ -109,6 +109,7 @@ typedef struct Crab {
     void (*throw)(Object *obj);
     Object *spit;
     byte counter;
+    byte force;
     byte rate;
     byte hold;
 } Crab;
@@ -201,10 +202,11 @@ static void move_spit(Object *obj) {
 
 static Object *setup_spit(Object *parent) {
     Object *obj = setup_obj(0, 0, SPRITE_SIZE(1, 1));
+    Crab *crab = CRAB(parent);
     mob_fn(obj, &move_spit);
     obj->flags |= O_PROJECTILE;
     obj->private = parent;
-    obj->velocity = 2;
+    obj->velocity = crab->force;
     obj->death = 8;
     return obj;
 }
@@ -218,27 +220,24 @@ static void spit_crab(Object *obj) {
     move_crab(obj);
 }
 
-void emit_sentinel(u16 x) {
-    Object *obj = setup_crab(x, 72);
+static void emit_LR_spiter(u16 x, u16 y, byte force, byte counter) {
+    Object *obj = setup_crab(x, y);
     mob_fn(obj, &spit_crab);
     CRAB(obj)->throw = &throw_LR;
-    CRAB(obj)->counter = 40;
+    CRAB(obj)->counter = counter;
+    CRAB(obj)->force = force;
     CRAB(obj)->rate = 48;
     CRAB(obj)->hold = 24;
     obj->direction = 0;
 }
 
+void emit_sentinel(u16 x) {
+    emit_LR_spiter(x, 72, 2, 40);
+}
+
 void emit_crab_squad(u16 x) {
-    byte cnt = 40;
     for (u16 i = 0; i < 6; i++) {
-	Object *obj = setup_crab(x, 216);
-	mob_fn(obj, &spit_crab);
-	CRAB(obj)->throw = &throw_LR;
-	CRAB(obj)->counter = cnt;
-	CRAB(obj)->rate = 48;
-	CRAB(obj)->hold = 24;
-	obj->direction = 0;
-	cnt -= 4;
+	emit_LR_spiter(x, 216, 4, 40 - (i << 2));
 	x += 18;
     }
 }
