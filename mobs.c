@@ -144,7 +144,7 @@ void cancel_timer(Callback fn) {
     }
 }
 
-static u16 is_small_mob_off_screen(Sprite *sprite) {
+static u16 is_mob_off_screen(Sprite *sprite) {
     return sprite->x >= MAX_POSITION
 	|| sprite->y < ON_SCREEN - 32
 	|| sprite->x < ON_SCREEN - 16
@@ -159,7 +159,7 @@ static inline u16 is_projectile(Object *obj) {
     return obj->flags & O_PROJECTILE;
 }
 
-static void small_mob_end(Object *obj, u16 last_frame) {
+static void mob_end(Object *obj, u16 last_frame) {
     Sprite *sprite = obj->sprite;
     if (obj->frame >= last_frame) {
 	free_mob(obj);
@@ -167,7 +167,7 @@ static void small_mob_end(Object *obj, u16 last_frame) {
     else if (is_persistent(obj) && sprite->x >= MAX_POSITION) {
 	sprite->x = sprite->y = 1;
     }
-    else if (is_small_mob_off_screen(sprite)) {
+    else if (is_mob_off_screen(sprite)) {
 	free_mob(obj);
     }
 }
@@ -199,7 +199,7 @@ static char mob_attack(Object *obj) {
     if (is_projectile(obj)) {
 	if (mob_bite_box(sprite, &bite_P)) {
 	    bite_soldier(sprite->x, sprite->y - 8);
-	    kill_small_mob(obj);
+	    kill_mob(obj);
 	    return 0;
 	}
     }
@@ -320,12 +320,12 @@ Object *setup_obj(short x, short y, byte size) {
     return obj;
 }
 
-void kill_small_mob(Object *obj) {
+void kill_mob(Object *obj) {
     obj->frame = obj->death;
     perish_sfx();
 }
 
-char is_small_mob_alive(Object *obj) {
+char is_mob_alive(Object *obj) {
     return obj->frame < obj->death;
 }
 
@@ -333,17 +333,17 @@ char mob_cycle(Object *obj, u16 last_frame) {
     char alive = 0;
     obj->life++;
 
-    if (!is_small_mob_alive(obj)) {
+    if (!is_mob_alive(obj)) {
 	if ((obj->life & 3) == 0) obj->frame++;
     }
     else if (!is_projectile(obj) && should_mob_burn(obj->sprite)) {
-	kill_small_mob(obj);
+	kill_mob(obj);
     }
     else {
 	alive = mob_attack(obj);
     }
 
-    small_mob_end(obj, last_frame);
+    mob_end(obj, last_frame);
     return alive && obj->place >= 0;
 }
 

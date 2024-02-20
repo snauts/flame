@@ -271,7 +271,7 @@ void emit_bee_upstream(u16 pos_x) {
 }
 
 void level_done_burn_bees(void) {
-    apply_to_all_mobs(&kill_small_mob);
+    apply_to_all_mobs(&kill_mob);
     void level_done(u16);
     level_done(0);
 }
@@ -606,7 +606,7 @@ static void dying_update(Object *obj) {
 
 static void burn_drones(Object *obj) {
     if (obj->private != NULL) {
-	kill_small_mob(obj);
+	kill_mob(obj);
     }
 }
 

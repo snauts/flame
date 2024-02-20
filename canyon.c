@@ -120,7 +120,7 @@ static void move_hopper(Object *obj) {
 }
 
 static void jump_hopper(Object *obj, u16(*jump_condition)(Object *)) {
-    if (is_small_mob_alive(obj) && jump_condition(obj)) {
+    if (is_mob_alive(obj) && jump_condition(obj)) {
 	obj->velocity = HOPPER(obj)->jump_amount;
     }
     move_hopper(obj);
@@ -328,7 +328,7 @@ static void chasing_swarm(u16 info) {
 	callback(&chasing_swarm, 0, (mob_index(mob) << 8) | n);
     }
     else if (mob->place >= 0) {
-	kill_small_mob(mob);
+	kill_mob(mob);
     }
 }
 

@@ -238,8 +238,8 @@ char mob_move(Object *obj, u16 last_frame);
 void mob_adjust_sprite_dir(Object *obj);
 void setup_burns(u16 count, u16 tiles);
 void flame_burn(Object *obj, u16 i);
-char is_small_mob_alive(Object *obj);
-void kill_small_mob(Object *obj);
+char is_mob_alive(Object *obj);
+void kill_mob(Object *obj);
 void init_burn(Object *obj);
 void free_burns(void);
 

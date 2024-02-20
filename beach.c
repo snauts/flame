@@ -119,7 +119,7 @@ Crab *c_obj;
 
 static void spit_cleanup(Crab *crab) {
     if (crab->spit != NULL) {
-	kill_small_mob(crab->spit);
+	kill_mob(crab->spit);
 	crab->spit = NULL;
     }
 }
@@ -187,7 +187,7 @@ static void move_spit(Object *obj) {
 	obj->x = parent->x + 4;
 	obj->y = parent->y - 4;
     }
-    else if (is_small_mob_alive(obj)) {
+    else if (is_mob_alive(obj)) {
 	throw_spittle(obj);
     }
 
@@ -288,6 +288,7 @@ static void display_nippon(Function prepare_level) {
     switch_frame(&update_game);
 
     c_obj = malloc(sizeof(Crab) * MAX_MOBS);
+    emit_crab_squad(256);
 }
 
 void display_beach(void) {
