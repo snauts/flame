@@ -240,13 +240,17 @@ void emit_sentinel(u16 x) {
     crab->rate = 48;
 }
 
+static void emit_squad_member(u16 x, u16 i) {
+    Crab *crab = emit_spiter(x, 216);
+    crab->throw = &left_throw;
+    crab->counter = 40 - (i << 2);
+    crab->force = 4;
+    crab->rate = 96;
+}
+
 void emit_crab_squad(u16 x) {
     for (u16 i = 0; i < 6; i++) {
-	Crab *crab = emit_spiter(x, 216);
-	crab->throw = &left_throw;
-	crab->counter = 40 - (i << 2);
-	crab->force = 4;
-	crab->rate = 96;
+	emit_squad_member(x, i);
 	x += 18;
     }
 }
