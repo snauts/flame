@@ -216,10 +216,11 @@ static Object *setup_spit(Object *parent) {
 }
 
 static void spit_crab(Object *obj) {
-    CRAB(obj)->counter++;
-    if (CRAB(obj)->counter >= CRAB(obj)->rate) {
-	CRAB(obj)->spit = setup_spit(obj);
-	CRAB(obj)->counter = 0;
+    Crab *crab = CRAB(obj);
+    crab->counter++;
+    if (is_mob_alive(obj) && crab->counter >= crab->rate) {
+	crab->spit = setup_spit(obj);
+	crab->counter = 0;
     }
     move_crab(obj);
 }
@@ -244,7 +245,7 @@ static void emit_squad_member(u16 x, u16 i) {
     Crab *crab = emit_spiter(x, 216);
     crab->throw = &left_throw;
     crab->counter = 40 - (i << 2);
-    crab->force = 4;
+    crab->force = 3;
     crab->rate = 96;
 }
 
