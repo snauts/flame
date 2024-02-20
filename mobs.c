@@ -330,7 +330,7 @@ char is_small_mob_alive(Object *obj) {
 }
 
 char mob_cycle(Object *obj, u16 last_frame) {
-    char ret = 0;
+    char alive = 0;
     obj->life++;
 
     if (!is_small_mob_alive(obj)) {
@@ -340,11 +340,11 @@ char mob_cycle(Object *obj, u16 last_frame) {
 	kill_small_mob(obj);
     }
     else {
-	ret = mob_attack(obj);
+	alive = mob_attack(obj);
     }
 
     small_mob_end(obj, last_frame);
-    return ret;
+    return alive && obj->place >= 0;
 }
 
 char mob_move(Object *obj, u16 last_frame) {
