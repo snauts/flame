@@ -46,7 +46,7 @@ Object *alloc_mob(void) {
 	obj = &mob->obj;
     }
     else {
-	error("MOB-POLL-FULL");
+	error("MOB-POOL-FULL");
     }
     return obj;
 }
@@ -181,7 +181,7 @@ static u16 should_mob_burn(Sprite *sprite) {
     return flame_collision(&r) != NULL;
 }
 
-const Rectangle bite_P = { x1:  3, y1:  3, x2:  5, y2:  5 };
+const Rectangle bite_P = { x1:  2, y1:  2, x2:  6, y2:  6 };
 const Rectangle bite_L = { x1:  2, y1:  4, x2:  6, y2:  8 };
 const Rectangle bite_R = { x1: 10, y1:  4, x2: 14, y2:  8 };
 
