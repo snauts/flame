@@ -161,10 +161,14 @@ static inline u16 spittle_animation(u16 life, Object *parent) {
     return parent ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
 }
 
-static void throw_LR(Object *obj) {
+static void sentinel_throw(Object *obj) {
     Object *parent = obj->private;
     parent->frame = 2 - parent->frame;
     obj->direction = parent->frame != 0 ? -1 : 1;
+}
+
+static void left_throw(Object *obj) {
+    obj->direction = -1;
 }
 
 static void throw_spittle(Object *obj) {
@@ -220,24 +224,29 @@ static void spit_crab(Object *obj) {
     move_crab(obj);
 }
 
-static void emit_LR_spiter(u16 x, u16 y, byte force, byte counter) {
+static Crab *emit_spiter(u16 x, u16 y) {
     Object *obj = setup_crab(x, y);
     mob_fn(obj, &spit_crab);
-    CRAB(obj)->throw = &throw_LR;
-    CRAB(obj)->counter = counter;
-    CRAB(obj)->force = force;
-    CRAB(obj)->rate = 48;
     CRAB(obj)->hold = 24;
     obj->direction = 0;
+    return CRAB(obj);
 }
 
 void emit_sentinel(u16 x) {
-    emit_LR_spiter(x, 72, 2, 40);
+    Crab *crab = emit_spiter(x, 72);
+    crab->throw = &sentinel_throw;
+    crab->counter = 40;
+    crab->force = 2;
+    crab->rate = 48;
 }
 
 void emit_crab_squad(u16 x) {
     for (u16 i = 0; i < 6; i++) {
-	emit_LR_spiter(x, 216, 4, 40 - (i << 2));
+	Crab *crab = emit_spiter(x, 216);
+	crab->throw = &left_throw;
+	crab->counter = 40 - (i << 2);
+	crab->force = 4;
+	crab->rate = 96;
 	x += 18;
     }
 }
