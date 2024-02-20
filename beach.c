@@ -118,7 +118,8 @@ Crab *c_obj;
 
 #define CRAB(obj) ((Crab *) (obj->private))
 
-static void spit_cleanup(Crab *crab) {
+static void spit_cleanup(Object *obj) {
+    Crab *crab = CRAB(obj);
     if (crab->spit != NULL) {
 	kill_mob(crab->spit);
 	crab->spit = NULL;
@@ -139,7 +140,7 @@ static void move_crab(Object *obj) {
 	palette = 3;
     }
     else {
-	spit_cleanup(CRAB(obj));
+	spit_cleanup(obj);
     }
 
     sprite->cfg = TILE(palette, 257 + 4 * obj->frame);
@@ -230,6 +231,7 @@ static void sentinel_crab(Object *obj) {
     if (obj->sprite->x == ON_SCREEN) {
 	mob_fn(obj, &move_crab);
 	obj->direction = 1;
+	spit_cleanup(obj);
     }
 }
 
