@@ -175,6 +175,20 @@ static char left_throw(Object *obj) {
     return 1;
 }
 
+static char edge_throw(Object *obj) {
+    Object *parent = obj->private;
+    Crab *crab = CRAB(parent);
+    if (parent->x == crab->pA) {
+	obj->direction = -1;
+	return 1;
+    }
+    if (parent->x == crab->pB) {
+	obj->direction = 1;
+	return 1;
+    }
+    return 0;
+}
+
 static void throw_spittle(Object *obj, Object *parent) {
     if (parent != NULL) {
 	obj->x = parent->x + 4;
@@ -249,16 +263,16 @@ static void patrol_crab(Object *obj) {
     spit_crab(obj);
 }
 
-static Crab *emit_spiter(u16 x, u16 y, Operator updater) {
+static Crab *emit_spiter(u16 x, u16 y, char dir, Operator updater) {
     Object *obj = setup_crab(x, y);
     mob_fn(obj, updater);
     CRAB(obj)->hold = 24;
-    obj->direction = 0;
+    obj->direction = dir;
     return CRAB(obj);
 }
 
 void emit_sentinel(u16 x) {
-    Crab *crab = emit_spiter(x, 72, &sentinel_crab);
+    Crab *crab = emit_spiter(x, 72, 0, &sentinel_crab);
     crab->throw = &sentinel_throw;
     crab->counter = 40;
     crab->force = 2;
@@ -266,11 +280,21 @@ void emit_sentinel(u16 x) {
 }
 
 static void emit_squad_member(u16 x, u16 i) {
-    Crab *crab = emit_spiter(x, 216, &spit_crab);
+    Crab *crab = emit_spiter(x, 216, 0, &spit_crab);
     crab->throw = &left_throw;
     crab->counter = 40 - (i << 2);
     crab->force = 3;
     crab->rate = 96;
+}
+
+static void emit_patrol_crab(u16 x, u16 y, char dir, u16 pA, u16 pB) {
+    Crab *crab = emit_spiter(x, y, dir, &patrol_crab);
+    crab->throw = &edge_throw;
+    crab->counter = 0;
+    crab->force = 3;
+    crab->rate = 32;
+    crab->pA = pA;
+    crab->pB = pB;
 }
 
 void emit_crab_squad(u16 x) {
