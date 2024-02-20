@@ -204,7 +204,7 @@ static Object *setup_spit(Object *parent) {
     Object *obj = setup_obj(0, 0, SPRITE_SIZE(1, 1));
     Crab *crab = CRAB(parent);
     mob_fn(obj, &move_spit);
-    obj->flags |= O_PROJECTILE;
+    obj->flags |= O_PROJECTILE | O_PERSISTENT;
     obj->private = parent;
     obj->velocity = crab->force;
     obj->death = 8;
