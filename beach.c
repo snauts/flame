@@ -220,13 +220,12 @@ static void move_spit(Object *obj) {
     obj->sprite->cfg = TILE(3, 313 + obj->frame);
 }
 
-static Object *setup_spit(Object *parent) {
+static Object *setup_spit(Object *parent, byte force) {
     Object *obj = setup_obj(0, 0, SPRITE_SIZE(1, 1));
-    Crab *crab = CRAB(parent);
     mob_fn(obj, &move_spit);
     obj->flags |= O_PROJECTILE | O_PERSISTENT;
     obj->private = parent;
-    obj->velocity = crab->force;
+    obj->velocity = force;
     obj->death = 8;
     return obj;
 }
@@ -236,7 +235,7 @@ static void spit_crab(Object *obj) {
     crab->counter++;
     if (is_mob_alive(obj) && crab->counter >= crab->rate) {
 	if (crab->spit == NULL) {
-	    crab->spit = setup_spit(obj);
+	    crab->spit = setup_spit(obj, crab->force);
 	}
 	crab->counter = 0;
     }
@@ -265,10 +264,12 @@ static void patrol_crab(Object *obj) {
 
 static Crab *emit_spiter(u16 x, u16 y, char dir, Operator updater) {
     Object *obj = setup_crab(x, y);
+    Crab *crab = CRAB(obj);
     mob_fn(obj, updater);
-    CRAB(obj)->hold = 24;
+    crab->spit = NULL;
+    crab->hold = 24;
     obj->direction = dir;
-    return CRAB(obj);
+    return crab;
 }
 
 void emit_sentinel(u16 x) {
