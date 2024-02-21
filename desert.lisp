@@ -365,10 +365,11 @@
   (s-pop))
 
 (defun rusty-down-stairs ()
-  (s-push nil)
-  (loop for h from 15 downto 0 by 3 do
-    (s-join (empty 1))
-    (s-join (rusty-bridge 3 h)))
+  (s-push (empty 1))
+  (s-join (rusty-bridge 3 15))
+  (loop for x from 8 by 7
+	for h from 12 downto 0 by 3 do
+    (s-place x 0 (rusty-bridge 3 h)))
   (s-pop))
 
 (defparameter *jumps*
@@ -465,6 +466,12 @@
 	(rusty-walkway 2)
 	(empty 32)))
 
+(defun add-down-stairs (martas)
+  (s-push martas)
+  (s-place (- (width martas) 5) 0 (rusty-down-stairs))
+  (s-inject "emit_down_stair_guards" (width martas))
+  (s-pop))
+
 (defun rusty-level ()
   (setf *seed* 1914)
   (join (rusty-base-platform 12)
@@ -474,9 +481,7 @@
 
 	;; Martas platformas
 	(trigger "emit_marta_platform_patrollers")
-	(martas-platformas)
-	(trigger "emit_down_stair_guards")
-	(rusty-down-stairs)
+	(add-down-stairs (martas-platformas))
 	(rusty-dirt-with-cacti #'dab-cacti)
 
 	;; swarm chase

@@ -298,7 +298,7 @@ void emit_marta_platform_patrollers(u16 pos_x) {
 
 void emit_down_stair_guards(u16 pos_x) {
     purge_mobs();
-    u16 x = pos_x + 48, y = 88;
+    u16 x = pos_x + 8, y = 88;
     emit_row_of_sky_hoppers(pos_x - 24);
     for (u16 i = 0; i < 6; i++) {
 	Object *mob = setup_hopper(x, y);
@@ -307,7 +307,7 @@ void emit_down_stair_guards(u16 pos_x) {
 	HOPPER(mob)->patrol_end = x + 32;
 	mob_fn(mob, &patrolling_hopper);
 	mob->direction = 1;
-	x += 96;
+	x += 56;
 	y += 24;
     }
 }
