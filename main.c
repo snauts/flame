@@ -270,6 +270,7 @@ static byte heap[HEAP_SIZE];
 void *malloc(u16 amount) {
     void *ptr = heap + free_mem;
     free_mem += amount;
+    memset(ptr, 0, amount);
     return ptr;
 }
 
