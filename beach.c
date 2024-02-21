@@ -180,12 +180,10 @@ static char edge_throw(Object *obj) {
     Crab *crab = CRAB(parent);
     if (parent->x == crab->pA) {
 	obj->direction = -1;
-	crab->counter = 0;
 	return 1;
     }
     if (parent->x == crab->pB) {
 	obj->direction = 1;
-	crab->counter = 0;
 	return 1;
     }
     return 0;
@@ -293,16 +291,16 @@ static void emit_squad_member(u16 x, u16 i) {
 static void emit_patrol_crab(u16 x, u16 y, char dir, u16 pA, u16 pB) {
     Crab *crab = emit_spiter(x, y, dir, &patrol_crab);
     crab->throw = &edge_throw;
-    crab->counter = 120;
+    crab->counter = 48;
     crab->force = 3;
-    crab->rate = 160;
+    crab->rate = 64;
     crab->pA = pA;
     crab->pB = pB;
 }
 
 void emit_stalk_patrol(u16 x) {
     for (u16 i = 0; i < 2; i++) {
-	u16 w = i * 20;
+	u16 w = i * 24;
 	emit_patrol_crab(x + w, 216, 1, x, x + 192);
 	emit_patrol_crab(x + 192 - w, 216, -1, x, x + 192);
     }
