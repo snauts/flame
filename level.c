@@ -345,3 +345,14 @@ void error(const char *str) {
     upload_palette(8);
     switch_frame(display_error);
 }
+
+void num_error(u32 num) {
+    static char num_str[9];
+    for (u16 i = 0; i < 8; i++) {
+	char hex = (num & 0xf);
+	num_str[7 - i] = (hex < 10 ? '0' : 'A'- 10) + hex;
+	num = num >> 4;
+    }
+    num_str[8] = 0;
+    error(num_str);
+}
