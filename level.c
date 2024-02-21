@@ -187,6 +187,10 @@ u16 get_snap(u16 pos_x, u16 prev, u16 next) {
     return get_snap_from_height(prev, next, find_height(pos_x));
 }
 
+u16 get_top(u16 pos_x) {
+    return get_snap(pos_x, 0, SCR_HEIGHT);
+}
+
 #include "images/font.h"
 #include "images/title.h"
 

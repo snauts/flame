@@ -262,8 +262,8 @@ static void patrol_crab(Object *obj) {
     spit_crab(obj);
 }
 
-static Crab *emit_spiter(u16 x, u16 y, char dir, Operator updater) {
-    Object *obj = setup_crab(x, y);
+static Crab *emit_spitter(u16 x, char dir, Operator updater) {
+    Object *obj = setup_crab(x, get_top(x));
     Crab *crab = CRAB(obj);
     mob_fn(obj, updater);
     crab->spit = NULL;
@@ -273,7 +273,7 @@ static Crab *emit_spiter(u16 x, u16 y, char dir, Operator updater) {
 }
 
 void emit_sentinel(u16 x) {
-    Crab *crab = emit_spiter(x, 72, 0, &sentinel_crab);
+    Crab *crab = emit_spitter(x, 0, &sentinel_crab);
     crab->throw = &sentinel_throw;
     crab->counter = 40;
     crab->force = 2;
@@ -281,15 +281,15 @@ void emit_sentinel(u16 x) {
 }
 
 static void emit_squad_member(u16 x, u16 i) {
-    Crab *crab = emit_spiter(x, 216, 0, &spit_crab);
+    Crab *crab = emit_spitter(x, 0, &spit_crab);
     crab->throw = &left_throw;
     crab->counter = 40 - (i << 2);
     crab->force = 3;
     crab->rate = 96;
 }
 
-static void emit_patrol_crab(u16 x, u16 y, char dir, u16 pA, u16 pB) {
-    Crab *crab = emit_spiter(x, y, dir, &patrol_crab);
+static void emit_patrol_crab(u16 x, char dir, u16 pA, u16 pB) {
+    Crab *crab = emit_spitter(x, dir, &patrol_crab);
     crab->throw = &edge_throw;
     crab->counter = 48;
     crab->force = 3;
@@ -298,11 +298,12 @@ static void emit_patrol_crab(u16 x, u16 y, char dir, u16 pA, u16 pB) {
     crab->pB = pB;
 }
 
-void emit_stalk_patrol(u16 x) {
+void emit_stalk_patrol(u16 x1) {
     for (u16 i = 0; i < 2; i++) {
 	u16 w = i * 24;
-	emit_patrol_crab(x + w, 216, 1, x, x + 192);
-	emit_patrol_crab(x + 192 - w, 216, -1, x, x + 192);
+	u16 x2 = x1 + 192;
+	emit_patrol_crab(x1 + w,  1, x1, x2);
+	emit_patrol_crab(x2 - w, -1, x1, x2);
     }
 }
 
