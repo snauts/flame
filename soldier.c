@@ -330,7 +330,6 @@ static char is_horizontal_flame(Object *f) {
     return TILE_ID(f->frame) == FLAME;
 }
 
-static byte button_down;
 static void advance_flame(Object *f) {
     char move_x, move_y;
     if (is_horizontal_flame(f)) {
@@ -550,7 +549,7 @@ void update_game(void) {
 
 static void soldier_march(void) {
     short prev = soldier.x;
-    byte crouch = 1;
+    byte down, crouch = 1;
     u16 aim_up = 0;
 
     if (BUTTON_RIGHT(button_state)) {
@@ -573,9 +572,9 @@ static void soldier_march(void) {
 	cooldown = 8;
     }
 
-    button_down = BUTTON_DOWN(button_state);
-    soldier_jump(JUST_PRESS(C), button_down);
-    crouch = crouch && button_down && on_ground();
+    down = BUTTON_DOWN(button_state);
+    soldier_jump(JUST_PRESS(C), down);
+    crouch = crouch && down && on_ground();
     soldier_animate(prev, aim_up, fire, crouch);
     soldier_sprite_update(crouch ? 4 : 0);
 }
@@ -954,7 +953,6 @@ void setup_soldier_sprites(void) {
     clear_rectangle(&f_rect);
     clear_rectangle(&s_rect);
     setup_flame_sprites();
-    button_down = 0;
     soldier.life = 0;
     locked = 0;
     face = 0;
