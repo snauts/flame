@@ -118,6 +118,7 @@ static Object *setup_bee(short x, short y) {
     obj->death = 2;
 
     BEE(obj)->v_direction = 0;
+    BEE(obj)->relinquish = 0;
     BEE(obj)->dx = 0;
     BEE(obj)->dy = 0;
 
