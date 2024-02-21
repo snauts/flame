@@ -86,9 +86,9 @@ static void should_sink(void) {
     }
 }
 
-static void soldier_sprite_update(void) {
+static void soldier_sprite_update(byte offset) {
     soldier.sprite->x = soldier.x - window + SOLDIER_MIN_X;
-    soldier.sprite->y = soldier.y + ON_SCREEN - 40;
+    soldier.sprite->y = soldier.y + ON_SCREEN - 40 + offset;
 
     soldier.sprite[-1].x = soldier.sprite->x + 8;
     soldier.sprite[-1].y = soldier.sprite->y + 8;
@@ -188,18 +188,22 @@ static void soldier_flip_sprites(void) {
 }
 
 static void soldier_yelling(byte state);
-static void soldier_animate(short prev, u16 aim_up, u16 fire) {
+static void soldier_animate(short prev, u16 aim_up, u16 fire, byte crouch) {
     static short cycle;
     u16 soldier_frame;
+    byte side = (cycle >= 6 || cycle == -2);
 
     soldier_yelling(fire);
     select_torso(aim_up);
-    if (on_ground()) {
-	cycle = animate_walking(cycle, prev);
-	soldier_frame = cycle + 2;
+    if (crouch) {
+	soldier_frame = side ? 37 : 38;
+    }
+    else if (!on_ground()) {
+	soldier_frame = side ? 14 : 15;
     }
     else {
-	soldier_frame = (cycle >= 6 || cycle == -2) ? 14 : 15;
+	cycle = animate_walking(cycle, prev);
+	soldier_frame = cycle + 2;
     }
     if (aim_up) soldier_frame += 16;
     soldier_frame = SOLDIER_LEG + 6 * soldier_frame;
@@ -330,7 +334,7 @@ static byte button_down;
 static void advance_flame(Object *f) {
     char move_x, move_y;
     if (is_horizontal_flame(f)) {
-	move_x = button_down ? 11 : 22;
+	move_x = 22;
 	move_y = 8;
     }
     else {
@@ -546,16 +550,20 @@ void update_game(void) {
 
 static void soldier_march(void) {
     short prev = soldier.x;
-
+    byte crouch = 1;
     u16 aim_up = 0;
+
     if (BUTTON_RIGHT(button_state)) {
 	move_forward();
+	crouch = 0;
     }
     else if (BUTTON_LEFT(button_state)) {
 	move_backward();
+	crouch = 0;
     }
     if (BUTTON_UP(button_state)) {
 	aim_up = 1;
+	crouch = 0;
     }
     update_height_map(soldier.x + SOLDIER_AHEAD);
 
@@ -567,8 +575,9 @@ static void soldier_march(void) {
 
     button_down = BUTTON_DOWN(button_state);
     soldier_jump(JUST_PRESS(C), button_down);
-    soldier_animate(prev, aim_up, fire);
-    soldier_sprite_update();
+    crouch = crouch && button_down && on_ground();
+    soldier_animate(prev, aim_up, fire, crouch);
+    soldier_sprite_update(crouch ? 4 : 0);
 }
 
 static void hide_all_sprites(void) {
@@ -643,7 +652,7 @@ void wiggle_sfx(void);
 static void soldier_sinking(u16 cookie) {
     soldier.y++;
     soldier.sprite->cfg ^= BIT(11);
-    soldier_sprite_update();
+    soldier_sprite_update(0);
     schedule(&soldier_sinking, 10);
     if ((soldier.sprite->cfg >> 11) & 1) wiggle_sfx();
 }
@@ -703,7 +712,7 @@ static void soldier_kneel(u16 cookie) {
 static void soldier_poison(void) {
     if (!on_ground()) {
 	advance_obj(&soldier, SOLDIER_AHEAD, 6);
-	soldier_sprite_update();
+	soldier_sprite_update(0);
     }
     else if (TILE_ID(soldier.sprite[0].cfg) != SOLDIER_POISON) {
 	update_color(39, 0x668);
@@ -730,8 +739,8 @@ static void soldier_poison(void) {
 
 static void soldier_update(u16 prev, u16 aim_up) {
     advance_obj(&soldier, SOLDIER_AHEAD, 6);
-    soldier_animate(prev, aim_up, 0);
-    soldier_sprite_update();
+    soldier_animate(prev, aim_up, 0, 0);
+    soldier_sprite_update(0);
 }
 
 static void soldier_complete(void) {
@@ -824,7 +833,7 @@ static void put_soldier(u16 x, u16 y) {
     soldier.sprite[2].size = SPRITE_SIZE(1, 1);
     soldier.sprite[2].next = 0;
 
-    soldier_sprite_update();
+    soldier_sprite_update(0);
 }
 
 static const byte yell_map[] = { 0, 16, 17, 18 };
