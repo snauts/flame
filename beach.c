@@ -280,14 +280,19 @@ void emit_sentinel(u16 x) {
     crab->rate = 48;
 }
 
+static Crab *emit_juggler(u16 x, byte counter) {
+    Crab *crab = emit_spitter(x, 0, &sentinel_crab);
+    crab->throw = &sentinel_throw;
+    crab->counter = counter;
+    crab->force = 3;
+    crab->rate = 32;
+    return crab;
+}
+
 void emit_twins(u16 x) {
     for (u16 i = 0; i < 2; i++) {
-	Crab *crab = emit_spitter(x, 0, &sentinel_crab);
+	Crab *crab = emit_juggler(x, x << 4);
 	get_mob(crab - c_obj)->frame = (i << 1);
-	crab->throw = &sentinel_throw;
-	crab->counter = (i << 4);
-	crab->force = 3;
-	crab->rate = 32;
 	x = x + 32;
     }
 }
@@ -324,6 +329,13 @@ void emit_crab_squad(u16 x) {
 	emit_squad_member(x, i);
 	x += 18;
     }
+}
+
+void emit_dirty_trio(u16 x) {
+    u16 x1 = x + 8, x2 = x1 + 64;
+    emit_patrol_crab(x1 + 16,  1, x1, x2);
+    emit_patrol_crab(x2 - 16, -1, x1, x2);
+    emit_juggler(x1 + 32, 0);
 }
 
 static void display_nippon(Function prepare_level) {

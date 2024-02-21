@@ -226,7 +226,7 @@
    (empty 2)
    (stepping-platform 0)
    (empty 2)
-   (stepping-platform 3)
+   (inject (stepping-platform 3) "emit_dirty_trio" 1)
    (empty 2)
 
    ;; ENDING
