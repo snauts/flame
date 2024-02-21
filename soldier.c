@@ -557,7 +557,7 @@ static void soldier_march(void) {
     if (BUTTON_UP(button_state)) {
 	aim_up = 1;
     }
-    update_height_map(soldier.x);
+    update_height_map(soldier.x + SOLDIER_AHEAD);
 
     u16 fire = BUTTON_B(button_state);
     if (fire && cooldown == 0) {
