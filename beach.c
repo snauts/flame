@@ -285,7 +285,7 @@ void emit_twins(u16 x) {
 	Crab *crab = emit_spitter(x, 0, &sentinel_crab);
 	get_mob(crab - c_obj)->frame = (i << 1);
 	crab->throw = &sentinel_throw;
-	crab->counter = 0;
+	crab->counter = (i << 4);
 	crab->force = 3;
 	crab->rate = 32;
 	x = x + 32;
