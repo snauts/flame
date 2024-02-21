@@ -280,6 +280,18 @@ void emit_sentinel(u16 x) {
     crab->rate = 48;
 }
 
+void emit_twins(u16 x) {
+    for (u16 i = 0; i < 2; i++) {
+	Crab *crab = emit_spitter(x, 0, &sentinel_crab);
+	get_mob(crab - c_obj)->frame = (i << 1);
+	crab->throw = &sentinel_throw;
+	crab->counter = 0;
+	crab->force = 3;
+	crab->rate = 32;
+	x = x + 32;
+    }
+}
+
 static void emit_squad_member(u16 x, u16 i) {
     Crab *crab = emit_spitter(x, 0, &spit_crab);
     crab->throw = &left_throw;

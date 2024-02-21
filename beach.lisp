@@ -216,7 +216,7 @@
    (empty 1)
    (stepping-platform 1)
    (empty 1)
-   (stepping-platform 2)
+   (inject (stepping-platform 2) "emit_twins" 2)
    (empty 1)
    (stepping-platform 1)
    (empty 1)
