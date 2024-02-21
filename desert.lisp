@@ -364,12 +364,20 @@
   (s-place 3 (+ h 2) (desert-cell 238))
   (s-pop))
 
+(defun bridge-support ()
+  (s-push (rusty-over-platform 1 1))
+  (s-place 0 3 (desert-cell 246))
+  (s-place 0 2 (desert-cell 279))
+  (s-place 0 0 (desert-cell 283))
+  (s-pop))
+
 (defun rusty-down-stairs ()
   (s-push (empty 1))
   (s-join (rusty-bridge 3 15))
-  (loop for x from 8 by 7
-	for h from 12 downto 0 by 3 do
-    (s-place x 0 (rusty-bridge 3 h)))
+  (s-place 1 17 (bridge-support))
+  (loop for x from 8 by 7 for h from 12 downto 0 by 3 do
+    (s-place x 0 (rusty-bridge 3 h))
+    (s-place x (+ h 2) (bridge-support)))
   (s-pop))
 
 (defparameter *jumps*
