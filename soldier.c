@@ -14,7 +14,7 @@
 #define SOLDIER_POISON	(SOLDIER_TOP + 27)
 #define SOLDIER_LEG	(SOLDIER_TOP + (6 * 3 * 3))
 
-#define FLAME		(SOLDIER_LEG + (37 * 3 * 2))
+#define FLAME		(SOLDIER_LEG + (39 * 3 * 2))
 #define FLAME_UP	(FLAME + (32 * 2 * 1))
 #define BLOOD		(FLAME_UP + (32 * 2 * 1))
 #define WEAPON		(BLOOD + (8 * 2 * 2))
