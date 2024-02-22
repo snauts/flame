@@ -721,13 +721,15 @@ static void soldier_kneel(u16 cookie) {
 }
 
 static void soldier_poison(void) {
+    if (get_palette_color(40) != 0x446) {
+	update_color(39, 0x668);
+	update_color(40, 0x446);
+    }
     if (!on_ground()) {
 	advance_obj(&soldier, SOLDIER_AHEAD, 6);
 	soldier_sprite_update(0);
     }
     else if (TILE_ID(soldier.sprite[0].cfg) != SOLDIER_POISON) {
-	update_color(39, 0x668);
-	update_color(40, 0x446);
 	soldier.sprite[-1].size = SPRITE_SIZE(4, 1);
 	soldier.sprite[-1].cfg = TILE(2, WEAPON + 1);
 	soldier.sprite[-1].x = soldier.sprite[0].x - 4;
