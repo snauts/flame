@@ -553,19 +553,9 @@ static inline u16 only_down(void) {
 
 static u16 last_pressed = 0;
 static void get_last_pressed_button() {
-    for (u16 i = 0; i < 4; i++) {
-	u16 key = BIT(i);
-	if (button_state & key) {
-	    if ((last_state & key) == 0) {
-		last_pressed = key;
-	    }
-	}
-	else {
-	    if (last_pressed == key) {
-		last_pressed = 0;
-	    }
-	}
-    }
+    u16 just = button_state & ~last_state;
+    if (just != 0) last_pressed = just;
+    last_pressed &= button_state & 0xF;
 }
 
 static void soldier_march(void) {
