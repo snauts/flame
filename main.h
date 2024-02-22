@@ -136,6 +136,7 @@ void copy_to_VRAM(u16 dst, u16 len);
 void clear_DMA_buffer(u16 data, u16 len);
 void update_color(u16 idx, u16 color);
 u16 dim_color(u16 color, u16 dim);
+u16 get_palette_color(u16 i);
 void upload_palette(u16 dim);
 void wait_for_interrupt(void);
 void wait_vblank_done(void);

@@ -123,6 +123,10 @@ void wait_vblank_done(void) {
 static u16 palette[64];
 static u16 color_base[64];
 
+u16 get_palette_color(u16 i) {
+    return color_base[i];
+}
+
 void update_palette(const u16 *buf, u16 offset, u16 count) {
     u16 i;
     for (i = 0; i < count; i++) {
