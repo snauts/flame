@@ -547,23 +547,47 @@ void update_game(void) {
     last_state = button_state;
 }
 
+static inline u16 only_down(void) {
+    return (button_state & 0xF) == BIT(1);
+}
+
+static u16 last_pressed = 0;
+static void get_last_pressed_button() {
+    for (u16 i = 0; i < 4; i++) {
+	u16 key = BIT(i);
+	if (button_state & key) {
+	    if ((last_state & key) == 0) {
+		last_pressed = key;
+	    }
+	}
+	else {
+	    if (last_pressed == key) {
+		last_pressed = 0;
+	    }
+	}
+    }
+}
+
 static void soldier_march(void) {
     short prev = soldier.x;
-    byte down, crouch = 1;
-    u16 aim_up = 0;
+    u16 down, crouch, aim_up = 0;
+    down = BUTTON_DOWN(button_state);
 
-    if (BUTTON_RIGHT(button_state)) {
-	move_forward();
-	crouch = 0;
+    get_last_pressed_button();
+
+    crouch = on_ground() && (only_down() || BUTTON_DOWN(last_pressed));
+
+    if (!crouch) {
+	aim_up = BUTTON_UP(button_state);
+
+	if (BUTTON_LEFT(button_state)) {
+	    move_backward();
+	}
+	if (BUTTON_RIGHT(button_state)) {
+	    move_forward();
+	}
     }
-    else if (BUTTON_LEFT(button_state)) {
-	move_backward();
-	crouch = 0;
-    }
-    if (BUTTON_UP(button_state)) {
-	aim_up = 1;
-	crouch = 0;
-    }
+
     update_height_map(soldier.x + SOLDIER_AHEAD);
 
     u16 fire = BUTTON_B(button_state);
@@ -572,9 +596,7 @@ static void soldier_march(void) {
 	cooldown = 8;
     }
 
-    down = BUTTON_DOWN(button_state);
     soldier_jump(JUST_PRESS(C), down);
-    crouch = crouch && down && on_ground();
     soldier_animate(prev, aim_up, fire, crouch);
     soldier_sprite_update(crouch ? 4 : 0);
 }
@@ -954,6 +976,7 @@ void setup_soldier_sprites(void) {
     clear_rectangle(&s_rect);
     setup_flame_sprites();
     soldier.life = 0;
+    last_pressed = 0;
     locked = 0;
     face = 0;
 }
