@@ -402,6 +402,9 @@ void emit_drop_bears(u16 x) {
     }
 }
 
+void emit_falling_crabs(u16 x) {
+}
+
 static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
