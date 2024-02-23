@@ -132,7 +132,7 @@ static void move_crab(Object *obj) {
     Sprite *sprite = obj->sprite;
 
     obj->x += obj->direction;
-    advance_obj(obj, 4, 12);
+    advance_obj(obj, 8, 12);
 
     if (mob_move(obj, 14)) {
 	if (obj->direction != 0) {
@@ -338,9 +338,30 @@ void emit_dirty_trio(u16 x) {
     emit_juggler(x1 + 32, 0);
 }
 
+static void drop_bear_drop(Object *obj) {
+    if (get_snap(obj->x + 8, obj->y, obj->y)) {
+	obj->direction = clamp(get_soldier()->x - obj->x, 1);
+	mob_fn(obj, &move_crab);
+    }
+    move_crab(obj);
+}
+
+static void delay_drop(u16 i) {
+    Object *obj = get_mob(i);
+    mob_fn(obj, &drop_bear_drop);
+    obj->y++;
+}
+
+static void delay_attack(u16 i) {
+    CRAB(get_mob(i))->rate = 1;
+    callback(&delay_drop, 80, i);
+}
+
 static void drop_bear_attack(Object *obj) {
-    if (obj->x == window + SCR_WIDTH - 128) {
-	CRAB(obj)->rate = 1;
+    Crab *crab = CRAB(obj);
+    if (crab->pA == window + SCR_WIDTH - 208) {
+	u16 timeout = crab->pB > 2 ? (crab->pB - 3) : (2 - crab->pB);
+	callback(&delay_attack, timeout << 2, mob_index(obj));
     }
     move_crab(obj);
 }
@@ -364,12 +385,15 @@ static char drop_bear_throw(Object *obj) {
 
 void emit_drop_bears(u16 x) {
     x += 64;
+    u16 pos = x + 24;
     for (u16 i = 0; i < 6; i++) {
 	Crab *crab = emit_spitter(x, 0, &drop_bear_prepare);
 	crab->throw = &drop_bear_throw;
 	crab->counter = 24;
-	crab->force = 2;
+	crab->force = 3;
 	crab->rate = 0;
+	crab->pA = pos;
+	crab->pB = i;
 
 	Object *obj = get_mob(crab - c_obj);
 	obj->frame = i > 2 ? 2 : 0;
