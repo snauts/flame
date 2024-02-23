@@ -308,10 +308,8 @@
 
    ;; PART5 pachinko pyramid
    (bamboo-stalks :width 2)
-   (empty 2)
    (trigger "emit_falling_crabs")
    (pachinko-pyramid)
-   (empty 2)
 
    ;; ENDING
    (inject (dune-platform :width 10) "level_done" 48)
