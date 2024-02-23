@@ -28,6 +28,8 @@
 #define BLOOD_SPRITE	3
 #define FLAME_DECOPLE	24
 
+enum { S_MARCH = 0, S_SINKING, S_POISON, S_COMPLETE, S_FIST_PUMP };
+
 static Object soldier;
 
 Object *get_soldier(void) {
@@ -75,14 +77,16 @@ static u16 is_soldier_off_screen(void) {
 }
 
 static u16 is_sinkable_state(void) {
-    return soldier.life == 0 || soldier.life == 2 || soldier.life == 4;
+    return soldier.life == S_MARCH
+	|| soldier.life == S_POISON
+	|| soldier.life == S_FIST_PUMP;
 }
 
 static void should_sink(void) {
     /* if we are bitten in mid air and fall into pit, do the sinking */
     if (is_soldier_off_screen() && is_sinkable_state()) {
 	soldier.sprite->cfg = TILE(2, SOLDIER_TOP + 18);
-	soldier.life = 1;
+	soldier.life = S_SINKING;
     }
 }
 
@@ -620,7 +624,7 @@ void fade_to_next_level(void) {
 }
 
 void finish_level(u16 i) {
-    fade_to_next_level();
+    if (soldier.life == S_FIST_PUMP) fade_to_next_level();
 }
 
 static byte started;
@@ -669,7 +673,7 @@ static void soldier_sinking(u16 cookie) {
 }
 
 static void soldier_sink(void) {
-    if (soldier.life == 1) {
+    if (soldier.life == S_SINKING) {
 	schedule(&fade_and_restart, 150);
 	soldier_sinking(0);
 	soldier_yelling(0);
@@ -698,7 +702,7 @@ static void do_bite(u16 x, u16 y) {
     blood->size = SPRITE_SIZE(2, 2);
     schedule(&spill_blood, 2);
     remove_one_flame();
-    if (!soldier.life) soldier.life = 2;
+    if (!soldier.life) soldier.life = S_POISON;
 }
 
 static void manage_blood(void) {
@@ -769,7 +773,7 @@ static void soldier_complete(void) {
 }
 
 void level_done(u16 x) {
-    soldier.life = 3;
+    soldier.life = S_COMPLETE;
 }
 
 void set_sprite_tile(Sprite *sprite, u16 tile) {
@@ -777,10 +781,10 @@ void set_sprite_tile(Sprite *sprite, u16 tile) {
 }
 
 void soldier_fist_pump() {
-    soldier.life = 4;
     flame_noise(1);
+    soldier.life = S_FIST_PUMP;
     soldier_update(soldier.x, 1);
-    if (soldier.life != 1) {
+    if (soldier.life != S_SINKING) {
 	u16 frame = 36 + 9 * ((soldier.frame >> 4) & 1);
 	set_sprite_tile(soldier.sprite, TILE(2, SOLDIER_TOP + frame));
 	set_sprite_tile(soldier.sprite - 1, TILE(2, WEAPON + yell_face));
@@ -797,19 +801,19 @@ void advance_sprites(void) {
     update_next_sprite(SOLDIER_BASE - 1);
 
     switch (soldier.life) {
-    case 0:
+    case S_MARCH:
 	soldier_march();
 	break;
-    case 1:
+    case S_SINKING:
 	soldier_sink();
 	break;
-    case 2:
+    case S_POISON:
 	soldier_poison();
 	break;
-    case 3:
+    case S_COMPLETE:
 	soldier_complete();
 	break;
-    case 4:
+    case S_FIST_PUMP:
 	soldier_fist_pump();
 	break;
     default:
@@ -967,7 +971,7 @@ void setup_soldier_sprites(void) {
     clear_rectangle(&f_rect);
     clear_rectangle(&s_rect);
     setup_flame_sprites();
-    soldier.life = 0;
+    soldier.life = S_MARCH;
     last_pressed = 0;
     locked = 0;
     face = 0;
