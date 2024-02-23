@@ -291,7 +291,7 @@ static Crab *emit_juggler(u16 x, byte counter) {
 
 void emit_twins(u16 x) {
     for (u16 i = 0; i < 2; i++) {
-	Crab *crab = emit_juggler(x, x << 4);
+	Crab *crab = emit_juggler(x, i << 4);
 	get_mob(crab - c_obj)->frame = (i << 1);
 	x = x + 32;
     }
