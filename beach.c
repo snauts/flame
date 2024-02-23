@@ -379,7 +379,7 @@ static void drop_bear_prepare(Object *obj) {
 
 static char drop_bear_throw(Object *obj) {
     Object *parent = obj->private;
-    obj->direction = 1 - parent->frame;
+    obj->direction = 2 * (1 - parent->frame);
     return CRAB(parent)->rate;
 }
 
@@ -390,7 +390,7 @@ void emit_drop_bears(u16 x) {
 	Crab *crab = emit_spitter(x, 0, &drop_bear_prepare);
 	crab->throw = &drop_bear_throw;
 	crab->counter = 24;
-	crab->force = 3;
+	crab->force = 1;
 	crab->rate = 0;
 	crab->pA = pos;
 	crab->pB = i;
