@@ -735,6 +735,7 @@ static void soldier_poison(void) {
 	soldier_sprite_update(0);
     }
     else if (TILE_ID(soldier.sprite[0].cfg) != SOLDIER_POISON) {
+	soldier_sprite_update(0);
 	soldier.sprite[-1].size = SPRITE_SIZE(4, 1);
 	soldier.sprite[-1].cfg = TILE(2, WEAPON + 1);
 	soldier.sprite[-1].x = soldier.sprite[0].x - 4;
