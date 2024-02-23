@@ -402,7 +402,35 @@ void emit_drop_bears(u16 x) {
     }
 }
 
+static void falling_crab(Object *obj) {
+    if (get_snap(obj->x + 8, obj->y, obj->y)) {
+	if (obj->direction == 0) {
+	    Crab *crab = CRAB(obj);
+	    obj->direction = 2 * (crab->counter & 1) - 1;
+	    crab->counter = crab->counter >> 1;
+	}
+    }
+    else {
+	obj->direction = 0;
+    }
+    move_crab(obj);
+}
+
+static byte crab_num;
+static void emit_next_crab(u16 x) {
+    static const byte walk_mask[] = { 0, 15, 1, 14, 3, 12, 7, 8 };
+    byte mask = walk_mask[crab_num];
+
+    Crab *crab = emit_spitter(x + mask + 136, 0, &falling_crab);
+    callback(&emit_next_crab, 28, x);
+    get_mob(crab - c_obj)->y = 0;
+    crab_num = (crab_num + 1) & 7;
+    crab->counter = mask;
+}
+
 void emit_falling_crabs(u16 x) {
+    crab_num = 0;
+    emit_next_crab(x);
 }
 
 static void display_nippon(Function prepare_level) {
