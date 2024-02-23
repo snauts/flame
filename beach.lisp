@@ -177,11 +177,19 @@
   (s-place 17 3 (beach-rocks 11 5 12 7))
   (s-pop))
 
+(defun sand-pillar-base-decoration ()
+  (beach-map '((181 nil 179 191 183 187 nil 189))))
+
+(defun sand-bamboo-stubs (stubs)
+  (s-push nil)
+  (dolist (x stubs (s-pop))
+    (s-join (beach-rocks (+ 8 (* x 2)) 7 (+ 10 (* x 2)) 8))))
+
 (defun watchtower ()
   (let ((dmg '(nil (2) nil nil (4) nil nil (3) nil nil (nil 5))))
-    (s-push (beach-rocks  8 7 16 8))
+    (s-push (sand-bamboo-stubs '(0 1 2 3)))
     (s-place 0 1 (single-bamboo-platform 1 8 :side 1 :dmg dmg))
-    (s-place 0 1 (beach-map '((181 nil 179 191 183 187 nil 189))))
+    (s-place 0 1 (sand-pillar-base-decoration))
     (s-place 7 7 (bamboo-platform :width 0))
     (s-place 5 3 (diagonal-stick 3))
     (s-place 5 3 (beach-cell 144))
@@ -203,6 +211,22 @@
     (1 (single-bamboo-platform 1 2 :side 1))
     (2 (single-bamboo-platform 2 3 :side 1 :dmg '((nil 1) nil (4))))
     (3 (single-bamboo-platform 4 2 :side 1 :dmg '((nil 2 nil 3))))))
+
+(defun shed-pillar (height)
+  (let ((dmg '(nil nil (4) nil (nil 5) nil (4) nil (nil 5) nil (4))))
+    (s-push (bamboo-latice 1 height :side 1 :dmg dmg))
+    (s-place 0 0 (sand-pillar-base-decoration))
+    (s-pop)))
+
+(defun abandoned-shed (&key (width 10) (height 7))
+  (s-push (dune-platform :width (floor (- width 2) 2)))
+  (let ((x (+ 6 (* 2 (- width 2)))))
+    (s-place 6 2 (shed-pillar height))
+    (s-place 6 1 (sand-bamboo-stubs '(2 3 0 1)))
+    (s-place x 2 (flip (shed-pillar height)))
+    (s-place x 1 (sand-bamboo-stubs '(2 3 0 1)))
+    (s-place 6 (+ 2 (* 2 height)) (bamboo-platform :width width))
+    (s-pop)))
 
 (defun beach-level ()
   (setf *seed* (* 1905 05 27))
@@ -228,6 +252,12 @@
    (empty 2)
    (inject (stepping-platform 3) "emit_dirty_trio" 1)
    (empty 2)
+
+   ;; PART4 abandoned shed
+   (dune-platform :type 4)
+   (empty 3)
+   (abandoned-shed)
+   (empty 3)
 
    ;; ENDING
    (inject (dune-platform :width 10) "level_done" 48)
