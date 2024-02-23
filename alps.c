@@ -271,7 +271,7 @@ void emit_bee_upstream(u16 pos_x) {
     }
 }
 
-void level_done_burn_bees(void) {
+void level_done_burn_bees(u16 x) {
     apply_to_all_mobs(&kill_mob);
     void level_done(u16);
     level_done(0);
