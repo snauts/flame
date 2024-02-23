@@ -229,6 +229,52 @@
     (s-inject "emit_drop_bears" 0)
     (s-pop)))
 
+(defun pachinko-platform-row (w)
+  (s-push nil)
+  (dotimes (i w (s-pop))
+    (let ((top (unless (or (= i 0) (= i (1- w))) '(1 1))))
+      (s-place (* 10 i) 0 (bamboo-platform :width 1 :pos 1 :toping top)))))
+
+(defun pachinko-dmg (i)
+  (case i
+    (0 nil)
+    (1 '(nil nil (4) nil (nil 5)))
+    (2 '(nil nil nil nil nil nil (4) nil (nil 5)))
+    (3 '(nil nil (4) nil (nil 5) nil nil nil nil nil (4) nil (nil 5)))
+    (4 '(nil nil nil nil nil nil (4) nil (nil 5)))
+    (5 '(nil nil (4) nil (nil 5)))
+    (6 nil)))
+
+(defun pachinko-join ()
+  (s-push (beach-cell 227))
+  (s-place 1 0 (beach-cell 220))
+  (s-place 1 1 (beach-cell 226))
+  (s-place 2 0 (flip (beach-cell 227)))
+  (s-pop))
+
+(defun pachinko-latice (i)
+  (let ((h (+ 2 (* 2 (if (< i 4) i (- 6 i))))))
+    (bamboo-latice 1 h :side 1 :dmg (pachinko-dmg i))))
+
+(defun dimmed-W ()
+  (s-push (beach-cell 143))
+  (s-place 1 0 (dimmed-V))
+  (s-place 3 0 (flip (beach-cell 143)))
+  (s-pop))
+
+(defun pachinko-pyramid ()
+  (s-push nil)
+  (dotimes (i 7)
+    (s-place (* 5 i) 0 (pachinko-latice i)))
+  (dotimes (i 6)
+    (s-place (+ 5 (* 5 i)) 0 (pachinko-join)))
+  (s-place 12 3 (dimmed-W))
+  (s-place 17 7 (dimmed-W))
+  (s-place 22 3 (dimmed-W))
+  (let ((x -4) (y 0))
+    (dotimes (i 4 (s-pop))
+      (s-place (incf x 5) (incf y 4) (pachinko-platform-row (- 4 i))))))
+
 (defun beach-level ()
   (setf *seed* (* 1905 05 27))
   (join
