@@ -91,17 +91,18 @@ static void should_sink(void) {
 }
 
 static void soldier_sprite_update(byte offset) {
-    soldier.sprite->x = soldier.x - window + SOLDIER_MIN_X;
-    soldier.sprite->y = soldier.y + ON_SCREEN - 40 + offset;
+    Sprite *sprite = soldier.sprite;
+    sprite->x = soldier.x - window + SOLDIER_MIN_X;
+    sprite->y = soldier.y + ON_SCREEN - 40 + offset;
 
-    soldier.sprite[-1].x = soldier.sprite->x + 8;
-    soldier.sprite[-1].y = soldier.sprite->y + 8;
+    sprite[-1].x = sprite->x + 8;
+    sprite[-1].y = sprite->y + 8;
 
-    soldier.sprite[1].x = soldier.sprite->x;
-    soldier.sprite[1].y = soldier.sprite->y + 24;
+    sprite[1].x = sprite->x;
+    sprite[1].y = sprite->y + 24;
 
-    soldier.sprite[2].x = soldier.sprite->x + soldier.direction * 16 + 8;
-    soldier.sprite[2].y = soldier.sprite->y + 21;
+    sprite[2].x = sprite->x + soldier.direction * 16 + 8;
+    sprite[2].y = sprite->y + 21;
 
     update_soldier_rectangle();
     should_sink();
