@@ -226,6 +226,7 @@
     (s-place x 2 (flip (shed-pillar height)))
     (s-place x 1 (sand-bamboo-stubs '(2 3 0 1)))
     (s-place 6 (+ 2 (* 2 height)) (bamboo-platform :width width))
+    (s-inject "emit_drop_bears" 0)
     (s-pop)))
 
 (defun beach-level ()

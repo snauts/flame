@@ -338,6 +338,46 @@ void emit_dirty_trio(u16 x) {
     emit_juggler(x1 + 32, 0);
 }
 
+static void drop_bear_attack(Object *obj) {
+    if (obj->x == window + SCR_WIDTH - 128) {
+	CRAB(obj)->rate = 1;
+    }
+    move_crab(obj);
+}
+
+static void drop_bear_prepare(Object *obj) {
+    if (is_mob_alive(obj) && obj->x == window + SCR_WIDTH - 32) {
+	Crab *crab = CRAB(obj);
+	if (crab->spit == NULL) {
+	    crab->spit = setup_spit(obj, crab->force);
+	    mob_fn(obj, &drop_bear_attack);
+	}
+    }
+    move_crab(obj);
+}
+
+static char drop_bear_throw(Object *obj) {
+    Object *parent = obj->private;
+    obj->direction = 1 - parent->frame;
+    return CRAB(parent)->rate;
+}
+
+void emit_drop_bears(u16 x) {
+    x += 64;
+    for (u16 i = 0; i < 6; i++) {
+	Crab *crab = emit_spitter(x, 0, &drop_bear_prepare);
+	crab->throw = &drop_bear_throw;
+	crab->counter = 24;
+	crab->force = 2;
+	crab->rate = 0;
+
+	Object *obj = get_mob(crab - c_obj);
+	obj->frame = i > 2 ? 2 : 0;
+
+	x += (i == 2 ? 64 : 20);
+    }
+}
+
 static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
