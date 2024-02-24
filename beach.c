@@ -418,7 +418,7 @@ static void falling_crab(Object *obj) {
 
 static byte crab_num;
 static void emit_next_crab(u16 x) {
-    static const byte walk_mask[] = { 0, 15, 1, 14, 3, 12, 7, 8 };
+    static const byte walk_mask[] = { 15, 0, 1, 14, 3, 12, 7, 8 };
     byte mask = walk_mask[crab_num];
 
     Crab *crab = emit_spitter(x + mask + 136, 0, &falling_crab);
