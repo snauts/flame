@@ -300,8 +300,8 @@ static const Function loader_table[] = {
     &display_mountains,
     &display_plateau,
     &display_queen,
-//    &announce_hiroshi,
-//    &display_beach,
+    &announce_hiroshi,
+    &display_beach,
     &display_ending,
     NULL,
 };
