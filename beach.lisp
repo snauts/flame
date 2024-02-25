@@ -30,8 +30,11 @@
     (4 (dune-4))
     (8 (dune-8))))
 
+(defun dune-segment (&key (width 1) (type 8))
+  (multiply (beach-dune type) width))
+
 (defun dune-platform (&key (width 1) (type 8))
-  (join (dune-L) (multiply (beach-dune type) width) (dune-R)))
+  (join (dune-L) (dune-segment :width width :type type) (dune-R)))
 
 (defun bamboo-platform-base (width)
   (let ((left (beach-rocks 0 2 2 4))
@@ -315,11 +318,64 @@
    (inject (dune-platform :width 10) "level_done" 48)
    (empty 48)))
 
+(defun watchtower-MK2 ()
+  (s-push (watchtower))
+  (s-place 7 3 (bamboo-platform :width 0))
+  (s-place 7 1 (diagonal-stick 1))
+  (s-place 8 2 (beach-cell 167 :h 1))
+  (s-place 9 2 (beach-cell 143 :h 1))
+  (s-place 6 1 (beach-cell 136))
+  (s-place 7 1 (beach-cell 144))
+  (s-place 7 4 (beach-cell 228))
+  (s-pop))
+
+(defun sapling-top ()
+  (case (xor-random 2)
+    (0 (beach-rocks 10 2 13 3))
+    (1 (beach-rocks 10 3 13 4))))
+
+(defun bamboo-sapling (type)
+  (case type
+    (0 (beach-cell 197))
+    (1 (beach-cell 198))
+    (2 (beach-cell 205))
+    (3 (beach-cell 206))
+    (4 (beach-rocks 8 0 10 1))
+    (5 (beach-rocks 8 1 10 2))
+    (6 (beach-rocks 10 0 12 1))
+    (7 (beach-rocks 10 1 12 2))))
+
+(defun watchtower-plant (height base)
+  (s-push nil)
+  (s-place 1 0 (beach-cell base))
+  (loop for y from 1 to height do
+    (let* ((type (xor-random 8))
+	   (x (if (>= type 6) 0 1)))
+      (s-place x y (bamboo-sapling type))))
+  (s-place 0 (1+ height) (sapling-top))
+  (s-pop))
+
+(defun add-watchtower-bamboo-saplings (offset)
+  (loop for x from 1 to offset by 4 do
+    (let ((base (if (= 0 (logand x 4)) 234 242)))
+      (s-place x 1 (watchtower-plant (+ 3 (xor-random 4)) base)))))
+
+(defun planted-watchtower (call &optional (distance 5))
+  (s-push (dune-segment :width (1- distance)))
+  (s-join (dune-segment :type 4))
+  (let ((offset (* 8 (- distance 2))))
+    (s-place offset 1 (watchtower-MK2))
+    (add-watchtower-bamboo-saplings offset)
+    (s-inject call (+ 3 offset))
+    (s-pop)))
+
 (defun dunes-level ()
   (setf *seed* 794)
   (join
-   (dune-platform :width 6)
-   (empty 2)
+   (dune-segment :width 4)
+   (planted-watchtower "emit_sentinel" 4)
+   (planted-watchtower "emit_sentinel" 5)
+   (planted-watchtower "emit_sentinel" 6)
 
-   (inject (dune-platform :width 10) "level_done" 48)
+   (inject (dune-segment :width 10) "level_done_burn_mobs" 48)
    (empty 48)))
