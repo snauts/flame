@@ -485,3 +485,8 @@ void display_beach(void) {
     void prepare_beach_level(void);
     display_nippon(&prepare_beach_level);
 }
+
+void display_dunes(void) {
+    void prepare_dunes_level(void);
+    display_nippon(&prepare_dunes_level);
+}

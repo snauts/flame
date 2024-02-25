@@ -314,3 +314,12 @@
    ;; ENDING
    (inject (dune-platform :width 10) "level_done" 48)
    (empty 48)))
+
+(defun dunes-level ()
+  (setf *seed* 794)
+  (join
+   (dune-platform :width 6)
+   (empty 2)
+
+   (inject (dune-platform :width 10) "level_done" 48)
+   (empty 48)))
