@@ -75,6 +75,7 @@ typedef struct Object {
 
 #define O_PERSISTENT	BIT(0)
 #define O_PROJECTILE	BIT(1)
+#define O_NO_GRAVITY	BIT(2)
 
 typedef void(*Callback)(u16);
 typedef void(*Function)(void);

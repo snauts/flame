@@ -189,6 +189,26 @@ static char edge_throw(Object *obj) {
     return 0;
 }
 
+struct Shoot {
+    u32 mx, my;
+    char dir_x;
+    char dir_y;
+    byte len;
+};
+
+const struct Shoot shoot[] = {
+    { mx: 0xAAAAAAAA, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
+};
+
+static void shoot_move(Object *obj) {
+    const struct Shoot *this = shoot + obj->direction;
+    u16 dx = (this->mx >> obj->velocity) & 1;
+    u16 dy = (this->my >> obj->velocity) & 1;
+    obj->x = obj->x + dx * this->dir_x;
+    obj->y = obj->y + dy * this->dir_y;
+    if (++obj->velocity == this->len) obj->velocity = 0;
+}
+
 static void throw_spittle(Object *obj, Object *parent) {
     if (parent != NULL) {
 	obj->x = parent->x + 4;
@@ -199,6 +219,9 @@ static void throw_spittle(Object *obj, Object *parent) {
 	    obj->private = NULL;
 	    crab->spit = NULL;
 	}
+    }
+    else if (obj->flags & O_NO_GRAVITY) {
+	shoot_move(obj);
     }
     else {
 	obj->x += obj->direction;
@@ -431,6 +454,35 @@ static void emit_next_crab(u16 x) {
 void emit_falling_crabs(u16 x) {
     crab_num = 0;
     emit_next_crab(x);
+}
+
+static void gunner_crab(Object *obj) {
+    spit_crab(obj);
+    if (obj->sprite->x == ON_SCREEN) {
+	spit_cleanup(obj);
+	kill_mob(obj);
+    }
+}
+
+static Crab *create_gunner_crab(u16 x) {
+    Crab *crab = emit_spitter(x, 0, &gunner_crab);
+    crab->counter = 0;
+    crab->hold = 16;
+    crab->rate = 4;
+    return crab;
+}
+
+static char gunner_throw(Object *obj) {
+    Object *parent = obj->private;
+    parent->frame = 2 - parent->frame;
+    obj->flags |= O_NO_GRAVITY;
+    obj->direction = 0;
+    obj->velocity = 0;
+    return 1;
+}
+
+void emit_gunner(u16 x) {
+    create_gunner_crab(x)->throw = &gunner_throw;
 }
 
 static void display_nippon(Function prepare_level) {
