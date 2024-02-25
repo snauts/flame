@@ -197,10 +197,10 @@ struct Shoot {
 };
 
 static const struct Shoot shoot[] = {
-    { mx: 0x00000000, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
-    { mx: 0x88888888, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
-    { mx: 0xAAAAAAAA, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
-    { mx: 0xEEEEEEEE, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
+    { mx: 0x0, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
+    { mx: 0x1, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
+    { mx: 0x3, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
+    { mx: 0x7, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
 };
 
 static void shoot_move(Object *obj) {
@@ -497,6 +497,7 @@ static char gunner_throw(Object *obj) {
 void emit_gunner(u16 x) {
     Crab *crab = create_gunner_crab(x);
     crab->throw = &gunner_throw;
+    crab->rate = 16;
     crab->pA = 0;
 }
 
