@@ -197,6 +197,7 @@ struct Shoot {
 };
 
 static const struct Shoot shoot[] = {
+    { mx: 0x00000000, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
     { mx: 0x88888888, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
     { mx: 0xAAAAAAAA, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
     { mx: 0xEEEEEEEE, my: 0xFFFFFFFF, dir_x: -1, dir_y: 1, len: 32 },
@@ -476,7 +477,7 @@ static Crab *create_gunner_crab(u16 x) {
     return crab;
 }
 
-static const byte mow[] = { 3, 0, 1, 2 };
+static const byte mow[] = { 4, 0, 1, 2, 3 };
 
 static const byte *patterns[] = {
     mow,
