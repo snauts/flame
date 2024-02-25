@@ -360,7 +360,7 @@
     (let ((base (if (= 0 (logand x 4)) 234 242)))
       (s-place x 1 (watchtower-plant (+ 3 (xor-random 4)) base)))))
 
-(defun planted-watchtower (call &optional (distance 5))
+(defun planted-watchtower (call &optional (distance 6))
   (s-push (dune-segment :width (1- distance)))
   (s-join (dune-segment :type 4))
   (let ((offset (* 8 (- distance 2))))
@@ -373,9 +373,9 @@
   (setf *seed* 794)
   (join
    (dune-segment :width 4)
-   (planted-watchtower "emit_gunner" 4)
-   (planted-watchtower "emit_gunner" 5)
-   (planted-watchtower "emit_gunner" 6)
+   (planted-watchtower "emit_gunner")
+   (planted-watchtower "emit_gunner")
+   (planted-watchtower "emit_gunner")
 
    (inject (dune-segment :width 10) "level_done_burn_mobs" 48)
    (empty 48)))
