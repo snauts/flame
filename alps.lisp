@@ -166,7 +166,7 @@
    (trigger "relinquish_all_bees")
 
    ;; NEXT LEVEL
-   (inject (flower-pathway) "level_done_burn_bees" 38)
+   (inject (flower-pathway) "level_done_burn_mobs" 38)
    (empty 32)))
 
 (defun queen-ground ()
