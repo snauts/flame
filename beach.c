@@ -490,13 +490,26 @@ static const char *patterns[] = {
 };
 
 static char gunner_throw(Object *obj) {
-    Object *parent = obj->private;
-    Crab *crab = CRAB(parent);
-    const char *pattern = patterns[crab->pA];
-    parent->frame = 2 - parent->frame;
     obj->flags |= O_NO_GRAVITY;
-    obj->direction = pattern[crab->pB + 1];
-    if (++crab->pB >= pattern[0]) crab->pB = 0;
+
+    Object *parent = obj->private;
+    parent->frame = 2 - parent->frame;
+
+    Crab *crab = CRAB(parent);
+    const char *data = patterns[crab->pA];
+
+    do {
+	obj->direction = data[crab->pB + 1];
+
+	if (++crab->pB >= data[0]) {
+	    crab->pB = 0; /* wrap */
+	}
+
+	if (obj->direction < 0) {
+	    crab->counter = obj->direction;
+	}
+    } while (obj->direction < 0);
+
     return 1;
 }
 
