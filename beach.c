@@ -488,7 +488,7 @@ static void gunner_crab(Object *obj) {
 static const char five[] = { 5, 1, 2, 3, 4, 0 };
 static const char cone[] = { 3, 1, 0, 4 };
 static const char even[] = { 1, 5 };
-static const char fast[] = { 2, 6, 7 };
+static const char fast[] = { 3, -32, 6, 7 };
 
 static const char *patterns[] = {
     five, cone, even, fast
