@@ -481,6 +481,7 @@ void emit_falling_crabs(u16 x) {
 static void gunner_crab(Object *obj) {
     spit_crab(obj);
     if (obj->sprite->x == ON_SCREEN) {
+	mob_fn(obj, &move_crab);
 	spit_cleanup(obj);
 	kill_mob(obj);
     }
