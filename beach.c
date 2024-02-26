@@ -205,6 +205,16 @@ static const struct Shoot shoot[] = {
     { mx: 0x1, my: 0x7, dir_x:  1, dir_y:  1, len: 3 },
     { mx: 0x7, my: 0x0, dir_x: -1, dir_y:  1, len: 3 },
     { mx: 0x7, my: 0x1, dir_x: -1, dir_y: -1, len: 3 },
+
+    { mx: 0xAA, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
+    { mx: 0x94, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
+    { mx: 0x11, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
+    { mx: 0x01, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
+    { mx: 0x00, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
+    { mx: 0x01, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
+    { mx: 0x11, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
+    { mx: 0x94, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
+    { mx: 0xAA, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
 };
 
 static void shoot_move(Object *obj) {
@@ -492,8 +502,16 @@ static const char fast[] = { 3, -32, 0, 2 };
 static const char saw[] = { 2, 1, 3 };
 static const char ray[] = { 2, 5, 6 };
 
+static const char rain[] = {
+    18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14, -40,
+};
+
+static const char pain[] = {
+    18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, -40, 14,
+};
+
 static const char *patterns[] = {
-    five, cone, even, fast, saw, ray
+    five, cone, even, fast, saw, ray, rain, pain
 };
 
 static char gunner_throw(Object *obj) {
@@ -553,6 +571,11 @@ void emit_crossfire(u16 x) {
 void emit_grenadiers(u16 x) {
     create_gunner_crab(x, 1, 28, 28);
     create_gunner_crab(x + 56, 1, 28, -28);
+}
+
+void emit_highway(u16 x) {
+    create_gunner_crab(x, 6, 16, 16);
+    create_gunner_crab(x + 56, 7, 16, 16);
 }
 
 static void display_nippon(Function prepare_level) {
