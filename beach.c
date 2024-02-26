@@ -203,6 +203,8 @@ static const struct Shoot shoot[] = {
     { mx: 0x7, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
     { mx: 0x1, my: 0x7, dir_x:  1, dir_y: 1, len: 3 },
     { mx: 0x7, my: 0x0, dir_x: -1, dir_y: 1, len: 3 },
+    { mx: 0x0, my: 0x7, dir_x: -2, dir_y: 2, len: 3 },
+    { mx: 0x3, my: 0x7, dir_x: -2, dir_y: 2, len: 3 },
 };
 
 static void shoot_move(Object *obj) {
@@ -478,12 +480,13 @@ static void gunner_crab(Object *obj) {
     }
 }
 
-static const byte mow[] = { 5, 1, 2, 3, 4, 0 };
+static const byte five[] = { 5, 1, 2, 3, 4, 0 };
 static const byte cone[] = { 3, 1, 0, 4 };
 static const byte even[] = { 1, 5 };
+static const byte fast[] = { 2, 6, 7 };
 
 static const byte *patterns[] = {
-    mow, cone, even
+    five, cone, even, fast
 };
 
 static char gunner_throw(Object *obj) {
@@ -515,6 +518,12 @@ void emit_gunner(u16 x) {
 
 void emit_marksman(u16 x) {
     create_gunner_crab(x, 1, 16, 12);
+}
+
+void emit_sniper(u16 x) {
+    create_gunner_crab(x, 3, 16, 12);
+    Crab *crab = create_gunner_crab(x + 32, 2, 96, 80);
+    get_obj(crab)->y = 0xd8;
 }
 
 static void display_nippon(Function prepare_level) {

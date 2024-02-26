@@ -389,6 +389,7 @@
    (dune-segment :width 2)
    (planted-watchtower "emit_marksman")
    (planted-watchtower "emit_gunner")
+   (planted-watchtower "emit_sniper")
 
    (inject (dune-with-saplings 10) "level_done_burn_mobs" 48)
    (empty 48)))
