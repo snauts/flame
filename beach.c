@@ -190,7 +190,7 @@ static char edge_throw(Object *obj) {
 }
 
 struct Shoot {
-    u32 mx, my;
+    u16 mx, my;
     char dir_x;
     char dir_y;
     byte len;
@@ -209,7 +209,9 @@ static void shoot_move(Object *obj) {
     u16 dy = (this->my >> obj->velocity) & 1;
     obj->x = obj->x + dx * this->dir_x;
     obj->y = obj->y + dy * this->dir_y;
-    if (++obj->velocity == this->len) obj->velocity = 0;
+    if (++obj->velocity == this->len) {
+	obj->velocity = 0;
+    }
 }
 
 static void throw_spittle(Object *obj, Object *parent) {
