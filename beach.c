@@ -507,7 +507,7 @@ static const char rain[] = {
 };
 
 static const char pain[] = {
-    18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, -40, 14,
+    18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 8, 9, 10, 11, 12, 13, 14, -40, 15,
 };
 
 static const char *patterns[] = {
