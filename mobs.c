@@ -57,7 +57,6 @@ void free_mob(Object *obj) {
     free_mobs[available_mobs++] = index;
     free_mobs[obj->place] = other;
     mobs[other].obj.place = obj->place;
-    obj->sprite->x = 0;
     obj->place = -1;
 }
 

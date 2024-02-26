@@ -266,12 +266,20 @@ static Object *setup_spit(Object *parent, byte force) {
     return obj;
 }
 
+static void create_spit(u16 i) {
+    Object *obj = get_mob(i);
+    if (is_mob_alive(obj)) {
+	Crab *crab = CRAB(obj);
+	crab->spit = setup_spit(obj, crab->force);
+    }
+}
+
 static void spit_crab(Object *obj) {
     Crab *crab = CRAB(obj);
     crab->counter++;
     if (is_mob_alive(obj) && crab->counter >= crab->rate) {
 	if (crab->spit == NULL) {
-	    crab->spit = setup_spit(obj, crab->force);
+	    callback(&create_spit, 0, mob_index(obj));
 	}
 	crab->counter = 0;
     }
