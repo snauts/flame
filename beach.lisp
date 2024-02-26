@@ -372,7 +372,7 @@
 (defun dunes-level ()
   (setf *seed* 794)
   (join
-   (dune-segment :width 4)
+   (dune-segment :width 2)
    (planted-watchtower "emit_gunner")
    (planted-watchtower "emit_gunner")
    (planted-watchtower "emit_gunner")
