@@ -321,10 +321,14 @@ static Crab *emit_juggler(u16 x, byte counter) {
     return crab;
 }
 
+static Object *get_obj(Crab *crab) {
+    return get_mob(crab - c_obj);
+}
+
 void emit_twins(u16 x) {
     for (u16 i = 0; i < 2; i++) {
 	Crab *crab = emit_juggler(x, i << 4);
-	get_mob(crab - c_obj)->frame = (i << 1);
+	get_obj(crab)->frame = (i << 1);
 	x = x + 32;
     }
 }
@@ -427,7 +431,7 @@ void emit_drop_bears(u16 x) {
 	crab->pA = pos;
 	crab->pB = i;
 
-	Object *obj = get_mob(crab - c_obj);
+	Object *obj = get_obj(crab);
 	obj->frame = i > 2 ? 2 : 0;
 
 	x += (i == 2 ? 64 : 20);
@@ -455,7 +459,7 @@ static void emit_next_crab(u16 x) {
 
     Crab *crab = emit_spitter(x + mask + 136, 0, &falling_crab);
     callback(&emit_next_crab, 28, x);
-    get_mob(crab - c_obj)->y = 0;
+    get_obj(crab)->y = 0;
     crab_num = (crab_num + 1) & 7;
     crab->counter = mask;
 }
