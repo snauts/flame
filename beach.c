@@ -202,6 +202,7 @@ static const struct Shoot shoot[] = {
     { mx: 0x3, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
     { mx: 0x7, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
     { mx: 0x1, my: 0x7, dir_x:  1, dir_y: 1, len: 3 },
+    { mx: 0x7, my: 0x0, dir_x: -1, dir_y: 1, len: 3 },
 };
 
 static void shoot_move(Object *obj) {
@@ -479,9 +480,10 @@ static void gunner_crab(Object *obj) {
 
 static const byte mow[] = { 5, 1, 2, 3, 4, 0 };
 static const byte cone[] = { 3, 1, 0, 4 };
+static const byte even[] = { 1, 5 };
 
 static const byte *patterns[] = {
-    mow, cone
+    mow, cone, even
 };
 
 static char gunner_throw(Object *obj) {
