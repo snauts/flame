@@ -325,8 +325,12 @@ Object *setup_obj(short x, short y, byte size) {
     return obj;
 }
 
-void kill_mob(Object *obj) {
+void kill_mob_silently(Object *obj) {
     obj->frame = obj->death;
+}
+
+void kill_mob(Object *obj) {
+    kill_mob_silently(obj);
     perish_sfx();
 }
 
