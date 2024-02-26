@@ -550,6 +550,11 @@ void emit_crossfire(u16 x) {
     create_gunner_crab(x + 48, 5, 48, 48)->self->y = 0xd8;
 }
 
+void emit_grenadiers(u16 x) {
+    create_gunner_crab(x, 1, 28, 28);
+    create_gunner_crab(x + 56, 1, 28, -28);
+}
+
 static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
