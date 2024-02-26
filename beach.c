@@ -522,7 +522,7 @@ void emit_marksman(u16 x) {
 
 void emit_sniper(u16 x) {
     create_gunner_crab(x, 3, 16, 12);
-    Crab *crab = create_gunner_crab(x + 32, 2, 96, 52);
+    Crab *crab = create_gunner_crab(x + 32, 2, 96, 84);
     get_obj(crab)->y = 0xd8;
 }
 
