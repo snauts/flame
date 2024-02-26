@@ -201,6 +201,7 @@ static const struct Shoot shoot[] = {
     { mx: 0x1, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
     { mx: 0x3, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
     { mx: 0x7, my: 0x7, dir_x: -1, dir_y: 1, len: 3 },
+    { mx: 0x1, my: 0x7, dir_x:  1, dir_y: 1, len: 3 },
 };
 
 static void shoot_move(Object *obj) {
@@ -473,9 +474,10 @@ static void gunner_crab(Object *obj) {
 }
 
 static const byte mow[] = { 4, 0, 1, 2, 3 };
+static const byte cone[] = { 3, 1, 0, 4 };
 
 static const byte *patterns[] = {
-    mow,
+    mow, cone
 };
 
 static char gunner_throw(Object *obj) {
@@ -489,10 +491,10 @@ static char gunner_throw(Object *obj) {
     return 1;
 }
 
-static Crab *create_gunner_crab(u16 x, u16 id, byte rate) {
+static Crab *create_gunner_crab(u16 x, u16 id, byte rate, byte start) {
     Crab *crab = emit_spitter(x, 0, &gunner_crab);
     crab->throw = &gunner_throw;
-    crab->counter = 0;
+    crab->counter = start;
     crab->rate = rate;
     crab->force = 0;
     crab->hold = 16;
@@ -502,7 +504,11 @@ static Crab *create_gunner_crab(u16 x, u16 id, byte rate) {
 }
 
 void emit_gunner(u16 x) {
-    create_gunner_crab(x, 0, 16);
+    create_gunner_crab(x, 0, 16, 0);
+}
+
+void emit_marksman(u16 x) {
+    create_gunner_crab(x, 1, 16, 12);
 }
 
 static void display_nippon(Function prepare_level) {

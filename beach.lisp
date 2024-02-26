@@ -387,8 +387,7 @@
   (setf *seed* 794)
   (join
    (dune-segment :width 2)
-   (planted-watchtower "emit_gunner")
-   (planted-watchtower "emit_gunner")
+   (planted-watchtower "emit_marksman")
    (planted-watchtower "emit_gunner")
 
    (inject (dune-with-saplings 10) "level_done_burn_mobs" 48)
