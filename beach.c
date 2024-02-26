@@ -212,6 +212,9 @@ static void shoot_move(Object *obj) {
     if (++obj->velocity == this->len) {
 	obj->velocity = 0;
     }
+    if (obj->y > SCR_HEIGHT) {
+	kill_mob_silently(obj);
+    }
 }
 
 static void throw_spittle(Object *obj, Object *parent) {
