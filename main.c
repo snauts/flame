@@ -275,6 +275,9 @@ void *malloc(u16 amount) {
     void *ptr = heap + free_mem;
     free_mem += amount;
     memset(ptr, 0, amount);
+    if (free_mem > HEAP_SIZE) {
+	error("MALLOC-FAIL");
+    }
     return ptr;
 }
 
