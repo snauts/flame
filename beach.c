@@ -473,7 +473,7 @@ static void gunner_crab(Object *obj) {
     }
 }
 
-static const byte mow[] = { 4, 0, 1, 2, 3 };
+static const byte mow[] = { 4, 1, 2, 3, 0 };
 static const byte cone[] = { 3, 1, 0, 4 };
 
 static const byte *patterns[] = {
@@ -504,7 +504,7 @@ static Crab *create_gunner_crab(u16 x, u16 id, byte rate, byte start) {
 }
 
 void emit_gunner(u16 x) {
-    create_gunner_crab(x, 0, 16, 0);
+    create_gunner_crab(x, 0, 12, 12);
 }
 
 void emit_marksman(u16 x) {
