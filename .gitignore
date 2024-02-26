@@ -1,6 +1,7 @@
 *.o
 *.inc
 *.bin
+*.elf
 *.fasl
 cksum
 pcx2h
