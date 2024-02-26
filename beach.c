@@ -108,7 +108,7 @@ static void sea_rotate(u16 i) {
 typedef struct Crab {
     char (*throw)(Object *obj);
     Object *spit;
-    byte counter;
+    char counter;
     byte force;
     byte rate;
     byte hold;
@@ -457,7 +457,7 @@ static void falling_crab(Object *obj) {
 
 static byte crab_num;
 static void emit_next_crab(u16 x) {
-    static const byte walk_mask[] = { 15, 0, 1, 14, 3, 12, 7, 8 };
+    static const char walk_mask[] = { 15, 0, 1, 14, 3, 12, 7, 8 };
     byte mask = walk_mask[crab_num];
 
     Crab *crab = emit_spitter(x + mask + 136, 0, &falling_crab);
@@ -480,19 +480,19 @@ static void gunner_crab(Object *obj) {
     }
 }
 
-static const byte five[] = { 5, 1, 2, 3, 4, 0 };
-static const byte cone[] = { 3, 1, 0, 4 };
-static const byte even[] = { 1, 5 };
-static const byte fast[] = { 2, 6, 7 };
+static const char five[] = { 5, 1, 2, 3, 4, 0 };
+static const char cone[] = { 3, 1, 0, 4 };
+static const char even[] = { 1, 5 };
+static const char fast[] = { 2, 6, 7 };
 
-static const byte *patterns[] = {
+static const char *patterns[] = {
     five, cone, even, fast
 };
 
 static char gunner_throw(Object *obj) {
     Object *parent = obj->private;
     Crab *crab = CRAB(parent);
-    const byte *pattern = patterns[crab->pA];
+    const char *pattern = patterns[crab->pA];
     parent->frame = 2 - parent->frame;
     obj->flags |= O_NO_GRAVITY;
     obj->direction = pattern[crab->pB + 1];
