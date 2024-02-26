@@ -107,8 +107,9 @@ static void sea_rotate(u16 i) {
 
 typedef struct Crab {
     char (*throw)(Object *obj);
+    Object *self;
     Object *spit;
-    char counter;
+    short counter;
     byte force;
     byte rate;
     byte hold;
@@ -302,6 +303,7 @@ static Crab *emit_spitter(u16 x, char dir, Operator updater) {
     Crab *crab = CRAB(obj);
     mob_fn(obj, updater);
     crab->spit = NULL;
+    crab->self = obj;
     crab->hold = 24;
     obj->direction = dir;
     return crab;
@@ -324,14 +326,10 @@ static Crab *emit_juggler(u16 x, byte counter) {
     return crab;
 }
 
-static Object *get_obj(Crab *crab) {
-    return get_mob(crab - c_obj);
-}
-
 void emit_twins(u16 x) {
     for (u16 i = 0; i < 2; i++) {
 	Crab *crab = emit_juggler(x, i << 4);
-	get_obj(crab)->frame = (i << 1);
+	crab->self->frame = (i << 1);
 	x = x + 32;
     }
 }
@@ -434,8 +432,7 @@ void emit_drop_bears(u16 x) {
 	crab->pA = pos;
 	crab->pB = i;
 
-	Object *obj = get_obj(crab);
-	obj->frame = i > 2 ? 2 : 0;
+	crab->self->frame = i > 2 ? 2 : 0;
 
 	x += (i == 2 ? 64 : 20);
     }
@@ -462,7 +459,7 @@ static void emit_next_crab(u16 x) {
 
     Crab *crab = emit_spitter(x + mask + 136, 0, &falling_crab);
     callback(&emit_next_crab, 28, x);
-    get_obj(crab)->y = 0;
+    crab->self->y = 0;
     crab_num = (crab_num + 1) & 7;
     crab->counter = mask;
 }
@@ -535,8 +532,7 @@ void emit_marksman(u16 x) {
 
 void emit_sniper(u16 x) {
     create_gunner_crab(x, 3, 16, 12);
-    Crab *crab = create_gunner_crab(x + 32, 2, 96, 84);
-    get_obj(crab)->y = 0xd8;
+    create_gunner_crab(x + 32, 2, 96, 84)->self->y = 0xd8;
 }
 
 static void display_nippon(Function prepare_level) {
