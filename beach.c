@@ -109,7 +109,7 @@ typedef struct Crab {
     char (*throw)(Object *obj);
     Object *self;
     Object *spit;
-    short counter;
+    char counter;
     byte force;
     byte rate;
     byte hold;
@@ -191,7 +191,7 @@ static char edge_throw(Object *obj) {
 }
 
 struct Shoot {
-    u16 mx, my;
+    byte mx, my;
     char dir_x;
     char dir_y;
     byte len;
@@ -204,8 +204,6 @@ static const struct Shoot shoot[] = {
     { mx: 0x7, my: 0x7, dir_x: -1, dir_y:  1, len: 3 },
     { mx: 0x1, my: 0x7, dir_x:  1, dir_y:  1, len: 3 },
     { mx: 0x7, my: 0x0, dir_x: -1, dir_y:  1, len: 3 },
-    { mx: 0x0, my: 0x7, dir_x: -2, dir_y:  2, len: 3 },
-    { mx: 0x3, my: 0x7, dir_x: -2, dir_y:  2, len: 3 },
     { mx: 0x7, my: 0x1, dir_x: -1, dir_y: -1, len: 3 },
 };
 
@@ -490,9 +488,9 @@ static void gunner_crab(Object *obj) {
 static const char five[] = { 5, 1, 2, 3, 4, 0 };
 static const char cone[] = { 3, 1, 0, 4 };
 static const char even[] = { 1, 5 };
-static const char fast[] = { 3, -32, 6, 7 };
+static const char fast[] = { 3, -32, 0, 2 };
 static const char saw[] = { 2, 1, 3 };
-static const char ray[] = { 2, 5, 8 };
+static const char ray[] = { 2, 5, 6 };
 
 static const char *patterns[] = {
     five, cone, even, fast, saw, ray
@@ -522,7 +520,7 @@ static char gunner_throw(Object *obj) {
     return 1;
 }
 
-static Crab *create_gunner_crab(u16 x, u16 id, byte rate, byte start) {
+static Crab *create_gunner_crab(u16 x, u16 id, byte rate, char start) {
     Crab *crab = emit_spitter(x, 0, &gunner_crab);
     crab->throw = &gunner_throw;
     crab->counter = start;
@@ -549,7 +547,7 @@ void emit_sniper(u16 x) {
 
 void emit_crossfire(u16 x) {
     create_gunner_crab(x, 4, 48, 24);
-    create_gunner_crab(x + 16, 5, 48, 48)->self->y = 0xd8;
+    create_gunner_crab(x + 48, 5, 48, 48)->self->y = 0xd8;
 }
 
 static void display_nippon(Function prepare_level) {
