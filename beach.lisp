@@ -378,6 +378,11 @@
     (s-inject call (+ offset (if extra -4 3)))
     (s-pop)))
 
+(defun dune-with-saplings (width)
+  (s-push (dune-segment :width width))
+  (add-watchtower-bamboo-saplings (* 8 (- width 1)))
+  (s-pop))
+
 (defun dunes-level ()
   (setf *seed* 794)
   (join
@@ -386,5 +391,5 @@
    (planted-watchtower "emit_gunner")
    (planted-watchtower "emit_gunner")
 
-   (inject (dune-segment :width 10) "level_done_burn_mobs" 48)
+   (inject (dune-with-saplings 10) "level_done_burn_mobs" 48)
    (empty 48)))
