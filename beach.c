@@ -472,16 +472,6 @@ static void gunner_crab(Object *obj) {
     }
 }
 
-static Crab *create_gunner_crab(u16 x) {
-    Crab *crab = emit_spitter(x, 0, &gunner_crab);
-    crab->counter = 0;
-    crab->force = 0;
-    crab->hold = 16;
-    crab->rate = 4;
-    crab->pB = 0;
-    return crab;
-}
-
 static const byte mow[] = { 4, 0, 1, 2, 3 };
 
 static const byte *patterns[] = {
@@ -499,11 +489,20 @@ static char gunner_throw(Object *obj) {
     return 1;
 }
 
-void emit_gunner(u16 x) {
-    Crab *crab = create_gunner_crab(x);
+static Crab *create_gunner_crab(u16 x, u16 id, byte rate) {
+    Crab *crab = emit_spitter(x, 0, &gunner_crab);
     crab->throw = &gunner_throw;
-    crab->rate = 16;
-    crab->pA = 0;
+    crab->counter = 0;
+    crab->rate = rate;
+    crab->force = 0;
+    crab->hold = 16;
+    crab->pA = id;
+    crab->pB = 0;
+    return crab;
+}
+
+void emit_gunner(u16 x) {
+    create_gunner_crab(x, 0, 16);
 }
 
 static void display_nippon(Function prepare_level) {
