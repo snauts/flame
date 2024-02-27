@@ -635,3 +635,11 @@ void display_dunes(void) {
     void prepare_dunes_level(void);
     display_nippon(&prepare_dunes_level);
 }
+
+void display_hermit(void) {
+    void prepare_hermit_level(void);
+    display_nippon(&prepare_hermit_level);
+
+    display_progress_bar();
+    lock_screen(1);
+}

@@ -261,6 +261,7 @@
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
     (save-array out "beach_level" (beach-level) *beach-walkable*)
     (save-array out "dunes_level" (dunes-level) *beach-walkable*)
+    (save-array out "hermit_level" (hermit-level) *beach-walkable*)
     (save-array out "mountain_level" (mountain-level) *alps-walkable*)
     (save-array out "plateau_level" (plateau-level) *alps-walkable*)
     (save-array out "queen_level" (queen-level) *alps-walkable*)

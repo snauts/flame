@@ -396,3 +396,7 @@
 
    (inject (dune-with-saplings 10) "level_done_burn_mobs" 48)
    (empty 48)))
+
+(defun hermit-level ()
+  (setf *seed* 1918)
+  (dune-segment :width 8))
