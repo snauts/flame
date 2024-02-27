@@ -322,6 +322,8 @@ Object *setup_obj(short x, short y, byte size) {
     obj->velocity = 0;
     obj->direction = -1;
     obj->sprite->size = size;
+    obj->sprite->x = 0;
+    obj->sprite->y = 0;
     return obj;
 }
 
