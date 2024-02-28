@@ -645,34 +645,60 @@ static Object **hermit;
 
 #define HERMIT_PARTS	8
 
-#define HERMIT_HP	hermit[0]->life
-#define HERMIT_EYES	hermit[4]
+#define BASE		0
+#define TIME		1
+#define EYES		4
+#define LEGS		5
+
+#define HERMIT_HP	hermit[BASE]->life
+#define HERMIT_TIME	hermit[TIME]->life
 
 static const Layout layout[HERMIT_PARTS] = {
     { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
-    { x:-16, y: -8, size:SPRITE_SIZE(3, 3), tile:TILE(3, 389) },
+    { x:-15, y: -8, size:SPRITE_SIZE(3, 3), tile:TILE(3, 389) },
     { x:  0, y:  0, size:SPRITE_SIZE(1, 1), tile:0 },
     { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
     { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
 };
 
-static void animate_eyes(Object *obj) {
-    if ((++obj->life & 0x7) == 0) {
+static void animate_eyes(u16 id) {
+    Object *obj = hermit[id];
+    if ((HERMIT_TIME & 0x7) == 0) {
 	obj->frame = obj->frame == 3 * 9 ? 0 : obj->frame + 9;
-	obj->sprite->cfg = layout[4].tile + obj->frame;
+	hermit[id]->sprite->cfg = layout[id].tile + obj->frame;
     }
 }
 
-static void hermit_update(Object *obj) {
+static const Pos *get_sway(void) {
+    static const Pos sway[] = {
+	{ x: 0, y: 0 },
+	{ x: 1, y: 0 },
+	{ x: 1, y: 1 },
+	{ x: 0, y: 1 },
+    };
+    return sway + ((HERMIT_TIME >> 3) & 3);
+}
+
+static void hermit_animate(Object *obj) {
+    const Pos *delta = get_sway();
     for (u16 i = 0; i < HERMIT_PARTS; i++) {
 	Sprite *sprite = hermit[i]->sprite;
 	sprite->x = obj->x + layout[i].x;
 	sprite->y = obj->y + layout[i].y;
+	if (i != EYES && i != LEGS) {
+	    sprite->x += delta->x;
+	    sprite->y += delta->y;
+	}
     }
-    animate_eyes(HERMIT_EYES);
+    animate_eyes(EYES);
+}
+
+static void hermit_update(Object *obj) {
+    hermit_animate(obj);
+    HERMIT_TIME++;
 }
 
 static void setup_hermit(u16 i) {
@@ -686,12 +712,12 @@ static void setup_hermit(u16 i) {
 	sprite->cfg = layout[i].tile;
     }
 
-    hermit[0]->x = 256;
-    hermit[0]->y = 284;
+    hermit[BASE]->x = 256;
+    hermit[BASE]->y = 284;
 
-    HERMIT_EYES->life = 0;
-    HERMIT_EYES->frame = 0;
+    hermit[EYES]->frame = 0;
 
+    HERMIT_TIME = 0;
     HERMIT_HP = BAR_HEALTH;
     mob_fn(hermit[0], &hermit_update);
 }
