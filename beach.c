@@ -4,6 +4,8 @@
 #include "images/beach.h"
 #include "images/dunes.h"
 
+#include "images/hermit_shell.h"
+
 static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
     for (u16 i = 0; i < 8; i++) {
 	u16 count = 1;
@@ -637,6 +639,9 @@ void display_dunes(void) {
 }
 
 void display_hermit(void) {
+    update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
+    update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
+
     void prepare_hermit_level(void);
     display_nippon(&prepare_hermit_level);
 
