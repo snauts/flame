@@ -94,6 +94,11 @@ typedef struct Pos {
     short x, y;
 } Pos;
 
+typedef struct Layout {
+    char x, y, size;
+    u16 tile;
+} Layout;
+
 #define NULL ((void *) 0)
 
 #define BYTE(x) (* (volatile byte *) (x))

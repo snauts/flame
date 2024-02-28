@@ -406,11 +406,6 @@ void display_rusty(void) {
 static Object **mantis;
 extern Object **burns;
 
-typedef struct Mantis {
-    char x, y, size;
-    u16 tile;
-} Mantis;
-
 #define MANTIS_HP	mantis[0]->life
 #define IS_AGITATED	mantis[1]->life
 #define FLICKERING	mantis[1]->frame
@@ -423,7 +418,7 @@ typedef struct Mantis {
 #define MANTIS_MIN_Y	152
 #define MANTIS_MAX_Y	272
 
-const Mantis mantis_layout[] = {
+const Layout mantis_layout[] = {
     { x:  0, y:  0, size: SPRITE_SIZE(4, 2), tile: TILE(3, 357) },
     { x:  8, y: 16, size: SPRITE_SIZE(2, 2), tile: TILE(3, 365) },
     { x: 16, y: 32, size: SPRITE_SIZE(4, 2), tile: TILE(3, 369) },
