@@ -5,6 +5,7 @@
 #include "images/dunes.h"
 
 #include "images/hermit_shell.h"
+#include "images/hermit_eyes.h"
 
 static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
     for (u16 i = 0; i < 8; i++) {
@@ -645,17 +646,25 @@ static Object **hermit;
 #define HERMIT_PARTS	8
 
 #define HERMIT_HP	hermit[0]->life
+#define HERMIT_EYES	hermit[4]
 
 static const Layout layout[HERMIT_PARTS] = {
     { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
-    { x:  0, y:  0, size:SPRITE_SIZE(1, 1), tile:0 },
+    { x:-16, y: -8, size:SPRITE_SIZE(3, 3), tile:TILE(3, 389) },
     { x:  0, y:  0, size:SPRITE_SIZE(1, 1), tile:0 },
     { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
     { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
 };
+
+static void animate_eyes(Object *obj) {
+    if ((++obj->life & 0x7) == 0) {
+	obj->frame = obj->frame == 3 * 9 ? 0 : obj->frame + 9;
+	obj->sprite->cfg = layout[4].tile + obj->frame;
+    }
+}
 
 static void hermit_update(Object *obj) {
     for (u16 i = 0; i < HERMIT_PARTS; i++) {
@@ -663,6 +672,7 @@ static void hermit_update(Object *obj) {
 	sprite->x = obj->x + layout[i].x;
 	sprite->y = obj->y + layout[i].y;
     }
+    animate_eyes(HERMIT_EYES);
 }
 
 static void setup_hermit(u16 i) {
@@ -678,6 +688,10 @@ static void setup_hermit(u16 i) {
 
     hermit[0]->x = 256;
     hermit[0]->y = 284;
+
+    HERMIT_EYES->life = 0;
+    HERMIT_EYES->frame = 0;
+
     HERMIT_HP = BAR_HEALTH;
     mob_fn(hermit[0], &hermit_update);
 }
@@ -688,6 +702,7 @@ void display_hermit(void) {
 
     update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
     update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
+    update_tiles(hermit_eyes_tiles, 389, ARRAY_SIZE(hermit_eyes_tiles));
 
     display_progress_bar();
     lock_screen(1);
