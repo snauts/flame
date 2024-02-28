@@ -580,6 +580,8 @@ void emit_highway(u16 x) {
     create_gunner_crab(x + 56, 7, 16, 16);
 }
 
+#define BURN_TILES 281
+
 static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
@@ -592,7 +594,7 @@ static void display_nippon(Function prepare_level) {
     update_palette(crab_palette, 48, ARRAY_SIZE(crab_palette));
     update_tiles(crab_tiles, 257, ARRAY_SIZE(crab_tiles));
 
-    load_burn_tiles(281);
+    load_burn_tiles(BURN_TILES);
 
     update_tiles(spit_tiles, 313, ARRAY_SIZE(spit_tiles));
 
@@ -638,13 +640,57 @@ void display_dunes(void) {
     display_nippon(&prepare_dunes_level);
 }
 
-void display_hermit(void) {
-    update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
-    update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
+static Object **hermit;
 
+#define HERMIT_PARTS	8
+
+#define HERMIT_HP	hermit[0]->life
+
+static const Layout layout[HERMIT_PARTS] = {
+    { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
+    { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
+    { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
+    { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
+    { x:  0, y:  0, size:SPRITE_SIZE(1, 1), tile:0 },
+    { x:  0, y:  0, size:SPRITE_SIZE(1, 1), tile:0 },
+    { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
+    { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
+};
+
+static void hermit_update(Object *obj) {
+    for (u16 i = 0; i < HERMIT_PARTS; i++) {
+	Sprite *sprite = hermit[i]->sprite;
+	sprite->x = obj->x + layout[i].x;
+	sprite->y = obj->y + layout[i].y;
+    }
+}
+
+static void setup_hermit(u16 i) {
+    setup_burns(4, BURN_TILES);
+
+    hermit = malloc(HERMIT_PARTS * sizeof(Object*));
+    for (u16 i = 0; i < HERMIT_PARTS; i++) {
+	hermit[i] = alloc_mob();
+	Sprite *sprite = hermit[i]->sprite;
+	sprite->size = layout[i].size;
+	sprite->cfg = layout[i].tile;
+    }
+
+    hermit[0]->x = 256;
+    hermit[0]->y = 284;
+    HERMIT_HP = BAR_HEALTH;
+    mob_fn(hermit[0], &hermit_update);
+}
+
+void display_hermit(void) {
     void prepare_hermit_level(void);
     display_nippon(&prepare_hermit_level);
 
+    update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
+    update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
+
     display_progress_bar();
     lock_screen(1);
+
+    schedule(&setup_hermit, 0);
 }
