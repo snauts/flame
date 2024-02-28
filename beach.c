@@ -6,6 +6,7 @@
 
 #include "images/hermit_shell.h"
 #include "images/hermit_eyes.h"
+#include "images/hermit_legs.h"
 
 static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
     for (u16 i = 0; i < 8; i++) {
@@ -659,15 +660,15 @@ static const Layout layout[HERMIT_PARTS] = {
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
     { x:-15, y: -8, size:SPRITE_SIZE(3, 3), tile:TILE(3, 389) },
-    { x:  0, y:  0, size:SPRITE_SIZE(1, 1), tile:0 },
+    { x:-20, y: 30, size:SPRITE_SIZE(4, 4), tile:TILE(3, 425) },
     { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
     { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
 };
 
-static void animate_eyes(u16 id) {
+static void animate_part(u16 id, u16 mask, u16 wrap, u16 inc) {
     Object *obj = hermit[id];
-    if ((HERMIT_TIME & 0x7) == 0) {
-	obj->frame = obj->frame == 3 * 9 ? 0 : obj->frame + 9;
+    if ((HERMIT_TIME & mask) == 0) {
+	obj->frame = obj->frame == wrap ? 0 : obj->frame + inc;
 	hermit[id]->sprite->cfg = layout[id].tile + obj->frame;
     }
 }
@@ -693,7 +694,8 @@ static void hermit_animate(Object *obj) {
 	    sprite->y += delta->y;
 	}
     }
-    animate_eyes(EYES);
+    animate_part(EYES, 7, 3 * 9, 9);
+    animate_part(LEGS, 3, 11 * 16, 16);
 }
 
 static void hermit_update(Object *obj) {
@@ -716,6 +718,7 @@ static void setup_hermit(u16 i) {
     hermit[BASE]->y = 284;
 
     hermit[EYES]->frame = 0;
+    hermit[LEGS]->frame = 0;
 
     HERMIT_TIME = 0;
     HERMIT_HP = BAR_HEALTH;
@@ -729,6 +732,7 @@ void display_hermit(void) {
     update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
     update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
     update_tiles(hermit_eyes_tiles, 389, ARRAY_SIZE(hermit_eyes_tiles));
+    update_tiles(hermit_legs_tiles, 425, ARRAY_SIZE(hermit_legs_tiles));
 
     display_progress_bar();
     lock_screen(1);
