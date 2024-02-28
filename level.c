@@ -264,7 +264,7 @@ void display_title(void) {
 }
 
 static void end_game_text(void) {
-    display_text("THE END", 17, 12);
+    display_text("GAME OVER", 16, 12);
     display_text("BEER FOREVER!", 14, 14);
 }
 
