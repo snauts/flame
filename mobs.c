@@ -246,11 +246,11 @@ static void update_burns(u16 i) {
 	    burn->sprite->x = burn->sprite->y = 0;
 	}
 	else {
+	    u16 tile = TILE(2, burn_tiles + 4 * burn->frame);
+	    if (burn->direction < 0) tile |= BIT(11);
+	    set_sprite_tile(burn->sprite, tile);
 	    burn->frame++;
 	}
-	u16 tile = TILE(2, burn_tiles + 4 * burn->frame);
-	if (burn->direction < 0) tile |= BIT(11);
-	set_sprite_tile(burn->sprite, tile);
     }
     schedule(&update_burns, 2);
 }
