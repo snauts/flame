@@ -722,8 +722,35 @@ static void hermit_animate(Object *obj) {
     }
 }
 
+static void hermit_dies(u16 x) {
+    error("PEPSI");
+}
+
+const Rectangle hL_box[] = {
+    { x1:  0, y1:  4, x2: 8, y2: 64 },
+    { x1:  8, y1: 16, x2:16, y2: 64 },
+    { x1: 16, y1: 32, x2:48, y2: 64 },
+};
+
+const Rectangle hR_box[] = {
+    { x1: 56, y1:  4, x2:64, y2: 64 },
+    { x1: 48, y1: 16, x2:56, y2: 64 },
+    { x1: 16, y1: 32, x2:48, y2: 64 },
+};
+
+static void hermit_hitbox(Object *obj) {
+    u16 size = ARRAY_SIZE(hL_box);
+    const Rectangle *box = obj->direction < 0 ? hL_box : hR_box;
+    if (HERMIT_HP > 0 && boss_hitbox(obj, box, size, size)) {
+	if (HERMIT_HP == 0) {
+	    schedule(&hermit_dies, 0);
+	}
+    }
+}
+
 static void hermit_update(Object *obj) {
     hermit_animate(obj);
+    hermit_hitbox(obj);
     HERMIT_TIME++;
 }
 
