@@ -659,8 +659,8 @@ static const Layout layout[HERMIT_PARTS] = {
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
-    { x:-15, y: -8, size:SPRITE_SIZE(3, 3), tile:TILE(3, 389) },
-    { x:-20, y: 30, size:SPRITE_SIZE(4, 4), tile:TILE(3, 425) },
+    { x:-15, y: -2, size:SPRITE_SIZE(3, 4), tile:TILE(3, 389) },
+    { x:-20, y: 30, size:SPRITE_SIZE(4, 4), tile:TILE(3, 437) },
     { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
     { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
 };
@@ -694,7 +694,7 @@ static void hermit_animate(Object *obj) {
 	    sprite->y += delta->y;
 	}
     }
-    animate_part(EYES, 7, 3 * 9, 9);
+    animate_part(EYES, 7, 3 * 12, 12);
     animate_part(LEGS, 3, 11 * 16, 16);
 }
 
@@ -732,7 +732,7 @@ void display_hermit(void) {
     update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
     update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
     update_tiles(hermit_eyes_tiles, 389, ARRAY_SIZE(hermit_eyes_tiles));
-    update_tiles(hermit_legs_tiles, 425, ARRAY_SIZE(hermit_legs_tiles));
+    update_tiles(hermit_legs_tiles, 437, ARRAY_SIZE(hermit_legs_tiles));
 
     display_progress_bar();
     lock_screen(1);
