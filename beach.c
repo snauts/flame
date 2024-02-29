@@ -164,8 +164,8 @@ static Object *setup_crab(short x, short y) {
     return obj;
 }
 
-static inline u16 spittle_animation(u16 life, Object *parent) {
-    return parent ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
+static inline u16 spittle_animation(u16 life, u16 is_growing) {
+    return is_growing ? clamp(3, (life >> 2)) : 4 + ((life >> 2) & 3);
 }
 
 static char sentinel_throw(Object *obj) {
@@ -255,6 +255,14 @@ static void throw_spittle(Object *obj, Object *parent) {
     }
 }
 
+static void animate_spit(Object *obj, u16 is_growing) {
+    if (mob_move(obj, 12)) {
+	obj->frame = spittle_animation(obj->life, is_growing);
+    }
+
+    obj->sprite->cfg = TILE(3, 313 + obj->frame);
+}
+
 static void move_spit(Object *obj) {
     Object *parent = obj->private;
 
@@ -262,11 +270,7 @@ static void move_spit(Object *obj) {
 	throw_spittle(obj, parent);
     }
 
-    if (mob_move(obj, 12)) {
-	obj->frame = spittle_animation(obj->life, parent);
-    }
-
-    obj->sprite->cfg = TILE(3, 313 + obj->frame);
+    animate_spit(obj, parent != NULL);
 }
 
 static Object *setup_spit(Object *parent, byte force) {
