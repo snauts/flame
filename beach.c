@@ -688,6 +688,20 @@ static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
     obj->sprite->cfg = tile + obj->frame;
 }
 
+static inline u16 is_staying(void) {
+    return HERMIT_STATE == H_STAY;
+}
+
+static void animate_legs(Object *part, u16 tile) {
+    if (is_staying()) {
+	static const byte stand[] = { 80, 96, 112, 96 };
+	part->sprite->cfg = tile + stand[(HERMIT_TIME >> 3) & 3];
+    }
+    else {
+	animate_part(part, tile, 3, 11 * 16, 16);
+    }
+}
+
 static const Pos *get_sway(void) {
     static const Pos sway[] = {
 	{ x: 0, y: 0 },
@@ -715,7 +729,7 @@ static void hermit_animate(Object *obj) {
 	    animate_part(part, tile, 7, 3 * 12, 12);
 	}
 	else if (i == LEGS) {
-	    animate_part(part, tile, 3, 11 * 16, 16);
+	    animate_legs(part, tile);
 	}
 	else {
 	    sprite->x += delta->x;
@@ -742,9 +756,7 @@ const Rectangle hR_box[] = {
 };
 
 static void hermit_charge(Object *obj) {
-    if (HERMIT_STATE == H_STAY) {
-	HERMIT_STATE = obj->direction < 0 ? H_LEFT : H_RIGHT;
-    }
+    if (is_staying()) HERMIT_STATE = obj->direction < 0 ? H_LEFT : H_RIGHT;
 }
 
 static void hermit_hitbox(Object *obj) {
