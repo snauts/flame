@@ -646,6 +646,24 @@ void display_dunes(void) {
     display_nippon(&prepare_dunes_level);
 }
 
+static void move_boss_spit(Object *obj) {
+    u16 is_growing = (obj->life < 16);
+    if (is_mob_alive(obj) && !is_growing) {
+	shoot_move(obj);
+    }
+
+    animate_spit(obj, is_growing);
+}
+
+static Object *setup_boss_spit(u16 x, u16 y, char pattern) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
+    mob_fn(obj, &move_boss_spit);
+    obj->flags |= O_PROJECTILE;
+    obj->direction = pattern;
+    obj->death = 8;
+    return obj;
+}
+
 static Object **hermit;
 
 #define HERMIT_PARTS	8
