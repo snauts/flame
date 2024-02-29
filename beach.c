@@ -652,7 +652,10 @@ static Object **hermit;
 #define LEGS		5
 
 #define HERMIT_HP	hermit[BASE]->life
+#define HERMIT_STATE	hermit[BASE]->frame
 #define HERMIT_TIME	hermit[TIME]->life
+
+enum { H_STAY = 0, H_LEFT, H_RIGHT };
 
 #define FLIP(p, i) (TILE(p, i) | BIT(11))
 
@@ -681,8 +684,8 @@ static const Layout left[HERMIT_PARTS] = {
 static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
     if ((HERMIT_TIME & mask) == 0) {
 	obj->frame = obj->frame >= wrap ? 0 : obj->frame + inc;
-	obj->sprite->cfg = tile + obj->frame;
     }
+    obj->sprite->cfg = tile + obj->frame;
 }
 
 static const Pos *get_sway(void) {
@@ -738,6 +741,12 @@ const Rectangle hR_box[] = {
     { x1: 16, y1: 32, x2:48, y2: 64 },
 };
 
+static void hermit_charge(Object *obj) {
+    if (HERMIT_STATE == H_STAY) {
+	HERMIT_STATE = obj->direction < 0 ? H_LEFT : H_RIGHT;
+    }
+}
+
 static void hermit_hitbox(Object *obj) {
     u16 size = ARRAY_SIZE(hL_box);
     const Rectangle *box = obj->direction < 0 ? hL_box : hR_box;
@@ -745,10 +754,39 @@ static void hermit_hitbox(Object *obj) {
 	if (HERMIT_HP == 0) {
 	    schedule(&hermit_dies, 0);
 	}
+	else {
+	    hermit_charge(obj);
+	}
+    }
+}
+
+static void hermit_walk(Object *obj, u16 condition) {
+    obj->x += obj->direction;
+    if (condition) {
+	obj->direction = -obj->direction;
+	obj->x -= 32 * obj->direction;
+	HERMIT_STATE = H_STAY;
+    }
+}
+
+static void hermit_action(Object *obj) {
+    switch (HERMIT_STATE) {
+    case H_LEFT:
+	hermit_walk(obj, obj->x < 128);
+	break;
+    case H_RIGHT:
+	hermit_walk(obj, obj->x > 384);
+	break;
+    case H_STAY:
+	break;
+    default:
+	error("BAD-HERMIT-STATE");
+	break;
     }
 }
 
 static void hermit_update(Object *obj) {
+    hermit_action(obj);
     hermit_animate(obj);
     hermit_hitbox(obj);
     HERMIT_TIME++;
@@ -762,18 +800,17 @@ static void setup_hermit(u16 i) {
 	hermit[i] = alloc_mob();
 	Sprite *sprite = hermit[i]->sprite;
 	sprite->size = left[i].size;
+	hermit[i]->frame = 0;
     }
 
-    hermit[BASE]->x = 256;
+    hermit[BASE]->x = 464;
     hermit[BASE]->y = 284;
     hermit[BASE]->direction = -1;
 
-    hermit[EYES]->frame = 0;
-    hermit[LEGS]->frame = 0;
-
     HERMIT_TIME = 0;
+    HERMIT_STATE = H_LEFT;
     HERMIT_HP = BAR_HEALTH;
-    mob_fn(hermit[0], &hermit_update);
+    mob_fn(hermit[BASE], &hermit_update);
 }
 
 void display_hermit(void) {
