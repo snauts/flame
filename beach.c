@@ -764,7 +764,7 @@ static void hermit_walk(Object *obj, u16 condition) {
     obj->x += obj->direction;
     if (condition) {
 	obj->direction = -obj->direction;
-	obj->x -= 32 * obj->direction;
+	obj->x -= obj->direction < 0 ? -32 : 32;
 	HERMIT_STATE = H_STAY;
     }
 }
