@@ -727,13 +727,13 @@ static void hermit_dies(u16 x) {
 }
 
 const Rectangle hL_box[] = {
-    { x1:  0, y1:  4, x2: 8, y2: 64 },
+    { x1: -4, y1:  4, x2: 8, y2: 64 },
     { x1:  8, y1: 16, x2:16, y2: 64 },
     { x1: 16, y1: 32, x2:48, y2: 64 },
 };
 
 const Rectangle hR_box[] = {
-    { x1: 56, y1:  4, x2:64, y2: 64 },
+    { x1: 56, y1:  4, x2:68, y2: 64 },
     { x1: 48, y1: 16, x2:56, y2: 64 },
     { x1: 16, y1: 32, x2:48, y2: 64 },
 };
