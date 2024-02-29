@@ -654,6 +654,19 @@ static Object **hermit;
 #define HERMIT_HP	hermit[BASE]->life
 #define HERMIT_TIME	hermit[TIME]->life
 
+#define FLIP(p, i) (TILE(p, i) | BIT(11))
+
+static const Layout right[HERMIT_PARTS] = {
+    { x: 32, y:  0, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 329) },
+    { x: 32, y: 32, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 361) },
+    { x:  0, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 341) },
+    { x:  0, y: 32, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 373) },
+    { x: 56, y: -2, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 389) },
+    { x: 53, y: 30, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 437) },
+    { x: 56, y:  0, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 325) },
+    { x: 56, y: 32, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 357) },
+};
+
 static const Layout layout[HERMIT_PARTS] = {
     { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
