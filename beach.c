@@ -667,7 +667,7 @@ static const Layout right[HERMIT_PARTS] = {
     { x: 56, y: 32, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 357) },
 };
 
-static const Layout layout[HERMIT_PARTS] = {
+static const Layout left[HERMIT_PARTS] = {
     { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
@@ -678,11 +678,10 @@ static const Layout layout[HERMIT_PARTS] = {
     { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
 };
 
-static void animate_part(u16 id, u16 mask, u16 wrap, u16 inc) {
-    Object *obj = hermit[id];
+static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
     if ((HERMIT_TIME & mask) == 0) {
-	obj->frame = obj->frame == wrap ? 0 : obj->frame + inc;
-	hermit[id]->sprite->cfg = layout[id].tile + obj->frame;
+	obj->frame = obj->frame >= wrap ? 0 : obj->frame + inc;
+	obj->sprite->cfg = tile + obj->frame;
     }
 }
 
@@ -696,19 +695,31 @@ static const Pos *get_sway(void) {
     return sway + ((HERMIT_TIME >> 3) & 3);
 }
 
+static const Layout *get_layout(Object *obj) {
+    return obj->direction > 0 ? right : left;
+}
+
 static void hermit_animate(Object *obj) {
     const Pos *delta = get_sway();
+    const Layout *layout = get_layout(obj);
     for (u16 i = 0; i < HERMIT_PARTS; i++) {
-	Sprite *sprite = hermit[i]->sprite;
+	Object *part = hermit[i];
+	Sprite *sprite = part->sprite;
+	u16 tile = layout[i].tile;
 	sprite->x = obj->x + layout[i].x;
 	sprite->y = obj->y + layout[i].y;
-	if (i != EYES && i != LEGS) {
+	if (i == EYES) {
+	    animate_part(part, tile, 7, 3 * 12, 12);
+	}
+	else if (i == LEGS) {
+	    animate_part(part, tile, 3, 11 * 16, 16);
+	}
+	else {
 	    sprite->x += delta->x;
 	    sprite->y += delta->y;
+	    sprite->cfg = tile;
 	}
     }
-    animate_part(EYES, 7, 3 * 12, 12);
-    animate_part(LEGS, 3, 11 * 16, 16);
 }
 
 static void hermit_update(Object *obj) {
@@ -723,12 +734,12 @@ static void setup_hermit(u16 i) {
     for (u16 i = 0; i < HERMIT_PARTS; i++) {
 	hermit[i] = alloc_mob();
 	Sprite *sprite = hermit[i]->sprite;
-	sprite->size = layout[i].size;
-	sprite->cfg = layout[i].tile;
+	sprite->size = left[i].size;
     }
 
     hermit[BASE]->x = 256;
     hermit[BASE]->y = 284;
+    hermit[BASE]->direction = -1;
 
     hermit[EYES]->frame = 0;
     hermit[LEGS]->frame = 0;
