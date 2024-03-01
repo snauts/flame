@@ -466,7 +466,7 @@ static void mantis_start_flying(void) {
 
 static void animate_wing(Object *obj) {
     if (!mantis_2nd_stage()) {
-	obj->sprite->x = obj->sprite->y = 0;
+	hide_sprite(obj->sprite);
     }
     else if (MANTIS_WALK) {
 	set_sprite_tile(obj->sprite, TILE(3, 545));

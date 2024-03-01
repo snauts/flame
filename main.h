@@ -229,6 +229,7 @@ u16 is_rightmost(void);
 u16 is_leftmost(void);
 
 Object *alloc_mob(void);
+void hide_sprite(Sprite *sprite);
 void schedule(Callback, u16 ticks);
 void callback(Callback, u16 timeout, u16 cookie);
 void mob_fn(Object *obj, void (*fn)(Object *));

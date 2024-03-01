@@ -57,6 +57,7 @@ void free_mob(Object *obj) {
     free_mobs[available_mobs++] = index;
     free_mobs[obj->place] = other;
     mobs[other].obj.place = obj->place;
+    hide_sprite(obj->sprite);
     obj->place = -1;
 }
 
@@ -161,7 +162,7 @@ static inline u16 is_projectile(Object *obj) {
 
 static void too_far_right(Object *obj, Sprite *sprite) {
     if (is_persistent(obj)) {
-	sprite->x = sprite->y = 1;
+	hide_sprite(sprite);
     }
     else {
 	free_mob(obj);
@@ -244,7 +245,7 @@ static void update_burns(u16 i) {
 	    burn->sprite->y = parent->sprite->y + burn->y;
 	}
 	if (burn->frame >= 8) {
-	    burn->sprite->x = burn->sprite->y = 0;
+	    hide_sprite(burn->sprite);
 	}
 	else {
 	    u16 tile = TILE(2, burn_tiles + 4 * burn->frame);
@@ -277,8 +278,7 @@ void init_burn(Object *obj) {
 void free_burns(void) {
     cancel_timer(&update_burns);
     for (u16 i = 0; i < burn_count; i++) {
-	burns[i]->sprite->x = 0;
-	burns[i]->sprite->y = 0;
+	hide_sprite(burns[i]->sprite);
 	free_mob(burns[i]);
     }
 }
@@ -323,8 +323,7 @@ Object *setup_obj(short x, short y, byte size) {
     obj->velocity = 0;
     obj->direction = -1;
     obj->sprite->size = size;
-    obj->sprite->x = 0;
-    obj->sprite->y = 0;
+    hide_sprite(obj->sprite);
     return obj;
 }
 
@@ -363,4 +362,8 @@ char mob_move(Object *obj, u16 last_frame) {
     obj->sprite->x = SCREEN_X(obj->x);
     obj->sprite->y = obj->y + ON_SCREEN - 16;
     return mob_cycle(obj, last_frame);
+}
+
+void hide_sprite(Sprite *sprite) {
+    sprite->y = 0;
 }
