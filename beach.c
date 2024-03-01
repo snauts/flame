@@ -728,28 +728,24 @@ static inline u16 is_staying(void) {
     return (HERMIT_STATE & (WALK_L | WALK_R)) == 0;
 }
 
-static void spit_fan_left(u16 i) {
-    if (is_staying() && i < 5) {
-	callback(&spit_fan_left, 4, i + 1);
-	setup_boss_spit(96, 192 + (i << 2), 20 - i);
-    }
-}
+static const byte spit_fan_data[2][6] = {
+    {   0, 20, 19, 18, 17, 16 },
+    { 246, 20, 23, 22, 21, 5 },
+};
 
-static void spit_fan_right(u16 i) {
-    if (is_staying() && i < 5) {
-	static const byte angle[] = { 20, 23, 22, 21, 5 };
-	setup_boss_spit(342, 192 + (i << 2), angle[i]);
-	callback(&spit_fan_right, 2, i + 1);
+static void spit_fan(u16 x) {
+    if (is_staying()) {
+	u16 delay, i = x & 0xf;
+	const byte *data = spit_fan_data[x >> 5];
+	setup_boss_spit(96 + data[0], 192 + (i << 2), data[i + 1]);
+	x = i < 4 ? x + 1 : ((x & ~0xf) ^ BIT(4));
+	delay = (x & BIT(4)) || i == 4 ? 40 : 4;
+	callback(&spit_fan, delay, x);
     }
 }
 
 static void produce_spit_fan(char dir) {
-    if (dir > 0) {
-	spit_fan_left(0);
-    }
-    else {
-	spit_fan_right(0);
-    }
+    spit_fan(dir > 0 ? 0 : (1 << 5));
 }
 
 static void animate_legs(Object *part, u16 tile) {
