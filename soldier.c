@@ -266,7 +266,7 @@ static void update_flame_sprite(Object *f) {
     }
 
     if (f->sprite->x > SCR_WIDTH + ON_SCREEN) {
-	f->sprite->x = f->sprite->y = 1;
+	hide_sprite(f->sprite);
     }
 }
 
