@@ -728,24 +728,35 @@ static inline u16 is_staying(void) {
     return (HERMIT_STATE & (WALK_L | WALK_R)) == 0;
 }
 
-static const byte spit_fan_data[2][6] = {
-    {   0, 20, 19, 18, 17, 16 },
-    { 246, 20, 23, 22, 21, 5 },
+struct BossSpit {
+    u16 x;
+    byte count;
+    byte ids[];
+};
+
+static const struct BossSpit spit_fan_L = {
+    .x = 96, .count = 5, .ids = { 20, 19, 18, 17, 16 },
+};
+static const struct BossSpit spit_fan_R = {
+    .x = 342, .count = 5, .ids = { 20, 23, 22, 21, 5 },
+};
+static const struct BossSpit *spit_data[] = {
+    &spit_fan_L, &spit_fan_R,
 };
 
 static void spit_fan(u16 x) {
     if (is_staying()) {
-	u16 delay, i = x & 0xf;
-	const byte *data = spit_fan_data[x >> 5];
-	setup_boss_spit(96 + data[0], 192 + (i << 2), data[i + 1]);
-	x = i < 4 ? x + 1 : ((x & ~0xf) ^ BIT(4));
-	delay = (x & BIT(4)) || i == 4 ? 40 : 4;
-	callback(&spit_fan, delay, x);
+	u16 delay = x >> 8, i = x & 0xf;
+	const struct BossSpit *data = spit_data[(x >> 4) & 0xf];
+	setup_boss_spit(data->x, 192 + (i << 2), data->ids[i]);
+	if (i < data->count - 1) {
+	    callback(&spit_fan, delay, x + 1);
+	}
     }
 }
 
 static void produce_spit_fan(char dir) {
-    spit_fan(dir > 0 ? 0 : (1 << 5));
+    spit_fan(dir > 0 ? 0x400 : 0x410);
 }
 
 static void animate_legs(Object *part, u16 tile) {
