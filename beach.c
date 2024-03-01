@@ -677,7 +677,8 @@ static Object **hermit;
 #define HERMIT_STATE	hermit[BASE]->frame
 #define HERMIT_TIME	hermit[TIME]->life
 
-enum { H_STAY = 0, H_LEFT, H_RIGHT };
+#define WALK_L		BIT(0)
+#define WALK_R		BIT(1)
 
 #define FLIP(p, i) (TILE(p, i) | BIT(11))
 
@@ -711,7 +712,7 @@ static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
 }
 
 static inline u16 is_staying(void) {
-    return HERMIT_STATE == H_STAY;
+    return (HERMIT_STATE & (WALK_L | WALK_R)) == 0;
 }
 
 static void animate_legs(Object *part, u16 tile) {
@@ -777,8 +778,8 @@ const Rectangle hR_box[] = {
     { x1: 16, y1: 32, x2:48, y2: 64 },
 };
 
-static void hermit_charge(Object *obj) {
-    if (is_staying()) HERMIT_STATE = obj->direction < 0 ? H_LEFT : H_RIGHT;
+static void hermit_start_walking(Object *obj) {
+    if (is_staying()) HERMIT_STATE |= obj->direction < 0 ? WALK_L : WALK_R;
 }
 
 static void hermit_hitbox(Object *obj) {
@@ -789,7 +790,7 @@ static void hermit_hitbox(Object *obj) {
 	    schedule(&hermit_dies, 0);
 	}
 	else {
-	    hermit_charge(obj);
+	    hermit_start_walking(obj);
 	}
     }
 }
@@ -799,23 +800,16 @@ static void hermit_walk(Object *obj, u16 condition) {
     if (condition) {
 	obj->direction = -obj->direction;
 	obj->x -= obj->direction < 0 ? -32 : 32;
-	HERMIT_STATE = H_STAY;
+	HERMIT_STATE &= ~(WALK_L | WALK_R);
     }
 }
 
 static void hermit_action(Object *obj) {
-    switch (HERMIT_STATE) {
-    case H_LEFT:
+    if (HERMIT_STATE & WALK_L) {
 	hermit_walk(obj, obj->x < 128);
-	break;
-    case H_RIGHT:
+    }
+    else if (HERMIT_STATE & WALK_R) {
 	hermit_walk(obj, obj->x > 384);
-	break;
-    case H_STAY:
-	break;
-    default:
-	error("BAD-HERMIT-STATE");
-	break;
     }
 }
 
@@ -842,7 +836,7 @@ static void setup_hermit(u16 i) {
     hermit[BASE]->direction = -1;
 
     HERMIT_TIME = 0;
-    HERMIT_STATE = H_LEFT;
+    HERMIT_STATE = WALK_L;
     HERMIT_HP = BAR_HEALTH;
     mob_fn(hermit[BASE], &hermit_update);
 }
