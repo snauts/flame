@@ -210,6 +210,7 @@ static const struct Shoot shoot[] = {
     { mx: 0x7, my: 0x0, dir_x: -1, dir_y:  1, len: 3 },
     { mx: 0x7, my: 0x1, dir_x: -1, dir_y: -1, len: 3 },
 
+    /* 7 */
     { mx: 0xAA, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
     { mx: 0x94, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
     { mx: 0x11, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
@@ -219,6 +220,13 @@ static const struct Shoot shoot[] = {
     { mx: 0x11, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
     { mx: 0x94, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
     { mx: 0xAA, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
+
+    /* 16 */
+    { mx: 0xFF, my: 0x00, dir_x: 1, dir_y: -1, len: 8 },
+    { mx: 0xFF, my: 0xAA, dir_x: 1, dir_y: -1, len: 8 },
+    { mx: 0xFE, my: 0xEF, dir_x: 1, dir_y: -1, len: 8 },
+    { mx: 0xAA, my: 0xFF, dir_x: 1, dir_y: -1, len: 8 },
+    { mx: 0x00, my: 0xFF, dir_x: 1, dir_y: -1, len: 8 },
 };
 
 static void shoot_move(Object *obj) {
@@ -715,6 +723,17 @@ static inline u16 is_staying(void) {
     return (HERMIT_STATE & (WALK_L | WALK_R)) == 0;
 }
 
+static void spit_fan_left(u16 i) {
+    if (is_staying() && i < 5) {
+	callback(&spit_fan_left, 4, i + 1);
+	setup_boss_spit(96, 208 - (i << 3), 16 + i);
+    }
+}
+
+static void produce_spit_fan(void) {
+    spit_fan_left(0);
+}
+
 static void animate_legs(Object *part, u16 tile) {
     if (is_staying()) {
 	static const byte stand[] = { 80, 96, 112, 96 };
@@ -795,12 +814,13 @@ static void hermit_hitbox(Object *obj) {
     }
 }
 
-static void hermit_walk(Object *obj, u16 condition) {
+static void hermit_walk(Object *obj, u16 stop_condition) {
     obj->x += obj->direction;
-    if (condition) {
+    if (stop_condition) {
 	obj->direction = -obj->direction;
 	obj->x -= obj->direction < 0 ? -32 : 32;
 	HERMIT_STATE &= ~(WALK_L | WALK_R);
+	produce_spit_fan();
     }
 }
 
