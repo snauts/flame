@@ -678,8 +678,8 @@ static Object **hermit;
 
 #define BASE		0
 #define TIME		1
-#define EYES		4
-#define LEGS		5
+#define EYES		2
+#define LEGS		3
 
 #define HERMIT_HP	hermit[BASE]->life
 #define HERMIT_STATE	hermit[BASE]->frame
@@ -691,25 +691,25 @@ static Object **hermit;
 #define FLIP(p, i) (TILE(p, i) | BIT(11))
 
 static const Layout right[HERMIT_PARTS] = {
+    { x: 56, y:  0, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 325) },
+    { x: 56, y: 32, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 357) },
+    { x: 56, y: -2, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 389) },
+    { x: 53, y: 30, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 437) },
     { x: 32, y:  0, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 329) },
     { x: 32, y: 32, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 361) },
     { x:  0, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 341) },
     { x:  0, y: 32, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 373) },
-    { x: 56, y: -2, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 389) },
-    { x: 53, y: 30, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 437) },
-    { x: 56, y:  0, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 325) },
-    { x: 56, y: 32, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 357) },
 };
 
 static const Layout left[HERMIT_PARTS] = {
+    { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
+    { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
+    { x:-15, y: -2, size:SPRITE_SIZE(3, 4), tile:TILE(3, 389) },
+    { x:-20, y: 30, size:SPRITE_SIZE(4, 4), tile:TILE(3, 437) },
     { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
-    { x:-15, y: -2, size:SPRITE_SIZE(3, 4), tile:TILE(3, 389) },
-    { x:-20, y: 30, size:SPRITE_SIZE(4, 4), tile:TILE(3, 437) },
-    { x:  0, y:  0, size:SPRITE_SIZE(1, 4), tile:TILE(3, 325) },
-    { x:  0, y: 32, size:SPRITE_SIZE(1, 4), tile:TILE(3, 357) },
 };
 
 static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
@@ -841,8 +841,6 @@ static void hermit_update(Object *obj) {
 }
 
 static void setup_hermit(u16 i) {
-    setup_burns(4, BURN_TILES);
-
     hermit = malloc(HERMIT_PARTS * sizeof(Object*));
     for (u16 i = 0; i < HERMIT_PARTS; i++) {
 	hermit[i] = alloc_mob();
@@ -850,6 +848,8 @@ static void setup_hermit(u16 i) {
 	sprite->size = left[i].size;
 	hermit[i]->frame = 0;
     }
+
+    setup_burns(4, BURN_TILES);
 
     hermit[BASE]->x = 464;
     hermit[BASE]->y = 284;

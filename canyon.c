@@ -764,8 +764,6 @@ static void walk_mantis(Object *obj) {
 }
 
 static void setup_mantis(u16 i) {
-    setup_burns(BURN_COUNT, 577);
-
     mantis = malloc(MANTIS_PARTS * sizeof(Object*));
     for (u16 i = 0; i < MANTIS_PARTS; i++) {
 	mantis[i] = alloc_mob();
@@ -775,6 +773,8 @@ static void setup_mantis(u16 i) {
 	mantis[i]->frame = 0;
 	mantis[i]->life = 0;
     }
+
+    setup_burns(BURN_COUNT, 577);
 
     VERTICAL = 0;
     MANTIS_WALK = 1;

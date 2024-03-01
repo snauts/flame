@@ -791,8 +791,6 @@ static void queen_update(Object *obj) {
 }
 
 static void setup_queen(u16 i) {
-    setup_burns(4, BURN_TILES);
-
     queen = malloc(QUEEN_SLICES * sizeof(Object*));
     for (u16 i = 0; i < QUEEN_PARTS; i++) {
 	queen[i] = alloc_mob();
@@ -802,6 +800,8 @@ static void setup_queen(u16 i) {
 	queen[i]->frame = i;
 	queen[i]->life = 0;
     }
+
+    setup_burns(4, BURN_TILES);
 
     QUEEN_STAGE = 1;
     QUEEN_HP = BAR_HEALTH;
