@@ -97,7 +97,7 @@ void apply_to_all_mobs(void (*fn)(Object *)) {
 void manage_mobs(void) {
     call_mob_functions();
     signed char last_mob = available_mobs;
-    for (signed char i = MAX_MOBS; i >= last_mob; i--) {
+    for (signed char i = MAX_MOBS - 1; i >= last_mob; i--) {
 	u16 index = free_mobs[i];
 	Mob *mob = mobs + index;
 	mob->obj.sprite->next = update_next_sprite(index + MOB_OFFSET);
