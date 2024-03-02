@@ -233,6 +233,11 @@ extern const byte decople_table[FLAME_LIFE];
 
 #define FIRE_FRAME(x) TILE(2, FLAME + (2 * (x)))
 
+static inline void update_flame_pos(Object *f) {
+    f->sprite->x = (f->x >> 4);
+    f->sprite->y = (f->y >> 4);
+}
+
 static void update_flame_sprite(Object *f) {
     byte decople = decople_table[f->life];
     Flame *this = CONTAINER_OF(f, Flame, obj);
@@ -245,14 +250,15 @@ static void update_flame_sprite(Object *f) {
     u16 dx = sx + clamp(this->emit.x - sx, decople >> 1);
     u16 dy = sy + clamp(this->emit.y - sy, decople);
 
-    f->sprite->x = (f->x >> 4);
-    f->sprite->y = (f->y >> 4);
+    update_flame_pos(f);
 
     if (!this->off) {
 	if (f->direction != soldier.direction) {
 	    this->off = 1;
 	    f->x += (dx << 4);
 	    if (f->life < FLAME_DECOPLE) f->y += (dy << 4);
+
+	    update_flame_pos(f);
 	}
 	else {
 	    f->sprite->x += dx;
