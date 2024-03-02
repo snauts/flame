@@ -755,8 +755,13 @@ static void spit_fan(u16 x) {
     }
 }
 
-static void produce_spit_fan(char dir) {
-    spit_fan(dir > 0 ? 0x400 : 0x410);
+static void produce_spit_fan(Object *obj, char right, char stop) {
+    if (stop) {
+	spit_fan(right ? 0x410 : 0x400);
+    }
+    else if ((obj->x & 0x3f) == 0) {
+	setup_boss_spit(obj->x - (right ? 0 : 72), 220, 20);
+    }
 }
 
 static void animate_legs(Object *part, u16 tile) {
@@ -840,13 +845,14 @@ static void hermit_hitbox(Object *obj) {
 }
 
 static void hermit_walk(Object *obj, u16 stop_condition) {
+    char right = obj->direction > 0;
     obj->x += obj->direction;
     if (stop_condition) {
+	obj->x -= right ? -32 : 32;
 	obj->direction = -obj->direction;
-	obj->x -= obj->direction < 0 ? -32 : 32;
 	HERMIT_STATE &= ~(WALK_L | WALK_R);
-	produce_spit_fan(obj->direction);
     }
+    produce_spit_fan(obj, right, stop_condition);
 }
 
 static void hermit_action(Object *obj) {
