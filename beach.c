@@ -828,6 +828,7 @@ static void hermit_death_update(Object *obj) {
 }
 
 static void hermit_dies(u16 x) {
+    soldier_fist_pump();
     apply_to_all_mobs(&remove_spit);
     mob_fn(hermit[BASE], &hermit_death_update);
 }
