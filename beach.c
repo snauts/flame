@@ -695,6 +695,7 @@ static Object **hermit;
 
 #define WALK_L		BIT(0)
 #define WALK_R		BIT(1)
+#define ANGRY		BIT(2)
 
 #define FLIP(p, i) (TILE(p, i) | BIT(11))
 
@@ -751,14 +752,28 @@ static const struct BossSpit *spit_data[] = {
     &spit_fan_L, &spit_fan_R,
 };
 
+static void hermit_start_walking(Object *obj) {
+    HERMIT_STATE |= obj->direction < 0 ? WALK_L : WALK_R;
+}
+
+static void hermit_idle(u16 x) {
+    if (HERMIT_STATE & ANGRY) {
+	hermit_start_walking(hermit[BASE]);
+    }
+    else {
+	callback(&hermit_idle, 0, x);
+    }
+}
+
 static void spit_fan(u16 x) {
-    if (is_staying()) {
-	u16 delay = x >> 8, i = x & 0xf;
-	const struct BossSpit *data = spit_data[(x >> 4) & 0xf];
-	setup_boss_spit(data->x, 192 + (i << 2), data->ids[i]);
-	if (i < data->count - 1) {
-	    callback(&spit_fan, delay, x + 1);
-	}
+    u16 delay = x >> 8, i = x & 0xf;
+    const struct BossSpit *data = spit_data[(x >> 4) & 0xf];
+    setup_boss_spit(data->x, 192 + (i << 2), data->ids[i]);
+    if (i < data->count - 1) {
+	callback(&spit_fan, delay, x + 1);
+    }
+    else {
+	callback(&hermit_idle, 64, x & ~0xf);
     }
 }
 
@@ -845,10 +860,6 @@ const Rectangle hR_box[] = {
     { x1: 16, y1: 32, x2:48, y2: 64 },
 };
 
-static void hermit_start_walking(Object *obj) {
-    if (is_staying()) HERMIT_STATE |= obj->direction < 0 ? WALK_L : WALK_R;
-}
-
 static void hermit_hitbox(Object *obj) {
     u16 size = ARRAY_SIZE(hL_box);
     const Rectangle *box = obj->direction < 0 ? hL_box : hR_box;
@@ -857,7 +868,7 @@ static void hermit_hitbox(Object *obj) {
 	    schedule(&hermit_dies, 0);
 	}
 	else {
-	    hermit_start_walking(obj);
+	    HERMIT_STATE |= ANGRY;
 	}
     }
 }
@@ -868,7 +879,7 @@ static void hermit_walk(Object *obj, u16 stop_condition) {
     if (stop_condition) {
 	obj->x -= right ? -32 : 32;
 	obj->direction = -obj->direction;
-	HERMIT_STATE &= ~(WALK_L | WALK_R);
+	HERMIT_STATE &= ~(WALK_L | WALK_R | ANGRY);
     }
     produce_spit_fan(obj, right, stop_condition);
 }
@@ -900,14 +911,15 @@ static void setup_hermit(u16 i) {
 
     setup_burns(4, BURN_TILES);
 
-    hermit[BASE]->x = 464;
+    hermit[BASE]->x = 416;
     hermit[BASE]->y = 284;
     hermit[BASE]->direction = -1;
 
     HERMIT_TIME = 0;
-    HERMIT_STATE = WALK_L;
+    HERMIT_STATE = 0;
     HERMIT_HP = BAR_HEALTH;
     mob_fn(hermit[BASE], &hermit_update);
+    hermit_idle(0);
 }
 
 void display_hermit(void) {
