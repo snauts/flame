@@ -234,6 +234,7 @@ void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n) {
 
 static u16 burn_count;
 static u16 burn_tiles;
+static u16 burn_index;
 Object **burns;
 
 static void update_burns(u16 i) {
@@ -263,6 +264,7 @@ static void update_burns(u16 i) {
 }
 
 void setup_burns(u16 count, u16 tiles) {
+    burn_index = 0;
     burn_tiles = tiles;
     burn_count = count;
     burns = malloc(count * sizeof(Object*));
@@ -288,13 +290,17 @@ void free_burns(void) {
     }
 }
 
-void flame_burn(Object *obj, u16 i) {
-    Object *burn = burns[i];
+void flame_burn(Object *obj) {
+    Object *burn = burns[burn_index];
     burn->private = NULL;
     burn->direction = obj->direction;
     burn->sprite->x = obj->sprite->x;
     burn->sprite->y = obj->sprite->y - 4;
     init_burn(burn);
+
+    if (++burn_index >= burn_count) {
+	burn_index = 0;
+    }
 }
 
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
@@ -306,7 +312,7 @@ u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
 	Object *flame = flame_collision(box + i);
 	if (flame != NULL && get_soldier()->life == 0) {
 	    obj->life = decrement_progress_bar();
-	    flame_burn(flame, 0);
+	    flame_burn(flame);
 	    perish_sfx();
 	    ret = 1;
 	}
