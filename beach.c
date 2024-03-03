@@ -668,13 +668,16 @@ static void move_boss_spit(Object *obj) {
     animate_spit(obj, is_growing);
 }
 
-static Object *setup_boss_spit(u16 x, u16 y, char pattern) {
-    Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
-    mob_fn(obj, &move_boss_spit);
-    obj->flags |= O_PROJECTILE;
-    obj->direction = pattern;
-    obj->death = 8;
-    return obj;
+static char is_hermit_alive(void);
+
+static void setup_boss_spit(u16 x, u16 y, char pattern) {
+    if (is_hermit_alive()) {
+	Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
+	mob_fn(obj, &move_boss_spit);
+	obj->flags |= O_PROJECTILE;
+	obj->direction = pattern;
+	obj->death = 8;
+    }
 }
 
 static Object **hermit;
@@ -716,6 +719,10 @@ static const Layout left[HERMIT_PARTS] = {
     { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
 };
+
+static char is_hermit_alive(void) {
+    return HERMIT_HP > 0;
+}
 
 static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
     if ((HERMIT_TIME & mask) == 0) {
@@ -811,8 +818,18 @@ static void hermit_animate(Object *obj) {
     }
 }
 
+static void remove_spit(Object *obj) {
+    if (obj->flags & O_PROJECTILE) {
+	kill_mob(obj);
+    }
+}
+
+static void hermit_death_update(Object *obj) {
+}
+
 static void hermit_dies(u16 x) {
-    error("PEPSI");
+    apply_to_all_mobs(&remove_spit);
+    mob_fn(hermit[BASE], &hermit_death_update);
 }
 
 const Rectangle hL_box[] = {
@@ -834,7 +851,7 @@ static void hermit_start_walking(Object *obj) {
 static void hermit_hitbox(Object *obj) {
     u16 size = ARRAY_SIZE(hL_box);
     const Rectangle *box = obj->direction < 0 ? hL_box : hR_box;
-    if (HERMIT_HP > 0 && boss_hitbox(obj, box, size, size)) {
+    if (is_hermit_alive() && boss_hitbox(obj, box, size, size)) {
 	if (HERMIT_HP == 0) {
 	    schedule(&hermit_dies, 0);
 	}
