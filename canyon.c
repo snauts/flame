@@ -539,14 +539,19 @@ static void mantis_flicker_color(u16 upd) {
     update_color(54 + FLICKERING, mantis_body_palette[FLICKERING + 6] + upd);
 }
 
+static void mantis_switch_direction(Object *obj, char dir) {
+    obj->direction = dir;
+    IS_AGITATED = 0;
+}
+
 static void adjust_manits_position(Object *obj) {
     if (MANTIS_WALK) obj->x += obj->direction;
 
     if (obj->x <= MANTIS_MIN_X && obj->direction < 0) {
-	obj->direction = 1;
+	mantis_switch_direction(obj, 1);
     }
     if (obj->x >= MANTIS_MAX_X && obj->direction > 0) {
-	obj->direction = -1;
+	mantis_switch_direction(obj, -1);
     }
 }
 
@@ -723,9 +728,8 @@ static void mantis_gets_angry(Object *obj, Sprite *soldier) {
 	    IS_AGITATED = 0;
 	}
 	else if (side == obj->direction) {
-	    obj->direction = -obj->direction;
+	    mantis_switch_direction(obj, -obj->direction);
 	    obj->x -= 40 * obj->direction;
-	    IS_AGITATED = 0;
 	}
     }
 }
