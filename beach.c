@@ -840,12 +840,34 @@ static void remove_spit(Object *obj) {
 }
 
 static void hermit_death_update(Object *obj) {
+    obj->x += obj->direction;
+    hermit_animate(obj);
+    HERMIT_TIME += 2;
+}
+
+static void hermit_shell_burn(u16 i) {
+    extern Object **burns;
+    init_burn(burns[i]);
+    if (!burns[i]->life) {
+	Object *obj = hermit[BASE];
+	burns[i]->private = obj;
+	burns[i]->direction = (i & 1) ? -1 : 1;
+	burns[i]->x = (random() & 0x1f) - 16;
+	burns[i]->y = (random() & 0x1f);
+    }
+    callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
+    if (i == 0) perish_sfx();
 }
 
 static void hermit_dies(u16 x) {
-    soldier_fist_pump();
+    Object *obj = hermit[BASE];
     apply_to_all_mobs(&remove_spit);
-    mob_fn(hermit[BASE], &hermit_death_update);
+    mob_fn(obj, &hermit_death_update);
+    soldier_fist_pump();
+    hermit_shell_burn(0);
+    obj->direction <<= 1;
+    HERMIT_STATE = WALK_R | WALK_L;
+    HERMIT_TIME = 0;
 }
 
 const Rectangle hL_box[] = {
