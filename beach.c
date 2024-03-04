@@ -839,8 +839,20 @@ static void remove_spit(Object *obj) {
     }
 }
 
-static void hermit_death_update(Object *obj) {
+static void hermit_panic_run(Object *obj) {
     obj->x += obj->direction;
+    if (obj->x < 128 && obj->direction < 0) {
+	obj->direction = 2;
+	obj->x = 96;
+    }
+    else if (obj->x > 384 && obj->direction > 0) {
+	obj->direction = -2;
+	obj->x = 416;
+    }
+}
+
+static void hermit_death_update(Object *obj) {
+    hermit_panic_run(obj);
     hermit_animate(obj);
     HERMIT_TIME += 2;
 }
