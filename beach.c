@@ -842,9 +842,53 @@ static void remove_spit(Object *obj) {
     }
 }
 
+static void cycle_flip(Sprite *sprite) {
+    u16 flip = (sprite->cfg + BIT(11)) & (3 << 11);
+    sprite->cfg = (sprite->cfg & ~(3 << 11)) | flip;
+}
+
+static char hermit_lose_eyes(Object *obj) {
+    Sprite *sprite = hermit[EYES]->sprite;
+    char done = sprite->y <= ON_SCREEN - 32;
+    if (!done) {
+	sprite->x += obj->direction;
+	sprite->y = sprite->y - 4;
+
+	animate_part(hermit[EYES], TILE(3, 389), 0, 3 * 12, 12);
+	cycle_flip(sprite);
+    }
+    return done;
+}
+
+static char hermit_lose_legs(Object *obj) {
+    Sprite *sprite = hermit[LEGS]->sprite;
+    char done = sprite->x <= ON_SCREEN - 32
+	|| sprite->x >= ON_SCREEN + SCR_WIDTH;
+
+    if (!done) {
+	sprite->x += 2 * obj->direction;
+
+	animate_part(hermit[LEGS], TILE(3, 437), 0, 11 * 16, 16);
+	cycle_flip(sprite);
+    }
+    return done;
+}
+
+static void hermit_dismember_update(Object *obj) {
+    hermit_lose_eyes(obj);
+    hermit_lose_legs(obj);
+    HERMIT_TIME++;
+}
+
 static void hermit_jerk_update(Object *obj) {
     if ((HERMIT_TIME & 0x1f) == 0) {
 	obj->direction = -obj->direction;
+	if (HERMIT_JERKS > 0) {
+	    HERMIT_JERKS--;
+	}
+	else {
+	    mob_fn(obj, &hermit_dismember_update);
+	}
     }
     hermit_animate(obj);
     HERMIT_TIME += 2;
@@ -864,7 +908,6 @@ static void hermit_panic_run(Object *obj) {
     }
     if (PANIC_BOUND >= 128) {
 	mob_fn(obj, &hermit_jerk_update);
-	HERMIT_JERKS = 3;
 	HERMIT_TIME = 0;
 	obj->x = 256;
     }
@@ -883,8 +926,15 @@ static void hermit_shell_burn(u16 i) {
 	Object *obj = hermit[BASE];
 	burns[i]->private = obj;
 	burns[i]->direction = (i & 1) ? -1 : 1;
-	burns[i]->x = (random() & 0x1f) - 16;
-	burns[i]->y = (random() & 0x1f);
+	if (HERMIT_JERKS > 0) {
+	    burns[i]->x = (random() & 0x1f) - 16;
+	    burns[i]->y = (random() & 0x1f);
+	}
+	else {
+	    u16 offset = obj->direction < 0 ? 0 : 32;
+	    burns[i]->x = (random() & 0x1f) - offset;
+	    burns[i]->y = (random() & 0x0f) + 32;
+	}
     }
     callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
     if (i == 0) perish_sfx();
@@ -898,6 +948,7 @@ static void hermit_dies(u16 x) {
     hermit_shell_burn(0);
     obj->direction <<= 1;
     HERMIT_STATE = WALK_R | WALK_L;
+    HERMIT_JERKS = 3;
     HERMIT_TIME = 0;
 }
 
