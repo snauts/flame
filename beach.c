@@ -843,8 +843,8 @@ static void remove_spit(Object *obj) {
 }
 
 static void cycle_flip(Sprite *sprite) {
-    u16 flip = (sprite->cfg + BIT(11)) & (3 << 11);
-    sprite->cfg = (sprite->cfg & ~(3 << 11)) | flip;
+    u16 flip = (HERMIT_TIME & (3 << 2)) << 9;
+    sprite->cfg = sprite->cfg | flip;
 }
 
 static char hermit_lose_eyes(Object *obj) {
