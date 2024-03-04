@@ -889,10 +889,14 @@ static void hermit_dismember(Object *obj) {
 	    free_mob(obj);
 	}
     }
-    if ((HERMIT_TIME & 3) == 0) {
+    u16 rem = HERMIT_TIME & 3;
+    if (rem == 0) {
 	obj->direction = -obj->direction;
-	hermit_animate(obj);
     }
+    else {
+	obj->y ^= rem << 1;
+    }
+    hermit_animate(obj);
     HERMIT_TIME++;
 }
 
