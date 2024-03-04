@@ -861,13 +861,13 @@ struct Explode { signed char id, dx, dy; };
 
 static const struct Explode explode[] = {
     { .id = 2, .dx =  2, .dy = 4 },
-    { .id = 0, .dx = -4, .dy = 1 },
-    { .id = 4, .dx =  4, .dy = 1 },
+    { .id = 0, .dx = -4, .dy = 2 },
+    { .id = 4, .dx =  4, .dy = 2 },
     { .id = 6, .dx = -2, .dy = 4 },
-    { .id = 3, .dx =  4, .dy = 1 },
+    { .id = 3, .dx =  4, .dy = 2 },
     { .id = 1, .dx = -2, .dy = 4 },
     { .id = 5, .dx =  2, .dy = 4 },
-    { .id = 7, .dx = -4, .dy = 1 },
+    { .id = 7, .dx = -4, .dy = 2 },
 };
 
 static void hermit_dismember(Object *obj) {
