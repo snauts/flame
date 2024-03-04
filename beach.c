@@ -896,6 +896,20 @@ static void hermit_dismember(Object *obj) {
     HERMIT_TIME++;
 }
 
+static const u16 ash_palette[][14] = {
+    { 0x0222,0x024a,0x0228,0x0226,0x082c,0x0a8c,0x062a,
+      0x0688,0x0224,0x0222,0x0000,0x0466,0x08aa,0x0244 },
+    { 0x0222,0x0448,0x0226,0x0224,0x084a,0x088a,0x0628,
+      0x0668,0x0224,0x0222,0x0000,0x0446,0x088a,0x0224 },
+    { 0x0222,0x0444,0x0222,0x0222,0x0888,0x0888,0x0666,
+      0x0666,0x0222,0x0222,0x0000,0x0444,0x0888,0x0222 },
+};
+
+static void upload_ash_palette(u16 i) {
+    update_palette(ash_palette[i], 49, ARRAY_SIZE(ash_palette[i]));
+    upload_palette(0);
+}
+
 static void hermit_shell_burn(u16 i);
 
 static void hermit_jerk(Object *obj) {
@@ -906,6 +920,7 @@ static void hermit_jerk(Object *obj) {
 	}
 	else {
 	    mob_fn(obj, &hermit_dismember);
+	    upload_ash_palette(2);
 	}
     }
     hermit_animate(obj);
@@ -926,6 +941,7 @@ static void hermit_panic_run(Object *obj) {
     }
     if (PANIC_BOUND >= 128) {
 	mob_fn(obj, &hermit_jerk);
+	upload_ash_palette(1);
 	HERMIT_TIME = 0;
 	obj->x = 256;
     }
@@ -982,6 +998,7 @@ static void hermit_dies(u16 x) {
     soldier_fist_pump();
     hermit_final_burn();
     obj->direction <<= 1;
+    upload_ash_palette(0);
     HERMIT_STATE = WALK_R | WALK_L;
     HERMIT_JERKS = 3;
     HERMIT_INDEX = 0;
