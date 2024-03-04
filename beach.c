@@ -863,10 +863,11 @@ static char hermit_lose_eyes(Object *obj) {
 static char hermit_lose_legs(Object *obj) {
     Sprite *sprite = hermit[LEGS]->sprite;
     char done = sprite->x <= ON_SCREEN - 32
-	|| sprite->x >= ON_SCREEN + SCR_WIDTH;
+	     || sprite->x >= ON_SCREEN + SCR_WIDTH;
 
     if (!done) {
 	sprite->x += 2 * obj->direction;
+	sprite->y = sprite->y - 1;
 
 	animate_part(hermit[LEGS], TILE(3, 437), 0, 11 * 16, 16);
 	cycle_flip(sprite);
@@ -926,15 +927,8 @@ static void hermit_shell_burn(u16 i) {
 	Object *obj = hermit[BASE];
 	burns[i]->private = obj;
 	burns[i]->direction = (i & 1) ? -1 : 1;
-	if (HERMIT_JERKS > 0) {
-	    burns[i]->x = (random() & 0x1f) - 16;
-	    burns[i]->y = (random() & 0x1f);
-	}
-	else {
-	    u16 offset = obj->direction < 0 ? 0 : 32;
-	    burns[i]->x = (random() & 0x1f) - offset;
-	    burns[i]->y = (random() & 0x0f) + 32;
-	}
+	burns[i]->x = (random() & 0x1f) - 16;
+	burns[i]->y = (random() & 0x1f);
     }
     callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
     if (i == 0) perish_sfx();
@@ -950,6 +944,7 @@ static void hermit_dies(u16 x) {
     HERMIT_STATE = WALK_R | WALK_L;
     HERMIT_JERKS = 3;
     HERMIT_TIME = 0;
+    PANIC_BOUND = 0;
 }
 
 const Rectangle hL_box[] = {
