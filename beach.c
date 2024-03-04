@@ -694,6 +694,7 @@ static Object **hermit;
 #define HERMIT_TIME	hermit[TIME]->life
 
 #define PANIC_BOUND	hermit[TIME]->x
+#define HERMIT_INDEX	hermit[TIME]->gravity
 #define HERMIT_JERKS	hermit[TIME]->velocity
 
 #define WALK_L		BIT(0)
@@ -930,8 +931,8 @@ static void hermit_shell_burn(u16 i) {
 	burns[i]->x = (random() & 0x1f) - 16;
 	burns[i]->y = (random() & 0x1f);
     }
-    callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
-    if (i == 0) perish_sfx();
+    callback(&hermit_shell_burn, 6, i >= 3 ? 1 : i + 1);
+    if (i == 1) perish_sfx();
 }
 
 static void hermit_dies(u16 x) {
@@ -939,10 +940,11 @@ static void hermit_dies(u16 x) {
     apply_to_all_mobs(&remove_spit);
     mob_fn(obj, &hermit_death);
     soldier_fist_pump();
-    hermit_shell_burn(0);
+    hermit_shell_burn(1);
     obj->direction <<= 1;
     HERMIT_STATE = WALK_R | WALK_L;
     HERMIT_JERKS = 3;
+    HERMIT_INDEX = 0;
     HERMIT_TIME = 0;
     PANIC_BOUND = 0;
 }
