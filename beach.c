@@ -937,30 +937,34 @@ static void hermit_death(Object *obj) {
     HERMIT_TIME += 2;
 }
 
+static u16 current_burn(u16 i) {
+    return clamp(HERMIT_INDEX + (i & 1), HERMIT_PARTS - 1);
+}
+
 static void hermit_shell_burn(u16 i) {
     u16 sound_mask = 0xf;
     extern Object **burns;
-    init_burn(burns[i]);
-    if (!burns[i]->life) {
-	Object *obj;
-	if (HERMIT_JERKS > 0) {
-	    obj = hermit[BASE];
-	    burns[i]->x = (random() & 0x1f) - 20;
-	    burns[i]->y = (random() & 0x1f);
-	}
-	else {
-	    u16 index = clamp(HERMIT_INDEX + (i & 1), HERMIT_PARTS - 1);
-	    obj = hermit[explode[index].id];
-	    short adj_x = 12 - ((obj->sprite->size << 0) & 12);
-	    short adj_y = 12 - ((obj->sprite->size << 2) & 12);
-	    burns[i]->x = (random() & 0xf) - adj_x;
-	    burns[i]->y = (random() & 0xf) - adj_y;
-	    sound_mask = 0x7;
-	}
-	burns[i]->direction = (i & 1) ? -1 : 1;
-	burns[i]->sprite->x = obj->sprite->x + burns[i]->x;
-	burns[i]->sprite->y = obj->sprite->y + burns[i]->y;
+    Object *burn = burns[i];
+    init_burn(burn);
+
+    Object *obj;
+    if (HERMIT_JERKS > 0) {
+	obj = hermit[BASE];
+	burn->x = (random() & 0x1f) - 20;
+	burn->y = (random() & 0x1f);
     }
+    else {
+	obj = hermit[explode[current_burn(i)].id];
+	short adj_x = 12 - ((obj->sprite->size << 0) & 12);
+	short adj_y = 12 - ((obj->sprite->size << 2) & 12);
+	burn->x = (random() & 0xf) - adj_x;
+	burn->y = (random() & 0xf) - adj_y;
+	sound_mask = 0x7;
+    }
+    burn->direction = -obj->direction;
+    burn->sprite->x = obj->sprite->x + burn->x;
+    burn->sprite->y = obj->sprite->y + burn->y;
+
     callback(&hermit_shell_burn, 1, i >= 11 ? 0 : i + 1);
     if (!(i & sound_mask) && HERMIT_INDEX < HERMIT_PARTS) perish_sfx();
 }

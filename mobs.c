@@ -249,7 +249,7 @@ static void update_burns(u16 i) {
 	else {
 	    u16 tile = TILE(2, burn_tiles + 4 * burn->frame);
 	    if (burn->direction < 0) tile |= BIT(11);
-	    set_sprite_tile(sprite, tile);
+	    sprite->cfg = tile;
 	    burn->frame++;
 	}
 	if (parent != NULL) {
