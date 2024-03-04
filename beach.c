@@ -951,9 +951,10 @@ static void hermit_shell_burn(u16 i) {
 	else {
 	    u16 index = clamp(HERMIT_INDEX + (i & 1), HERMIT_PARTS - 1);
 	    obj = hermit[explode[index].id];
-	    u16 adjust = 12 - (obj->sprite->size & 12);
-	    burns[i]->x = (random() & 0xf) - adjust;
-	    burns[i]->y = (random() & 0xf);
+	    short adj_x = 12 - ((obj->sprite->size << 0) & 12);
+	    short adj_y = 12 - ((obj->sprite->size << 2) & 12);
+	    burns[i]->x = (random() & 0xf) - adj_x;
+	    burns[i]->y = (random() & 0xf) - adj_y;
 	    sound_mask = 0x7;
 	}
 	burns[i]->direction = (i & 1) ? -1 : 1;
