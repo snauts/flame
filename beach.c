@@ -693,6 +693,9 @@ static Object **hermit;
 #define HERMIT_STATE	hermit[BASE]->frame
 #define HERMIT_TIME	hermit[TIME]->life
 
+#define PANIC_BOUND	hermit[TIME]->x
+#define HERMIT_JERKS	hermit[TIME]->velocity
+
 #define WALK_L		BIT(0)
 #define WALK_R		BIT(1)
 #define ANGRY		BIT(2)
@@ -847,25 +850,23 @@ static void hermit_jerk_update(Object *obj) {
     HERMIT_TIME += 2;
 }
 
-static char panic_reached_center(void) {
-    return hermit[TIME]->x > 256 || hermit[TIME]->y < 256;
-}
-
 static void hermit_panic_run(Object *obj) {
     obj->x += obj->direction;
-    if (obj->x < hermit[TIME]->x && obj->direction < 0) {
-	obj->x = hermit[TIME]->x - 32;
-	hermit[TIME]->x += 64;
+    if (obj->direction < 0 && obj->x < 128 + PANIC_BOUND) {
+	obj->x = 96 + PANIC_BOUND;
 	obj->direction = 2;
+	PANIC_BOUND += 32;
     }
-    else if (obj->x > hermit[TIME]->y && obj->direction > 0) {
-	obj->x = hermit[TIME]->y + 32;
-	hermit[TIME]->y -= 64;
+    else if (obj->direction > 0 && obj->x > 384 - PANIC_BOUND) {
+	obj->x = 352 - PANIC_BOUND;
 	obj->direction = -2;
+	PANIC_BOUND += 32;
     }
-    if (panic_reached_center() && obj->x == 256) {
+    if (PANIC_BOUND >= 128) {
 	mob_fn(obj, &hermit_jerk_update);
+	HERMIT_JERKS = 3;
 	HERMIT_TIME = 0;
+	obj->x = 256;
     }
 }
 
@@ -898,8 +899,6 @@ static void hermit_dies(u16 x) {
     obj->direction <<= 1;
     HERMIT_STATE = WALK_R | WALK_L;
     HERMIT_TIME = 0;
-    hermit[TIME]->x = 128;
-    hermit[TIME]->y = 384;
 }
 
 const Rectangle hL_box[] = {
