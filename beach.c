@@ -949,7 +949,7 @@ static void hermit_shell_burn(u16 i) {
 	    burns[i]->y = (random() & 0x1f);
 	}
 	else {
-	    u16 index = clamp(HERMIT_INDEX + (i & 1), HERMIT_PARTS);
+	    u16 index = clamp(HERMIT_INDEX + (i & 1), HERMIT_PARTS - 1);
 	    obj = hermit[explode[index].id];
 	    u16 adjust = 12 - (obj->sprite->size & 12);
 	    burns[i]->x = (random() & 0xf) - adjust;
