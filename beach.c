@@ -927,17 +927,20 @@ static void hermit_jerk(Object *obj) {
     HERMIT_TIME += 2;
 }
 
+static void flip_panic_direction(Object *obj) {
+    PANIC_BOUND += (PANIC_BOUND < 64 || obj->direction < 0) ? 32 : 0;
+    obj->direction = -obj->direction;
+}
+
 static void hermit_panic_run(Object *obj) {
     obj->x += obj->direction;
     if (obj->direction < 0 && obj->x < 128 + PANIC_BOUND) {
 	obj->x = 96 + PANIC_BOUND;
-	obj->direction = 2;
-	PANIC_BOUND += 32;
+	flip_panic_direction(obj);
     }
     else if (obj->direction > 0 && obj->x > 384 - PANIC_BOUND) {
 	obj->x = 352 - PANIC_BOUND;
-	obj->direction = -2;
-	PANIC_BOUND += 32;
+	flip_panic_direction(obj);
     }
     if (PANIC_BOUND >= 128) {
 	mob_fn(obj, &hermit_jerk);
