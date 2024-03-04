@@ -819,6 +819,9 @@ static void hermit_animate(Object *obj) {
     const Layout *layout = get_layout(obj);
     for (u16 i = 0; i < HERMIT_PARTS; i++) {
 	Object *part = hermit[i];
+	if (part->flags & O_ANIHILATED) {
+	    continue;
+	}
 	Sprite *sprite = part->sprite;
 	u16 tile = layout[i].tile;
 	sprite->x = obj->x + layout[i].x;
@@ -869,7 +872,8 @@ static const struct Explode explode[] = {
 
 static void hermit_dismember(Object *obj) {
     const struct Explode *rip = explode + HERMIT_INDEX;
-    Sprite *sprite = hermit[rip->id]->sprite;
+    Object *this = hermit[rip->id];
+    Sprite *sprite = this->sprite;
 
     if (!is_part_off_screen(sprite)) {
 	sprite->x += rip->dx * hermit[BASE]->direction;
@@ -883,9 +887,15 @@ static void hermit_dismember(Object *obj) {
 	    fade_music(0);
 	    free_mob(obj);
 	}
+
+	this->flags |= O_ANIHILATED;
+	obj->direction = -obj->direction;
+	hermit_animate(obj);
     }
     HERMIT_TIME++;
 }
+
+static void hermit_shell_burn(u16 i);
 
 static void hermit_jerk(Object *obj) {
     if ((HERMIT_TIME & 0x1f) == 0) {
@@ -895,6 +905,7 @@ static void hermit_jerk(Object *obj) {
 	}
 	else {
 	    mob_fn(obj, &hermit_dismember);
+	    cancel_timer(&hermit_shell_burn);
 	}
     }
     hermit_animate(obj);
