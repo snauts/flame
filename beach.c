@@ -989,6 +989,7 @@ static void hermit_shell_burn(u16 i) {
 }
 
 static void hermit_final_burn(void) {
+    set_seed(1337);
     free_burns();
     setup_burns(12, BURN_TILES);
     hermit_shell_burn(0);
