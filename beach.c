@@ -847,7 +847,7 @@ static void remove_spit(Object *obj) {
 }
 
 static void cycle_flip(Sprite *sprite) {
-    u16 flip = (HERMIT_TIME & (3 << 1)) << 10;
+    u16 flip = (HERMIT_TIME & 3) << 11;
     sprite->cfg = (sprite->cfg & ~(3 << 11)) | flip;
 }
 
@@ -860,14 +860,14 @@ static char is_part_off_screen(Sprite *sprite) {
 struct Explode { signed char id, dx, dy; };
 
 static const struct Explode explode[] = {
-    { .id = 2, .dx = 2, .dy = 8 },
-    { .id = 0, .dx = 4, .dy = 2 },
-    { .id = 4, .dx = 4, .dy = 2 },
-    { .id = 6, .dx = 2, .dy = 8 },
-    { .id = 3, .dx = 4, .dy = 2 },
-    { .id = 1, .dx = 2, .dy = 8 },
-    { .id = 5, .dx = 2, .dy = 8 },
-    { .id = 7, .dx = 4, .dy = 2 },
+    { .id = 2, .dx =  2, .dy = 4 },
+    { .id = 0, .dx = -4, .dy = 1 },
+    { .id = 4, .dx =  4, .dy = 1 },
+    { .id = 6, .dx = -2, .dy = 4 },
+    { .id = 3, .dx =  4, .dy = 1 },
+    { .id = 1, .dx = -2, .dy = 4 },
+    { .id = 5, .dx =  2, .dy = 4 },
+    { .id = 7, .dx = -4, .dy = 1 },
 };
 
 static void hermit_dismember(Object *obj) {
@@ -876,7 +876,8 @@ static void hermit_dismember(Object *obj) {
     Sprite *sprite = this->sprite;
 
     if (!is_part_off_screen(sprite)) {
-	sprite->x += rip->dx * hermit[BASE]->direction;
+	this->flags |= O_ANIHILATED;
+	sprite->x = sprite->x - rip->dx;
 	sprite->y = sprite->y - rip->dy;
 	cycle_flip(sprite);
     }
@@ -887,8 +888,8 @@ static void hermit_dismember(Object *obj) {
 	    fade_music(0);
 	    free_mob(obj);
 	}
-
-	this->flags |= O_ANIHILATED;
+    }
+    if ((HERMIT_TIME & 3) == 0) {
 	obj->direction = -obj->direction;
 	hermit_animate(obj);
     }
@@ -947,14 +948,15 @@ static void hermit_shell_burn(u16 i) {
 	    burns[i]->y = (random() & 0x1f);
 	}
 	else {
-	    u16 index = clamp(HERMIT_INDEX + (i >> 1), HERMIT_PARTS);
+	    u16 index = clamp(HERMIT_INDEX, HERMIT_PARTS);
 	    obj = hermit[explode[index].id];
 	    u16 adjust = 12 - (obj->sprite->size & 12);
 	    burns[i]->x = (random() & 0xf) - adjust;
 	    burns[i]->y = (random() & 0xf);
 	}
 	burns[i]->direction = (i & 1) ? -1 : 1;
-	burns[i]->private = obj;
+	burns[i]->sprite->x = obj->sprite->x + burns[i]->x;
+	burns[i]->sprite->y = obj->sprite->y + burns[i]->y;
     }
     callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
     if (i == 0 && HERMIT_INDEX < HERMIT_PARTS) perish_sfx();
