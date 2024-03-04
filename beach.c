@@ -860,14 +860,14 @@ static char is_part_off_screen(Sprite *sprite) {
 struct Explode { signed char id, dx, dy; };
 
 static const struct Explode explode[] = {
-    { .id = 2, .dx =  1, .dy = 4 },
-    { .id = 3, .dx =  2, .dy = 1 },
-    { .id = 6, .dx = -2, .dy = 1 },
-    { .id = 7, .dx = -1, .dy = 4 },
-    { .id = 4, .dx =  1, .dy = 4 },
-    { .id = 5, .dx =  2, .dy = 1 },
-    { .id = 1, .dx =  1, .dy = 4 },
-    { .id = 0, .dx = -2, .dy = 1 },
+    { .id = 2, .dx = 2, .dy = 8 },
+    { .id = 0, .dx = 4, .dy = 2 },
+    { .id = 4, .dx = 4, .dy = 2 },
+    { .id = 6, .dx = 2, .dy = 8 },
+    { .id = 3, .dx = 4, .dy = 2 },
+    { .id = 1, .dx = 2, .dy = 8 },
+    { .id = 5, .dx = 2, .dy = 8 },
+    { .id = 7, .dx = 4, .dy = 2 },
 };
 
 static void hermit_dismember(Object *obj) {
@@ -943,11 +943,11 @@ static void hermit_shell_burn(u16 i) {
 	Object *obj;
 	if (HERMIT_JERKS > 0) {
 	    obj = hermit[BASE];
-	    burns[i]->x = (random() & 0x1f) - 16;
+	    burns[i]->x = (random() & 0x1f) - 20;
 	    burns[i]->y = (random() & 0x1f);
 	}
 	else {
-	    u16 index = clamp(HERMIT_INDEX + i, HERMIT_PARTS);
+	    u16 index = clamp(HERMIT_INDEX + (i >> 1), HERMIT_PARTS);
 	    obj = hermit[explode[index].id];
 	    u16 adjust = 12 - (obj->sprite->size & 12);
 	    burns[i]->x = (random() & 0xf) - adjust;
@@ -957,7 +957,7 @@ static void hermit_shell_burn(u16 i) {
 	burns[i]->private = obj;
     }
     callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
-    if (i == 1) perish_sfx();
+    if (i == 0 && HERMIT_INDEX < HERMIT_PARTS) perish_sfx();
 }
 
 static void hermit_dies(u16 x) {
