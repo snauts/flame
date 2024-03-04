@@ -875,20 +875,20 @@ static char hermit_lose_legs(Object *obj) {
     return done;
 }
 
-static void hermit_dismember_update(Object *obj) {
+static void hermit_dismember(Object *obj) {
     hermit_lose_eyes(obj);
     hermit_lose_legs(obj);
     HERMIT_TIME++;
 }
 
-static void hermit_jerk_update(Object *obj) {
+static void hermit_jerk(Object *obj) {
     if ((HERMIT_TIME & 0x1f) == 0) {
 	obj->direction = -obj->direction;
 	if (HERMIT_JERKS > 0) {
 	    HERMIT_JERKS--;
 	}
 	else {
-	    mob_fn(obj, &hermit_dismember_update);
+	    mob_fn(obj, &hermit_dismember);
 	}
     }
     hermit_animate(obj);
@@ -908,13 +908,13 @@ static void hermit_panic_run(Object *obj) {
 	PANIC_BOUND += 32;
     }
     if (PANIC_BOUND >= 128) {
-	mob_fn(obj, &hermit_jerk_update);
+	mob_fn(obj, &hermit_jerk);
 	HERMIT_TIME = 0;
 	obj->x = 256;
     }
 }
 
-static void hermit_death_update(Object *obj) {
+static void hermit_death(Object *obj) {
     hermit_panic_run(obj);
     hermit_animate(obj);
     HERMIT_TIME += 2;
@@ -937,7 +937,7 @@ static void hermit_shell_burn(u16 i) {
 static void hermit_dies(u16 x) {
     Object *obj = hermit[BASE];
     apply_to_all_mobs(&remove_spit);
-    mob_fn(obj, &hermit_death_update);
+    mob_fn(obj, &hermit_death);
     soldier_fist_pump();
     hermit_shell_burn(0);
     obj->direction <<= 1;
