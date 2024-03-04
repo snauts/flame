@@ -905,7 +905,6 @@ static void hermit_jerk(Object *obj) {
 	}
 	else {
 	    mob_fn(obj, &hermit_dismember);
-	    cancel_timer(&hermit_shell_burn);
 	}
     }
     hermit_animate(obj);
@@ -941,13 +940,23 @@ static void hermit_shell_burn(u16 i) {
     extern Object **burns;
     init_burn(burns[i]);
     if (!burns[i]->life) {
-	Object *obj = hermit[BASE];
-	burns[i]->private = obj;
+	Object *obj;
+	if (HERMIT_JERKS > 0) {
+	    obj = hermit[BASE];
+	    burns[i]->x = (random() & 0x1f) - 16;
+	    burns[i]->y = (random() & 0x1f);
+	}
+	else {
+	    u16 index = clamp(HERMIT_INDEX + i, HERMIT_PARTS);
+	    obj = hermit[explode[index].id];
+	    u16 adjust = 12 - (obj->sprite->size & 12);
+	    burns[i]->x = (random() & 0xf) - adjust;
+	    burns[i]->y = (random() & 0xf);
+	}
 	burns[i]->direction = (i & 1) ? -1 : 1;
-	burns[i]->x = (random() & 0x1f) - 16;
-	burns[i]->y = (random() & 0x1f);
+	burns[i]->private = obj;
     }
-    callback(&hermit_shell_burn, 6, i >= 3 ? 1 : i + 1);
+    callback(&hermit_shell_burn, 4, i >= 3 ? 0 : i + 1);
     if (i == 1) perish_sfx();
 }
 
@@ -956,7 +965,7 @@ static void hermit_dies(u16 x) {
     apply_to_all_mobs(&remove_spit);
     mob_fn(obj, &hermit_death);
     soldier_fist_pump();
-    hermit_shell_burn(1);
+    hermit_shell_burn(0);
     obj->direction <<= 1;
     HERMIT_STATE = WALK_R | WALK_L;
     HERMIT_JERKS = 3;
