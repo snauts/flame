@@ -710,7 +710,7 @@ static const Layout right[HERMIT_PARTS] = {
     { x: 53, y: 30, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 437) },
     { x: 32, y:  0, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 329) },
     { x: 32, y: 32, size:SPRITE_SIZE(3, 4), tile:FLIP(3, 361) },
-    { x:  0, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 341) },
+    { x: 16, y: 16, size:SPRITE_SIZE(2, 2), tile:FLIP(3, 343) },
     { x:  0, y: 32, size:SPRITE_SIZE(4, 4), tile:FLIP(3, 373) },
 };
 
@@ -721,7 +721,7 @@ static const Layout left[HERMIT_PARTS] = {
     { x:-20, y: 30, size:SPRITE_SIZE(4, 4), tile:TILE(3, 437) },
     { x:  8, y:  0, size:SPRITE_SIZE(3, 4), tile:TILE(3, 329) },
     { x:  8, y: 32, size:SPRITE_SIZE(3, 4), tile:TILE(3, 361) },
-    { x: 32, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, 341) },
+    { x: 32, y: 16, size:SPRITE_SIZE(2, 2), tile:TILE(3, 343) },
     { x: 32, y: 32, size:SPRITE_SIZE(4, 4), tile:TILE(3, 373) },
 };
 
