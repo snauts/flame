@@ -844,41 +844,46 @@ static void remove_spit(Object *obj) {
 }
 
 static void cycle_flip(Sprite *sprite) {
-    u16 flip = (HERMIT_TIME & (3 << 2)) << 9;
-    sprite->cfg = sprite->cfg | flip;
+    u16 flip = (HERMIT_TIME & (3 << 1)) << 10;
+    sprite->cfg = (sprite->cfg & ~(3 << 11)) | flip;
 }
 
-static char hermit_lose_eyes(Object *obj) {
-    Sprite *sprite = hermit[EYES]->sprite;
-    char done = sprite->y <= ON_SCREEN - 32;
-    if (!done) {
-	sprite->x += obj->direction;
-	sprite->y = sprite->y - 4;
-
-	animate_part(hermit[EYES], TILE(3, 389), 0, 3 * 12, 12);
-	cycle_flip(sprite);
-    }
-    return done;
+static char is_part_off_screen(Sprite *sprite) {
+    return sprite->y <= ON_SCREEN - 32
+	|| sprite->x <= ON_SCREEN - 32
+	|| sprite->x >= ON_SCREEN + SCR_WIDTH;
 }
 
-static char hermit_lose_legs(Object *obj) {
-    Sprite *sprite = hermit[LEGS]->sprite;
-    char done = sprite->x <= ON_SCREEN - 32
-	     || sprite->x >= ON_SCREEN + SCR_WIDTH;
+struct Explode { signed char id, dx, dy; };
 
-    if (!done) {
-	sprite->x += 2 * obj->direction;
-	sprite->y = sprite->y - 1;
-
-	animate_part(hermit[LEGS], TILE(3, 437), 0, 11 * 16, 16);
-	cycle_flip(sprite);
-    }
-    return done;
-}
+static const struct Explode explode[] = {
+    { .id = 2, .dx =  1, .dy = 4 },
+    { .id = 3, .dx =  2, .dy = 1 },
+    { .id = 6, .dx = -2, .dy = 1 },
+    { .id = 7, .dx = -1, .dy = 4 },
+    { .id = 4, .dx =  1, .dy = 4 },
+    { .id = 5, .dx =  2, .dy = 1 },
+    { .id = 1, .dx =  1, .dy = 4 },
+    { .id = 0, .dx = -2, .dy = 1 },
+};
 
 static void hermit_dismember(Object *obj) {
-    hermit_lose_eyes(obj);
-    hermit_lose_legs(obj);
+    const struct Explode *rip = explode + HERMIT_INDEX;
+    Sprite *sprite = hermit[rip->id]->sprite;
+
+    if (!is_part_off_screen(sprite)) {
+	sprite->x += rip->dx * hermit[BASE]->direction;
+	sprite->y = sprite->y - rip->dy;
+	cycle_flip(sprite);
+    }
+    else {
+	HERMIT_INDEX++;
+	if (HERMIT_INDEX == HERMIT_PARTS) {
+	    schedule(&finish_level, 100);
+	    fade_music(0);
+	    free_mob(obj);
+	}
+    }
     HERMIT_TIME++;
 }
 
