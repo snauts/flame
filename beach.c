@@ -839,15 +839,33 @@ static void remove_spit(Object *obj) {
     }
 }
 
+static void hermit_jerk_update(Object *obj) {
+    if ((HERMIT_TIME & 0x1f) == 0) {
+	obj->direction = -obj->direction;
+    }
+    hermit_animate(obj);
+    HERMIT_TIME += 2;
+}
+
+static char panic_reached_center(void) {
+    return hermit[TIME]->x > 256 || hermit[TIME]->y < 256;
+}
+
 static void hermit_panic_run(Object *obj) {
     obj->x += obj->direction;
-    if (obj->x < 128 && obj->direction < 0) {
+    if (obj->x < hermit[TIME]->x && obj->direction < 0) {
+	obj->x = hermit[TIME]->x - 32;
+	hermit[TIME]->x += 64;
 	obj->direction = 2;
-	obj->x = 96;
     }
-    else if (obj->x > 384 && obj->direction > 0) {
+    else if (obj->x > hermit[TIME]->y && obj->direction > 0) {
+	obj->x = hermit[TIME]->y + 32;
+	hermit[TIME]->y -= 64;
 	obj->direction = -2;
-	obj->x = 416;
+    }
+    if (panic_reached_center() && obj->x == 256) {
+	mob_fn(obj, &hermit_jerk_update);
+	HERMIT_TIME = 0;
     }
 }
 
@@ -880,6 +898,8 @@ static void hermit_dies(u16 x) {
     obj->direction <<= 1;
     HERMIT_STATE = WALK_R | WALK_L;
     HERMIT_TIME = 0;
+    hermit[TIME]->x = 128;
+    hermit[TIME]->y = 384;
 }
 
 const Rectangle hL_box[] = {
