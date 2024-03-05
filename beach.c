@@ -772,6 +772,21 @@ static char lay_position(Object *obj) {
     return (obj->x & (half_bar() ? 0x1f : 0x3f)) == 0;
 }
 
+static void hermit_jump(u16 initiate) {
+    Object *obj = hermit[BASE];
+    if (initiate) {
+	obj->velocity = 4;
+    }
+
+    advance_y(obj, 6);
+    if (obj->velocity > 0 || obj->y < 284) {
+	schedule(&hermit_jump, 0);
+    }
+    else {
+	obj->y = 284; /* snap */
+    }
+}
+
 static void hermit_idle(u16 x) {
     if (HERMIT_STATE & ANGRY) {
 	hermit_start_walking(hermit[BASE]);
