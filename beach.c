@@ -694,6 +694,7 @@ static Object **hermit;
 #define HERMIT_TIME	hermit[TIME]->life
 
 #define PANIC_BOUND	hermit[TIME]->x
+#define HERMIT_RUNS	hermit[TIME]->y
 #define HERMIT_INDEX	hermit[TIME]->gravity
 #define HERMIT_JERKS	hermit[TIME]->velocity
 
@@ -830,6 +831,20 @@ static void spit_fan(u16 x) {
     }
 }
 
+static void spit_storm(u16 i) {
+    static const byte height[] = { 190, 160, 220 };
+    char dir = hermit[BASE]->direction > 0;
+    u16 x = dir ? spit_fan_L.x : spit_fan_R.x;
+    setup_boss_spit(x, height[i], dir ? 16 : 5);
+
+    if (i == 0 && is_state(ANGRY)) {
+	callback(&hermit_idle, 64, 0);
+    }
+    else {
+	callback(&spit_storm, 48, i < 2 ? i + 1 : 0);
+    }
+}
+
 static void arc_and_resume_walk(u16 x) {
     callback(&hermit_idle, 32, 0);
     perish_sfx();
@@ -846,10 +861,19 @@ static char arc_position(Object *obj) {
     return obj->x == ((obj->direction < 0) ? 288 : 232);
 }
 
-static void produce_spit_fan(Object *obj, char right, char stop) {
-    if (stop) {
+static void produce_corner_pattern(char right) {
+    if ((HERMIT_RUNS & 3) > (HERMIT_HP >> 6)) {
+	spit_storm(0);
+    }
+    else {
 	u16 delay = 4 + (HERMIT_HP >> 4);
 	spit_fan((right ? 0x10 : 0x00) | (delay << 8));
+    }
+}
+
+static void produce_spit_fan(Object *obj, char right, char stop) {
+    if (stop) {
+	produce_corner_pattern(right);
     }
     else if (is_state(DO_ARC)) {
 	if (arc_position(obj)) perform_jump_and_arc();
@@ -1115,6 +1139,7 @@ static void hermit_walk(Object *obj, u16 stop_condition) {
 	obj->x -= right ? -32 : 32;
 	obj->direction = -obj->direction;
 	HERMIT_STATE = 0;
+	HERMIT_RUNS++;
     }
     produce_spit_fan(obj, right, stop_condition);
 }
@@ -1150,6 +1175,7 @@ static void setup_hermit(u16 i) {
     hermit[BASE]->y = 284;
     hermit[BASE]->direction = -1;
 
+    HERMIT_RUNS = 0;
     HERMIT_TIME = 0;
     HERMIT_STATE = 0;
     HERMIT_HP = BAR_HEALTH;
