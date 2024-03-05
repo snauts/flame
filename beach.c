@@ -700,6 +700,7 @@ static Object **hermit;
 #define WALK_L		BIT(0)
 #define WALK_R		BIT(1)
 #define ANGRY		BIT(2)
+#define DO_ARC		BIT(3)
 
 #define FLIP(p, i) (TILE(p, i) | BIT(11))
 
@@ -736,8 +737,12 @@ static void animate_part(Object *obj, u16 tile, u16 mask, u16 wrap, u16 inc) {
     obj->sprite->cfg = tile + obj->frame;
 }
 
+static inline u16 is_state(u16 mask) {
+    return HERMIT_STATE & mask;
+}
+
 static inline u16 is_staying(void) {
-    return (HERMIT_STATE & (WALK_L | WALK_R)) == 0;
+    return !is_state(WALK_L | WALK_R);
 }
 
 struct BossSpit {
@@ -764,6 +769,10 @@ static char half_bar(void) {
     return HERMIT_HP < BAR_HEALTH / 2;
 }
 
+static char quarter_bar(void) {
+    return HERMIT_HP < BAR_HEALTH / 4;
+}
+
 static char at_edge(Object *obj) {
     return obj->x < 128 || obj->x > 384;
 }
@@ -788,11 +797,24 @@ static void hermit_jump(u16 initiate) {
 }
 
 static void hermit_idle(u16 x) {
-    if (HERMIT_STATE & ANGRY) {
+    if (is_state(ANGRY)) {
 	hermit_start_walking(hermit[BASE]);
+	if (quarter_bar()) HERMIT_STATE |= DO_ARC;
     }
     else {
 	callback(&hermit_idle, 0, x);
+    }
+}
+
+static void spit_arc(u16 y) {
+    static const byte type[] = {
+	5, 21, 22, 23, 20, 19, 18, 17, 16
+    };
+    static const byte height[] = {
+	0, 4, 6, 8, 10, 8, 6, 4, 0
+    };
+    for (u16 i = 0; i < ARRAY_SIZE(type); i++) {
+	setup_boss_spit(224 + (i - 4) * 8, y - height[i], type[i]);
     }
 }
 
@@ -808,10 +830,29 @@ static void spit_fan(u16 x) {
     }
 }
 
+static void arc_and_resume_walk(u16 x) {
+    callback(&hermit_idle, 32, 0);
+    perish_sfx();
+    spit_arc(x);
+}
+
+static void perform_jump_and_arc(void) {
+    callback(&arc_and_resume_walk, 44, 220);
+    HERMIT_STATE &= ~(WALK_R | WALK_L);
+    hermit_jump(1);
+}
+
+static char arc_position(Object *obj) {
+    return obj->x == ((obj->direction < 0) ? 288 : 232);
+}
+
 static void produce_spit_fan(Object *obj, char right, char stop) {
     if (stop) {
 	u16 delay = 4 + (HERMIT_HP >> 4);
 	spit_fan((right ? 0x10 : 0x00) | (delay << 8));
+    }
+    else if (is_state(DO_ARC)) {
+	if (arc_position(obj)) perform_jump_and_arc();
     }
     else if (!at_edge(obj) && lay_position(obj)) {
 	setup_boss_spit(obj->x - (right ? 0 : 72), 220, 20);
@@ -1073,16 +1114,16 @@ static void hermit_walk(Object *obj, u16 stop_condition) {
     if (stop_condition) {
 	obj->x -= right ? -32 : 32;
 	obj->direction = -obj->direction;
-	HERMIT_STATE &= ~(WALK_L | WALK_R | ANGRY);
+	HERMIT_STATE = 0;
     }
     produce_spit_fan(obj, right, stop_condition);
 }
 
 static void hermit_action(Object *obj) {
-    if (HERMIT_STATE & WALK_L) {
+    if (is_state(WALK_L)) {
 	hermit_walk(obj, obj->x < 128);
     }
-    else if (HERMIT_STATE & WALK_R) {
+    else if (is_state(WALK_R)) {
 	hermit_walk(obj, obj->x > 384);
     }
 }
