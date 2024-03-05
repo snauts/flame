@@ -835,10 +835,10 @@ static void spit_storm(u16 i) {
     setup_boss_spit(x, height[i], dir ? 16 : 5);
 
     if (i == 0 && is_state(ANGRY)) {
-	callback(&hermit_idle, 64, 0);
+	callback(&hermit_idle, 96, 0);
     }
     else {
-	callback(&spit_storm, 48, i < 2 ? i + 1 : 0);
+	callback(&spit_storm, 64, i < 2 ? i + 1 : 0);
     }
 }
 
@@ -867,7 +867,7 @@ static void produce_corner_pattern(char right) {
 	spit_storm(0);
     }
     else {
-	u16 delay = 4 + (HERMIT_HP >> 4);
+	u16 delay = 4 + (HERMIT_HP >> 3);
 	spit_fan((right ? 0x10 : 0x00) | (delay << 8));
     }
 }
