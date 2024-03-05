@@ -766,12 +766,8 @@ static void hermit_start_walking(Object *obj) {
     HERMIT_STATE |= obj->direction < 0 ? WALK_L : WALK_R;
 }
 
-static char half_bar(void) {
-    return HERMIT_HP < BAR_HEALTH / 2;
-}
-
-static char quarter_bar(void) {
-    return HERMIT_HP < BAR_HEALTH / 4;
+static char bar_thirds(u16 i) {
+    return HERMIT_HP < ((BAR_HEALTH / 3) << (i - 1));
 }
 
 static char at_edge(Object *obj) {
@@ -779,7 +775,7 @@ static char at_edge(Object *obj) {
 }
 
 static char lay_position(Object *obj) {
-    return (obj->x & (half_bar() ? 0x1f : 0x3f)) == 0;
+    return (obj->x & (bar_thirds(2) ? 0x1f : 0x3f)) == 0;
 }
 
 static void hermit_jump(u16 initiate) {
@@ -800,7 +796,7 @@ static void hermit_jump(u16 initiate) {
 static void hermit_idle(u16 x) {
     if (is_state(ANGRY)) {
 	hermit_start_walking(hermit[BASE]);
-	if (quarter_bar()) HERMIT_STATE |= DO_ARC;
+	if (bar_thirds(1)) HERMIT_STATE |= DO_ARC;
     }
     else {
 	callback(&hermit_idle, 0, x);
