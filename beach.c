@@ -795,7 +795,8 @@ static void spit_fan(u16 x) {
 
 static void produce_spit_fan(Object *obj, char right, char stop) {
     if (stop) {
-	spit_fan(right ? 0x410 : 0x400);
+	u16 delay = 4 + (HERMIT_HP >> 4);
+	spit_fan((right ? 0x10 : 0x00) | (delay << 8));
     }
     else if (!at_edge(obj) && lay_position(obj)) {
 	setup_boss_spit(obj->x - (right ? 0 : 72), 220, 20);
