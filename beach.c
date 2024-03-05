@@ -782,10 +782,11 @@ static void hermit_jump(u16 initiate) {
     Object *obj = hermit[BASE];
     if (initiate > 0) {
 	obj->velocity = initiate;
+	obj->gravity = 0;
     }
 
     advance_y(obj, 6);
-    if (obj->velocity > 0 || obj->y < 284) {
+    if (is_hermit_alive() && (obj->velocity > 0 || obj->y < 284)) {
 	schedule(&hermit_jump, 0);
     }
     else {
@@ -847,10 +848,14 @@ static void arc_and_resume_walk(u16 x) {
     spit_arc(x);
 }
 
+static void hermit_stop(void) {
+    HERMIT_STATE &= ~(WALK_R | WALK_L);
+}
+
 static void perform_jump_and_arc(void) {
     callback(&arc_and_resume_walk, 44, 220);
-    HERMIT_STATE &= ~(WALK_R | WALK_L);
     hermit_jump(4);
+    hermit_stop();
 }
 
 static char arc_position(Object *obj) {
