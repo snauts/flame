@@ -780,8 +780,8 @@ static char lay_position(Object *obj) {
 
 static void hermit_jump(u16 initiate) {
     Object *obj = hermit[BASE];
-    if (initiate) {
-	obj->velocity = 4;
+    if (initiate > 0) {
+	obj->velocity = initiate;
     }
 
     advance_y(obj, 6);
@@ -850,7 +850,7 @@ static void arc_and_resume_walk(u16 x) {
 static void perform_jump_and_arc(void) {
     callback(&arc_and_resume_walk, 44, 220);
     HERMIT_STATE &= ~(WALK_R | WALK_L);
-    hermit_jump(1);
+    hermit_jump(4);
 }
 
 static char arc_position(Object *obj) {
