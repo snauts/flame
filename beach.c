@@ -760,6 +760,18 @@ static void hermit_start_walking(Object *obj) {
     HERMIT_STATE |= obj->direction < 0 ? WALK_L : WALK_R;
 }
 
+static char half_bar(void) {
+    return HERMIT_HP < BAR_HEALTH / 2;
+}
+
+static char at_edge(Object *obj) {
+    return obj->x < 128 || obj->x > 384;
+}
+
+static char lay_position(Object *obj) {
+    return (obj->x & (half_bar() ? 0x1f : 0x3f)) == 0;
+}
+
 static void hermit_idle(u16 x) {
     if (HERMIT_STATE & ANGRY) {
 	hermit_start_walking(hermit[BASE]);
@@ -785,7 +797,7 @@ static void produce_spit_fan(Object *obj, char right, char stop) {
     if (stop) {
 	spit_fan(right ? 0x410 : 0x400);
     }
-    else if ((obj->x & 0x3f) == 0) {
+    else if (!at_edge(obj) && lay_position(obj)) {
 	setup_boss_spit(obj->x - (right ? 0 : 72), 220, 20);
     }
 }
