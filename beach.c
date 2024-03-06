@@ -775,7 +775,7 @@ static char at_edge(Object *obj) {
 }
 
 static char lay_position(Object *obj) {
-    return (obj->x & (bar_thirds(2) ? 0x1f : 0x3f)) == 0;
+    return (bar_thirds(2) ? (obj->x % 48) : (obj->x & 0x3f)) == 0;
 }
 
 static void hermit_jump(u16 initiate) {
@@ -829,7 +829,7 @@ static void spit_fan(u16 x) {
 }
 
 static void spit_storm(u16 i) {
-    static const byte height[] = { 190, 160, 220 };
+    static const byte height[] = { 190, 220 };
     char dir = hermit[BASE]->direction > 0;
     u16 x = dir ? spit_fan_L.x : spit_fan_R.x;
     setup_boss_spit(x, height[i], dir ? 16 : 5);
@@ -838,7 +838,7 @@ static void spit_storm(u16 i) {
 	callback(&hermit_idle, 96, 0);
     }
     else {
-	callback(&spit_storm, 64, i < 2 ? i + 1 : 0);
+	callback(&spit_storm, 64, (i + 1) & 1);
     }
 }
 
