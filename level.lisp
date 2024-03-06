@@ -255,10 +255,12 @@
 
 (load "desert.lisp")
 (load "beach.lisp")
+(load "town.lisp")
 (load "alps.lisp")
 
 (defun save-level ()
   (with-open-file (out "level.inc" :if-exists :supersede :direction :output)
+    (save-array out "town_level" (town-level) *town-walkable*)
     (save-array out "beach_level" (beach-level) *beach-walkable*)
     (save-array out "dunes_level" (dunes-level) *beach-walkable*)
     (save-array out "hermit_level" (hermit-level) *beach-walkable*)

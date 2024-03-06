@@ -79,4 +79,4 @@ z80.hex: z80.asm
 
 -include dep.inc
 
-level.inc: desert.lisp alps.lisp beach.lisp
+level.inc: desert.lisp alps.lisp beach.lisp town.lisp
