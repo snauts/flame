@@ -209,6 +209,7 @@ void display_hermit(void);
 void announce_johnny(void);
 void announce_hans(void);
 void announce_hiroshi(void);
+void announce_emile(void);
 void prepare_desert_level(void);
 void prepare_rusty_level(void);
 void prepare_mantis_level(void);

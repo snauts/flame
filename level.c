@@ -332,6 +332,16 @@ void announce_hiroshi(void) {
     announcement(&hiroshi_text);
 }
 
+static void emile_text(void) {
+    display_text("- PART 4 -", 15, 3);
+    display_text_plane("EMILE", 17, 13, VRAM_PLANE_B);
+    UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
+}
+
+void announce_emile(void) {
+    announcement(&emile_text);
+}
+
 const char *error_str;
 static void error_text(void) {
     display_text("ERROR:", 2, 0);
