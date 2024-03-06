@@ -794,13 +794,18 @@ static void hermit_jump(u16 initiate) {
     }
 }
 
+static void spit_fan(u16 x);
+
 static void hermit_idle(u16 x) {
     if (is_state(ANGRY)) {
 	hermit_start_walking(hermit[BASE]);
 	if (bar_thirds(1)) HERMIT_STATE |= DO_ARC;
     }
-    else {
+    else if (x == 0) {
 	callback(&hermit_idle, 0, x);
+    }
+    else {
+	spit_fan(x);
     }
 }
 
@@ -824,21 +829,21 @@ static void spit_fan(u16 x) {
 	callback(&spit_fan, delay, x + 1);
     }
     else {
-	callback(&hermit_idle, 64, x & ~0xf);
+	callback(&hermit_idle, 96, x & ~0xf);
     }
 }
 
 static void spit_storm(u16 i) {
-    static const byte height[] = { 190, 220 };
+    static const byte height[] = { 220, 190, 220, 205, 190, 205, 220, 190 };
     char dir = hermit[BASE]->direction > 0;
     u16 x = dir ? spit_fan_L.x : spit_fan_R.x;
     setup_boss_spit(x, height[i], dir ? 16 : 5);
 
-    if (i == 0 && is_state(ANGRY)) {
+    if (is_state(ANGRY)) {
 	callback(&hermit_idle, 96, 0);
     }
     else {
-	callback(&spit_storm, 64, (i + 1) & 1);
+	callback(&spit_storm, 64, (i + 1) & 7);
     }
 }
 
