@@ -1064,7 +1064,6 @@ static u16 current_burn(u16 i) {
 }
 
 static void hermit_shell_burn(u16 i) {
-    u16 sound_mask = 0xf;
     extern Object **burns;
     Object *burn = burns[i];
     init_burn(burn);
@@ -1081,21 +1080,37 @@ static void hermit_shell_burn(u16 i) {
 	short adj_y = 12 - ((obj->sprite->size << 2) & 12);
 	burn->x = (random() & 0xf) - adj_x;
 	burn->y = (random() & 0xf) - adj_y;
-	sound_mask = 0x7;
     }
     burn->direction = -obj->direction;
     burn->sprite->x = obj->sprite->x + burn->x;
     burn->sprite->y = obj->sprite->y + burn->y;
 
     callback(&hermit_shell_burn, 1, i >= 11 ? 0 : i + 1);
-    if (!(i & sound_mask) && HERMIT_INDEX < HERMIT_PARTS) perish_sfx();
+}
+
+static void hermit_burn_sound(u16 x) {
+    if (HERMIT_INDEX < HERMIT_PARTS) {
+	u16 delay;
+	if (HERMIT_JERKS == 0) {
+	    delay = 12 - HERMIT_INDEX;
+	}
+	else if (HERMIT_JERKS < 3) {
+	    delay = 13 + HERMIT_JERKS;
+	}
+	else {
+	    delay = 24 - (PANIC_BOUND >> 4);
+	}
+	schedule(&hermit_burn_sound, delay);
+	perish_sfx();
+    }
 }
 
 static void hermit_final_burn(void) {
-    set_seed(1337);
     free_burns();
+    set_seed(1337);
     setup_burns(12, BURN_TILES);
     hermit_shell_burn(0);
+    hermit_burn_sound(0);
 }
 
 static void hermit_dies(u16 x) {
@@ -1103,7 +1118,6 @@ static void hermit_dies(u16 x) {
     apply_to_all_mobs(&remove_spit);
     mob_fn(obj, &hermit_death);
     soldier_fist_pump();
-    hermit_final_burn();
     obj->direction <<= 1;
     upload_ash_palette(0);
     HERMIT_STATE = WALK_R | WALK_L;
@@ -1111,6 +1125,7 @@ static void hermit_dies(u16 x) {
     HERMIT_INDEX = 0;
     HERMIT_TIME = 0;
     PANIC_BOUND = 0;
+    hermit_final_burn();
 }
 
 const Rectangle hL_box[] = {
