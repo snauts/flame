@@ -4,7 +4,8 @@ LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CWARN	= -Wextra -Wall -Wno-unused-parameter
 CFLAGS  = $(CWARN) -fomit-frame-pointer -fno-builtin -Os
-CSRC	= main.c canyon.c soldier.c sound.c level.c mobs.c alps.c beach.c town.c
+CSRC	= main.c level.c sound.c mobs.c soldier.c \
+	  canyon.c alps.c beach.c town.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 
 ifneq ($(LTO),)
