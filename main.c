@@ -312,6 +312,7 @@ static const Function loader_table[] = {
     &display_hermit,
 
 //    &announce_emile,
+//    &display_town,
 
     &display_ending,
     NULL,

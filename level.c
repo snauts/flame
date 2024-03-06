@@ -119,6 +119,7 @@ PREPARE_LEVEL(queen);
 PREPARE_LEVEL(beach);
 PREPARE_LEVEL(dunes);
 PREPARE_LEVEL(hermit);
+PREPARE_LEVEL(town);
 
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);

@@ -206,6 +206,7 @@ void display_queen(void);
 void display_beach(void);
 void display_dunes(void);
 void display_hermit(void);
+void display_town(void);
 void announce_johnny(void);
 void announce_hans(void);
 void announce_hiroshi(void);
