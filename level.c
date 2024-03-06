@@ -258,6 +258,7 @@ static void flammenwerfer_text(void) {
     copy_to_VRAM(VRAM_PLANE_A + 0x400, 80 * 8 * 2);
 
     display_text("PRESS START", 15, 16);
+    display_text("SATIRICAL ODDITY IN FOUR PARTS", 5, 27);
 }
 
 void display_title(void) {
