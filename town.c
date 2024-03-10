@@ -20,6 +20,32 @@ static void draw_sky(void) {
     }
 }
 
+static void draw_houses(void) {
+    static const byte horizon[] = {
+	20, 28, 36, 44, 45, 37, 37, 47, 38, 46, 37, 38, 46, 37, 38, 46,
+	 1, 38, 46, 47, 35, 36, 44, 45, 37, 20, 28, 47, 47, 35,  2,  0,
+	43, 47, 47, 35, 25, 33, 25, 41, 33, 41, 25, 33, 41, 39, 25, 41,
+	33, 47, 35, 34, 42, 47, 35, 41, 33, 25, 36, 44, 37, 20, 28, 45,
+    };
+    for (u16 i = 0; i < ARRAY_SIZE(horizon); i++) {
+	byte tile = horizon[i];
+	switch (tile) {
+	case 0:
+	    /* empty */
+	    break;
+	case 1:
+	    paint_background(i, 10, 1, 2, 27, 0);
+	    break;
+	case 2:
+	    paint_background(i, 9, 2, 3, 22, 5);
+	    break;
+	default:
+	    poke_VRAM(0x80 * 11 + (i << 1), TILE(0, 1 + tile));
+	    break;
+	}
+    }
+}
+
 static void display_french(Function prepare_level) {
     /* load tiles */
 
@@ -33,6 +59,7 @@ static void display_french(Function prepare_level) {
     /* background */
     fill_VRAM(0, 0, 0x800);
     draw_sky();
+    draw_houses();
 
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
