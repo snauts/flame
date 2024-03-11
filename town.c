@@ -65,7 +65,51 @@ static void draw_middle_houses(void) {
     fill_VRAM(0x80 * 16, TILE(0, 25), 0x140);
 }
 
+static u16 draw_bottom_object(u16 x, u16 id) {
+    u16 dx = 1, dy = 1;
+    switch (id) {
+    case 77:
+	dx = 2;
+	dy = 4;
+	break;
+    case 113:
+	dx = 2;
+    case 94:
+	dy = 3;
+	break;
+    case 89:
+	dx = dy = 3;
+	break;
+    case 102:
+	dx = 4;
+	dy = 3;
+	break;
+    case 200:
+	id = 100 | BIT(11);
+	break;
+    case 116:
+	dx = 2;
+    case 108:
+	dy = 2;
+	break;
+    }
+    paint_background(x, 21 - dy, dx, dy, id, 8 - dy);
+    return dx;
+}
+
 static void draw_bottom_houses(void) {
+    u16 x = 0;
+    static const byte houses[] = {
+	116, 108,  77, 108, 113,  77, 108,  77,
+	 94,  77, 113,  77,  94,  93,  92,  94,
+	 89,  77, 108,  89,  94, 113,  93,  92,
+	102,  92,  77,  94, 100, 101, 101, 200,
+	 93,  92, 108, 100, 101, 101, 200,  94,
+	116,  77, 113
+    };
+    for (u16 i = 0; i < ARRAY_SIZE(houses); i++) {
+	x += draw_bottom_object(x, houses[i]);
+    }
     for (u16 i = 0; i < 7; i++) {
 	fill_VRAM(0x80 * (21 + i), BIT(12) | TILE(0, 7 - i), 0x40);
     }
