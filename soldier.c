@@ -544,7 +544,7 @@ static void game_paused(void) {
     flame_noise(pause);
 }
 
-void update_game(void) {
+byte update_scroll(byte basic_scroll) {
     button_state = read_gamepad();
     if (pause_toggle()) {
 	pause = !pause;
@@ -553,9 +553,16 @@ void update_game(void) {
     if (!pause) {
 	manage_timers();
 	advance_sprites();
-	level_scroll();
+	if (basic_scroll) {
+	    level_scroll();
+	}
     }
     last_state = button_state;
+    return pause;
+}
+
+void update_game(void) {
+    update_scroll(1);
 }
 
 static inline u16 only_down(void) {

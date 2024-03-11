@@ -100,9 +100,24 @@ static void draw_houses(void) {
     draw_bottom_houses();
 }
 
-static void display_french(Function prepare_level) {
-    /* load tiles */
+static u16 *scroll_buf = NULL;
+static void update_town(void) {
+    if (!update_scroll(0)) {
+	u16 half = -(window >> 1);
+	u16 third = -(window / 3);
+	for (u16 i = 0; i < 28; i++) {
+	    u16 back = i <= 11 ? third : (i <= 15 ? half : (third << 1));
+	    scroll_buf[(i << 4) + 0] = -window;
+	    scroll_buf[(i << 4) + 1] = back;
+	}
+    }
+    copy_to_VRAM_ptr(VRAM_SCROLL_A, 0x380, scroll_buf);
+}
 
+static void display_french(Function prepare_level) {
+    scroll_buf = malloc(0x380);
+
+    /* load tiles */
     update_palette(town_palette, 0, ARRAY_SIZE(town_palette));
     update_tiles(town_tiles, 1, ARRAY_SIZE(town_tiles));
 
@@ -130,7 +145,7 @@ static void display_french(Function prepare_level) {
     music_onions();
 
     callback(&fade_in, 0, 6);
-    switch_frame(&update_game);
+    switch_scroll(&update_town, 0x02);
 }
 
 void display_town(void) {

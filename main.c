@@ -356,9 +356,18 @@ void update_VDP_word(u32 ctrl, u16 data) {
     vram_idx++;
 }
 
-void switch_frame(Function fn) {
+static void scroll_type(byte value) {
+    WORD(VDP_CTRL) = VDP_CTRL_REG(0xB, value);
+}
+
+void switch_scroll(Function fn, byte scroll) {
+    scroll_type(scroll);
     game_frame = fn;
     reset_heap();
+}
+
+void switch_frame(Function fn) {
+    switch_scroll(fn, 0x00);
 }
 
 static void panic_on_draw(void) {

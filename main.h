@@ -150,9 +150,11 @@ void wait_vblank_done(void);
 void wait_for_start(byte);
 void *buffer_ptr(u16 addr);
 void *malloc(u16 amount);
+byte update_scroll(byte);
 void update_game(void);
 void reset_heap(void);
 
+void switch_scroll(Function fn, byte scroll);
 void switch_frame(Function fn);
 void restart_level(void);
 void next_level(void);
