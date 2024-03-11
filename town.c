@@ -20,6 +20,51 @@ static void draw_sky(void) {
     }
 }
 
+static u16 draw_middle_object(u16 x, u16 id) {
+    u16 dx = 1, dy = 1;
+    switch (id) {
+    case 99:
+	id = BIT(11) | 33;
+	break;
+    case 55:
+    case 73:
+    case 75:
+	dx = 2;
+	/* falls through */
+    case 71:
+	dy = 2;
+	break;
+    case 52:
+	dx = 2;
+	/* falls through */
+    case 68:
+	dy = 3;
+	break;
+    case 49:
+	dx = dy = 3;
+	break;
+    }
+    paint_background(x, 16 - dy, dx, dy, id, 8 - dy);
+    return dx;
+}
+
+static void draw_middle_houses(void) {
+    u16 x = 0;
+    static const byte houses[] = {
+	68, 33, 41, 99, 71, 33, 41,
+	99, 73, 75, 33, 41, 41, 99,
+	52, 68, 52, 75, 68, 52, 68,
+	71, 55, 71, 68, 71, 49, 71,
+	33, 41, 41, 99, 71, 49, 71,
+	75, 55, 75, 71, 52, 49, 68,
+	73, 71, 75,
+    };
+    for (u16 i = 0; i < ARRAY_SIZE(houses); i++) {
+	x += draw_middle_object(x, houses[i]);
+    }
+    fill_VRAM(0x80 * 16, TILE(0, 25), 0x200);
+}
+
 static void draw_houses(void) {
     static const byte horizon[] = {
 	20, 28, 36, 44, 45, 37, 37, 47, 38, 46, 37, 38, 46, 37, 38, 46,
@@ -44,6 +89,8 @@ static void draw_houses(void) {
 	    break;
 	}
     }
+    fill_VRAM(0x80 * 12, TILE(0, 1), 0x100);
+    draw_middle_houses();
 }
 
 static void display_french(Function prepare_level) {
