@@ -62,7 +62,13 @@ static void draw_middle_houses(void) {
     for (u16 i = 0; i < ARRAY_SIZE(houses); i++) {
 	x += draw_middle_object(x, houses[i]);
     }
-    fill_VRAM(0x80 * 16, TILE(0, 25), 0x200);
+    fill_VRAM(0x80 * 16, TILE(0, 25), 0x140);
+}
+
+static void draw_bottom_houses(void) {
+    for (u16 i = 0; i < 7; i++) {
+	fill_VRAM(0x80 * (21 + i), BIT(12) | TILE(0, 7 - i), 0x40);
+    }
 }
 
 static void draw_houses(void) {
@@ -91,6 +97,7 @@ static void draw_houses(void) {
     }
     fill_VRAM(0x80 * 12, TILE(0, 1), 0x100);
     draw_middle_houses();
+    draw_bottom_houses();
 }
 
 static void display_french(Function prepare_level) {
