@@ -146,7 +146,7 @@ static void draw_houses(void) {
 
 static u16 *scroll_buf = NULL;
 static void update_town(void) {
-    if (!update_scroll(0)) {
+    if (update_frame()) {
 	u16 half = -(window >> 1);
 	u16 third = -(window / 3);
 	for (u16 i = 0; i < 28; i++) {
@@ -187,7 +187,8 @@ static void display_french(Function prepare_level) {
     music_onions();
 
     callback(&fade_in, 0, 6);
-    switch_scroll(&update_town, 0x02);
+    switch_frame(&update_town);
+    scroll_type(0x02);
 
     scroll_buf = malloc(0x380);
 }

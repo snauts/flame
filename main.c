@@ -323,7 +323,12 @@ void next_level(void) {
     loader = (loader[1] == NULL ? loader_table : loader + 1);
 }
 
+void scroll_type(byte value) {
+    WORD(VDP_CTRL) = VDP_CTRL_REG(0xB, value);
+}
+
 void restart_level(void) {
+    scroll_type(0x00);
     switch_frame(*loader);
 }
 
@@ -356,18 +361,9 @@ void update_VDP_word(u32 ctrl, u16 data) {
     vram_idx++;
 }
 
-static void scroll_type(byte value) {
-    WORD(VDP_CTRL) = VDP_CTRL_REG(0xB, value);
-}
-
-void switch_scroll(Function fn, byte scroll) {
-    scroll_type(scroll);
+void switch_frame(Function fn) {
     game_frame = fn;
     reset_heap();
-}
-
-void switch_frame(Function fn) {
-    switch_scroll(fn, 0x00);
 }
 
 static void panic_on_draw(void) {
