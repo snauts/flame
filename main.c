@@ -328,6 +328,7 @@ void scroll_type(byte value) {
 }
 
 void restart_level(void) {
+    reset_heap();
     scroll_type(0x00);
     switch_frame(*loader);
 }
@@ -363,7 +364,6 @@ void update_VDP_word(u32 ctrl, u16 data) {
 
 void switch_frame(Function fn) {
     game_frame = fn;
-    reset_heap();
 }
 
 static void panic_on_draw(void) {
