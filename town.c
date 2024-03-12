@@ -159,8 +159,6 @@ static void update_town(void) {
 }
 
 static void display_french(Function prepare_level) {
-    scroll_buf = malloc(0x380);
-
     /* load tiles */
     update_palette(town_palette, 0, ARRAY_SIZE(town_palette));
     update_tiles(town_tiles, 1, ARRAY_SIZE(town_tiles));
@@ -190,6 +188,8 @@ static void display_french(Function prepare_level) {
 
     callback(&fade_in, 0, 6);
     switch_scroll(&update_town, 0x02);
+
+    scroll_buf = malloc(0x380);
 }
 
 void display_town(void) {
