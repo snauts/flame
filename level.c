@@ -219,11 +219,19 @@ static void clear_screen_to_black(void) {
 
 const char special[] = "-!:";
 
+static byte is_upper_case(char c) {
+    return 'A' <= c && c <= 'Z';
+}
+
+static byte is_lower_case(char c) {
+    return 'a' <= c && c <= 'z';
+}
+
 static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
     u16 i = 0, offset = (y << 7)  + (x << 1);
     while (text[i] != 0) {
 	u16 tile = 0;
-	if ('A' <= text[i] && text[i] <= 'Z') {
+	if (is_upper_case(text[i]) || is_lower_case(text[i])) {
 	    tile = 1 + text[i] - 'A';
 	}
 	else if ('0' <= text[i] && text[i] <= '9') {
