@@ -343,10 +343,19 @@ void restart_level(void) {
     switch_frame(*loader);
 }
 
+typedef struct VRAM_Write {
+    u32 addr;
+    u16 data;
+} VRAM_Write;
+
+static VRAM_Write vram_write[VRAM_BUF_SIZE];
+static VRAM_Write *next_write;
+
 u16 counter;
 static void init_variables(void) {
     extern byte bss_start, bss_end;
     memset(&bss_start, 0, (u32) (&bss_end - &bss_start));
+    next_write = vram_write;
     loader = loader_table;
     restart_level();
     counter = 0;
@@ -359,17 +368,13 @@ static void setup_game(void) {
     wait_vblank_done();
 }
 
-static u16 vram_idx;
-static u32 vram_addr[VRAM_BUF_SIZE];
-static u16 vram_data[VRAM_BUF_SIZE];
-
 void update_VDP_word(u32 ctrl, u16 data) {
-    if (vram_idx >= VRAM_BUF_SIZE) {
-	wait_vblank_done();
+    if (next_write >= vram_write + VRAM_BUF_SIZE) {
+        wait_vblank_done();
     }
-    vram_addr[vram_idx] = ctrl;
-    vram_data[vram_idx] = data;
-    vram_idx++;
+    next_write->addr = ctrl;
+    next_write->data = data;
+    next_write++;
 }
 
 void switch_frame(Function fn) {
@@ -381,13 +386,11 @@ static void panic_on_draw(void) {
 }
 
 static void transfer_to_VRAM(void) {
-    u16 index = 0;
-    while (index < vram_idx) {
-	LONG(VDP_CTRL) = vram_addr[index];
-	WORD(VDP_DATA) = vram_data[index];
-	index++;
+    while (next_write > vram_write) {
+	next_write--;
+	LONG(VDP_CTRL) = next_write->addr;
+	WORD(VDP_DATA) = next_write->data;
     }
-    vram_idx = 0;
 }
 
 void vblank_interrupt(void) {
