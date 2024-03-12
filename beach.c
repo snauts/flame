@@ -101,11 +101,7 @@ static const u16 sea_palette[][5] = {
 };
 
 static void sea_rotate(u16 i) {
-    extern byte total_dimming;
-    if (total_dimming == 0) {
-	update_palette(sea_palette[i], 4, ARRAY_SIZE(sea_palette[i]));
-	upload_palette(0);
-    }
+    update_palette(sea_palette[i], 4, ARRAY_SIZE(sea_palette[i]));
     callback(&sea_rotate, 12, i < 2 ? i + 1 : 0);
 }
 
@@ -1010,7 +1006,6 @@ static const u16 ash_palette[][14] = {
 
 static void upload_ash_palette(u16 i) {
     update_palette(ash_palette[i], 49, ARRAY_SIZE(ash_palette[i]));
-    upload_palette(0);
 }
 
 static void hermit_shell_burn(u16 i);

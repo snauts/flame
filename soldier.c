@@ -539,7 +539,7 @@ static u16 pause_toggle(void) {
 }
 
 static void game_paused(void) {
-    upload_palette(pause << 1);
+    dim_palette(pause << 1);
     music_toggle(pause);
     flame_noise(pause);
 }
@@ -617,7 +617,7 @@ static void hide_all_sprites(void) {
 #define FADE_SPEED 3
 static void fade_and_restart(u16 fade) {
     if (fade < 8) {
-	upload_palette(fade);
+	dim_palette(fade);
 	callback(&fade_and_restart, FADE_SPEED, fade + 1);
     }
     else {
@@ -627,7 +627,7 @@ static void fade_and_restart(u16 fade) {
 }
 
 void fade_in(u16 fade) {
-    upload_palette(fade);
+    dim_palette(fade);
     if (fade > 0) callback(&fade_in, FADE_SPEED, fade - 1);
 }
 

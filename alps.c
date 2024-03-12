@@ -493,7 +493,6 @@ static const u16 ash_palette[][7] = {
 
 static void upload_ash_palette(u16 i) {
     update_palette(ash_palette[i], 49, ARRAY_SIZE(ash_palette[i]));
-    upload_palette(0);
 }
 
 static void queen_animate(Object *obj) {

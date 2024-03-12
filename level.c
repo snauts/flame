@@ -356,7 +356,7 @@ static void display_error(void) {
 
 void error(const char *str) {
     error_str = str;
-    upload_palette(8);
+    dim_palette(8);
     switch_frame(display_error);
 }
 

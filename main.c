@@ -134,32 +134,37 @@ void update_palette(const u16 *buf, u16 offset, u16 count) {
     }
 }
 
-u16 dim_color(u16 color, u16 dim) {
-    if (dim > 0) {
-	dim = dim << 1;
-	for (u16 mask = 0xf; mask != 0xf000; mask <<= 4) {
-	    color = (color & mask) > dim ? color - dim : color & ~mask;
-	    dim <<= 4;
-	}
+static u16 dim_color(u16 color, u16 dim) {
+    dim = dim << 1;
+    for (u16 mask = 0xf; mask != 0xf000; mask <<= 4) {
+	color = (color & mask) > dim ? color - dim : color & ~mask;
+	dim <<= 4;
     }
     return color;
 }
 
 /* dimming is expensive, use with care */
-byte total_dimming;
-void upload_palette(u16 dim) {
+static byte total_dimming;
+void dim_palette(u16 dim) {
     total_dimming = dim;
-    for (u16 i = 0; i < 64; i++) {
-	palette[i] = dim_color(color_base[i], dim);
+}
+
+static void upload_palette(void) {
+    u16 *buffer;
+    if (total_dimming == 0) {
+	buffer = color_base;
     }
-    copy_to_VRAM_ptr(0, 128, palette);
+    else {
+	buffer = palette;
+	for (u16 i = 0; i < 64; i++) {
+	    buffer[i] = dim_color(color_base[i], total_dimming);
+	}
+    }
+    copy_to_VRAM_ptr(0, sizeof(palette) | BIT(0), buffer);
 }
 
 void update_color(u16 idx, u16 color) {
-    if (total_dimming == 0) {
-	UPDATE_CRAM_WORD(2 * idx, color);
-	update_palette(&color, idx, 1);
-    }
+    color_base[idx] = color;
 }
 
 typedef struct DMA_Chunk {
@@ -191,6 +196,10 @@ void copy_to_VRAM(u16 dst, u16 len) {
     wait_vblank_done();
 }
 
+static u16 is_palette(DMA_Chunk *chunk) {
+    return chunk->len & BIT(0);
+}
+
 static void copy_using_DMA(void) {
     for (u16 i = 0; i < chunk_idx; i++) {
 	u32 dma_src = ((u32) chunk[i].ptr);
@@ -199,7 +208,7 @@ static void copy_using_DMA(void) {
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x15, (dma_src >>  1) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x16, (dma_src >>  9) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x17, (dma_src >> 17) & 0x7F);
-	u32 addr = (chunk[i].ptr == palette) ? VDP_CRAM_DMA : VDP_VRAM_DMA;
+	u32 addr = is_palette(chunk + i) ? VDP_CRAM_DMA : VDP_VRAM_DMA;
 	LONG(VDP_CTRL) = VDP_CTRL_VALUE(addr, chunk[i].dst);
 	while (is_DMA());
     }
@@ -329,6 +338,7 @@ void scroll_type(byte value) {
 
 void restart_level(void) {
     reset_heap();
+    dim_palette(8);
     scroll_type(0x00);
     switch_frame(*loader);
 }
@@ -394,6 +404,7 @@ void _start(void) {
     setup_game();
     for (;;) {
 	game_frame();
+	upload_palette();
 	wait_vblank_done();
     }
 }
