@@ -612,8 +612,6 @@ static void display_nippon(const Level *level) {
 
     /* load tiles */
     load_soldier_tiles(2);
-    reset_window();
-    reset_mobs();
 
     /* background */
     fill_VRAM(0, 0, 0x800);

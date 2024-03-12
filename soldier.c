@@ -893,6 +893,8 @@ static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
 
 void load_soldier_tiles(u16 id) {
     load_soldier_tiles_at_offset(id, SOLDIER_TOP);
+    reset_window();
+    reset_mobs();
 }
 
 static void march(u16 n) {

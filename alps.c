@@ -284,8 +284,6 @@ void display_alps(const Level *level) {
     load_image(&alps_img, 1, 0);
 
     load_soldier_tiles(1);
-    reset_mobs();
-    reset_window();
 
     /* background */
     fill_VRAM(0x600, 4, 0x80);

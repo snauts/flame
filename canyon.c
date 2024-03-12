@@ -356,8 +356,6 @@ void display_desert(const Level *level, byte more_bones) {
     load_image(&canyon_img, 1, 0);
 
     load_soldier_tiles(0);
-    reset_mobs();
-    reset_window();
 
     /* background */
     fill_VRAM(0x000,  1, 0x300);

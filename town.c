@@ -179,8 +179,6 @@ static void display_french(const Level *level) {
     load_image(&town_img, 1, 0);
 
     load_soldier_tiles(3);
-    reset_window();
-    reset_mobs();
 
     /* background */
     fill_VRAM(0, 0, 0x800);
