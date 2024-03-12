@@ -277,7 +277,7 @@ void level_done_burn_mobs(u16 x) {
     level_done(0);
 }
 
-void display_alps(Function prepare_level) {
+void display_alps(const Level *level) {
     /* load tiles */
     load_image(&alps_img, 1, 0);
 
@@ -298,7 +298,7 @@ void display_alps(Function prepare_level) {
     /* foreground */
     load_image(&rocks_img, 65, 1);
 
-    prepare_level();
+    prepare_level(level);
 
     void music_erika(void);
     music_erika();
@@ -310,14 +310,15 @@ void display_alps(Function prepare_level) {
 }
 
 void display_mountains(void) {
-    display_alps(&prepare_mountain_level);
+    extern const Level mountain_level;
+    display_alps(&mountain_level);
 }
 
 static Object *prev;
 static Callback generator;
 void display_plateau(void) {
-    void prepare_plateau_level(void);
-    display_alps(&prepare_plateau_level);
+    extern const Level plateau_level;
+    display_alps(&plateau_level);
     generator = NULL;
     prev = NULL;
 }
@@ -795,9 +796,10 @@ static void setup_queen(u16 i) {
 }
 
 void display_queen(void) {
+    extern const Level queen_level;
     load_tiles(&queen_img, QUEEN_TILES);
 
-    display_alps(&prepare_queen_level);
+    display_alps(&queen_level);
     display_progress_bar();
     lock_screen(1);
 

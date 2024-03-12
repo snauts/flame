@@ -597,7 +597,7 @@ void emit_highway(u16 x) {
 
 #define BURN_TILES 281
 
-static void display_nippon(Function prepare_level) {
+static void display_nippon(const Level *level) {
     set_seed(1877);
 
     load_image(&beach_img, 1, 0);
@@ -622,7 +622,7 @@ static void display_nippon(Function prepare_level) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    prepare_level();
+    prepare_level(level);
 
     void music_battotai(void);
     music_battotai();
@@ -633,13 +633,13 @@ static void display_nippon(Function prepare_level) {
 }
 
 void display_beach(void) {
-    void prepare_beach_level(void);
-    display_nippon(&prepare_beach_level);
+    extern const Level beach_level;
+    display_nippon(&beach_level);
 }
 
 void display_dunes(void) {
-    void prepare_dunes_level(void);
-    display_nippon(&prepare_dunes_level);
+    extern const Level dunes_level;
+    display_nippon(&dunes_level);
 }
 
 static void move_boss_spit(Object *obj) {
@@ -1187,8 +1187,8 @@ static void setup_hermit(u16 i) {
 }
 
 void display_hermit(void) {
-    void prepare_hermit_level(void);
-    display_nippon(&prepare_hermit_level);
+    extern const Level hermit_level;
+    display_nippon(&hermit_level);
 
     load_image(&hermit_shell_img, 325, 3);
     load_tiles(&hermit_eyes_img, 389);

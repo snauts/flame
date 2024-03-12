@@ -172,7 +172,7 @@ static void update_town(void) {
     }
 }
 
-static void display_french(Function prepare_level) {
+static void display_french(const Level *level) {
     /* load tiles */
     load_image(&town_img, 1, 0);
 
@@ -188,7 +188,7 @@ static void display_french(Function prepare_level) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    prepare_level();
+    prepare_level(level);
 
     void music_onions(void);
     music_onions();
@@ -199,6 +199,6 @@ static void display_french(Function prepare_level) {
 }
 
 void display_town(void) {
-    void prepare_town_level(void);
-    display_french(&prepare_town_level);
+    extern const Level town_level;
+    display_french(&town_level);
 }

@@ -92,15 +92,17 @@ void update_height_map(u16 pos_x) {
     }
 }
 
-static void prepare_level(const u16 *level) {
+void prepare_level(const Level *level) {
     clear_DMA_buffer(0, 0x1000);
+    trigger = level->triggers;
+    height = level->height;
 
     column = 0;
-    front = level;
+    front = level->tiles;
     for (u16 x = 0; x < 64; x++) {
 	update_column_forward(&poke_VRAM);
     }
-    back = level; /* reset back */
+    back = level->tiles; /* reset back */
     next_platform = 0;
     forward_platform();
     fill_bottom_row();
@@ -111,24 +113,6 @@ static void prepare_level(const u16 *level) {
     callback(&fade_in, 0, 6);
     switch_frame(&update_game);
 }
-
-#define PREPARE_LEVEL(name)		\
-void prepare_##name##_level(void) {	\
-    trigger = name##_level_triggers;	\
-    height = name##_level_height;	\
-    prepare_level(name##_level_tiles);	\
-}
-
-PREPARE_LEVEL(desert);
-PREPARE_LEVEL(rusty);
-PREPARE_LEVEL(mantis);
-PREPARE_LEVEL(mountain);
-PREPARE_LEVEL(plateau);
-PREPARE_LEVEL(queen);
-PREPARE_LEVEL(beach);
-PREPARE_LEVEL(dunes);
-PREPARE_LEVEL(hermit);
-PREPARE_LEVEL(town);
 
 void level_scroll(void) {
     UPDATE_VRAM_WORD(VRAM_SCROLL_A, -window);
