@@ -51,6 +51,12 @@ typedef unsigned char byte;
 typedef unsigned short u16;
 typedef unsigned int u32;
 
+typedef struct Image {
+    const void *palette;
+    const void *tiles;
+    u16 size;
+} Image;
+
 typedef struct Sprite {
     u16 y;
     byte size;
@@ -139,6 +145,7 @@ void memset(void *ptr, byte c, int amount);
 void memcpy(void *dst, const void *src, int amount);
 void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
+void load_image(const Image *img, u16 offset, char palette);
 void update_VDP_word(u32 ctrl, u16 data);
 void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
 void *copy_to_VRAM_async(u16 dst, u16 len);

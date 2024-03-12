@@ -351,8 +351,7 @@ void ignite_swarm(u16 pos_x) {
 
 void display_desert(Function prepare_level, byte more_bones) {
     /* load tiles */
-    update_palette(canyon_palette, 0, ARRAY_SIZE(canyon_palette));
-    update_tiles(canyon_tiles, 1, ARRAY_SIZE(canyon_tiles));
+    load_image(&canyon_img, 1, 0);
 
     load_soldier_tiles(0);
     reset_mobs();
@@ -370,16 +369,15 @@ void display_desert(Function prepare_level, byte more_bones) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    update_palette(desert_palette, 16, ARRAY_SIZE(desert_palette));
-    update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
-    update_tiles(cliffs_tiles, 161, ARRAY_SIZE(cliffs_tiles));
+    load_image(&desert_img, 97, 16);
+    load_image(&cliffs_img, 161, -1);
 
     prepare_level();
 
     void music_johnny(void);
     music_johnny();
 
-    update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
+    load_image(&hopper_img, 289, -1);
 
     h_obj = malloc(sizeof(Hopper) * MAX_MOBS);
 }

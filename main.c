@@ -260,6 +260,13 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
     if (n > 0) copy_to_VRAM(offset, n);
 }
 
+void load_image(const Image *img, u16 offset, char palette) {
+    if (palette >= 0) {
+	update_palette(img->palette, palette, 16);
+    }
+    update_tiles(img->tiles, offset, img->size);
+}
+
 static u16 seed;
 void set_seed(u16 new) {
     seed = new;

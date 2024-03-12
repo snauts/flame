@@ -34,7 +34,9 @@ int total_pixels = 0;
 int pixel_amount = 0;
 unsigned char current_pixel = 0;
 
+static int output_size = 0;
 void output_byte(int out, unsigned char byte) {
+    output_size++;
     dprintf(out, "0x%02x,", byte);
     if ((total_pixels++ & 0xf) == 0xf) {
 	dprintf(out, "\n");
@@ -191,6 +193,12 @@ int main(int argc, char **argv) {
     if (total_pixels & 0xf != 0) {
 	dprintf(out, "\n");
     }
+    dprintf(out, "};\n");
+
+    dprintf(out, "static const Image %s_img = {\n", str);
+    dprintf(out, ".palette = %s_palette,\n", str);
+    dprintf(out, ".tiles = %s_tiles,\n", str);
+    dprintf(out, ".size = %d,\n", output_size);
     dprintf(out, "};\n");
 
     close(out);
