@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include "images/town.h"
+#include "images/street.h"
 
 #include "town.inc"
 
@@ -177,6 +178,7 @@ static void update_town(void) {
 static void display_french(const Level *level) {
     /* load tiles */
     load_image(&town_img, 1, 0);
+    load_image(&street_img, 129, 1);
 
     load_soldier_tiles(3);
 
