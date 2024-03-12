@@ -1,5 +1,4 @@
 #include "main.h"
-#include "level.inc"
 
 #define WINDOW_MIN	64
 #define HEIGHT_DATA	2

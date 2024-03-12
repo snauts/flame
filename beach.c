@@ -8,6 +8,8 @@
 #include "images/hermit_eyes.h"
 #include "images/hermit_legs.h"
 
+#include "beach.inc"
+
 static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
     for (u16 i = 0; i < 8; i++) {
 	u16 count = 1;

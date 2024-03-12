@@ -1,3 +1,5 @@
+(load "level.lisp")
+
 (defparameter *beach-walkable*
   '(130 138 146 154 162 170 178 186
     132 140 148 156
@@ -428,3 +430,12 @@
   (s-place 31 1 (watchtower-plant 5 242))
   (s-place 34 1 (watchtower-plant 1 242))
   (s-pop))
+
+(defun save-beach ()
+  (with-open-file (out "beach.inc" :if-exists :supersede :direction :output)
+    (save-array out "beach_level" (beach-level) *beach-walkable*)
+    (save-array out "dunes_level" (dunes-level) *beach-walkable*)
+    (save-array out "hermit_level" (hermit-level) *beach-walkable*)))
+
+(defun save-and-quit ()
+  (save-and-quit-level #'save-beach))

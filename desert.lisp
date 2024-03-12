@@ -1,3 +1,5 @@
+(load "level.lisp")
+
 (defparameter *desert-walkable*
   '(103 111 119 127 135 143 151 159
     163 171 179 187 195 203 211 219
@@ -525,3 +527,12 @@
   (s-place 39 17 (desert-cell 246))
   (s-place 39 16 (desert-cell 279))
   (s-pop))
+
+(defun save-desert ()
+  (with-open-file (out "desert.inc" :if-exists :supersede :direction :output)
+    (save-array out "desert_level" (desert-level) *desert-walkable*)
+    (save-array out "mantis_level" (mantis-level) *desert-walkable*)
+    (save-array out "rusty_level" (rusty-level) *desert-walkable*)))
+
+(defun save-and-quit ()
+  (save-and-quit-level #'save-desert))

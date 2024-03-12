@@ -2,6 +2,8 @@
 
 #include "images/town.h"
 
+#include "town.inc"
+
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
 static void draw_sky(void) {

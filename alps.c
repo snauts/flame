@@ -6,6 +6,8 @@
 #include "images/burn.h"
 #include "images/bee.h"
 
+#include "alps.inc"
+
 #define BEE_TILES	193
 #define BURN_TILES	(BEE_TILES + 8)
 #define QUEEN_TILES	(BURN_TILES + 32)
