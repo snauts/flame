@@ -145,17 +145,31 @@ static void draw_houses(void) {
 }
 
 static u16 *scroll_buf = NULL;
+
+static void update_scroll_buffer(void) {
+    copy_to_VRAM_ptr(VRAM_SCROLL_A, 0x380, scroll_buf);
+}
+
 static void update_town(void) {
     if (update_frame()) {
-	u16 half = -(window >> 1);
+	u16 *ptr = scroll_buf;
 	u16 third = -(window / 3);
-	for (u16 i = 0; i < 28; i++) {
-	    u16 back = i <= 11 ? third : (i <= 15 ? half : (third << 1));
-	    scroll_buf[(i << 4) + 0] = -window;
-	    scroll_buf[(i << 4) + 1] = back;
+	u16 shift = third;
+	for (u16 row = 0; row < 28; row++) {
+	    switch (row) {
+	    case 12:
+		shift = -(window >> 1);
+		break;
+	    case 16:
+		shift = (third << 1);
+		break;
+	    }
+	    ptr[0] = -window;
+	    ptr[1] = shift;
+	    ptr += 16;
 	}
+	update_scroll_buffer();
     }
-    copy_to_VRAM_ptr(VRAM_SCROLL_A, 0x380, scroll_buf);
 }
 
 static void display_french(Function prepare_level) {
