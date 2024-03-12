@@ -174,8 +174,7 @@ static void update_town(void) {
 
 static void display_french(Function prepare_level) {
     /* load tiles */
-    update_palette(town_palette, 0, ARRAY_SIZE(town_palette));
-    update_tiles(town_tiles, 1, ARRAY_SIZE(town_tiles));
+    load_image(&town_img, 1, 0);
 
     load_soldier_tiles(3);
     reset_window();

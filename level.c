@@ -207,8 +207,7 @@ u16 get_top(u16 pos_x) {
 #include "images/title.h"
 
 static void load_font_tiles(void) {
-    update_palette(font_palette, 0, ARRAY_SIZE(font_palette));
-    update_tiles(font_tiles, 1, ARRAY_SIZE(font_tiles));
+    load_image(&font_img, 1, 0);
 }
 
 static void clear_screen_to_black(void) {
@@ -263,8 +262,7 @@ static void simple_screen(Function paint_screen, u16 offset, byte start) {
 }
 
 static void flammenwerfer_text(void) {
-    update_palette(title_palette, 16, ARRAY_SIZE(title_palette));
-    update_tiles(title_tiles, 256, ARRAY_SIZE(title_tiles));
+    load_image(&title_img, 256, 1);
 
     clear_DMA_buffer(0, 0x1000);
     paint_background(0, 0, 40, 8, TILE(1, 256), 0);

@@ -449,15 +449,10 @@ u16 soldier_collision(Rectangle *r) {
     return intersect(r, &s_rect);
 }
 
-static const u16 *palette;
-static void flicker_color(u16 index, u16 deviate) {
-    u16 color = palette[index] + deviate;
-    update_color(32 + index, color);
-}
-
+static u16 face_color, body_color;
 static void soldier_flicker(u16 deviate) {
-    flicker_color(6, deviate);
-    flicker_color(7, deviate);
+    update_color(38, body_color + deviate);
+    update_color(39, face_color + deviate);
 }
 
 static byte face;
@@ -871,33 +866,29 @@ static const byte yell_map[] = { 0, 16, 17, 18 };
 static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
     switch (id) {
     case 0:
-	UPDATE_TILES(soldier_tiles, offset);
-	palette = soldier_palette;
+	load_image(&soldier_img, offset, 2);
 	break;
     case 1:
-	UPDATE_TILES(hans_tiles, offset);
-	palette = hans_palette;
+	load_image(&hans_img, offset, 2);
 	break;
     case 2:
-	UPDATE_TILES(hiroshi_tiles, offset);
-	palette = hiroshi_palette;
+	load_image(&hiroshi_img, offset, 2);
 	break;
     case 3:
-	UPDATE_TILES(french_tiles, offset);
-	palette = french_palette;
+	load_image(&french_img, offset, 2);
 	break;
     }
 
     yell_face = yell_map[id];
+    body_color = get_palette_color(38);
+    face_color = get_palette_color(39);
+    load_tiles(&walk_img, SOLDIER_LEG);
 
-    update_palette(palette, 32, ARRAY_SIZE(soldier_palette));
-    update_tiles(walk_tiles, SOLDIER_LEG, ARRAY_SIZE(walk_tiles));
+    load_tiles(&flame_img, FLAME);
+    load_tiles(&flame_up_img, FLAME_UP);
 
-    update_tiles(flame_tiles, FLAME, ARRAY_SIZE(flame_tiles));
-    update_tiles(flame_up_tiles, FLAME_UP, ARRAY_SIZE(flame_up_tiles));
-
-    update_tiles(blood_tiles, BLOOD, ARRAY_SIZE(blood_tiles));
-    update_tiles(gun_tiles, WEAPON, ARRAY_SIZE(gun_tiles));
+    load_tiles(&blood_img, BLOOD);
+    load_tiles(&gun_img, WEAPON);
 }
 
 void load_soldier_tiles(u16 id) {

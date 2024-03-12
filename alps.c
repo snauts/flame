@@ -174,7 +174,7 @@ void emit_static_garden_bees(u16 x) {
 }
 
 void load_burn_tiles(u16 where) {
-    update_tiles(burn_tiles, where, ARRAY_SIZE(burn_tiles));
+    load_tiles(&burn_img, where);
 }
 
 void emit_xonix_bees(u16 x) {
@@ -279,8 +279,7 @@ void level_done_burn_mobs(u16 x) {
 
 void display_alps(Function prepare_level) {
     /* load tiles */
-    update_palette(alps_palette, 0, ARRAY_SIZE(alps_palette));
-    update_tiles(alps_tiles, 1, ARRAY_SIZE(alps_tiles));
+    load_image(&alps_img, 1, 0);
 
     load_soldier_tiles(1);
     reset_mobs();
@@ -297,16 +296,14 @@ void display_alps(Function prepare_level) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    update_palette(rocks_palette, 16, ARRAY_SIZE(rocks_palette));
-    update_tiles(rocks_tiles, 65, ARRAY_SIZE(rocks_tiles));
+    load_image(&rocks_img, 65, 1);
 
     prepare_level();
 
     void music_erika(void);
     music_erika();
 
-    update_palette(bee_palette, 48, ARRAY_SIZE(bee_palette));
-    update_tiles(bee_tiles, BEE_TILES, ARRAY_SIZE(bee_tiles));
+    load_image(&bee_img, BEE_TILES, 3);
     load_burn_tiles(BURN_TILES);
 
     b_obj = malloc(sizeof(Bee) * MAX_MOBS);
@@ -798,7 +795,7 @@ static void setup_queen(u16 i) {
 }
 
 void display_queen(void) {
-    update_tiles(queen_tiles, QUEEN_TILES, ARRAY_SIZE(queen_tiles));
+    load_tiles(&queen_img, QUEEN_TILES);
 
     display_alps(&prepare_queen_level);
     display_progress_bar();

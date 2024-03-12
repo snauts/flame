@@ -369,15 +369,15 @@ void display_desert(Function prepare_level, byte more_bones) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    load_image(&desert_img, 97, 16);
-    load_image(&cliffs_img, 161, -1);
+    load_image(&desert_img, 97, 1);
+    load_tiles(&cliffs_img, 161);
 
     prepare_level();
 
     void music_johnny(void);
     music_johnny();
 
-    load_image(&hopper_img, 289, -1);
+    load_tiles(&hopper_img, 289);
 
     h_obj = malloc(sizeof(Hopper) * MAX_MOBS);
 }
@@ -780,12 +780,10 @@ static void setup_mantis(u16 i) {
 }
 
 void display_mantis(void) {
-    update_palette(mantis_body_palette, 48, ARRAY_SIZE(mantis_body_palette));
-
-    update_tiles(mantis_body_tiles, 357, ARRAY_SIZE(mantis_body_tiles));
-    update_tiles(mantis_claw_tiles, 385, ARRAY_SIZE(mantis_claw_tiles));
-    update_tiles(mantis_leg_tiles, 449, ARRAY_SIZE(mantis_leg_tiles));
-    update_tiles(mantis_wing_tiles, 545, ARRAY_SIZE(mantis_wing_tiles));
+    load_image(&mantis_body_img, 357, 3);
+    load_tiles(&mantis_claw_img, 385);
+    load_tiles(&mantis_leg_img,  449);
+    load_tiles(&mantis_wing_img, 545);
 
     load_burn_tiles(577);
 

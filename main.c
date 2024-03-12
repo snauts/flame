@@ -237,7 +237,7 @@ void clear_DMA_buffer(u16 data, u16 len) {
     fill_VRAM(0, data, len >> 1);
 }
 
-void update_tiles(const byte *buf, u16 offset, u16 count) {
+static void update_tiles(const byte *buf, u16 offset, u16 count) {
     byte *ptr = buffer_ptr(0);
     u16 i = 0, n = 0;
     offset *= 32;
@@ -260,11 +260,13 @@ void update_tiles(const byte *buf, u16 offset, u16 count) {
     if (n > 0) copy_to_VRAM(offset, n);
 }
 
-void load_image(const Image *img, u16 offset, char palette) {
-    if (palette >= 0) {
-	update_palette(img->palette, palette, 16);
-    }
+void load_tiles(const Image *img, u16 offset) {
     update_tiles(img->tiles, offset, img->size);
+}
+
+void load_image(const Image *img, u16 offset, u16 palette) {
+    update_palette(img->palette, (palette << 4), 16);
+    load_tiles(img, offset);
 }
 
 static u16 seed;

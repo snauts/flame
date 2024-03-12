@@ -127,9 +127,6 @@ typedef struct Layout {
 #define UPDATE_CRAM_WORD(addr, data) \
     update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
 
-#define UPDATE_TILES(tile_set, offset) \
-    update_tiles(tile_set, offset, ARRAY_SIZE(tile_set));
-
 #define BUG(condition, message) \
     if (condition) error(message);
 
@@ -143,9 +140,9 @@ u16 strlen(const char *str);
 short clamp(short value, short max);
 void memset(void *ptr, byte c, int amount);
 void memcpy(void *dst, const void *src, int amount);
-void update_tiles(const byte *buf, u16 offset, u16 count);
 void update_palette(const u16 *buf, u16 offset, u16 count);
-void load_image(const Image *img, u16 offset, char palette);
+void load_image(const Image *img, u16 offset, u16 palette);
+void load_tiles(const Image *img, u16 offset);
 void update_VDP_word(u32 ctrl, u16 data);
 void copy_to_VRAM_ptr(u16 dst, u16 len, void *ptr);
 void *copy_to_VRAM_async(u16 dst, u16 len);

@@ -600,18 +600,13 @@ void emit_highway(u16 x) {
 static void display_nippon(Function prepare_level) {
     set_seed(1877);
 
-    update_palette(beach_palette, 0, ARRAY_SIZE(beach_palette));
-    update_tiles(beach_tiles, 1, ARRAY_SIZE(beach_tiles));
-
-    update_palette(dunes_palette, 16, ARRAY_SIZE(dunes_palette));
-    update_tiles(dunes_tiles, 129, ARRAY_SIZE(dunes_tiles));
-
-    update_palette(crab_palette, 48, ARRAY_SIZE(crab_palette));
-    update_tiles(crab_tiles, 257, ARRAY_SIZE(crab_tiles));
+    load_image(&beach_img, 1, 0);
+    load_image(&dunes_img, 129, 1);
+    load_image(&crab_img, 257, 3);
 
     load_burn_tiles(BURN_TILES);
 
-    update_tiles(spit_tiles, 313, ARRAY_SIZE(spit_tiles));
+    load_tiles(&spit_img, 313);
 
     /* load tiles */
     load_soldier_tiles(2);
@@ -1195,10 +1190,9 @@ void display_hermit(void) {
     void prepare_hermit_level(void);
     display_nippon(&prepare_hermit_level);
 
-    update_palette(hermit_shell_palette, 48, ARRAY_SIZE(hermit_shell_palette));
-    update_tiles(hermit_shell_tiles, 325, ARRAY_SIZE(hermit_shell_tiles));
-    update_tiles(hermit_eyes_tiles, 389, ARRAY_SIZE(hermit_eyes_tiles));
-    update_tiles(hermit_legs_tiles, 437, ARRAY_SIZE(hermit_legs_tiles));
+    load_image(&hermit_shell_img, 325, 3);
+    load_tiles(&hermit_eyes_img, 389);
+    load_tiles(&hermit_legs_img, 437);
 
     display_progress_bar();
     lock_screen(1);
