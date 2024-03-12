@@ -93,6 +93,12 @@ typedef struct Trigger {
     Callback fn;
 } Trigger;
 
+typedef struct Level {
+    const void *triggers;
+    const void *height;
+    const void *tiles;
+} Level;
+
 typedef struct Rectangle {
     short x1, y1, x2, y2;
 } Rectangle;

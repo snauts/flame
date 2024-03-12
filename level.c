@@ -116,7 +116,7 @@ static void prepare_level(const u16 *level) {
 void prepare_##name##_level(void) {	\
     trigger = name##_level_triggers;	\
     height = name##_level_height;	\
-    prepare_level(name##_level);	\
+    prepare_level(name##_level_tiles);	\
 }
 
 PREPARE_LEVEL(desert);
