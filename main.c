@@ -284,9 +284,8 @@ void *malloc(u16 amount) {
     void *ptr = heap + free_mem;
     free_mem += amount;
     memset(ptr, 0, amount);
-    if (free_mem > HEAP_SIZE) {
-	error("MALLOC-FAIL");
-    }
+
+    BUG(free_mem > HEAP_SIZE, "MALLOC-FAIL");
     return ptr;
 }
 
@@ -369,9 +368,8 @@ static void setup_game(void) {
 }
 
 void update_VDP_word(u32 ctrl, u16 data) {
-    if (next_write >= vram_write + VRAM_BUF_SIZE) {
-        wait_vblank_done();
-    }
+    BUG(next_write >= vram_write + VRAM_BUF_SIZE, "VRAM-FAIL");
+
     next_write->addr = ctrl;
     next_write->data = data;
     next_write++;
@@ -382,7 +380,7 @@ void switch_frame(Function fn) {
 }
 
 static void panic_on_draw(void) {
-    if (!is_vblank()) error("VBLANK");
+    BUG(!is_vblank(), "VBLANK-FAIL");
 }
 
 static void transfer_to_VRAM(void) {

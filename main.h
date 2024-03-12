@@ -124,6 +124,9 @@ typedef struct Layout {
 #define UPDATE_TILES(tile_set, offset) \
     update_tiles(tile_set, offset, ARRAY_SIZE(tile_set));
 
+#define BUG(condition, message) \
+    if (condition) error(message);
+
 #define SCREEN_X(x) ((x) - window + ON_SCREEN)
 
 void poke_VRAM(u16 addr, u16 data);

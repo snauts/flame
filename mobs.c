@@ -39,15 +39,12 @@ void mob_fn(Object *obj, void (*fn)(Object *)) {
 
 Object *alloc_mob(void) {
     Object *obj = NULL;
-    if (available_mobs > 0) {
-	Mob *mob = mobs + free_mobs[--available_mobs];
-	mob->obj.place = available_mobs;
-	mob->fn = NULL;
-	obj = &mob->obj;
-    }
-    else {
-	error("MOB-POOL-FULL");
-    }
+    BUG(!available_mobs, "MOB-POOL-FULL");
+
+    Mob *mob = mobs + free_mobs[--available_mobs];
+    mob->obj.place = available_mobs;
+    mob->fn = NULL;
+    obj = &mob->obj;
     return obj;
 }
 
