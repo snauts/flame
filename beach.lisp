@@ -431,11 +431,9 @@
   (s-place 34 1 (watchtower-plant 1 242))
   (s-pop))
 
-(defun save-beach ()
-  (with-open-file (out "beach.inc" :if-exists :supersede :direction :output)
-    (save-array out "beach_level" (beach-level) *beach-walkable*)
-    (save-array out "dunes_level" (dunes-level) *beach-walkable*)
-    (save-array out "hermit_level" (hermit-level) *beach-walkable*)))
-
-(defun save-and-quit ()
-  (save-and-quit-level #'save-beach))
+(save-level
+ "beach.inc"
+ *beach-walkable*
+ (list "hermit_level" (hermit-level)
+       "beach_level" (beach-level)
+       "dunes_level" (dunes-level)))

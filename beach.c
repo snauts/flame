@@ -635,12 +635,10 @@ static void display_nippon(const Level *level) {
 }
 
 void display_beach(void) {
-    extern const Level beach_level;
     display_nippon(&beach_level);
 }
 
 void display_dunes(void) {
-    extern const Level dunes_level;
     display_nippon(&dunes_level);
 }
 
@@ -1189,7 +1187,6 @@ static void setup_hermit(u16 i) {
 }
 
 void display_hermit(void) {
-    extern const Level hermit_level;
     display_nippon(&hermit_level);
 
     load_image(&hermit_shell_img, 325, 3);

@@ -258,7 +258,14 @@
     (format out ".tiles = ~A_tiles,~%" name)
     (format out "};~%")))
 
-(defun save-and-quit-level (fn)
-  (handler-case (funcall fn)
-    (condition (var) (format t "ERROR: ~A~%" var)))
+(defun save-sub-level (out walk-map sub-levels)
+  (unless (null sub-levels)
+    (save-array out (first sub-levels) (second sub-levels) walk-map)
+    (save-sub-level out walk-map (nthcdr 2 sub-levels))))
+
+(defun save-level (name walk-map sub-levels)
+  (with-open-file (out name :if-exists :supersede :direction :output)
+    (save-sub-level out walk-map sub-levels)))
+
+(defun save-and-quit ()
   (quit))

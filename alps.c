@@ -312,14 +312,12 @@ void display_alps(const Level *level) {
 }
 
 void display_mountains(void) {
-    extern const Level mountain_level;
     display_alps(&mountain_level);
 }
 
 static Object *prev;
 static Callback generator;
 void display_plateau(void) {
-    extern const Level plateau_level;
     display_alps(&plateau_level);
     generator = NULL;
     prev = NULL;
@@ -798,7 +796,6 @@ static void setup_queen(u16 i) {
 }
 
 void display_queen(void) {
-    extern const Level queen_level;
     load_tiles(&queen_img, QUEEN_TILES);
 
     display_alps(&queen_level);

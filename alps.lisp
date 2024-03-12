@@ -214,11 +214,9 @@
   (s-inject "emit_bee_row" 16)
   (s-pop))
 
-(defun save-alps ()
-  (with-open-file (out "alps.inc" :if-exists :supersede :direction :output)
-    (save-array out "mountain_level" (mountain-level) *alps-walkable*)
-    (save-array out "plateau_level" (plateau-level) *alps-walkable*)
-    (save-array out "queen_level" (queen-level) *alps-walkable*)))
-
-(defun save-and-quit ()
-  (save-and-quit-level #'save-alps))
+(save-level
+ "alps.inc"
+ *alps-walkable*
+ (list "mountain_level" (mountain-level)
+       "plateau_level" (plateau-level)
+       "queen_level" (queen-level)))

@@ -201,6 +201,5 @@ static void display_french(const Level *level) {
 }
 
 void display_town(void) {
-    extern const Level town_level;
     display_french(&town_level);
 }

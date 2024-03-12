@@ -385,12 +385,10 @@ void display_desert(const Level *level, byte more_bones) {
 }
 
 void display_canyon(void) {
-    extern const Level desert_level;
     display_desert(&desert_level, 0);
 }
 
 void display_rusty(void) {
-    extern const Level rusty_level;
     display_desert(&rusty_level, 0);
 }
 
@@ -784,7 +782,6 @@ static void setup_mantis(u16 i) {
 }
 
 void display_mantis(void) {
-    extern const Level mantis_level;
     load_image(&mantis_body_img, 357, 3);
     load_tiles(&mantis_claw_img, 385);
     load_tiles(&mantis_leg_img,  449);

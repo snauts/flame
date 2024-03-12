@@ -528,11 +528,9 @@
   (s-place 39 16 (desert-cell 279))
   (s-pop))
 
-(defun save-desert ()
-  (with-open-file (out "desert.inc" :if-exists :supersede :direction :output)
-    (save-array out "desert_level" (desert-level) *desert-walkable*)
-    (save-array out "mantis_level" (mantis-level) *desert-walkable*)
-    (save-array out "rusty_level" (rusty-level) *desert-walkable*)))
-
-(defun save-and-quit ()
-  (save-and-quit-level #'save-desert))
+(save-level
+ "desert.inc"
+ *desert-walkable*
+ (list "desert_level" (desert-level)
+       "mantis_level" (mantis-level)
+       "rusty_level" (rusty-level)))
