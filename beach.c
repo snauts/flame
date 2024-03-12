@@ -627,20 +627,12 @@ static void display_nippon(Function prepare_level) {
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
-    clear_DMA_buffer(0, 0x1000);
-
-    fill_VRAM(0, 0, 0x800);
     prepare_level();
-    fill_bottom_row();
-    copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 
-    setup_soldier_sprites();
     void music_battotai(void);
     music_battotai();
 
-    callback(&fade_in, 0, 6);
     callback(&sea_rotate, 30, 0);
-    switch_frame(&update_game);
 
     c_obj = malloc(sizeof(Crab) * MAX_MOBS);
 }

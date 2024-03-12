@@ -374,21 +374,12 @@ void display_desert(Function prepare_level, byte more_bones) {
     update_tiles(desert_tiles, 97, ARRAY_SIZE(desert_tiles));
     update_tiles(cliffs_tiles, 161, ARRAY_SIZE(cliffs_tiles));
 
-    clear_DMA_buffer(0, 0x1000);
-
     prepare_level();
 
-    fill_bottom_row();
-    copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
-
-    setup_soldier_sprites();
     void music_johnny(void);
     music_johnny();
 
     update_tiles(hopper_tiles, 289, ARRAY_SIZE(hopper_tiles));
-
-    callback(&fade_in, 0, 6);
-    switch_frame(&update_game);
 
     h_obj = malloc(sizeof(Hopper) * MAX_MOBS);
 }

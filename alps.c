@@ -300,24 +300,14 @@ void display_alps(Function prepare_level) {
     update_palette(rocks_palette, 16, ARRAY_SIZE(rocks_palette));
     update_tiles(rocks_tiles, 65, ARRAY_SIZE(rocks_tiles));
 
-    clear_DMA_buffer(0, 0x1000);
-
-    fill_VRAM(0, 0, 0x800);
     prepare_level();
 
-    fill_bottom_row();
-    copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
-
-    setup_soldier_sprites();
     void music_erika(void);
     music_erika();
 
     update_palette(bee_palette, 48, ARRAY_SIZE(bee_palette));
     update_tiles(bee_tiles, BEE_TILES, ARRAY_SIZE(bee_tiles));
     load_burn_tiles(BURN_TILES);
-
-    callback(&fade_in, 0, 6);
-    switch_frame(&update_game);
 
     b_obj = malloc(sizeof(Bee) * MAX_MOBS);
 }

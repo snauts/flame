@@ -93,6 +93,8 @@ void update_height_map(u16 pos_x) {
 }
 
 static void prepare_level(const u16 *level) {
+    clear_DMA_buffer(0, 0x1000);
+
     column = 0;
     front = level;
     for (u16 x = 0; x < 64; x++) {
@@ -101,6 +103,13 @@ static void prepare_level(const u16 *level) {
     back = level; /* reset back */
     next_platform = 0;
     forward_platform();
+    fill_bottom_row();
+
+    copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
+    setup_soldier_sprites();
+
+    callback(&fade_in, 0, 6);
+    switch_frame(&update_game);
 }
 
 #define PREPARE_LEVEL(name)		\
