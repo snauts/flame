@@ -4,6 +4,7 @@ LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CWARN	= -Wextra -Wall -Wno-unused-parameter
 CFLAGS  = $(CWARN) -fomit-frame-pointer -fno-builtin -Os
+IFLAGS	= --noinform --no-sysinit --no-userinit
 CSRC	= main.c level.c sound.c mobs.c soldier.c \
 	  canyon.c alps.c beach.c town.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
@@ -64,7 +65,7 @@ z80.hex: z80.asm
 
 %.inc: %.lisp
 	@echo Prepare $@
-	@sbcl --noinform --load $< --eval "(save-and-quit)"
+	@sbcl $(IFLAGS) --load $< --eval "(save-and-quit)"
 
 %.o: %.c
 	@echo Compile $<
