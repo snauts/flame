@@ -26,9 +26,9 @@ static const u16 *recede(const u16 *ptr) {
 }
 
 static const u16 *fill_column(const u16 *ptr, void (*poke)(u16, u16)) {
-    u16 addr = 0xd80 + column;
+    short addr = 0xd80 + column;
     short count = *(ptr++) & 0xff;
-    while (addr > 0x80) {
+    while (addr >= 0) {
 	poke(addr, count > 0 ? *(ptr++) : 0);
 	addr = addr - 0x80;
 	count--;
