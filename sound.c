@@ -1,6 +1,8 @@
 #include "main.h"
 #include "music.inc"
 
+#define MUSIC_BASE 0x1000
+
 enum Music {
     MUSIC_NONE,
     MUSIC_JOHNNY,
@@ -160,13 +162,17 @@ static void z80_word_raw(u16 addr, u16 data) {
     BYTE(Z80_RAM + addr + 0) = data & 0xff;
 }
 
-static void load_score(u16 offset, const byte *ptr, u16 size) {
+static void load_score(const byte *ptr, u16 size) {
+    const u16 offset = MUSIC_BASE;
     memcpy((void *) Z80_RAM + offset, ptr, size);
     z80_word_raw(0x14, offset);
     z80_word_raw(0x12, offset);
     BYTE(Z80_RAM + 0x11) = 1;
     BYTE(Z80_RAM + 0x10) = 0;
 }
+
+#define LOAD_SCORE(x) \
+    load_score((x), ARRAY_SIZE(x));
 
 static void setup_johnny(void) {
     setup_ym2612_channel(0, guitar);
@@ -175,7 +181,7 @@ static void setup_johnny(void) {
     for (byte i = 4; i <= 6; i++) {
 	setup_ym2612_channel(i, bong);
     }
-    load_score(0x1000, johnny_score, ARRAY_SIZE(johnny_score));
+    LOAD_SCORE(johnny_score);
 }
 
 static void setup_erika(void) {
@@ -185,14 +191,14 @@ static void setup_erika(void) {
     setup_ym2612_channel(4, hi_hat);
     setup_ym2612_channel(5, bong);
     setup_ym2612_channel(6, horn);
-    load_score(0x1000, erika_score, ARRAY_SIZE(erika_score));
+    LOAD_SCORE(erika_score);
 }
 
 static void setup_doves(void) {
     setup_ym2612_channel(0, flute);
     setup_ym2612_channel(1, hi_hat);
     setup_ym2612_channel(2, tuba);
-    load_score(0x1000, doves_score, ARRAY_SIZE(doves_score));
+    LOAD_SCORE(doves_score);
 }
 
 static void setup_battotai(void) {
@@ -202,7 +208,7 @@ static void setup_battotai(void) {
     setup_ym2612_channel(4, horn);
     setup_ym2612_channel(5, tuba);
     setup_ym2612_channel(6, bong);
-    load_score(0x1000, battotai_score, ARRAY_SIZE(battotai_score));
+    LOAD_SCORE(battotai_score);
 }
 
 static void setup_onions(void) {
@@ -212,7 +218,7 @@ static void setup_onions(void) {
     setup_ym2612_channel(4, bong);
     setup_ym2612_channel(5, bong);
     setup_ym2612_channel(6, hi_hat);
-    load_score(0x1000, onions_score, ARRAY_SIZE(onions_score));
+    LOAD_SCORE(onions_score);
 }
 
 #define PSG_SFX_CH0	0x18
@@ -220,6 +226,7 @@ static void setup_onions(void) {
 #define PSG_SFX_CH2	0x1C
 
 #define SFX_BASE	0xF00
+
 enum {
     SFX_PERISH = 0,
     SFX_WIGGLE,
@@ -235,7 +242,7 @@ static void load_sfx(u16 i, const byte *ptr, u16 size) {
 }
 
 static void load_z80_sfx(void) {
-    sfx[0] = 0xF00;
+    sfx[SFX_PERISH] = SFX_BASE;
     load_sfx(SFX_PERISH, perish, sizeof(perish));
     load_sfx(SFX_WIGGLE, wiggle, sizeof(wiggle));
     load_sfx(SFX_SLASH, slash, sizeof(slash));
@@ -250,7 +257,7 @@ void wiggle_sfx(void) {
 }
 
 void slash_sfx(void) {
-    z80_word(PSG_SFX_CH1, sfx[SFX_SLASH]);
+    z80_word(PSG_SFX_CH2, sfx[SFX_SLASH]);
 }
 
 static void mute_sound(void) {
