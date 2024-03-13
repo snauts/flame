@@ -277,36 +277,38 @@ static void update_flame_sprite(Object *f) {
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
-    Object *f = &flame[index].obj;
+    Flame *ptr = flame + index;
+    Object *f = &ptr->obj;
     u16 offset_y, offset_x;
     if (!aim_up) {
-	offset_x = 4 + 22 * soldier.direction;
+	offset_x = 22;
 	offset_y = 20;
 	f->velocity = 0;
 	f->frame = FLAME;
     }
     else {
-	offset_x = 4 + 16 * soldier.direction;
+	offset_x = 16;
 	offset_y = 3;
 	f->velocity = 16;
 	f->frame = FLAME_UP;
     }
 
-    Pos *p = &flame[index].emit;
+    Pos *p = &ptr->emit;
     p->x = soldier.sprite->x;
     p->y = soldier.sprite->y;
-    flame[index].off = 0;
+    ptr->off = 0;
+
+    if (soldier.direction < 0) {
+	offset_x = -offset_x;
+	f->frame |= BIT(11);
+    }
 
     f->direction = soldier.direction;
     f->velocity -= soldier.velocity;
-    f->x = offset_x << 4;
+    f->x = (4 + offset_x) << 4;
     f->y = offset_y << 4;
     f->gravity = 4;
     f->life = 0;
-
-    if (soldier.direction < 0) {
-	f->frame |= BIT(11);
-    }
 
     f->sprite->size = SPRITE_SIZE(2, 1);
     f->place = available_flames;
