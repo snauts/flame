@@ -226,7 +226,7 @@ static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
 	poke_VRAM(i << 1, tile);
 	i++;
     }
-    copy_to_VRAM(plane + offset, 2 * strlen(text));
+    if (i > 0) copy_to_VRAM(plane + offset, 2 * strlen(text));
 }
 
 static void display_text(const char *text, u16 x, u16 y) {
