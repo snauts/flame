@@ -8,6 +8,7 @@
 typedef struct Mob {
     Object obj;
     void (*fn)(Object *);
+    char padding[0] ALIGN(32);
 } Mob;
 
 static signed char available_mobs;

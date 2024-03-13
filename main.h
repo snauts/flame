@@ -44,6 +44,8 @@
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
+#define ALIGN(x) __attribute__((__aligned__(x)))
+
 #define CONTAINER_OF(ptr, type, member) \
     ({ ((type *)(((void *)(ptr)) - __builtin_offsetof(type, member))); })
 
