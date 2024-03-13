@@ -338,6 +338,7 @@ void announce_emile(void) {
     announcement(&emile_text);
 }
 
+#if defined(DEBUG)
 const char *error_str;
 static void error_text(void) {
     display_text("ERROR:", 2, 0);
@@ -364,3 +365,4 @@ void num_error(u32 num) {
     num_str[8] = 0;
     error(num_str);
 }
+#endif

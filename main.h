@@ -133,8 +133,12 @@ typedef struct Layout {
 #define UPDATE_CRAM_WORD(addr, data) \
     update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
 
+#if !defined(DEBUG)
+#define BUG(condition, message)
+#else
 #define BUG(condition, message) \
     if (condition) error(message);
+#endif
 
 #define SCREEN_X(x) ((x) - window + ON_SCREEN)
 

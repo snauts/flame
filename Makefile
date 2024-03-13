@@ -3,15 +3,22 @@ PREFIX	= m68k-elf-
 LDFLAGS = -static -nostdlib -T flame.ld
 ASFLAGS = -m68000 --register-prefix-optional
 CWARN	= -Wextra -Wall -Wno-unused-parameter
-CFLAGS  = $(CWARN) -fomit-frame-pointer -fno-builtin -Os
+CFLAGS  = $(CWARN) -fomit-frame-pointer -fno-builtin
 IFLAGS	= --noinform --no-sysinit --no-userinit
 CSRC	= main.c level.c sound.c mobs.c soldier.c \
 	  canyon.c alps.c beach.c town.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
+SHA	= $(shell git show --format="%h" --no-patch)
 
 ifneq ($(LTO),)
 CFLAGS	+= -flto
 LDLAGS	+= -flto
+endif
+
+ifneq ($(OPTIONS),)
+CFLAGS	+= $(OPTIONS)
+else
+CFLAGS	+= -Os -DDEBUG
 endif
 
 all:	build
@@ -34,8 +41,10 @@ run:	build
 mame:	build
 	mame -w -r 640x480 genesis -cart $(NAME).bin
 
-release: build
-	cp $(NAME).bin $(NAME)-$(shell date +"%F").bin
+release:
+	make clean
+	OPTIONS=-O3 make build
+	cp $(NAME).bin $(NAME)-$(SHA).bin
 
 debug:	build
 	rlwrap blastem -d $(NAME).bin
