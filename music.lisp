@@ -1034,13 +1034,11 @@
      p2 *onion-pause*)))
 
 (defun onion-score-common (score)
-  (transpone-channel score 0 8)
   (merge-into score (onion-drums))
-  (adjust-octaves score '(2 1 0 x 1 1 5))
-  (transpone-channel score 1 1)
+  (adjust-octaves score '(2 3 2 x 1 1 5))
   (channel-key-off score 0 3/4)
   (channel-key-off score 1 4/5)
-  (channel-key-off score 2 9/10)
+  (channel-key-off score 2 2/3)
   (channel-key-off score '(4 5) 16)
   (clean-up-score score)
   score)
@@ -1048,6 +1046,7 @@
 (defun onion-score-1 ()
   (let ((score (copy-score (onions-flute))))
     (delete-channel score 4)
+    (transpone-channel score 0 8)
     (onion-score-common score)))
 
 (defun onion-score-2 ()
@@ -1055,7 +1054,7 @@
     (copy-channel score 0 1)
     (copy-channel score 0 2)
     (copy-channel score 4 5)
-    (transpone-channel score 1 7)
+    (delete-channel score 0)
     (onion-score-common score)))
 
 (defun onions-score ()

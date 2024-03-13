@@ -207,8 +207,8 @@ static void setup_battotai(void) {
 
 static void setup_onions(void) {
     setup_ym2612_channel(0, flute);
-    setup_ym2612_channel(1, guitar);
-    setup_ym2612_channel(2, guitar);
+    setup_ym2612_channel(1, horn);
+    setup_ym2612_channel(2, tuba);
     setup_ym2612_channel(4, bong);
     setup_ym2612_channel(5, bong);
     setup_ym2612_channel(6, hi_hat);
