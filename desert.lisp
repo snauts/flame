@@ -528,9 +528,8 @@
   (s-place 39 16 (desert-cell 279))
   (s-pop))
 
-(save-level
- "desert.inc"
- *desert-walkable*
- (list "desert_level" (desert-level)
-       "mantis_level" (mantis-level)
-       "rusty_level" (rusty-level)))
+(defun commit-save ()
+  (push-level "desert_level" (desert-level))
+  (push-level "mantis_level" (mantis-level))
+  (push-level "rusty_level" (rusty-level))
+  (save-level "desert.inc" *desert-walkable*))

@@ -18,7 +18,6 @@
 (defun town-level ()
   (join (town-walk 16) (empty 64)))
 
-(save-level
- "town.inc"
- *town-walkable*
- (list "town_level" (town-level)))
+(defun commit-save ()
+  (push-level "town_level" (town-level))
+  (save-level "town.inc" *town-walkable*))

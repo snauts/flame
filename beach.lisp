@@ -431,9 +431,8 @@
   (s-place 34 1 (watchtower-plant 1 242))
   (s-pop))
 
-(save-level
- "beach.inc"
- *beach-walkable*
- (list "hermit_level" (hermit-level)
-       "beach_level" (beach-level)
-       "dunes_level" (dunes-level)))
+(defun commit-save ()
+  (push-level "hermit_level" (hermit-level))
+  (push-level "beach_level" (beach-level))
+  (push-level "dunes_level" (dunes-level))
+  (save-level "beach.inc" *beach-walkable*))

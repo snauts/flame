@@ -258,14 +258,24 @@
     (format out ".tiles = ~A_tiles,~%" name)
     (format out "};~%")))
 
-(defun save-sub-level (out walk-map sub-levels)
-  (unless (null sub-levels)
-    (save-array out (first sub-levels) (second sub-levels) walk-map)
-    (save-sub-level out walk-map (nthcdr 2 sub-levels))))
+(defvar *all-levels* nil)
 
-(defun save-level (name walk-map sub-levels)
+(defun push-level (array data)
+  (push (list array data) *all-levels*))
+
+(defun save-level (name walk-map)
   (with-open-file (out name :if-exists :supersede :direction :output)
-    (save-sub-level out walk-map sub-levels)))
+    (dolist (level *all-levels*)
+      (destructuring-bind (array data) level
+	(save-array out array data walk-map)))))
+
+(declaim (ftype function commit-save))
+
+(defun perform-save ()
+  (let ((*all-levels* nil))
+    (commit-save)))
 
 (defun save-and-quit ()
+  (handler-case (perform-save)
+    (condition (var) (format t "ERROR: ~A~%" var)))
   (quit))

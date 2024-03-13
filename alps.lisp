@@ -214,9 +214,8 @@
   (s-inject "emit_bee_row" 16)
   (s-pop))
 
-(save-level
- "alps.inc"
- *alps-walkable*
- (list "mountain_level" (mountain-level)
-       "plateau_level" (plateau-level)
-       "queen_level" (queen-level)))
+(defun commit-save ()
+  (push-level "mountain_level" (mountain-level))
+  (push-level "plateau_level" (plateau-level))
+  (push-level "queen_level" (queen-level))
+  (save-level "alps.inc" *alps-walkable*))
