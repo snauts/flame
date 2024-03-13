@@ -43,8 +43,7 @@ mame:	build
 
 release:
 	make clean
-	OPTIONS=-O3 make build
-	cp $(NAME).bin $(NAME)-$(SHA).bin
+	LTO=yes OPTIONS="-O3 -DVERSION='\"$(SHA)\"'" make build
 
 debug:	build
 	rlwrap blastem -d $(NAME).bin
