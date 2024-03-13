@@ -201,16 +201,18 @@ static u16 is_palette(DMA_Chunk *chunk) {
 }
 
 static void copy_using_DMA(void) {
+    DMA_Chunk *dma = chunk;
     for (u16 i = 0; i < chunk_idx; i++) {
-	u32 dma_src = ((u32) chunk[i].ptr);
-	WORD(VDP_CTRL) = VDP_CTRL_REG(0x13, (chunk[i].len >>  1) & 0xFF);
-	WORD(VDP_CTRL) = VDP_CTRL_REG(0x14, (chunk[i].len >>  9));
+	u32 dma_src = ((u32) dma->ptr);
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x13, (dma->len >> 1) & 0xFF);
+	WORD(VDP_CTRL) = VDP_CTRL_REG(0x14, (dma->len >> 9));
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x15, (dma_src >>  1) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x16, (dma_src >>  9) & 0xFF);
 	WORD(VDP_CTRL) = VDP_CTRL_REG(0x17, (dma_src >> 17) & 0x7F);
-	u32 addr = is_palette(chunk + i) ? VDP_CRAM_DMA : VDP_VRAM_DMA;
-	LONG(VDP_CTRL) = VDP_CTRL_VALUE(addr, chunk[i].dst);
+	u32 addr = is_palette(dma) ? VDP_CRAM_DMA : VDP_VRAM_DMA;
+	LONG(VDP_CTRL) = VDP_CTRL_VALUE(addr, dma->dst);
 	while (is_DMA());
+	dma++;
     }
 
     /* reset chunks */
