@@ -182,6 +182,7 @@ void execute_nops(u32 nops);
 void do_z80_bus(void (*)(void));
 void z80_word(u16 addr, u16 data);
 void z80_poke(u16 addr, byte data);
+void z80_copy(u16 dst, const byte *src, u16 size);
 void psg_noise(byte type, byte vol);
 void music_toggle(byte state);
 void fade_music(u16 i);

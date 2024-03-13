@@ -80,10 +80,16 @@ void z80_poke(u16 addr, byte data) {
     z80_release_bus();
 }
 
+void z80_copy(u16 dst, const byte *src, u16 size) {
+    for (u16 i = 0; i < size; i++) {
+	BYTE(Z80_RAM + dst + i) = src[i]; /* write must be volatile */
+    }
+}
+
 static void init_z80(void) {
     z80_reset(1);
     z80_request_bus();
-    memcpy((void *) Z80_RAM, z80, sizeof(z80));
+    z80_copy(0, z80, sizeof(z80));
     z80_release_bus();
     z80_reset(0);
     execute_nops(80);

@@ -164,7 +164,7 @@ static void z80_word_raw(u16 addr, u16 data) {
 
 static void load_score(const byte *ptr, u16 size) {
     const u16 offset = MUSIC_BASE;
-    memcpy((void *) Z80_RAM + offset, ptr, size);
+    z80_copy(offset, ptr, size);
     z80_word_raw(0x14, offset);
     z80_word_raw(0x12, offset);
     BYTE(Z80_RAM + 0x11) = 1;
@@ -237,7 +237,7 @@ enum {
 static u16 sfx[SFX_LASTONE + 1];
 
 static void load_sfx(u16 i, const byte *ptr, u16 size) {
-    memcpy((void *) Z80_RAM + sfx[i], ptr, size);
+    z80_copy(sfx[i], ptr, size);
     sfx[i + 1] = sfx[i] + size;
 }
 
