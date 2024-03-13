@@ -236,8 +236,8 @@ static void shoot_move(Object *obj) {
     const struct Shoot *this = shoot + obj->direction;
     u16 dx = (this->mx >> obj->velocity) & 1;
     u16 dy = (this->my >> obj->velocity) & 1;
-    obj->x = obj->x + dx * this->dir_x;
-    obj->y = obj->y + dy * this->dir_y;
+    obj->x = obj->x + (this->dir_x > 0 ? dx : -dx);
+    obj->y = obj->y + (this->dir_y > 0 ? dy : -dy);
     if (++obj->velocity == this->len) {
 	obj->velocity = 0;
     }
