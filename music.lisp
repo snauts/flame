@@ -839,16 +839,18 @@
   (copy-score
    (append
     (multiply (battotai-drum-row '(a b r z c r d z)) 2)
-    (multiply (battotai-drum-row '(c a r z d d r z)) 2)
-    (battotai-drum-row '(r a r z r a r z))
-    (battotai-drum-row '(d r r z r a r z))
-    (battotai-drum-row '(r a r z d r d z)))))
+    (multiply (battotai-drum-row '(b z d z a a a z)) 2)
+    (battotai-drum-row '(r a r z r z r z))
+    (battotai-drum-row '(d b r z b a a z))
+    (battotai-drum-row '(a b b z d b d z)))))
 
 (defun battotai-flute ()
   (append
    (multiply *battotai-1* 2)
    (multiply *battotai-2* 2)
-   *battotai-3* *battotai-4* *battotai-5*))
+   *battotai-3*
+   *battotai-4*
+   *battotai-5*))
 
 (defun oom-pah ()
   '((32 (2 1 C) (6 0 C))
