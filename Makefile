@@ -9,6 +9,7 @@ CSRC	= main.c level.c sound.c mobs.c soldier.c \
 	  canyon.c alps.c beach.c town.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 SHA	= $(shell git show --format="%h" --no-patch)
+DATE	= $(shell date +"%F")
 
 ifneq ($(LTO),)
 CFLAGS	+= -flto
@@ -43,7 +44,7 @@ mame:	build
 
 release:
 	make clean
-	LTO=yes OPTIONS="-O3 -DVERSION='\"$(SHA)\"'" make build
+	LTO=yes OPTIONS="-O3 -DVERSION='\"$(DATE) $(SHA)\"'" make build
 
 debug:	build
 	rlwrap blastem -d $(NAME).bin

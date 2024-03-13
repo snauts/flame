@@ -252,7 +252,7 @@ static void flammenwerfer_text(void) {
     copy_to_VRAM(VRAM_PLANE_A + 0x400, 80 * 8 * 2);
 
 #if defined(VERSION)
-    display_text("SHA:" VERSION, 28, 0);
+    display_text(VERSION, 40 - sizeof(VERSION), 0);
 #endif
     display_text("PRESS START", 15, 16);
     display_text("SATIRICAL ODDITY IN FOUR PARTS", 5, 27);
