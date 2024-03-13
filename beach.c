@@ -138,8 +138,8 @@ static void move_crab(Object *obj) {
     advance_obj(obj, 8, 12);
 
     if (mob_move(obj, 14)) {
-	if (obj->direction != 0) {
-	    obj->frame = ((obj->life >> 2) % 6);
+	if (obj->direction != 0 && (obj->life & 3) == 0) {
+	    obj->frame = obj->frame == 5 ? 0 : obj->frame + 1;
 	}
 	palette = 3;
     }
