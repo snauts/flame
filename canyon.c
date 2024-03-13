@@ -109,11 +109,14 @@ static void move_hopper(Object *obj) {
     u16 land = advance_obj(obj, 4, 12);
 
     if (mob_move(obj, 17)) {
-	if (land) {
-	    obj->frame = 3 + ((obj->life >> 2) % 6);
-	}
-	else {
+	if (!land) {
 	    obj->frame = 1 + ((obj->life >> 1) & 1);
+	}
+	else if (obj->frame < 3) {
+	    obj->frame = 3;
+	}
+	else if ((obj->life & 3) == 0) {
+	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
 	}
     }
 
