@@ -221,6 +221,7 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire, byte crouch) {
 
 typedef struct Flame {
     Object obj;
+    char dx, dy;
     byte off;
     Pos emit;
 } Flame;
@@ -277,20 +278,22 @@ static void update_flame_sprite(Object *f) {
 }
 
 static void emit_flame(u16 index, u16 aim_up) {
+    signed char offset_y, offset_x;
     Flame *ptr = flame + index;
     Object *f = &ptr->obj;
-    u16 offset_y, offset_x;
     if (!aim_up) {
 	offset_x = 22;
 	offset_y = 20;
 	f->velocity = 0;
 	f->frame = FLAME;
+	ptr->dy = 8;
     }
     else {
 	offset_x = 16;
 	offset_y = 3;
 	f->velocity = 16;
 	f->frame = FLAME_UP;
+	ptr->dy = 4;
     }
 
     Pos *p = &ptr->emit;
@@ -302,10 +305,12 @@ static void emit_flame(u16 index, u16 aim_up) {
 	offset_x = -offset_x;
 	f->frame |= BIT(11);
     }
+    ptr->dx = offset_x;
+    offset_x += 4;
 
     f->direction = soldier.direction;
     f->velocity -= soldier.velocity;
-    f->x = (4 + offset_x) << 4;
+    f->x = offset_x << 4;
     f->y = offset_y << 4;
     f->gravity = 4;
     f->life = 0;
@@ -339,22 +344,9 @@ static u16 flame_expired(Object *f) {
     return (++f->life) >= FLAME_LIFE;
 }
 
-static char is_horizontal_flame(Object *f) {
-    return TILE_ID(f->frame) == FLAME;
-}
-
-static void advance_flame(Object *f) {
-    char move_x, move_y;
-    if (is_horizontal_flame(f)) {
-	move_x = 22;
-	move_y = 8;
-    }
-    else {
-	move_x = 16;
-	move_y = 4;
-    }
-    f->x += move_x * f->direction;
-    advance_y(f, move_y);
+static void advance_flame(Flame *ptr, Object *f) {
+    f->x += ptr->dx;
+    advance_y(f, ptr->dy);
 }
 
 static Rectangle f_rect;
@@ -410,8 +402,9 @@ static void manage_flames(void) {
     clear_rectangle(&f_rect);
     for (signed char i = available_flames; i < FLAME_COUNT; i++) {
 	u16 index = free_flames[i];
-	Object *f = &flame[index].obj;
-	advance_flame(f);
+	Flame *ptr = flame + index;
+	Object *f = &ptr->obj;
+	advance_flame(ptr, f);
 	update_flame_sprite(f);
 	update_total_rectange(f);
 	f->sprite->next = update_next_sprite(index + FLAME_OFFSET);
