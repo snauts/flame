@@ -157,7 +157,7 @@ static void update_town(void) {
     if (update_frame()) {
 	u16 *ptr = scroll_buf;
 	u16 invert = -window;
-	u16 third = invert / 3;
+	u16 third = -(window / 3);
 	u16 shift = third;
 	for (u16 row = 0; row < 28; row++) {
 	    switch (row) {
