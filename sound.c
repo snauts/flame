@@ -227,17 +227,19 @@ static void setup_onions(void) {
 
 #define SFX_BASE	0xF00
 
-static u16 sfx[SFX_LAST + 1];
+static u16 sfx[SFX_LAST];
+static u16 sfx_next;
 static u16 channel;
 
 static void load_sfx(u16 i, const byte *ptr, u16 size) {
-    z80_copy(sfx[i], ptr, size);
-    sfx[i + 1] = sfx[i] + size;
+    z80_copy(sfx_next, ptr, size);
+    sfx[i] = sfx_next;
+    sfx_next += size;
 }
 
 static void load_z80_sfx(void) {
+    sfx_next = SFX_BASE;
     channel = PSG_SFX_CH0;
-    sfx[SFX_PERISH] = SFX_BASE;
     load_sfx(SFX_PERISH, perish, sizeof(perish));
     load_sfx(SFX_WIGGLE, wiggle, sizeof(wiggle));
     load_sfx(SFX_SLASH,  slash,  sizeof(slash));
