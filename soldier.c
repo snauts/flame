@@ -257,7 +257,7 @@ static void update_flame_sprite(Object *f) {
 	if (f->direction != soldier.direction) {
 	    this->off = 1;
 	    f->x += (dx << 4);
-	    if (f->life < FLAME_DECOPLE) f->y += (dy << 4);
+	    if (f->life <= FLAME_DECOPLE) f->y += (dy << 4);
 
 	    update_flame_pos(f);
 	}
