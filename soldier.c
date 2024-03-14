@@ -263,11 +263,11 @@ static void update_flame_sprite(Object *f) {
 	}
 	else {
 	    f->sprite->x += dx;
-	    if (f->life < FLAME_DECOPLE) {
+	    if (f->life <= FLAME_DECOPLE) {
 		f->sprite->y += dy;
-	    }
-	    else if (f->life == FLAME_DECOPLE) {
-		f->y += (dy << 4);
+		if (f->life == FLAME_DECOPLE) {
+		    f->y += (dy << 4);
+		}
 	    }
 	}
     }
