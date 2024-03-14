@@ -964,7 +964,7 @@ static void hermit_dismember(Object *obj) {
     else {
 	HERMIT_INDEX++;
 	if (HERMIT_INDEX == HERMIT_PARTS) {
-	    schedule(&finish_level, 100);
+	    schedule(&finish_level, 128);
 	    fade_music(0);
 	    free_mob(obj);
 	}

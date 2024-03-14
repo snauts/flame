@@ -661,7 +661,7 @@ static void blow_off_legs_and_body(u16 i) {
     mantis_blow_off_part(3, 10, 1, -1);
     mantis_blow_off_part(5, 40, 3, 1);
     mantis_blow_off_part(6, 40, 2, -1);
-    schedule(&finish_level, 200);
+    schedule(&finish_level, 230);
     schedule(&fade_music, 100);
 }
 
