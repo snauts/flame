@@ -363,14 +363,12 @@ static u16 intersect(Rectangle *r1, Rectangle *r2) {
 	&& intersect_segment(r1->y1, r1->y2, r2->y1, r2->y2);
 }
 
-static void update_total_rectange(Object *f) {
+static void update_total_rectange(Object *f, u16 first_call) {
     u16 x = f->sprite->x;
     u16 y = f->sprite->y;
-    if (f_rect.x1 == 0 && f_rect.y1 == 0) {
-	f_rect.x1 = x;
-	f_rect.y1 = y;
-	f_rect.x2 = f_rect.x1;
-	f_rect.y2 = f_rect.y1;
+    if (first_call) {
+	f_rect.x1 = f_rect.x2 = x;
+	f_rect.y1 = f_rect.y2 = y;
     }
     else {
 	if (x < f_rect.x1) f_rect.x1 = x;
@@ -406,7 +404,7 @@ static void manage_flames(void) {
 	Object *f = &ptr->obj;
 	advance_flame(ptr, f);
 	update_flame_sprite(f);
-	update_total_rectange(f);
+	update_total_rectange(f, i == available_flames);
 	f->sprite->next = update_next_sprite(index + FLAME_OFFSET);
     }
     /* add sprite size */
