@@ -415,10 +415,10 @@ static void manage_flames(void) {
     }
 }
 
-static void flame_rectangle(Rectangle *r, Object *f) {
-    r->x1 = f->sprite->x + 1;
+static void flame_rectangle(Rectangle *r, Sprite *sprite) {
+    r->x1 = sprite->x + 1;
     r->x2 = r->x1 + 14;
-    r->y1 = f->sprite->y + 2;
+    r->y1 = sprite->y + 2;
     r->y2 = r->y1 + 4;
 }
 
@@ -428,7 +428,7 @@ Object *flame_collision(Rectangle *r) {
 	for (byte i = available_flames; i < FLAME_COUNT; i++) {
 	    u16 index = free_flames[i];
 	    Object *f = &flame[index].obj;
-	    flame_rectangle(&f_single, f);
+	    flame_rectangle(&f_single, f->sprite);
 	    if (intersect(r, &f_single)) {
 		remove_flame(f);
 		return f;
