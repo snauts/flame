@@ -666,13 +666,12 @@ u16 decrement_progress_bar(void) {
     return progress;
 }
 
-void wiggle_sfx(void);
 static void soldier_sinking(u16 cookie) {
     soldier.y++;
     soldier.sprite->cfg ^= BIT(11);
     soldier_sprite_update(0);
     schedule(&soldier_sinking, 10);
-    if ((soldier.sprite->cfg >> 11) & 1) wiggle_sfx();
+    if ((soldier.sprite->cfg >> 11) & 1) play_sfx(SFX_WIGGLE);
 }
 
 static void soldier_sink(void) {
@@ -696,9 +695,8 @@ static void spill_blood(u16 cookie) {
     }
 }
 
-void slash_sfx(void);
 static void do_bite(u16 x, u16 y) {
-    slash_sfx();
+    play_sfx(SFX_SLASH);
     blood->x = x;
     blood->y = y;
     blood->cfg = TILE(2, BLOOD);

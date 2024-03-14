@@ -310,8 +310,8 @@ u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
 	Object *flame = flame_collision(box + i);
 	if (flame != NULL && get_soldier()->life == 0) {
 	    obj->life = decrement_progress_bar();
+	    play_sfx(SFX_PERISH);
 	    flame_burn(flame);
-	    perish_sfx();
 	    ret = 1;
 	}
 	if (i < skip && obj->life > 0 && soldier_collision(box + i)) {
@@ -342,7 +342,7 @@ void kill_mob_silently(Object *obj) {
 
 void kill_mob(Object *obj) {
     kill_mob_silently(obj);
-    perish_sfx();
+    play_sfx(SFX_PERISH);
 }
 
 char is_mob_alive(Object *obj) {

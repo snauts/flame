@@ -830,7 +830,7 @@ static void spit_storm(u16 i) {
 
 static void arc_and_resume_walk(u16 x) {
     callback(&hermit_idle, 32, 0);
-    perish_sfx();
+    play_sfx(SFX_PERISH);
     spit_arc(x);
 }
 
@@ -1081,7 +1081,7 @@ static void hermit_burn_sound(u16 x) {
 	    delay = 24 - (PANIC_BOUND >> 4);
 	}
 	schedule(&hermit_burn_sound, delay);
-	perish_sfx();
+	play_sfx(SFX_PERISH);
     }
 }
 

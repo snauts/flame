@@ -606,7 +606,7 @@ static void emit_queen_burn(u16 i) {
 	burns[i]->y = (random() % 48);
     }
     callback(&emit_queen_burn, 4, i >= 3 ? 0 : i + 1);
-    if (i == 0) perish_sfx();
+    if (i == 0) play_sfx(SFX_PERISH);
 }
 
 static void queen_dies(u16 i) {

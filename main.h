@@ -86,6 +86,13 @@ typedef struct Object {
 #define O_NO_GRAVITY	BIT(2)
 #define O_ANIHILATED	BIT(3)
 
+enum {
+    SFX_PERISH,
+    SFX_WIGGLE,
+    SFX_SLASH,
+    SFX_LAST,
+};
+
 typedef void(*Callback)(u16);
 typedef void(*Function)(void);
 typedef void(*Operator)(Object *);
@@ -185,9 +192,9 @@ void z80_poke(u16 addr, byte data);
 void z80_copy(u16 dst, const byte *src, u16 size);
 void psg_noise(byte type, byte vol);
 void music_toggle(byte state);
+void play_sfx(u16 index);
 void fade_music(u16 i);
 void music_none(void);
-void perish_sfx(void);
 
 u16 random(void);
 void set_seed(u16);

@@ -227,14 +227,8 @@ static void setup_onions(void) {
 
 #define SFX_BASE	0xF00
 
-enum {
-    SFX_PERISH = 0,
-    SFX_WIGGLE,
-    SFX_SLASH,
-    SFX_LASTONE,
-};
-
-static u16 sfx[SFX_LASTONE + 1];
+static u16 sfx[SFX_LAST + 1];
+static u16 channel;
 
 static void load_sfx(u16 i, const byte *ptr, u16 size) {
     z80_copy(sfx[i], ptr, size);
@@ -242,22 +236,16 @@ static void load_sfx(u16 i, const byte *ptr, u16 size) {
 }
 
 static void load_z80_sfx(void) {
+    channel = PSG_SFX_CH0;
     sfx[SFX_PERISH] = SFX_BASE;
     load_sfx(SFX_PERISH, perish, sizeof(perish));
     load_sfx(SFX_WIGGLE, wiggle, sizeof(wiggle));
-    load_sfx(SFX_SLASH, slash, sizeof(slash));
+    load_sfx(SFX_SLASH,  slash,  sizeof(slash));
 }
 
-void perish_sfx(void) {
-    z80_word(PSG_SFX_CH0, sfx[SFX_PERISH]);
-}
-
-void wiggle_sfx(void) {
-    z80_word(PSG_SFX_CH1, sfx[SFX_WIGGLE]);
-}
-
-void slash_sfx(void) {
-    z80_word(PSG_SFX_CH2, sfx[SFX_SLASH]);
+void play_sfx(u16 index) {
+    z80_word(channel, sfx[index]);
+    channel = channel < PSG_SFX_CH2 ? channel + 2 : PSG_SFX_CH0;
 }
 
 static void mute_sound(void) {
