@@ -361,9 +361,52 @@ static void display_error(void) {
     simple_screen(&error_text, 0, 0);
 }
 
+#include <stdarg.h>
+
+static char hex_char(u16 v) {
+    return v < 10 ? v + '0' : v - 10 + 'A';
+}
+
+static u16 hex2str(char *buf, u32 value) {
+    u16 index;
+    for (index = 0; index < 8; index++) {
+	buf[index] = hex_char((value >> (28 - 4 * index)) & 0xf);
+    }
+    return index;
+}
+
+static void sprintf(char *buf, const char *fmt, va_list args) {
+    while (*fmt != 0) {
+	if (*fmt != '%') {
+	    *buf++ = *fmt++;
+	    continue;
+	}
+	++fmt;
+
+	switch (*fmt) {
+	case 'd':
+	    break;
+	case 'x':
+	    buf += hex2str(buf, va_arg(args, unsigned));
+	    break;
+	default:
+	    *buf++ = '!';
+	}
+	++fmt;
+    }
+    *buf = 0;
+}
+
 int error(const char *format, ...) {
+    char *buf = malloc(256);
+
+    va_list args;
+    va_start(args, format);
+    sprintf(buf, format, args);
+    va_end(args);
+
     switch_frame(display_error);
-    error_str = format;
+    error_str = buf;
     dim_palette(8);
     return 0;
 }
