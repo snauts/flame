@@ -147,7 +147,7 @@ typedef struct Layout {
 #else
 int error(const char *format, ...)
     __attribute__ ((format (printf, 1, 2)));
-#define BUG(condition, message) \
+#define BUG(condition, message...) \
     if (condition) error(message);
 #endif
 
