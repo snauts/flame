@@ -18,11 +18,55 @@
 (defun town-walk (n)
   (join (street 0 5 1 8) (walk-middle n) (street 5 5 6 8)))
 
+(defun wall-bottom (w)
+  (join (street 0 1 1 3) (multiply (street 1 1 5 3) w) (street 5 1 6 3)))
+
+(defun small-brick ()
+  (if (= 0 (xor-random 2))
+      (street-cell 141)
+      (street-cell 165)))
+
+(defun large-brick-left ()
+  (case (xor-random 3)
+    (0 (street-cell 140))
+    (1 (street-cell 156))
+    (2 (street-cell 149))))
+
+(defun large-brick-right ()
+  (case (xor-random 3)
+    (0 (street-cell 148))
+    (1 (street-cell 164))
+    (2 (street-cell 157))))
+
+(defun large-brick ()
+  (join (large-brick-left)
+	(large-brick-right)))
+
+(defun large-brick-row (n)
+  (s-push nil)
+  (dotimes (i n (s-pop))
+    (s-join (large-brick))))
+
+(defun brick-bottom-row (n)
+  (join (small-brick) (large-brick-row n) (small-brick)))
+
+(defun brick-row (n)
+  (on-top (brick-bottom-row (1- n)) (large-brick-row n)))
+
+(defun wall-row (w)
+  (join (street 0 3 1 5) (brick-row (* 2 w)) (street 5 3 6 5)))
+
+(defun town-wall (w h)
+  (s-push (wall-bottom w))
+  (loop for y from 2 to (* 2 h) by 2 do
+    (s-place 0 y (wall-row w)))
+  (s-pop))
+
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
 	(empty 2)
-	(town-walk 4)
+	(place 5 2 (town-walk 5) (town-wall 3 2))
 	(empty 2)
 	(town-walk 4)
 	(empty 2)
