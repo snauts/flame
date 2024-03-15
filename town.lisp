@@ -18,8 +18,22 @@
 (defun town-walk (n)
   (join (street 0 5 1 8) (walk-middle n) (street 5 5 6 8)))
 
+(defun random-cell (&rest choices)
+  (street-cell (elt choices (xor-random (length choices)))))
+
+(defun bottom-boulder ()
+  (join (random-cell 142 158) (random-cell 150 166)))
+
+(defun wall-bottom-top (n)
+  (s-push nil)
+  (dotimes (i n (s-pop))
+    (s-join (bottom-boulder))))
+
+(defun wall-bottom-middle (w)
+  (on-top (multiply (street 1 1 5 2) w) (wall-bottom-top (* 2 w))))
+
 (defun wall-bottom (w)
-  (join (street 0 1 1 3) (multiply (street 1 1 5 3) w) (street 5 1 6 3)))
+  (join (street 0 1 1 3) (wall-bottom-middle w) (street 5 1 6 3)))
 
 (defun small-brick ()
   (if (= 0 (xor-random 2))
