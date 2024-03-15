@@ -19,7 +19,17 @@
   (join (street 0 5 1 8) (walk-middle n) (street 5 5 6 8)))
 
 (defun town-level ()
-  (join (multiply (join (town-walk 4) (empty 2)) 4) (empty 64)))
+  (setf *seed* (* 1815 06 18))
+  (join (town-walk 4)
+	(empty 2)
+	(town-walk 4)
+	(empty 2)
+	(town-walk 4)
+	(empty 2)
+
+	;; level done
+	(inject  (town-walk 12) "level_done" 32)
+	(empty 48)))
 
 (defun commit-save ()
   (push-level "town_level" (town-level))
