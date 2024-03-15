@@ -1,4 +1,5 @@
 (defparameter *seed* 0)
+(defparameter *height* 28)
 
 (defun xor-seed (shift)
   (setf *seed* (logxor *seed* (ash *seed* shift))))
@@ -240,8 +241,12 @@
 (defun save-declarations (out names)
   (mapc (lambda (x) (format out "void ~A(u16);~%" x)) names))
 
+(defun trunc-column (x &optional (h *height*))
+  (when (and (> h 0) (numberp (first x)))
+    (cons (first x) (trunc-column (rest x) (1- h)))))
+
 (defun save-array (out name level walkable)
-  (let ((clean (remove-if #'stringp level)))
+  (let ((clean (mapcar #'trunc-column (remove-if #'stringp level))))
     (save-declarations out (remove-if-not #'stringp level))
     (format out "static const Trigger ~A_triggers[] = {~%" name)
     (save-triggers out level)
