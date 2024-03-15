@@ -242,7 +242,7 @@
   (mapc (lambda (x) (format out "void ~A(u16);~%" x)) names))
 
 (defun trunc-column (x &optional (h *height*))
-  (when (and (> h 0) (numberp (first x)))
+  (when (and (> h 0) (not (null x)))
     (cons (first x) (trunc-column (rest x) (1- h)))))
 
 (defun save-array (out name level walkable)
