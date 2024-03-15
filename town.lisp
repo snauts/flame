@@ -1,7 +1,7 @@
 (load "level.lisp")
 
 (defparameter *town-walkable*
-  '(130 138 146 154 162 170))
+  '(130 138 146 154 162 170 136 144 152))
 
 (defun street-tile (id &key (v 0) (h 0) (pr 0))
   (tile id :pl 1 :v v :h h :pr pr))
@@ -70,17 +70,25 @@
 (defun wall-row (w)
   (join (street 0 3 1 5) (brick-row (* 2 w)) (street 5 3 6 5)))
 
+(defun stack-cells (&rest cells)
+  (reduce #'on-top (mapcar #'street-cell cells)))
+
+(defun shingles (n)
+  (let ((middle (multiply (stack-cells 144 168) n)))
+    (join (stack-cells 136 160) middle (stack-cells 152 176))))
+
 (defun town-wall (w h)
   (s-push (wall-bottom w))
   (loop for y from 2 to (* 2 h) by 2 do
     (s-place 0 y (wall-row w)))
+  (s-place -1 (* 2 (1+ h)) (shingles (+ 2 (* 4 w))))
   (s-pop))
 
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
 	(empty 2)
-	(place 5 2 (town-walk 5) (town-wall 3 2))
+	(place 5 2 (town-walk 5) (town-wall 2 2))
 	(empty 2)
 	(town-walk 4)
 	(empty 2)
