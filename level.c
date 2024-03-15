@@ -375,6 +375,22 @@ static u16 hex2str(char *buf, u32 value) {
     return index;
 }
 
+static short num2str(char *buf, short value) {
+    if (value < 0) {
+	*buf = '-';
+	return 1 + num2str(buf + 1, -value);
+    }
+    else {
+	short i = 0, more = value / 10;
+	if (more > 0) {
+	    i = num2str(buf, more);
+	    buf += i;
+	}
+	*buf = '0' + (value % 10);
+	return i + 1;
+    }
+}
+
 static void sprintf(char *buf, const char *fmt, va_list args) {
     while (*fmt != 0) {
 	if (*fmt != '%') {
@@ -385,6 +401,7 @@ static void sprintf(char *buf, const char *fmt, va_list args) {
 
 	switch (*fmt) {
 	case 'd':
+	    buf += num2str(buf, va_arg(args, int));
 	    break;
 	case 'x':
 	    buf += hex2str(buf, va_arg(args, unsigned));
