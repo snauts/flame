@@ -8,6 +8,7 @@ IFLAGS	= --noinform --no-sysinit --no-userinit --disable-debugger
 CSRC	= main.c level.c sound.c mobs.c soldier.c \
 	  canyon.c alps.c beach.c town.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
+SED	= 's/lisp:/inc:/;s/(load "/ /;s/")//'
 SHA	= $(shell git show --format="%h" --no-patch)
 DATE	= $(shell date +"%F")
 
@@ -26,6 +27,7 @@ all:	build
 
 build:
 	@$(PREFIX)gcc $(CFLAGS) $(CSRC) -MM -MG > dep.inc
+	@grep '^(load ' *.lisp | sed $(SED) >> dep.inc
 	@make -s $(NAME).bin
 
 clean:
