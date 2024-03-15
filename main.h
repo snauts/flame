@@ -145,6 +145,8 @@ typedef struct Layout {
 #if !defined(DEBUG)
 #define BUG(condition, message)
 #else
+int error(const char *format, ...)
+    __attribute__ ((format (printf, 1, 2)));
 #define BUG(condition, message) \
     if (condition) error(message);
 #endif
@@ -247,8 +249,6 @@ void update_window(short direction);
 void paint_background(u16, u16, u16, u16, u16, u16);
 u16 get_snap(u16 pos_x, u16 prev, u16 next);
 void prepare_level(const Level *level);
-void error(const char *str);
-void num_error(u32 num);
 void reset_window(void);
 void level_scroll(void);
 u16 get_top(u16 pos_x);

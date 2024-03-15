@@ -215,6 +215,9 @@ static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
 	else if ('0' <= c && c <= '9') {
 	    tile = c - '0' + 26 + 1;
 	}
+	else if (c == '\n') {
+	    break;
+	}
 	else {
 	    for (u16 j = 0; j < ARRAY_SIZE(special); j++) {
 		if (c == special[j]) {
@@ -226,7 +229,11 @@ static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
 	poke_VRAM(i << 1, tile);
 	i++;
     }
-    if (i > 0) copy_to_VRAM(plane + offset, 2 * strlen(text));
+    if (i > 0) copy_to_VRAM(plane + offset, 2 * i);
+
+    if (text[i] == '\n') {
+	display_text_plane(text + i + 1, x, y + 1, plane);
+    }
 }
 
 static void display_text(const char *text, u16 x, u16 y) {
@@ -235,6 +242,7 @@ static void display_text(const char *text, u16 x, u16 y) {
 
 static void simple_screen(Function paint_screen, u16 offset, byte start) {
     window = offset;
+    scroll_type(0x00);
     level_scroll();
     music_none();
     load_font_tiles();
@@ -344,28 +352,19 @@ void announce_emile(void) {
 #if defined(DEBUG)
 const char *error_str;
 static void error_text(void) {
-    display_text("ERROR:", 2, 0);
-    display_text(error_str, 9, 0);
+    display_text("ERROR", 1, 0);
+    display_text("-----", 1, 1);
+    display_text(error_str, 1, 3);
 }
 
 static void display_error(void) {
-    simple_screen(&error_text, 4, 0);
+    simple_screen(&error_text, 0, 0);
 }
 
-void error(const char *str) {
-    error_str = str;
-    dim_palette(8);
+int error(const char *format, ...) {
     switch_frame(display_error);
-}
-
-void num_error(u32 num) {
-    static char num_str[9];
-    for (u16 i = 0; i < 8; i++) {
-	char hex = (num & 0xf);
-	num_str[7 - i] = (hex < 10 ? '0' : 'A'- 10) + hex;
-	num = num >> 4;
-    }
-    num_str[8] = 0;
-    error(num_str);
+    error_str = format;
+    dim_palette(8);
+    return 0;
 }
 #endif
