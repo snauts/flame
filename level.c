@@ -352,9 +352,9 @@ void announce_emile(void) {
 #if defined(DEBUG)
 const char *error_str;
 static void error_text(void) {
-    display_text("ERROR", 1, 0);
-    display_text("-----", 1, 1);
-    display_text(error_str, 1, 3);
+    display_text("ERROR", 1, 1);
+    display_text("-----", 1, 2);
+    display_text(error_str, 1, 4);
 }
 
 static void display_error(void) {
