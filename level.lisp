@@ -124,6 +124,9 @@
 (defun crop (x1 y1 x2 y2 box)
   (mapcar (lambda (column) (cut column y1 y2)) (cut box x1 x2)))
 
+(defun lower (box &optional (n 1))
+  (mapcar (lambda (column) (nthcdr n column)) box))
+
 (defun trunc (list n)
   (nthcdr n list))
 
