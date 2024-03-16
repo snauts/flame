@@ -33,7 +33,7 @@
   (on-top (multiply (street 1 1 5 2) w) (wall-bottom-top (* 2 w))))
 
 (defun wall-bottom (w)
-  (join (street 0 1 1 3) (wall-bottom-middle w) (street 5 1 7 3)))
+  (join (street 0 1 1 3) (wall-bottom-middle w) (street 5 1 8 3)))
 
 (defun small-brick ()
   (if (= 0 (xor-random 2))
@@ -89,7 +89,7 @@
   (join (town-walk 4)
 	(empty 2)
 	(lower (town-wall 2 2) 2)
-	(empty 2)
+	(empty 1)
 	(place 5 2 (town-walk 6) (town-wall 3 1))
 	(empty 2)
 
