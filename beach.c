@@ -1168,6 +1168,7 @@ static void setup_hermit(u16 i) {
 	Sprite *sprite = hermit[i]->sprite;
 	sprite->size = left[i].size;
 	hermit[i]->frame = 0;
+	hermit[i]->flags = 0;
     }
 
     setup_burns(4, BURN_TILES);
