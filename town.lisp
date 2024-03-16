@@ -88,11 +88,9 @@
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
 	(empty 2)
-	(lower (town-wall 2 2))
+	(lower (town-wall 2 2) 2)
 	(empty 2)
-	(place 5 2 (town-walk 5) (town-wall 2 1))
-	(empty 2)
-	(town-walk 4)
+	(place 5 2 (town-walk 6) (town-wall 3 1))
 	(empty 2)
 
 	;; level done
