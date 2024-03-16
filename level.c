@@ -355,6 +355,7 @@ static void error_text(void) {
     display_text("ERROR", 1, 1);
     display_text("-----", 1, 2);
     display_text(error_str, 1, 4);
+    error_str = NULL;
 }
 
 static void display_error(void) {
@@ -415,6 +416,8 @@ static void sprintf(char *buf, const char *fmt, va_list args) {
 }
 
 int error(const char *format, ...) {
+    if (error_str != NULL) return -1;
+
     char *buf = malloc(256);
 
     va_list args;
