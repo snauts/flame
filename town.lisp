@@ -33,7 +33,7 @@
   (on-top (multiply (street 1 1 5 2) w) (wall-bottom-top (* 2 w))))
 
 (defun wall-bottom (w)
-  (join (street 0 1 1 3) (wall-bottom-middle w) (street 5 1 6 3)))
+  (join (street 0 1 1 3) (wall-bottom-middle w) (street 5 1 7 3)))
 
 (defun small-brick ()
   (if (= 0 (xor-random 2))
@@ -68,7 +68,7 @@
   (on-top (brick-bottom-row (1- n)) (large-brick-row n)))
 
 (defun wall-row (w)
-  (join (street 0 3 1 5) (brick-row (* 2 w)) (street 5 3 6 5)))
+  (join (street 0 3 1 5) (brick-row (* 2 w)) (street 5 3 7 5)))
 
 (defun stack-cells (&rest cells)
   (reduce #'on-top (mapcar #'street-cell cells)))
@@ -81,7 +81,7 @@
   (s-push (wall-bottom w))
   (loop for y from 2 to (* 2 h) by 2 do
     (s-place 0 y (wall-row w)))
-  (s-place -1 (* 2 (1+ h)) (shingles (+ 2 (* 4 w))))
+  (s-place 0 (* 2 (1+ h)) (shingles (1+ (* 4 w))))
   (s-pop))
 
 (defun town-level ()
