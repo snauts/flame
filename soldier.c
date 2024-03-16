@@ -203,7 +203,7 @@ static void soldier_animate(short prev, u16 aim_up, u16 fire, byte crouch) {
     if (crouch) {
 	soldier_frame = side ? 37 : 38;
     }
-    else if (!on_ground()) {
+    else if (!on_ground() || soldier.velocity > 0) {
 	soldier_frame = side ? 14 : 15;
     }
     else {
