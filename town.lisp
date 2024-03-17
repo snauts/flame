@@ -84,8 +84,9 @@
   (s-place 0 (* 2 (1+ h)) (shingles (1+ (* 4 w))))
   (s-pop))
 
-(defun lamp-post (&key (base-h 3) (post-h 6) walkable)
-  (s-push (stack (street-cell 179) base-h))
+(defun lamp-post (&key (base-h 3) (post-h 6) walkable forward brick)
+  (s-push (when (numberp brick) (street-cell brick)))
+  (s-place-top 0 (stack (street-cell 179) base-h))
   (when (numberp walkable)
     (s-place 0 walkable (street-cell (set-walkable 179))))
   (s-place-top 0 (street-cell 178))
@@ -95,6 +96,14 @@
     (s-place-top 0 shine)
     (s-place-top 0 (topple shine)))
   (s-place-top 0 (street 7 7 10 8))
+  (if forward (forward (s-pop)) (s-pop)))
+
+(defun promenade ()
+  (s-push (town-walk 6))
+  (loop for x from 2 to 18 by 8 do
+    (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
+  (loop for x from 5 to 21 by 8 do
+    (s-place x 2 (lamp-post :base-h 2 :brick 184)))
   (s-pop))
 
 (defun town-level ()
@@ -102,9 +111,10 @@
   (join (town-walk 4)
 	(empty 2)
 	(lower (town-wall 2 2) 2)
-	(lamp-post)
 	(empty 1)
 	(place 5 2 (town-walk 6) (town-wall 3 1))
+	(empty 2)
+	(promenade)
 	(empty 2)
 
 	;; level done
