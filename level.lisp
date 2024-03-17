@@ -154,6 +154,9 @@
 (defun s-place (x y box)
   (setf (first *stack*) (place x y (first *stack*) box)))
 
+(defun s-place-top (x box)
+  (s-place x (if (null *stack*) 0 (height (first *stack*))) box))
+
 (defun s-top (x)
   (setf (first *stack*) (on-top (first *stack*) x)))
 
