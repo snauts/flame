@@ -98,14 +98,6 @@
   (s-place-top 0 (street 7 7 10 8))
   (if forward (forward (s-pop)) (s-pop)))
 
-(defun promenade ()
-  (s-push (town-walk 6))
-  (loop for x from 2 to 18 by 8 do
-    (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
-  (loop for x from 5 to 21 by 8 do
-    (s-place x 2 (lamp-post :base-h 2 :brick 184)))
-  (s-pop))
-
 (defun window-row (w)
   (join (street-cell 192) (multiply (street-cell 189) w) (street-cell 192)))
 
@@ -118,15 +110,31 @@
     (dotimes (i w (s-pop))
       (s-place (1+ i) 1 dark))))
 
+(defun simple-house ()
+  (s-push (town-walk 6))
+  (s-place 5 2 (town-wall 3 4))
+  (s-place 10 5 (brick-window 2 3))
+  (loop for x from 1 to 21 by 20 do
+    (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
+  (s-pop))
+
+
+(defun brick-fence ()
+  (s-push (town-walk 6))
+  (s-place 5 2 (town-wall 3 1))
+  (loop for x from 1 to 22 by 21 do
+    (s-place x 2 (lamp-post :base-h 2 :brick 184)))
+  (s-pop))
+
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
 	(empty 2)
 	(lower (town-wall 2 2) 2)
 	(empty 1)
-	(place 5 2 (town-walk 6) (town-wall 3 1))
+	(simple-house)
 	(empty 2)
-	(promenade)
+	(brick-fence)
 	(empty 2)
 
 	;; level done
