@@ -106,6 +106,18 @@
     (s-place x 2 (lamp-post :base-h 2 :brick 184)))
   (s-pop))
 
+(defun window-row (w)
+  (join (street-cell 192) (multiply (street-cell 189) w) (street-cell 192)))
+
+(defun brick-window (w h)
+  (s-push (window-row w))
+  (s-place 0 1 (stack (street-cell 188) h))
+  (s-place (1+ w) 1 (stack (street-cell 188) h))
+  (s-place-top 0 (window-row w))
+  (let ((dark (stack (cell (tile 1 :pl 0)) h)))
+    (dotimes (i w (s-pop))
+      (s-place (1+ i) 1 dark))))
+
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
