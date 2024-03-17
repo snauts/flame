@@ -1,5 +1,6 @@
 (defparameter *seed* 0)
 (defparameter *height* 28)
+(defparameter *walkable-bit* (ash 1 16))
 
 (defun xor-seed (shift)
   (setf *seed* (logxor *seed* (ash *seed* shift))))
@@ -143,6 +144,9 @@
 (defun on-top (box1 box2)
   (place 0 (height box1) box1 box2))
 
+(defun set-walkable (n)
+  (logior n *walkable-bit*))
+
 (defvar *stack* nil)
 
 (defun s-push (x)
@@ -177,17 +181,24 @@
 	  (ash (or (length prev) 0) 8)))
 
 (defun serialize (box &optional prev flat)
-  (labels ((add (x) (push x flat)))
+  (labels ((add (x) (push (logand x #xffff) flat)))
     (add (index-pair box prev))
     (mapc #'add (zero-first box))
     (if (null box)
 	(reverse flat)
 	(serialize (rest box) (first box) flat))))
 
+(defun is-walkable-bit-set (n)
+  (and (numberp n) (not (= 0 (logand n *walkable-bit*)))))
+
+(defun is-walkable (n walkable)
+  (or (is-walkable-bit-set n)
+      (member (idx n) walkable)))
+
 (defun column-height (column walkable &optional result (height 224))
   (decf height 8)
   (cond ((null column) result)
-	((member (idx (first column)) walkable)
+	((is-walkable (first column) walkable)
 	 (column-height (rest column) walkable (cons height result) height))
 	(t (column-height (rest column) walkable result height))))
 

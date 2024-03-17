@@ -84,8 +84,10 @@
   (s-place 0 (* 2 (1+ h)) (shingles (1+ (* 4 w))))
   (s-pop))
 
-(defun lamp-post (&optional (base-h 3) (post-h 6))
+(defun lamp-post (&key (base-h 3) (post-h 6) walkable)
   (s-push (stack (street-cell 179) base-h))
+  (when (numberp walkable)
+    (s-place 0 walkable (street-cell (set-walkable 179))))
   (s-place-top 0 (street-cell 178))
   (s-place-top 0 (stack (street-cell 177) post-h))
   (s-place-top -1 (street 7 5 10 6))
