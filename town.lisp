@@ -167,6 +167,7 @@
   (s-push (town-walk 13))
   (s-place 5 2 (big-house))
   (s-place 29 2 (big-house))
+  (s-place 34 14 (street 8 1 10 3))
   (s-place 1 2 (lamp-post :base-h 2 :brick 184))
   (s-place 25 2 (lamp-post :base-h 2 :brick 184))
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
