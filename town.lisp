@@ -163,11 +163,15 @@
     (s-place 10 y (brick-window 3 4)))
   (s-pop))
 
+(defun window-bottles ()
+  (street 8 1 10 3))
+
 (defun house-block ()
   (s-push (town-walk 13))
   (s-place 5 2 (big-house))
   (s-place 29 2 (big-house))
-  (s-place 34 14 (street 8 1 10 3))
+  (s-place 34 14 (window-bottles))
+  (s-place 16 6 (window-bottles))
   (s-place 1 2 (lamp-post :base-h 2 :brick 184))
   (s-place 25 2 (lamp-post :base-h 2 :brick 184))
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
