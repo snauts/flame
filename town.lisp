@@ -121,8 +121,8 @@
 (defun brick-fence ()
   (s-push (town-walk 6))
   (s-place 5 2 (town-wall 3 1))
-  (loop for x from 1 to 22 by 21 do
-    (s-place x 2 (lamp-post :base-h 2 :brick 184)))
+  (loop for x from 1 to 21 by 20 do
+    (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
   (s-pop))
 
 (defun wall-join (w)
@@ -156,6 +156,22 @@
     (s-place x 15 (lamp-post :base-h 2 :post-h 2 :brick 240)))
   (s-pop))
 
+(defun big-house ()
+  (s-push (town-wall 4 12))
+  (loop for y from 3 to 19 by 8 do
+    (s-place 3 y (brick-window 3 4))
+    (s-place 10 y (brick-window 3 4)))
+  (s-pop))
+
+(defun house-block ()
+  (s-push (town-walk 13))
+  (s-place 5 2 (big-house))
+  (s-place 29 2 (big-house))
+  (s-place 1 2 (lamp-post :base-h 2 :brick 184))
+  (s-place 25 2 (lamp-post :base-h 2 :brick 184))
+  (s-place 49 2 (lamp-post :base-h 2 :brick 184))
+  (s-pop))
+
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
@@ -163,6 +179,8 @@
 	(brick-column 2 2)
 	(empty 1)
 	(simple-house)
+	(empty 2)
+	(house-block)
 	(empty 2)
 	(brick-fence)
 	(empty 2)
