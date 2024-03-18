@@ -126,7 +126,7 @@
   (mapcar (lambda (column) (cut column y1 y2)) (cut box x1 x2)))
 
 (defun lower (box &optional (n 1))
-  (mapcar (lambda (column) (nthcdr n column)) box))
+  (mapcar (lambda (column) (or (nthcdr n column) (list nil))) box))
 
 (defun trunc (list n)
   (nthcdr n list))
