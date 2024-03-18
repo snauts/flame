@@ -118,12 +118,23 @@
     (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
   (s-pop))
 
-
 (defun brick-fence ()
   (s-push (town-walk 6))
   (s-place 5 2 (town-wall 3 1))
   (loop for x from 1 to 22 by 21 do
     (s-place x 2 (lamp-post :base-h 2 :brick 184)))
+  (s-pop))
+
+(defun wall-join (w)
+  (join (street-cell 200) (multiply (street 9 0 11 1) w) (street 11 0 13 1)))
+
+(defun brick-bridge-pillar ()
+  (s-push (town-walk 6))
+  (s-place 4 2 (town-wall 1 3))
+  (s-place 12 2 (town-wall 1 5))
+  (s-place 2 2 (town-wall 4 1))
+  (s-place 4 7 (wall-join 2))
+  (s-place 12 7 (wall-join 2))
   (s-pop))
 
 (defun town-level ()
@@ -135,6 +146,8 @@
 	(simple-house)
 	(empty 2)
 	(brick-fence)
+	(empty 2)
+	(brick-bridge-pillar)
 	(empty 2)
 
 	;; level done
