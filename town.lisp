@@ -146,12 +146,14 @@
 	(brick-column 1 7)
 	(empty 8)
 	(brick-column 1 7)
-	(empty 2)
+	(empty 4)
 	(brick-bridge-pillar 5 3)))
 
 (defun brick-bridge ()
   (s-push (brick-bridge-base))
-  (s-place 12 14 (shingles 51))
+  (s-place 12 14 (shingles 53))
+  (loop for x from 14 to 62 by 16 do
+    (s-place x 15 (lamp-post :base-h 2 :post-h 2 :brick 240)))
   (s-pop))
 
 (defun town-level ()
