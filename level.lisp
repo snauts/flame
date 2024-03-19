@@ -220,10 +220,13 @@
 	 (compact (rest raw) (cons (cons 8 (first raw)) compacted)))
 	(t (compact (rest raw) (inc-distance compacted)))))
 
+(defun plus-2 (x)
+  (if (= x 0) 0 (+ x 2)))
+
 (defun encode-map (map &optional flat (prev 0))
   (let ((size (length (first map))))
-    (push prev flat)
-    (push size flat)
+    (push (plus-2 prev) flat)
+    (push (plus-2 size) flat)
     (mapc (lambda (x) (push x flat)) (first map))
     (if (null map)
 	(reverse flat)

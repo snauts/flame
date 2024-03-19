@@ -66,7 +66,7 @@ u16 is_leftmost(void) {
 }
 
 static u16 get_platform_count(const byte *map) {
-    return map[HEIGHT_NEXT] - 1;
+    return map[HEIGHT_NEXT] - HEIGHT_DATA;
 }
 
 u16 platform_bottom(void) {
@@ -86,11 +86,11 @@ static void backward_platform(void) {
 
 void update_height_map(u16 pos_x) {
     if (pos_x >= next_platform) {
-	height += height[HEIGHT_NEXT] + 2;
+	height += height[HEIGHT_NEXT];
 	forward_platform();
     }
     else if (pos_x < prev_platform) {
-	height -= height[HEIGHT_PREV] + 2;
+	height -= height[HEIGHT_PREV];
 	backward_platform();
     }
 }
@@ -170,12 +170,12 @@ const byte *find_height(u16 pos_x) {
     u16 prev = prev_platform;
     const byte *map = height;
     while (pos_x < prev) {
-	map -= map[HEIGHT_PREV] + 2;
+	map -= map[HEIGHT_PREV];
 	next = prev;
 	prev -= map[HEIGHT_WIDTH];
     }
     while (pos_x >= next) {
-	map += map[HEIGHT_NEXT] + 2;
+	map += map[HEIGHT_NEXT];
 	prev = next;
 	next += map[HEIGHT_WIDTH];
     }
