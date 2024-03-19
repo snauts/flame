@@ -206,18 +206,18 @@
   (mapcar (lambda (column) (column-height column walkable)) box))
 
 (defun inc-distance (compacted)
-  (incf (first (first compacted)))
+  (incf (first (first compacted)) 8)
   compacted)
 
 (defun should-new-entry (raw head)
   (or (null head)
-      (<= 255 (first head))
+      (<= #xF8 (first head))
       (not (equal (first raw) (rest head)))))
 
 (defun compact (raw compacted)
   (cond ((null raw) (reverse compacted))
 	((should-new-entry raw (first compacted))
-	 (compact (rest raw) (cons (cons 1 (first raw)) compacted)))
+	 (compact (rest raw) (cons (cons 8 (first raw)) compacted)))
 	(t (compact (rest raw) (inc-distance compacted)))))
 
 (defun encode-map (map &optional flat (prev 0))

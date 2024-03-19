@@ -76,12 +76,12 @@ u16 platform_bottom(void) {
 
 static void forward_platform(void) {
     prev_platform = next_platform;
-    next_platform += 8 * height[HEIGHT_WIDTH];
+    next_platform += height[HEIGHT_WIDTH];
 }
 
 static void backward_platform(void) {
     next_platform = prev_platform;
-    prev_platform -= 8 * height[HEIGHT_WIDTH];
+    prev_platform -= height[HEIGHT_WIDTH];
 }
 
 void update_height_map(u16 pos_x) {
@@ -172,12 +172,12 @@ const byte *find_height(u16 pos_x) {
     while (pos_x < prev) {
 	map -= map[HEIGHT_PREV] + 2;
 	next = prev;
-	prev -= 8 * map[HEIGHT_WIDTH];
+	prev -= map[HEIGHT_WIDTH];
     }
     while (pos_x >= next) {
 	map += map[HEIGHT_NEXT] + 2;
 	prev = next;
-	next += 8 * map[HEIGHT_WIDTH];
+	next += map[HEIGHT_WIDTH];
     }
     return map;
 }
