@@ -1,7 +1,11 @@
 #include "main.h"
 
 #define WINDOW_MIN	64
-#define HEIGHT_DATA	2
+
+#define HEIGHT_PREV	0
+#define HEIGHT_NEXT	1
+#define HEIGHT_WIDTH	2
+#define HEIGHT_DATA	3
 
 u16 window;
 
@@ -62,31 +66,31 @@ u16 is_leftmost(void) {
 }
 
 static u16 get_platform_count(const byte *map) {
-    return (map[0] & 0xf) - 1;
+    return map[HEIGHT_NEXT] - 1;
 }
 
 u16 platform_bottom(void) {
     u16 platform_count = get_platform_count(height);
-    return platform_count > 0 ? height[1 + platform_count] : 0;
+    return platform_count > 0 ? height[HEIGHT_DATA + platform_count - 1] : 0;
 }
 
 static void forward_platform(void) {
     prev_platform = next_platform;
-    next_platform += 8 * height[1];
+    next_platform += 8 * height[HEIGHT_WIDTH];
 }
 
 static void backward_platform(void) {
     next_platform = prev_platform;
-    prev_platform -= 8 * height[1];
+    prev_platform -= 8 * height[HEIGHT_WIDTH];
 }
 
 void update_height_map(u16 pos_x) {
     if (pos_x >= next_platform) {
-	height += (*height & 0xf) + 1;
+	height += height[HEIGHT_NEXT] + 2;
 	forward_platform();
     }
     else if (pos_x < prev_platform) {
-	height -= (*height >> 4) + 1;
+	height -= height[HEIGHT_PREV] + 2;
 	backward_platform();
     }
 }
@@ -166,14 +170,14 @@ const byte *find_height(u16 pos_x) {
     u16 prev = prev_platform;
     const byte *map = height;
     while (pos_x < prev) {
-	map -= (*map >> 4) + 1;
+	map -= map[HEIGHT_PREV] + 2;
 	next = prev;
-	prev -= 8 * map[1];
+	prev -= 8 * map[HEIGHT_WIDTH];
     }
     while (pos_x >= next) {
-	map += (*map & 0xf) + 1;
+	map += map[HEIGHT_NEXT] + 2;
 	prev = next;
-	next += 8 * map[1];
+	next += 8 * map[HEIGHT_WIDTH];
     }
     return map;
 }

@@ -222,7 +222,8 @@
 
 (defun encode-map (map &optional flat (prev 0))
   (let ((size (length (first map))))
-    (push (logior size (ash prev 4)) flat)
+    (push prev flat)
+    (push size flat)
     (mapc (lambda (x) (push x flat)) (first map))
     (if (null map)
 	(reverse flat)
