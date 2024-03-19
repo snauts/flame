@@ -466,9 +466,9 @@ static void soldier_yelling(byte state) {
     }
 }
 
-static byte locked;
-void lock_screen(byte state) {
-    locked = state;
+static u16 locked;
+void lock_screen(u16 state) {
+    locked = (state == 1) ? SCR_WIDTH + ON_SCREEN - 24 : state;
 }
 
 void fill_bottom_row(void) {
@@ -487,7 +487,7 @@ static void soldier_backward(void) {
 
 static void move_forward(void) {
     if (locked) {
-	if (soldier.sprite->x < SCR_WIDTH + ON_SCREEN - 24) {
+	if (soldier.sprite->x < locked) {
 	    soldier_forward();
 	}
     }
