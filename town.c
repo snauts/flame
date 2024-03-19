@@ -194,7 +194,7 @@ static void display_french(const Level *level) {
     prepare_level(level);
 
     void music_onions(void);
-    music_onions();
+    // music_onions();
 
     scroll_type(0x02);
     scroll_buf = malloc(0x380);
