@@ -75,7 +75,7 @@ typedef struct Object {
     signed char direction;
     Sprite *sprite;
     void *private;
-    byte death;
+    u16 death;
     u16 flags;
     u16 frame;
     u16 life;

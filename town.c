@@ -1,9 +1,15 @@
 #include "main.h"
 
+#include "images/rat.h"
 #include "images/town.h"
 #include "images/street.h"
 
 #include "town.inc"
+
+#define RAT_TILES	257
+#define RAT_LOOP	(RAT_TILES + 5 * 4)
+#define BURN_TILES	281
+#define BURN_OUT	(BURN_TILES + 8 * 4)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -176,10 +182,21 @@ static void update_town(void) {
     }
 }
 
+typedef struct Rat {
+    Object *self;
+} Rat;
+
+Rat *r_obj;
+
+#define RAT(obj) ((Rat *) (obj->private))
+
 static void display_french(const Level *level) {
     /* load tiles */
     load_image(&town_img, 1, 0);
     load_image(&street_img, 129, 1);
+    load_image(&rat_img, RAT_TILES, 3);
+
+    load_burn_tiles(BURN_TILES);
 
     load_soldier_tiles(3);
 
@@ -199,8 +216,48 @@ static void display_french(const Level *level) {
     scroll_type(0x02);
     scroll_buf = malloc(0x380);
     switch_frame(&update_town);
+
+    r_obj = malloc(sizeof(Rat) * MAX_MOBS);
+}
+
+static void move_rat(Object *obj) {
+    u16 palette = 2;
+    Sprite *sprite = obj->sprite;
+
+    obj->x += obj->direction;
+    advance_obj(obj, 8, 12);
+
+    if (mob_move(obj, BURN_OUT)) {
+	if (obj->direction != 0 && (obj->life & 3) == 0) {
+	    obj->frame = obj->frame == RAT_LOOP ? RAT_TILES : obj->frame + 4;
+	}
+	palette = 3;
+    }
+
+    sprite->cfg = TILE(palette, obj->frame);
+    mob_adjust_sprite_dir(obj);
+}
+
+static Object *setup_rat(short x, short y, char dir) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
+    Rat *rat = r_obj + mob_index(obj);
+    mob_fn(obj, &move_rat);
+
+    obj->direction = dir;
+    obj->frame = RAT_TILES;
+    obj->death = BURN_TILES;
+    obj->flags |= O_PERSISTENT;
+    obj->private = rat;
+    rat->self = obj;
+
+    return obj;
+}
+
+static void emit_rat(u16 x) {
+    setup_rat(256, 160, -1);
 }
 
 void display_town(void) {
     display_french(&town_level);
+    schedule(&emit_rat, 0);
 }
