@@ -220,20 +220,23 @@ static void display_french(const Level *level) {
 }
 
 static void move_rat(Object *obj) {
-    u16 land, palette = 2;
+    u16 land = 0, palette = 2;
     Sprite *sprite = obj->sprite;
+    char emerged = (obj->frame >= 3);
 
-    obj->x += obj->direction;
-    land = advance_obj(obj, 8, 8);
+    if (emerged) {
+	obj->x += obj->direction;
+	land = advance_obj(obj, 8, 8);
+    }
 
     if (mob_move(obj, 17)) {
-	if (!land) {
+	if (emerged && !land) {
 	    obj->frame = 3;
 	    if (RAT(obj)->was_ground) {
 		obj->velocity = 2;
 	    }
 	}
-	else if (obj->direction != 0 && (obj->life & 3) == 0) {
+	else if ((obj->life & 3) == 0) {
 	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
 	}
 	palette = 3;
@@ -259,10 +262,10 @@ static Object *setup_rat(short x, short y, char dir) {
 }
 
 static void emit_rat(u16 x) {
-    setup_rat(400, 208, -1);
+    setup_rat(352, 176, -1);
 }
 
 void display_town(void) {
     display_french(&town_level);
-    schedule(&emit_rat, 0);
+    schedule(&emit_rat, 50);
 }
