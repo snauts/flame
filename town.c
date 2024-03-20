@@ -221,14 +221,17 @@ static void display_french(const Level *level) {
 }
 
 static void move_rat(Object *obj) {
-    u16 palette = 2;
+    u16 land, palette = 2;
     Sprite *sprite = obj->sprite;
 
     obj->x += obj->direction;
-    advance_obj(obj, 8, 12);
+    land = advance_obj(obj, 8, 12);
 
     if (mob_move(obj, BURN_OUT)) {
-	if (obj->direction != 0 && (obj->life & 3) == 0) {
+	if (!land) {
+	    obj->frame = RAT_LOOP;
+	}
+	else if (obj->direction != 0 && (obj->life & 3) == 0) {
 	    obj->frame = obj->frame == RAT_LOOP ? RAT_TILES : obj->frame + 4;
 	}
 	palette = 3;
