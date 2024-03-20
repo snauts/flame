@@ -7,9 +7,7 @@
 #include "town.inc"
 
 #define RAT_TILES	257
-#define RAT_LOOP	(RAT_TILES + 5 * 4)
-#define BURN_TILES	281
-#define BURN_OUT	(BURN_TILES + 8 * 4)
+#define BURN_TILES	(RAT_TILES + 6 * 4)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -227,17 +225,17 @@ static void move_rat(Object *obj) {
     obj->x += obj->direction;
     land = advance_obj(obj, 8, 12);
 
-    if (mob_move(obj, BURN_OUT)) {
+    if (mob_move(obj, 14)) {
 	if (!land) {
-	    obj->frame = RAT_LOOP;
+	    obj->frame = 5;
 	}
 	else if (obj->direction != 0 && (obj->life & 3) == 0) {
-	    obj->frame = obj->frame == RAT_LOOP ? RAT_TILES : obj->frame + 4;
+	    obj->frame = obj->frame == 5 ? 0 : obj->frame + 1;
 	}
 	palette = 3;
     }
 
-    sprite->cfg = TILE(palette, obj->frame);
+    sprite->cfg = TILE(palette, RAT_TILES + 4 * obj->frame);
     mob_adjust_sprite_dir(obj);
 }
 
@@ -246,9 +244,8 @@ static Object *setup_rat(short x, short y, char dir) {
     Rat *rat = r_obj + mob_index(obj);
     mob_fn(obj, &move_rat);
 
+    obj->death = 6;
     obj->direction = dir;
-    obj->frame = RAT_TILES;
-    obj->death = BURN_TILES;
     obj->flags |= O_PERSISTENT;
     obj->private = rat;
     rat->self = obj;
