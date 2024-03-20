@@ -247,13 +247,14 @@ static void move_rat(Object *obj) {
     mob_adjust_sprite_dir(obj);
 }
 
-static Object *setup_rat(short x, short y, char dir) {
+static Object *setup_rat(short x, short y) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
+    short diff = get_soldier()->x - x;
     Rat *rat = r_obj + mob_index(obj);
     mob_fn(obj, &move_rat);
 
     obj->death = 9;
-    obj->direction = dir;
+    obj->direction = diff > 0 ? 1 : -1;
     obj->flags |= O_PERSISTENT;
     obj->private = rat;
     rat->self = obj;
@@ -262,7 +263,8 @@ static Object *setup_rat(short x, short y, char dir) {
 }
 
 static void emit_rat(u16 x) {
-    setup_rat(352, 176, -1);
+    setup_rat(352, 176);
+    schedule(&emit_rat, 100);
 }
 
 void display_town(void) {
