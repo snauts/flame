@@ -182,6 +182,7 @@ static void update_town(void) {
 
 typedef struct Rat {
     Object *self;
+    u16 was_ground;
 } Rat;
 
 Rat *r_obj;
@@ -223,11 +224,14 @@ static void move_rat(Object *obj) {
     Sprite *sprite = obj->sprite;
 
     obj->x += obj->direction;
-    land = advance_obj(obj, 8, 12);
+    land = advance_obj(obj, 8, 8);
 
     if (mob_move(obj, 14)) {
 	if (!land) {
 	    obj->frame = 5;
+	    if (RAT(obj)->was_ground) {
+		obj->velocity = 2;
+	    }
 	}
 	else if (obj->direction != 0 && (obj->life & 3) == 0) {
 	    obj->frame = obj->frame == 5 ? 0 : obj->frame + 1;
@@ -236,6 +240,7 @@ static void move_rat(Object *obj) {
     }
 
     sprite->cfg = TILE(palette, RAT_TILES + 4 * obj->frame);
+    RAT(obj)->was_ground = land;
     mob_adjust_sprite_dir(obj);
 }
 
@@ -254,7 +259,7 @@ static Object *setup_rat(short x, short y, char dir) {
 }
 
 static void emit_rat(u16 x) {
-    setup_rat(256, 160, -1);
+    setup_rat(248, 160, -1);
 }
 
 void display_town(void) {
