@@ -7,7 +7,7 @@
 #include "town.inc"
 
 #define RAT_TILES	257
-#define BURN_TILES	(RAT_TILES + 6 * 4)
+#define BURN_TILES	(RAT_TILES + 9 * 4)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -226,15 +226,15 @@ static void move_rat(Object *obj) {
     obj->x += obj->direction;
     land = advance_obj(obj, 8, 8);
 
-    if (mob_move(obj, 14)) {
+    if (mob_move(obj, 17)) {
 	if (!land) {
-	    obj->frame = 5;
+	    obj->frame = 3;
 	    if (RAT(obj)->was_ground) {
 		obj->velocity = 2;
 	    }
 	}
 	else if (obj->direction != 0 && (obj->life & 3) == 0) {
-	    obj->frame = obj->frame == 5 ? 0 : obj->frame + 1;
+	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
 	}
 	palette = 3;
     }
@@ -249,7 +249,7 @@ static Object *setup_rat(short x, short y, char dir) {
     Rat *rat = r_obj + mob_index(obj);
     mob_fn(obj, &move_rat);
 
-    obj->death = 6;
+    obj->death = 9;
     obj->direction = dir;
     obj->flags |= O_PERSISTENT;
     obj->private = rat;
@@ -259,7 +259,7 @@ static Object *setup_rat(short x, short y, char dir) {
 }
 
 static void emit_rat(u16 x) {
-    setup_rat(248, 160, -1);
+    setup_rat(400, 208, -1);
 }
 
 void display_town(void) {
