@@ -249,7 +249,7 @@ static void move_rat(Object *obj) {
 
 static Object *setup_rat(short x, short y) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
-    short diff = get_soldier()->x - x;
+    short diff = get_soldier()->x - x + 16;
     Rat *rat = r_obj + mob_index(obj);
     mob_fn(obj, &move_rat);
 
