@@ -194,6 +194,8 @@
   (s-place 5 12 (town-wall-top 10 4))
   (loop for x from 7 to 40 by 8 do
     (s-place x 13 (brick-window 4 4)))
+  (s-place 8 14 (window-bottles))
+  (s-place 10 14 (window-bottles))
   (s-place 1 2 (lamp-post :base-h 2 :brick 184))
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
   (s-pop))
