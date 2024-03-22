@@ -202,6 +202,14 @@
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
   (s-pop))
 
+(defun pillars-with-lamps ()
+  (s-push (brick-column 1 3))
+  (s-place 10 0 (brick-column 1 2))
+  (s-place -10 0 (brick-column 1 2))
+  (s-place 7 0 (lamp-post :base-h 8 :post-h 6 :forward t))
+  (s-place 17 0 (lamp-post :base-h 8 :post-h 6 :forward t))
+  (s-pop))
+
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 8)
@@ -216,6 +224,8 @@
 	(empty 2)
 	(arch-house)
 	(empty 2)
+	(pillars-with-lamps)
+	(empty 1)
 	(brick-bridge)
 	(empty 2)
 
