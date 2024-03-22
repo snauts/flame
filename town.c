@@ -262,11 +262,10 @@ static Object *setup_rat(short x, short y) {
     return obj;
 }
 
-static void emit_rat(u16 x) {
-    setup_rat(352, 176);
+void emit_rat(u16 x) {
+    setup_rat(x - 120, 176);
 }
 
 void display_town(void) {
     display_french(&town_level);
-    schedule(&emit_rat, 50);
 }
