@@ -264,7 +264,6 @@ static Object *setup_rat(short x, short y) {
 
 static void emit_rat(u16 x) {
     setup_rat(352, 176);
-    schedule(&emit_rat, 100);
 }
 
 void display_town(void) {

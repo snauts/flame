@@ -77,11 +77,16 @@
   (let ((middle (multiply (stack-cells 144 168) n)))
     (join (stack-cells 136 160) middle (stack-cells 152 176))))
 
+(defun town-wall-top (w h)
+  (s-push nil)
+  (loop for y from 0 to (* 2 (1- h)) by 2 do
+    (s-place 0 y (wall-row w)))
+  (s-place 0 (* 2 h) (shingles (1+ (* 4 w))))
+  (s-pop))
+
 (defun town-wall (w h)
   (s-push (wall-bottom w))
-  (loop for y from 2 to (* 2 h) by 2 do
-    (s-place 0 y (wall-row w)))
-  (s-place 0 (* 2 (1+ h)) (shingles (1+ (* 4 w))))
+  (s-place 0 2 (town-wall-top w h))
   (s-pop))
 
 (defun lamp-post (&key (base-h 3) (post-h 6) walkable forward brick)
@@ -177,6 +182,22 @@
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
   (s-pop))
 
+(defun arch-pillar ()
+  (s-push (town-wall 2 8))
+  (s-place 2 3 (brick-window 4 4))
+  (s-pop))
+
+(defun arch-house ()
+  (s-push (town-walk 13))
+  (s-place 5 2 (arch-pillar))
+  (s-place 37 2 (arch-pillar))
+  (s-place 5 12 (town-wall-top 10 4))
+  (loop for x from 7 to 40 by 8 do
+    (s-place x 13 (brick-window 4 4)))
+  (s-place 1 2 (lamp-post :base-h 2 :brick 184))
+  (s-place 49 2 (lamp-post :base-h 2 :brick 184))
+  (s-pop))
+
 (defun town-level ()
   (setf *seed* (* 1815 06 18))
   (join (town-walk 4)
@@ -188,6 +209,8 @@
 	(house-block)
 	(empty 2)
 	(brick-fence)
+	(empty 2)
+	(arch-house)
 	(empty 2)
 	(brick-bridge)
 	(empty 2)
