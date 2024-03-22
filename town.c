@@ -263,7 +263,7 @@ static Object *setup_rat(short x, short y) {
 }
 
 void emit_rat(u16 x) {
-    setup_rat(x - 120, 176);
+    setup_rat(x - 40, 176);
 }
 
 void display_town(void) {

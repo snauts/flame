@@ -121,7 +121,7 @@
   (s-place 10 5 (brick-window 2 3))
   (loop for x from 1 to 21 by 20 do
     (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
-  (join (s-pop) (trigger "emit_rat")))
+  (s-pop))
 
 (defun brick-fence ()
   (s-push (town-walk 6))
@@ -208,7 +208,7 @@
 	(empty 2)
 	(brick-column 2 2)
 	(empty 1)
-	(simple-house)
+	(inject (simple-house) "emit_rat" 16)
 	(empty 2)
 	(house-block)
 	(empty 2)
