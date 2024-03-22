@@ -192,6 +192,8 @@
   (s-place 5 2 (arch-pillar))
   (s-place 37 2 (arch-pillar))
   (s-place 5 12 (town-wall-top 10 4))
+  (s-place 18 2 (town-wall 1 1))
+  (s-place 28 2 (town-wall 1 1))
   (loop for x from 7 to 40 by 8 do
     (s-place x 13 (brick-window 4 4)))
   (s-place 8 14 (window-bottles))
