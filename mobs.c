@@ -191,9 +191,9 @@ static u16 should_mob_burn(Sprite *sprite) {
     return flame_collision(&r) != NULL;
 }
 
-const Rectangle bite_P = { x1:  2, y1:  2, x2:  6, y2:  6 };
-const Rectangle bite_L = { x1:  2, y1:  4, x2:  6, y2:  8 };
-const Rectangle bite_R = { x1: 10, y1:  4, x2: 14, y2:  8 };
+const Rectangle bite_P = { x1: 2, y1:  2, x2:  6, y2:  6 };
+const Rectangle bite_L = { x1: 2, y1:  4, x2:  8, y2:  8 };
+const Rectangle bite_R = { x1: 8, y1:  4, x2: 14, y2:  8 };
 
 static u16 mob_bite_box(Sprite *sprite, const Rectangle *ofs) {
     Rectangle r;
