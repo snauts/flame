@@ -704,16 +704,17 @@ static void mantis_check_hitbox(Object *obj) {
     }
 }
 
-static u16 mantis_vertical_attack(Object *obj, Sprite *soldier) {
-    return abs(obj->sprite->x - soldier->x) < 4
-	|| (obj->x >= (MANTIS_MAX_X - 1) && soldier->x > MANTIS_MAX_X)
-	|| (obj->x <= (MANTIS_MIN_X + 1) && soldier->x < MANTIS_MIN_X);
+static u16 mantis_vertical_attack(Object *obj, Sprite *s_sprite) {
+    return abs(obj->sprite->x - s_sprite->x) < 4
+	|| (obj->x >= (MANTIS_MAX_X - 1) && s_sprite->x > MANTIS_MAX_X)
+	|| (obj->x <= (MANTIS_MIN_X + 1) && s_sprite->x < MANTIS_MIN_X);
 }
 
-static void mantis_gets_angry(Object *obj, Sprite *soldier) {
+static void mantis_gets_angry(Object *obj) {
     if (IS_AGITATED && MANTIS_WALK) {
-	short side = clamp(obj->sprite->x - soldier->x, 1);
-	if (mantis_2nd_stage() && mantis_vertical_attack(obj, soldier)) {
+	Sprite *s_sprite = soldier.sprite;
+	short side = clamp(obj->sprite->x - s_sprite->x, 1);
+	if (mantis_2nd_stage() && mantis_vertical_attack(obj, s_sprite)) {
 	    mantis[7]->frame = mantis[7]->life = 10;
 	    MANTIS_WALK = 0;
 	    IS_AGITATED = 0;
@@ -737,7 +738,6 @@ static void mantis_fall_down(Object *obj) {
 }
 
 static void walk_mantis(Object *obj) {
-    Sprite *soldier = get_soldier()->sprite;
     if (!DETACHED) {
 	place_mantis(obj->x, obj->y, obj->direction > 0);
     }
@@ -755,7 +755,7 @@ static void walk_mantis(Object *obj) {
     adjust_mantis_height(obj);
 
     mantis_check_hitbox(obj);
-    mantis_gets_angry(obj, soldier);
+    mantis_gets_angry(obj);
 }
 
 static void setup_mantis(u16 i) {

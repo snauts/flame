@@ -30,11 +30,7 @@
 
 enum { S_MARCH = 0, S_SINKING, S_POISON, S_COMPLETE, S_FIST_PUMP };
 
-static Object soldier;
-
-Object *get_soldier(void) {
-    return &soldier;
-}
+Object soldier;
 
 static Sprite sprite[80];
 static Sprite *blood;

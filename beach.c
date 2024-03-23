@@ -413,7 +413,7 @@ void emit_dirty_trio(u16 x) {
 
 static void drop_bear_drop(Object *obj) {
     if (get_snap(obj->x + 8, obj->y, obj->y)) {
-	obj->direction = clamp(get_soldier()->x - obj->x, 1);
+	obj->direction = clamp(soldier.x - obj->x, 1);
 	mob_fn(obj, &move_crab);
     }
     move_crab(obj);

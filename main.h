@@ -201,7 +201,6 @@ void music_none(void);
 u16 random(void);
 void set_seed(u16);
 
-Object *get_soldier(void);
 void advance_sprites(void);
 void fade_to_next_level(void);
 void soldier_fist_pump(void);
@@ -286,3 +285,4 @@ void free_burns(void);
 
 extern u16 window;
 extern u16 counter;
+extern Object soldier;

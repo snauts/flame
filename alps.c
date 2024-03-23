@@ -268,7 +268,7 @@ static void emit_piston_bee(u16 x) {
 
 void emit_bee_upstream(u16 pos_x) {
     emit_piston_bee(pos_x);
-    if (get_soldier()->x < pos_x) {
+    if (soldier.x < pos_x) {
 	callback(emit_bee_upstream, 63, pos_x);
     }
 }
@@ -653,10 +653,10 @@ static Object *emit_drone(Object *parent, char dx, char dy) {
 static void drone_dive(Object *obj) {
     move_bee(obj);
     u16 bx = obj->sprite->x;
-    u16 sx = get_soldier()->sprite->x;
+    u16 sx = soldier.sprite->x;
     if (bx >= sx + 2 && bx <= sx + 6) {
 	u16 by = obj->sprite->y;
-	u16 sy = get_soldier()->sprite->y;
+	u16 sy = soldier.sprite->y;
 	BEE(obj)->v_direction = sy > by ? 1 : -1;
 	obj->direction = 0;
 	mob_fn(obj, &move_bee);
@@ -698,7 +698,7 @@ static void queen_second_stage(Object *obj) {
 
     if (QUEEN_TIME == 0) {
 	u16 bx = obj->sprite->x;
-	u16 sx = get_soldier()->sprite->x;
+	u16 sx = soldier.sprite->x;
 	if (bx >= sx - 30 && bx <= sx - 26) {
 	    emit_drone(obj, -1, -1);
 	    emit_drone(obj,  0, -1);
@@ -739,7 +739,7 @@ static void queen_third_stage(Object *obj) {
 }
 
 static char opposite_direction(Object *obj) {
-    return get_soldier()->x < obj->x - window ? 1 : -1;
+    return soldier.x < obj->x - window ? 1 : -1;
 }
 
 static void queen_stages(Object *obj) {

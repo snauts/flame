@@ -222,7 +222,7 @@ static void display_french(const Level *level) {
 }
 
 static char rat_diff(Object *obj) {
-    return get_soldier()->x - obj->x + 16 > 0 ? 1 : -1;
+    return soldier.x - obj->x + 16 > 0 ? 1 : -1;
 }
 
 static void move_rat(Object *obj) {

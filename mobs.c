@@ -309,18 +309,18 @@ void flame_burn(Object *obj) {
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip) {
     u16 ret = 0;
     Rectangle box[size];
-    Sprite *soldier = get_soldier()->sprite;
+    Sprite *s_sprite = soldier.sprite;
     update_hitbox(obj, box, base, size);
     for (u16 i = 0; i < size; i++) {
 	Object *flame = flame_collision(box + i);
-	if (flame != NULL && get_soldier()->life == 0) {
+	if (flame != NULL && soldier.life == 0) {
 	    obj->life = decrement_progress_bar();
 	    play_sfx(SFX_PERISH);
 	    flame_burn(flame);
 	    ret = 1;
 	}
 	if (i < skip && obj->life > 0 && soldier_collision(box + i)) {
-	    bite_soldier(soldier->x + 8, soldier->y);
+	    bite_soldier(s_sprite->x + 8, s_sprite->y);
 	}
     }
     return ret;
