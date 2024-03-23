@@ -278,6 +278,7 @@ void mob_adjust_sprite_dir(Object *obj);
 void setup_burns(u16 count, u16 tiles);
 char is_mob_alive(Object *obj);
 char is_x_on_screen(short x);
+char is_x_behind_screen(short x);
 void kill_mob_silently(Object *obj);
 void kill_mob(Object *obj);
 void init_burn(Object *obj);

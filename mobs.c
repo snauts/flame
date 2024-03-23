@@ -149,6 +149,10 @@ char is_x_on_screen(short x) {
     return ON_SCREEN - 16 < x && x < ON_SCREEN + SCR_WIDTH;
 }
 
+char is_x_behind_screen(short x) {
+    return SCREEN_X(x) <= ON_SCREEN - 16;
+}
+
 static u16 is_mob_off_screen(Sprite *sprite) {
     return sprite->y < ON_SCREEN - 32
 	|| sprite->x < ON_SCREEN - 16
