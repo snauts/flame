@@ -183,6 +183,8 @@ static void update_town(void) {
 typedef struct Rat {
     Object *self;
     u16 was_ground;
+    u16 cookie;
+    Callback fn;
 } Rat;
 
 Rat *r_obj;
@@ -241,13 +243,20 @@ static void move_rat(Object *obj) {
 	}
 	palette = 3;
     }
+    else {
+	Rat *rat = RAT(obj);
+	if (rat->fn != NULL) {
+	    rat->fn(rat->cookie);
+	    rat->fn = NULL;
+	}
+    }
 
     sprite->cfg = TILE(palette, RAT_TILES + 4 * obj->frame);
     RAT(obj)->was_ground = land;
     mob_adjust_sprite_dir(obj);
 }
 
-static Object *setup_rat(short x, short y) {
+static Rat *setup_rat(short x, short y) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
     short diff = get_soldier()->x - x + 16;
     Rat *rat = r_obj + mob_index(obj);
@@ -258,12 +267,20 @@ static Object *setup_rat(short x, short y) {
     obj->flags |= O_PERSISTENT;
     obj->private = rat;
     rat->self = obj;
+    rat->fn = NULL;
 
-    return obj;
+    return rat;
+}
+
+void follow_up_rat(u16 x) {
+    setup_rat(x - 40, 115);
+    setup_rat(x - 216, 179);
 }
 
 void emit_rat(u16 x) {
-    setup_rat(x - 40, 176);
+    Rat *rat = setup_rat(x - 40, 176);
+    rat->fn = &follow_up_rat;
+    rat->cookie = x;
 }
 
 void display_town(void) {
