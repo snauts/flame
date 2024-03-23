@@ -221,6 +221,10 @@ static void display_french(const Level *level) {
     r_obj = malloc(sizeof(Rat) * MAX_MOBS);
 }
 
+static char rat_diff(Object *obj) {
+    return get_soldier()->x - obj->x + 16 > 0 ? 1 : -1;
+}
+
 static void move_rat(Object *obj) {
     u16 land = 0, palette = 2;
     Sprite *sprite = obj->sprite;
@@ -235,7 +239,13 @@ static void move_rat(Object *obj) {
 	if (emerged && !land) {
 	    obj->frame = 3;
 	    if (RAT(obj)->was_ground) {
-		obj->velocity = 2;
+		char diff = rat_diff(obj);
+		if (diff != obj->direction) {
+		    obj->direction = diff;
+		}
+		else {
+		    obj->velocity = 2;
+		}
 	    }
 	}
 	else if ((obj->life & 3) == 0) {
@@ -258,12 +268,11 @@ static void move_rat(Object *obj) {
 
 static Rat *setup_rat(short x, short y) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
-    short diff = get_soldier()->x - x + 16;
     Rat *rat = r_obj + mob_index(obj);
     mob_fn(obj, &move_rat);
 
     obj->death = 9;
-    obj->direction = diff > 0 ? 1 : -1;
+    obj->direction = rat_diff(obj);
     obj->flags |= O_PERSISTENT;
     obj->private = rat;
     rat->self = obj;
