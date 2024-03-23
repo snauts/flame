@@ -144,6 +144,11 @@ void cancel_timer(Callback fn) {
     }
 }
 
+char is_x_on_screen(short x) {
+    x = SCREEN_X(x);
+    return ON_SCREEN - 16 < x && x < ON_SCREEN + SCR_WIDTH;
+}
+
 static u16 is_mob_off_screen(Sprite *sprite) {
     return sprite->y < ON_SCREEN - 32
 	|| sprite->x < ON_SCREEN - 16
