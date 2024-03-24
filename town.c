@@ -190,6 +190,7 @@ typedef struct Rat {
 Rat *r_obj;
 
 static u16 rat_counter;
+static u16 dead_rats;
 
 #define RAT(obj) ((Rat *) (obj->private))
 
@@ -222,6 +223,7 @@ static void display_french(const Level *level) {
 
     r_obj = malloc(sizeof(Rat) * MAX_MOBS);
     rat_counter = 0;
+    dead_rats = 0;
 }
 
 static char rat_diff(Object *obj) {
@@ -230,6 +232,10 @@ static char rat_diff(Object *obj) {
 
 static char is_rat_at_edge(Object *obj) {
     return obj->direction == -1 && obj->sprite->x < ON_SCREEN - 8;
+}
+
+static u16 live_rats(void) {
+    return rat_counter - dead_rats;
 }
 
 static void move_rat(Object *obj) {
@@ -257,7 +263,7 @@ static void move_rat(Object *obj) {
 	}
 	else if ((obj->life & 3) == 0) {
 	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
-	    if (is_rat_at_edge(obj)) {
+	    if (is_rat_at_edge(obj) && live_rats() < 4) {
 		obj->direction = 1;
 	    }
 	}
@@ -268,6 +274,9 @@ static void move_rat(Object *obj) {
 	if (rat->fn != NULL) {
 	    rat->fn(rat->cookie);
 	    rat->fn = NULL;
+	}
+	if (obj->place == -1) {
+	    dead_rats++;
 	}
     }
 
