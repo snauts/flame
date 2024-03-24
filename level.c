@@ -339,7 +339,7 @@ static void hiroshi_text(void) {
     display_text("- PART 3 -", 15, 3);
     display_text_plane("HIROSHI", 16, 13, VRAM_PLANE_B);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
-    display_text("THE OCEAN IS SO SALY BECAUSE", 6, 24);
+    display_text("THE OCEAN IS SO SALTY BECAUSE", 5, 24);
     display_text("EVERYONE PEES IN IT", 10, 25);
 }
 
