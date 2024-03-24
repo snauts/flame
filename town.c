@@ -245,6 +245,9 @@ static void move_rat(Object *obj) {
 
     if (emerged) {
 	obj->x += obj->direction;
+	if ((counter & 7) == 0) {
+	    obj->x += obj->direction;
+	}
 	land = advance_obj(obj, 8, 8);
     }
 
