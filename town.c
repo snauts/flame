@@ -327,8 +327,8 @@ static void same_rat(u16 x) {
     }
 }
 
-static void emit_house_block_rat_bravo(u16 x) {
-    setup_rat(x, 112);
+void emit_house_block_rat_bravo(u16 x) {
+    setup_rat(x - 108, 112);
 }
 
 void emit_house_block_rat(u16 x) {
@@ -337,9 +337,6 @@ void emit_house_block_rat(u16 x) {
 	Rat *rat = setup_rat(x, 176);
 	rat->fn = &same_rat;
 	rat->cookie = x;
-    }
-    else {
-	emit_house_block_rat_bravo(x + 56);
     }
 }
 
