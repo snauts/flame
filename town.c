@@ -327,8 +327,19 @@ static void same_rat(u16 x) {
     }
 }
 
+static void top_window_rat(u16 x) {
+    setup_rat(x, 48);
+}
+
+static void house_bravo_follow_up(u16 x) {
+    callback(&top_window_rat, 20, x - 108);
+    top_window_rat(x - 164);
+}
+
 void emit_house_block_rat_bravo(u16 x) {
-    setup_rat(x - 108, 112);
+    Rat *rat = setup_rat(x - 108, 112);
+    rat->fn = house_bravo_follow_up;
+    rat->cookie = x;
 }
 
 void emit_house_block_rat(u16 x) {
