@@ -317,13 +317,26 @@ void emit_rat(u16 x) {
 
 void emit_house_block_rat(u16 x);
 
+static void bottom_window_rat(u16 x) {
+    setup_rat(x, 176);
+}
+
 static void same_rat(u16 x) {
     if (rat_counter & 2) {
 	setup_rat(x - 180, 115);
     }
     else {
 	callback(&emit_house_block_rat, 50, x + 36);
-	setup_rat(x - 212, 176);
+	bottom_window_rat(x - 212);
+    }
+}
+
+void emit_house_block_rat(u16 x) {
+    x = x - 36;
+    if (soldier.x + 80 < x) {
+	Rat *rat = setup_rat(x, 176);
+	rat->fn = &same_rat;
+	rat->cookie = x;
     }
 }
 
@@ -347,19 +360,19 @@ static void house_charlie_follow_up(u16 x) {
     top_window_rat(x - 160);
 }
 
+static void house_charlie_front_follow_up(u16 x) {
+    callback(&bottom_window_rat, 100, x - 206);
+    top_window_rat(x - 16);
+}
+
 void emit_house_block_rat_charlie(u16 x) {
     Rat *rat = setup_rat(x - 216, 112);
     rat->fn = house_charlie_follow_up;
     rat->cookie = x;
-}
 
-void emit_house_block_rat(u16 x) {
-    x = x - 36;
-    if (soldier.x + 80 < x) {
-	Rat *rat = setup_rat(x, 176);
-	rat->fn = &same_rat;
-	rat->cookie = x;
-    }
+    rat = setup_rat(x - 16, 176);
+    rat->fn = house_charlie_front_follow_up;
+    rat->cookie = x;
 }
 
 void display_town(void) {
