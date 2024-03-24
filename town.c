@@ -318,11 +318,11 @@ void emit_rat(u16 x) {
 void emit_house_block_rat(u16 x);
 
 static void same_rat(u16 x) {
-    callback(&emit_house_block_rat, 50, x + 36);
     if (rat_counter & 2) {
 	setup_rat(x - 180, 115);
     }
     else {
+	callback(&emit_house_block_rat, 50, x + 36);
 	setup_rat(x - 212, 176);
     }
 }
@@ -332,13 +332,23 @@ static void top_window_rat(u16 x) {
 }
 
 static void house_bravo_follow_up(u16 x) {
-    callback(&top_window_rat, 20, x - 108);
+    callback(&top_window_rat, 50, x - 108);
     top_window_rat(x - 164);
 }
 
 void emit_house_block_rat_bravo(u16 x) {
     Rat *rat = setup_rat(x - 108, 112);
     rat->fn = house_bravo_follow_up;
+    rat->cookie = x;
+}
+
+static void house_charlie_follow_up(u16 x) {
+    top_window_rat(x - 160);
+}
+
+void emit_house_block_rat_charlie(u16 x) {
+    Rat *rat = setup_rat(x - 216, 112);
+    rat->fn = house_charlie_follow_up;
     rat->cookie = x;
 }
 
