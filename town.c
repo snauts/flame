@@ -225,6 +225,10 @@ static char rat_diff(Object *obj) {
     return soldier.x - obj->x + 16 > 0 ? 1 : -1;
 }
 
+static char is_rat_at_edge(Object *obj) {
+    return obj->direction == -1 && obj->sprite->x < ON_SCREEN - 8;
+}
+
 static void move_rat(Object *obj) {
     u16 land = 0, palette = 2;
     Sprite *sprite = obj->sprite;
@@ -250,6 +254,9 @@ static void move_rat(Object *obj) {
 	}
 	else if ((obj->life & 3) == 0) {
 	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
+	    if (is_rat_at_edge(obj)) {
+		obj->direction = 1;
+	    }
 	}
 	palette = 3;
     }
