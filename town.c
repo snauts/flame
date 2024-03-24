@@ -343,6 +343,7 @@ void emit_house_block_rat_bravo(u16 x) {
 }
 
 static void house_charlie_follow_up(u16 x) {
+    callback(&top_window_rat, 25, x - 16);
     top_window_rat(x - 160);
 }
 
