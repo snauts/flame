@@ -203,7 +203,7 @@ static void clear_screen_to_black(void) {
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 }
 
-const char special[] = "-!:";
+const char special[] = "-!:,";
 
 static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
     u16 i = 0, offset = (y << 7)  + (x << 1);
@@ -312,12 +312,13 @@ static void start_level(u16 tmp) {
 
 static void announcement(Function paint_screen) {
     simple_screen(paint_screen, 0, 1);
-    schedule(&start_level, 150);
+    schedule(&start_level, 200);
 }
 
 static void johnny_text(void) {
     display_text("- PART 1 -", 15, 3);
     display_text("JOHNNY", 17, 13);
+    display_text("THE ONLY GOOD BUG IS A DEAD BUG!", 4, 24);
 }
 
 void announce_johnny(void) {
@@ -327,6 +328,7 @@ void announce_johnny(void) {
 static void hans_text(void) {
     display_text("- PART 2 -", 15, 3);
     display_text("HANS", 18, 13);
+    display_text("GET ZE FLAMMENWERFER", 10, 24);
 }
 
 void announce_hans(void) {
@@ -337,6 +339,8 @@ static void hiroshi_text(void) {
     display_text("- PART 3 -", 15, 3);
     display_text_plane("HIROSHI", 16, 13, VRAM_PLANE_B);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
+    display_text("THE OCEAN IS SO SALY BECAUSE", 6, 24);
+    display_text("EVERYONE PEES IN IT", 10, 25);
 }
 
 void announce_hiroshi(void) {
@@ -347,6 +351,7 @@ static void emile_text(void) {
     display_text("- PART 4 -", 15, 3);
     display_text_plane("EMILE", 17, 13, VRAM_PLANE_B);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
+    display_text("GET AWAY RAT, YOU CARRIER OF DISEASE", 2, 24);
 }
 
 void announce_emile(void) {
