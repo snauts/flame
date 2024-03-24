@@ -181,6 +181,7 @@
   (s-place 1 2 (lamp-post :base-h 2 :brick 184))
   (s-place 25 2 (lamp-post :base-h 2 :brick 184))
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
+  (s-inject "emit_house_block_rat" 14)
   (s-pop))
 
 (defun arch-pillar ()

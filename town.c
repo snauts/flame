@@ -189,6 +189,8 @@ typedef struct Rat {
 
 Rat *r_obj;
 
+static u16 rat_counter;
+
 #define RAT(obj) ((Rat *) (obj->private))
 
 static void display_french(const Level *level) {
@@ -219,6 +221,7 @@ static void display_french(const Level *level) {
     switch_frame(&update_town);
 
     r_obj = malloc(sizeof(Rat) * MAX_MOBS);
+    rat_counter = 0;
 }
 
 static char rat_diff(Object *obj) {
@@ -285,10 +288,11 @@ static Rat *setup_rat(short x, short y) {
     rat->self = obj;
     rat->fn = NULL;
 
+    rat_counter++;
     return rat;
 }
 
-void follow_up_rat(u16 x) {
+static void follow_up_rat(u16 x) {
     setup_rat(x - 40, 115);
     setup_rat(x - 216, 179);
 }
@@ -297,6 +301,27 @@ void emit_rat(u16 x) {
     Rat *rat = setup_rat(x - 40, 176);
     rat->fn = &follow_up_rat;
     rat->cookie = x;
+}
+
+void emit_house_block_rat(u16 x);
+
+static void same_rat(u16 x) {
+    callback(&emit_house_block_rat, 50, x + 36);
+    if (rat_counter & 2) {
+	setup_rat(x - 180, 115);
+    }
+    else {
+	setup_rat(x - 212, 176);
+    }
+}
+
+void emit_house_block_rat(u16 x) {
+    x = x - 36;
+    if (soldier.x + 80 < x) {
+	Rat *rat = setup_rat(x, 176);
+	rat->fn = &same_rat;
+	rat->cookie = x;
+    }
 }
 
 void display_town(void) {
