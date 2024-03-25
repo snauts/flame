@@ -263,11 +263,13 @@ static void flammenwerfer_text(void) {
     paint_background(0, 0, 40, 8, TILE(1, 256), 0);
     copy_to_VRAM(VRAM_PLANE_A + 0x400, 80 * 8 * 2);
 
-#if defined(VERSION)
+#if defined(VERSION) && defined(VERBOSE)
     display_text(VERSION, 40 - sizeof(VERSION), 0);
 #endif
     display_text("PRESS START", 15, 16);
+#if defined(VERBOSE)
     display_text("SATIRICAL ODDITY IN FOUR PARTS", 5, 27);
+#endif
 }
 
 void display_title(void) {
@@ -318,7 +320,9 @@ static void announcement(Function paint_screen) {
 static void johnny_text(void) {
     display_text("- PART 1 -", 15, 3);
     display_text("JOHNNY", 17, 13);
+#if defined(VERBOSE)
     display_text("THE ONLY GOOD BUG IS A DEAD BUG!", 4, 24);
+#endif
 }
 
 void announce_johnny(void) {
@@ -328,7 +332,9 @@ void announce_johnny(void) {
 static void hans_text(void) {
     display_text("- PART 2 -", 15, 3);
     display_text("HANS", 18, 13);
+#if defined(VERBOSE)
     display_text("GET ZE FLAMMENWERFER", 10, 24);
+#endif
 }
 
 void announce_hans(void) {
@@ -339,8 +345,10 @@ static void hiroshi_text(void) {
     display_text("- PART 3 -", 15, 3);
     display_text_plane("HIROSHI", 16, 13, VRAM_PLANE_B);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
+#if defined(VERBOSE)
     display_text("THE OCEAN IS SO SALTY BECAUSE", 5, 24);
     display_text("EVERYONE PEES IN IT", 10, 25);
+#endif
 }
 
 void announce_hiroshi(void) {
@@ -351,7 +359,9 @@ static void emile_text(void) {
     display_text("- PART 4 -", 15, 3);
     display_text_plane("EMILE", 17, 13, VRAM_PLANE_B);
     UPDATE_VRAM_WORD(VRAM_SCROLL_B, 4);
+#if defined(VERBOSE)
     display_text("GET AWAY RAT, YOU CARRIER OF DISEASE", 2, 24);
+#endif
 }
 
 void announce_emile(void) {
