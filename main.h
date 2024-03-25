@@ -87,6 +87,7 @@ typedef struct Object {
 #define O_ANIHILATED	BIT(3)
 
 enum {
+    SFX_SILENT,
     SFX_PERISH,
     SFX_WIGGLE,
     SFX_SLASH,

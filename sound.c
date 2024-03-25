@@ -231,6 +231,8 @@ static u16 sfx[SFX_LAST];
 static u16 sfx_next;
 static u16 channel;
 
+static const byte silent[] = { 0x00, 0x0f };
+
 static void load_sfx(u16 i, const byte *ptr, u16 size) {
     z80_copy(sfx_next, ptr, size);
     sfx[i] = sfx_next;
@@ -240,6 +242,7 @@ static void load_sfx(u16 i, const byte *ptr, u16 size) {
 static void load_z80_sfx(void) {
     sfx_next = SFX_BASE;
     channel = PSG_SFX_CH0;
+    load_sfx(SFX_SILENT, silent, sizeof(silent));
     load_sfx(SFX_PERISH, perish, sizeof(perish));
     load_sfx(SFX_WIGGLE, wiggle, sizeof(wiggle));
     load_sfx(SFX_SLASH,  slash,  sizeof(slash));
@@ -260,9 +263,16 @@ static void mute_sound(void) {
     }
 }
 
+static void mute_all_psg_channels(void) {
+    for (u16 i = 0; i <= 2; i++) play_sfx(SFX_SILENT);
+}
+
 void music_toggle(byte state) {
     z80_poke(0x10, state);
-    if (state) do_z80_bus(&mute_sound);
+    if (state) {
+	mute_all_psg_channels();
+	do_z80_bus(&mute_sound);
+    }
 }
 
 static void update_total_levels(void) {
