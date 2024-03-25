@@ -375,6 +375,22 @@ void emit_house_block_rat_charlie(u16 x) {
     rat->cookie = x;
 }
 
+static void house_delta_follow_up(u16 x) {
+    Rat *rat = setup_rat(x - 60, 112);
+    rat->fn = top_window_rat;
+    rat->cookie = x - 60;
+}
+
+void emit_house_block_rat_delta(u16 x) {
+    Rat *rat = setup_rat(x - 60, 176);
+    rat->fn = house_delta_follow_up;
+    rat->cookie = x;
+
+    rat = setup_rat(x - 252, 112);
+    rat->fn = top_window_rat;
+    rat->cookie = x - 252;
+}
+
 void display_town(void) {
     display_french(&town_level);
 }
