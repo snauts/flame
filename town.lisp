@@ -235,7 +235,7 @@
 	(empty 2)
 
 	;; level done
-	(inject  (town-walk 12) "level_done" 32)
+	(inject  (town-walk 12) "level_done_burn_mobs" 32)
 	(empty 48)))
 
 (defun ramp-stage (h &key next)
@@ -265,7 +265,7 @@
   (s-place 24 2 (town-wall 1 0))
   (loop for x from 24 by 50 for y from 4 to 20 by 4 do
     (s-place x 0 (ramp-stage y :next (/= y 20))))
-  (s-join (inject (finish-ramp) "level_done" 32))
+  (s-join (inject (finish-ramp) "level_done_burn_mobs" 32))
   (s-join (empty 48))
   (s-pop))
 
