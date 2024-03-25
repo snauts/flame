@@ -238,6 +238,38 @@
 	(inject  (town-walk 12) "level_done" 32)
 	(empty 48)))
 
+(defun ramp-stage (h &key next)
+  (s-push nil)
+  (let ((half (floor h 2)))
+    (loop for x from 12 to 36 by 12 do
+      (s-place x 0 (brick-column 1 half)))
+    (when next (s-place 50 0 (brick-column 1 (+ 2 half))))
+    (s-place 48 0 (brick-column 2 half))
+    (s-place 0 h (shingles 57))
+    (when next (s-place 50 (1+ h) (wall-join 2)))
+    (s-place 2 (1+ h) (lamp-post :base-h 1 :post-h 0 :brick 240))
+    (s-pop)))
+
+(defun finish-ramp ()
+  (s-push nil)
+  (loop for x from 0 to 36 by 12 do
+    (s-place x 0 (brick-column 1 10)))
+  (s-place 0 20 (shingles 48))
+  (loop for x from 0 to 36 by 12 do
+    (s-place (+ x 2) 21 (lamp-post :base-h 1 :post-h 0 :brick 240)))
+  (join (empty 2) (s-pop)))
+
+(defun ramp-level ()
+  (setf *seed* 1789)
+  (s-push (town-walk 8))
+  (s-place 24 2 (town-wall 1 0))
+  (loop for x from 24 by 50 for y from 4 to 20 by 4 do
+    (s-place x 0 (ramp-stage y :next (/= y 20))))
+  (s-join (inject (finish-ramp) "level_done" 32))
+  (s-join (empty 48))
+  (s-pop))
+
 (defun commit-save ()
   (push-level "town_level" (town-level))
+  (push-level "ramp_level" (ramp-level))
   (save-level "town.inc" *town-walkable*))

@@ -378,3 +378,7 @@ void emit_house_block_rat_charlie(u16 x) {
 void display_town(void) {
     display_french(&town_level);
 }
+
+void display_ramp(void) {
+    display_french(&ramp_level);
+}

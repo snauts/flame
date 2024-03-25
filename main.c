@@ -338,6 +338,7 @@ static const Function loader_table[] = {
 
 //    &announce_emile,
 //    &display_town,
+//    &display_ramp,
 
     &display_ending,
     NULL,
