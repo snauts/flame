@@ -230,12 +230,45 @@ static char rat_diff(Object *obj) {
     return soldier.x - obj->x + 16 > 0 ? 1 : -1;
 }
 
-static char is_rat_at_edge(Object *obj) {
+static char is_rat_at_screen_edge(Object *obj) {
     return obj->direction == -1 && obj->sprite->x < ON_SCREEN - 8;
 }
 
 static u16 live_rats(void) {
     return rat_counter - dead_rats;
+}
+
+static u16 advance_rat(Object *obj) {
+    obj->x += obj->direction;
+    if ((counter & 7) == 0) {
+	obj->x += obj->direction;
+    }
+    return advance_obj(obj, 8, 8);
+}
+
+static void rat_change_direction(Object *obj, u16 old_x, char diff) {
+    obj->x = old_x;
+    obj->direction = diff;
+    if (soldier.y > obj->y) {
+	obj->y++;
+    }
+}
+
+static void rat_at_platform_edge(Object *obj, u16 old_x) {
+    char diff = rat_diff(obj);
+    if (diff != obj->direction) {
+	rat_change_direction(obj, old_x, diff);
+    }
+    else {
+	obj->velocity = 2;
+    }
+}
+
+static void rat_in_air(Object *obj, u16 old_x) {
+    obj->frame = 3;
+    if (RAT(obj)->was_ground) {
+	rat_at_platform_edge(obj, old_x);
+    }
 }
 
 static void move_rat(Object *obj) {
@@ -244,34 +277,15 @@ static void move_rat(Object *obj) {
     char emerged = (obj->frame >= 3);
     short old_x = obj->x;
 
-    if (emerged) {
-	obj->x += obj->direction;
-	if ((counter & 7) == 0) {
-	    obj->x += obj->direction;
-	}
-	land = advance_obj(obj, 8, 8);
-    }
+    if (emerged) land = advance_rat(obj);
 
     if (mob_move(obj, 17)) {
 	if (emerged && !land) {
-	    obj->frame = 3;
-	    if (RAT(obj)->was_ground) {
-		char diff = rat_diff(obj);
-		if (diff != obj->direction) {
-		    obj->x = old_x;
-		    obj->direction = diff;
-		    if (soldier.y > obj->y) {
-			obj->y++;
-		    }
-		}
-		else {
-		    obj->velocity = 2;
-		}
-	    }
+	    rat_in_air(obj, old_x);
 	}
 	else if ((obj->life & 3) == 0) {
 	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
-	    if (is_rat_at_edge(obj) && live_rats() < 4) {
+	    if (is_rat_at_screen_edge(obj) && live_rats() < 4) {
 		obj->direction = 1;
 	    }
 	}
