@@ -218,6 +218,8 @@
   (s-place -10 0 (brick-column 1 2))
   (s-place 7 0 (lamp-post :base-h 8 :post-h 6 :forward t))
   (s-place 17 0 (lamp-post :base-h 8 :post-h 6 :forward t))
+  (s-inject "emit_pillar_bravo" 26)
+  (s-inject "emit_pillar_alpha" 16)
   (s-pop))
 
 (defun simple-shed ()

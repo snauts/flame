@@ -468,6 +468,26 @@ void emit_arch_charlie_wave(u16 x) {
     callback(&arch_charlie_follow_up, 150, x);
 }
 
+void emit_pillar_alpha(u16 x) {
+    setup_rat(x - 28, 164);
+    setup_rat(x - 108, 179);
+    setup_rat(x - 252, 176);
+}
+
+static void emit_back_striker(u16 x) {
+    setup_rat(x - 188, 179);
+}
+
+static void emit_pillar_follow_up(u16 x) {
+    callback(&emit_back_striker, 100, x);
+}
+
+void emit_pillar_bravo(u16 x) {
+    Rat *rat = setup_rat(x - 28, 179);
+    rat->fn = emit_pillar_follow_up;
+    rat->cookie = x;
+}
+
 void display_town(void) {
     display_french(&town_level);
 }
