@@ -417,8 +417,8 @@ static void reverse_wave(u16 x) {
 
 void emit_reverse_wave(u16 x) {
     reverse_wave(x - 224);
-    setup_rat(x - 40, 176);
-    setup_rat(x - 52, 50);
+    setup_rat(x - 52, 176);
+    setup_rat(x - 72, 51);
 }
 
 void display_town(void) {
