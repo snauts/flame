@@ -242,6 +242,7 @@ static void move_rat(Object *obj) {
     u16 land = 0, palette = 2;
     Sprite *sprite = obj->sprite;
     char emerged = (obj->frame >= 3);
+    short old_x = obj->x;
 
     if (emerged) {
 	obj->x += obj->direction;
@@ -257,6 +258,7 @@ static void move_rat(Object *obj) {
 	    if (RAT(obj)->was_ground) {
 		char diff = rat_diff(obj);
 		if (diff != obj->direction) {
+		    obj->x = old_x;
 		    obj->direction = diff;
 		    if (soldier.y > obj->y) {
 			obj->y++;
