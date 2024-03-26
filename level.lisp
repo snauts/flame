@@ -63,7 +63,8 @@
 (defun inject (box name pos)
   (if (= 0 pos)
       (cons name box)
-      (cons (first box) (inject (rest box) name (1- pos)))))
+      (let ((next-pos (if (stringp (first box)) pos (1- pos))))
+	(cons (first box) (inject (rest box) name next-pos)))))
 
 (defun for-all (box fn)
   (labels ((manipulate (x) (unless (null x) (funcall fn x))))
