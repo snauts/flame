@@ -468,10 +468,14 @@ void emit_arch_charlie_wave(u16 x) {
     callback(&arch_charlie_follow_up, 150, x);
 }
 
+static void pillar_back_stab(u16 x) {
+    setup_rat(x - 252, 176);
+}
+
 void emit_pillar_alpha(u16 x) {
     setup_rat(x - 28, 163);
     setup_rat(x - 108, 179);
-    setup_rat(x - 252, 176);
+    callback(&pillar_back_stab, 30, x);
 }
 
 static void emit_back_striker(u16 x) {
@@ -488,10 +492,14 @@ void emit_pillar_bravo(u16 x) {
     rat->cookie = x;
 }
 
+static void emit_pillar_middle(u16 x) {
+    setup_rat(x - 230, 163);
+}
+
 void emit_bridge_alpha(u16 x) {
     setup_rat(x - 40, 131);
     setup_rat(x + 88, 204);
-    setup_rat(x - 230, 163);
+    callback(&emit_pillar_middle, 30, x);
 }
 
 void emit_bridge_beta(u16 x) {
