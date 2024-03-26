@@ -258,6 +258,9 @@ static void move_rat(Object *obj) {
 		char diff = rat_diff(obj);
 		if (diff != obj->direction) {
 		    obj->direction = diff;
+		    if (soldier.y > obj->y) {
+			obj->y++;
+		    }
 		}
 		else {
 		    obj->velocity = 2;
