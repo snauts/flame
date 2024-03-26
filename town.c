@@ -408,6 +408,19 @@ void emit_dumpster_wave(u16 x) {
     callback(&dumpster_wave, 50, x - 80);
 }
 
+static void reverse_wave(u16 x) {
+    if ((x & 7) < 5) {
+	setup_rat(x, 163);
+	callback(&reverse_wave, 15, x - 15);
+    }
+}
+
+void emit_reverse_wave(u16 x) {
+    reverse_wave(x - 224);
+    setup_rat(x - 40, 176);
+    setup_rat(x - 52, 50);
+}
+
 void display_town(void) {
     display_french(&town_level);
 }
