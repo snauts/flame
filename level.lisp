@@ -132,6 +132,15 @@
 (defun trunc (list n)
   (nthcdr n list))
 
+(defun remove-str (list n)
+  (cond ((= n 0) list)
+	((null list) nil)
+	((stringp (first list)) (remove-str (rest list) n))
+	(t (cons (first list) (remove-str (rest list) (1- n))))))
+
+(defun consume (list n)
+  (remove-str (trunc list n) 48))
+
 (defun multiply (box n)
   (let ((result nil))
     (dotimes (i n result)
