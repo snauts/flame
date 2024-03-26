@@ -129,6 +129,7 @@
   (s-place 5 2 (town-wall 3 1))
   (loop for x from 1 to 21 by 20 do
     (s-place x 0 (lamp-post :base-h 4 :walkable 1 :forward t)))
+  (s-inject "emit_dumpster_wave" 18)
   (s-pop))
 
 (defun wall-join (w)

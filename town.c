@@ -391,6 +391,18 @@ void emit_house_block_rat_delta(u16 x) {
     rat->cookie = x - 252;
 }
 
+static void dumpster_wave(u16 x) {
+    if ((x & 7) < 5) {
+	setup_rat(x, 163);
+	callback(&dumpster_wave, 15, x + 17);
+    }
+}
+
+void emit_dumpster_wave(u16 x) {
+    setup_rat(x - 268, 176);
+    callback(&dumpster_wave, 50, x - 80);
+}
+
 void display_town(void) {
     display_french(&town_level);
 }
