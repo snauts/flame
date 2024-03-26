@@ -380,7 +380,7 @@ static void house_charlie_follow_up(u16 x) {
 }
 
 static void house_charlie_front_follow_up(u16 x) {
-    callback(&bottom_window_rat, 100, x - 206);
+    // callback(&bottom_window_rat, 100, x - 206);
     top_window_rat(x - 16);
 }
 
