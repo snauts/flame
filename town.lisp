@@ -163,7 +163,9 @@
     (s-place x 15 (lamp-post :base-h 2 :post-h 2 :brick 240)))
   (s-inject "emit_bridge_alpha" 12)
   (s-inject "emit_bridge_beta" 28)
-  (s-inject "emit_bridge_gamma" 52)
+  (s-inject "emit_bridge_gamma" 51)
+  (s-inject "emit_bridge_kappa" 67)
+  (s-inject "emit_bridge_delta" 82)
   (s-pop))
 
 (defun big-house ()

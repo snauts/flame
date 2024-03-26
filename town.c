@@ -509,15 +509,31 @@ void emit_bridge_beta(u16 x) {
 
 static void emit_bridge_three(u16 x) {
     if ((x & 7) < 3) {
-	setup_rat(x & ~7, 99);
 	short diff = soldier.x - x;
 	callback(&emit_bridge_three, 10, diff > 0 ? x - 15 : x + 17);
+	setup_rat(x & ~7, 99);
     }
 }
 
 void emit_bridge_gamma(u16 x) {
-    callback(&emit_bridge_three, 50, x - 96);
-    emit_bridge_three(x - 240);
+    callback(&emit_bridge_three, 75, x - 80);
+    emit_bridge_three(x - 256);
+}
+
+void emit_bridge_kappa(u16 x) {
+    emit_bridge_gamma(x);
+    callback(&emit_bridge_three, 225, x - 80);
+    callback(&emit_bridge_three, 150, x - 256);
+}
+
+static void town_last_rat(u16 x) {
+    setup_rat(x - 28, 204);
+}
+
+void emit_bridge_delta(u16 x) {
+    Rat *rat = setup_rat(x - 88, 131);
+    rat->fn = town_last_rat;
+    rat->cookie = x;
 }
 
 void display_town(void) {
