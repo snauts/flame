@@ -432,16 +432,21 @@ static void reverse_wave(u16 x) {
 void emit_reverse_wave(u16 x) {
     reverse_wave(x - 224);
     setup_rat(x - 52, 176);
-    setup_rat(x - 72, 51);
+    // setup_rat(x - 72, 51);
 }
 
-void emit_arch_alpha_wave(u16 x) {
+static void emit_arch_window_wave(u16 x) {
     setup_rat(x - 40, 112);
     setup_rat(x - 104, 112);
 }
 
+void emit_arch_alpha_wave(u16 x) {
+    emit_arch_window_wave(x);
+    setup_rat(x - 72, 164);
+}
+
 void emit_arch_bravo_wave(u16 x) {
-    emit_arch_alpha_wave(x);
+    emit_arch_window_wave(x);
     setup_rat(x - 168, 112);
     setup_rat(x - 232, 176);
 }
@@ -452,14 +457,13 @@ static void arch_final(u16 x) {
 }
 
 static void arch_charlie_follow_up(u16 x) {
-    setup_rat(x - 200, 164);
     setup_rat(x - 40, 176);
     setup_rat(x - 120, 51);
     callback(&arch_final, 100, x);
 }
 
 void emit_arch_charlie_wave(u16 x) {
-    emit_arch_alpha_wave(x);
+    emit_arch_window_wave(x);
     setup_rat(x - 168, 112);
     callback(&arch_charlie_follow_up, 150, x);
 }
