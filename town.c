@@ -421,6 +421,18 @@ void emit_reverse_wave(u16 x) {
     setup_rat(x - 72, 51);
 }
 
+void emit_arch_alpha_wave(u16 x) {
+    setup_rat(x - 40, 112);
+    setup_rat(x - 104, 112);
+}
+
+void emit_arch_bravo_wave(u16 x) {
+    setup_rat(x - 40, 112);
+    setup_rat(x - 104, 112);
+    setup_rat(x - 168, 112);
+    setup_rat(x - 232, 176);
+}
+
 void display_town(void) {
     display_french(&town_level);
 }
