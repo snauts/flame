@@ -507,6 +507,19 @@ void emit_bridge_beta(u16 x) {
     setup_rat(x - 60, 99);
 }
 
+static void emit_bridge_three(u16 x) {
+    if ((x & 7) < 3) {
+	setup_rat(x & ~7, 99);
+	short diff = soldier.x - x;
+	callback(&emit_bridge_three, 10, diff > 0 ? x - 15 : x + 17);
+    }
+}
+
+void emit_bridge_gamma(u16 x) {
+    callback(&emit_bridge_three, 50, x - 96);
+    emit_bridge_three(x - 240);
+}
+
 void display_town(void) {
     display_french(&town_level);
 }
