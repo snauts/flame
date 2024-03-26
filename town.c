@@ -469,7 +469,7 @@ void emit_arch_charlie_wave(u16 x) {
 }
 
 void emit_pillar_alpha(u16 x) {
-    setup_rat(x - 28, 164);
+    setup_rat(x - 28, 163);
     setup_rat(x - 108, 179);
     setup_rat(x - 252, 176);
 }
@@ -486,6 +486,17 @@ void emit_pillar_bravo(u16 x) {
     Rat *rat = setup_rat(x - 28, 179);
     rat->fn = emit_pillar_follow_up;
     rat->cookie = x;
+}
+
+void emit_bridge_alpha(u16 x) {
+    setup_rat(x - 40, 131);
+    setup_rat(x + 88, 204);
+    setup_rat(x - 230, 163);
+}
+
+void emit_bridge_beta(u16 x) {
+    setup_rat(x - 40, 204);
+    setup_rat(x - 60, 99);
 }
 
 void display_town(void) {

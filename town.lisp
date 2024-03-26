@@ -161,6 +161,8 @@
   (s-place 12 14 (shingles 53))
   (loop for x from 14 to 62 by 16 do
     (s-place x 15 (lamp-post :base-h 2 :post-h 2 :brick 240)))
+  (s-inject "emit_bridge_alpha" 12)
+  (s-inject "emit_bridge_beta" 28)
   (s-pop))
 
 (defun big-house ()
