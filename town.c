@@ -474,7 +474,7 @@ static void pillar_back_stab(u16 x) {
 
 void emit_pillar_alpha(u16 x) {
     setup_rat(x - 28, 163);
-    setup_rat(x - 108, 179);
+    setup_rat(x - 100, 179);
     callback(&pillar_back_stab, 30, x);
 }
 
