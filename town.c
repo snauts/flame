@@ -479,7 +479,7 @@ static void emit_back_striker(u16 x) {
 }
 
 static void emit_pillar_follow_up(u16 x) {
-    callback(&emit_back_striker, 100, x);
+    callback(&emit_back_striker, 90, x);
 }
 
 void emit_pillar_bravo(u16 x) {
