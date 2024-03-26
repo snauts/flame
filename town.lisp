@@ -208,6 +208,7 @@
   (s-place 49 2 (lamp-post :base-h 2 :brick 184))
   (s-inject "emit_arch_alpha_wave" 30)
   (s-inject "emit_arch_bravo_wave" 38)
+  (s-inject "emit_arch_charlie_wave" 46)
   (s-inject "emit_reverse_wave" 16)
   (s-pop))
 
