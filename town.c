@@ -585,3 +585,9 @@ void display_ramp(void) {
     display_french(&ramp_level);
     ramp_looper(0);
 }
+
+void display_king(void) {
+    display_french(&king_level);
+    display_progress_bar();
+    lock_screen(1);
+}

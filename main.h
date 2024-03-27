@@ -238,6 +238,7 @@ void display_dunes(void);
 void display_hermit(void);
 void display_town(void);
 void display_ramp(void);
+void display_king(void);
 void announce_johnny(void);
 void announce_hans(void);
 void announce_hiroshi(void);

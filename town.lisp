@@ -282,7 +282,13 @@
   (s-join (empty 48))
   (s-pop))
 
+(defun king-level ()
+  (setf *seed* 1715)
+  (s-push (town-walk 16))
+  (s-pop))
+
 (defun commit-save ()
   (push-level "town_level" (town-level))
   (push-level "ramp_level" (ramp-level))
+  (push-level "king_level" (king-level))
   (save-level "town.inc" *town-walkable*))
