@@ -540,6 +540,34 @@ void display_town(void) {
     display_french(&town_level);
 }
 
+static void ramp_pattern_1(u16 x) {
+}
+
+static void ramp_pattern_2(u16 x) {
+}
+
+static const Callback ramp_patterns[] = {
+    &ramp_pattern_1,
+    &ramp_pattern_2,
+};
+
+static void ramp_looper(u16 i) {
+    short x = soldier.x - 24 * 8;
+    if (x > 0) {
+	for (u16 i = 0; i < ARRAY_SIZE(ramp_patterns); i++) {
+	    if (x < 400) {
+		ramp_patterns[i](x);
+		break;
+	    }
+	    else {
+		x -= 400;
+	    }
+	}
+    }
+    schedule(&ramp_looper, 0);
+}
+
 void display_ramp(void) {
     display_french(&ramp_level);
+    ramp_looper(0);
 }
