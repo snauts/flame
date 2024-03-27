@@ -257,7 +257,8 @@
   (s-push nil)
   (let ((half (floor h 2)))
     (loop for x from 12 to 36 by 12 do
-      (s-place x 0 (brick-column 1 half)))
+      (s-place x 0 (brick-column 1 half))
+      (unless (= h 4) (s-place (1+ x) (- h 5) (brick-window 2 2))))
     (when next (s-place 50 0 (brick-column 1 (+ 2 half))))
     (s-place 48 0 (brick-column 2 half))
     (s-place 0 h (shingles 57))

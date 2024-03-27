@@ -551,18 +551,14 @@ void display_town(void) {
 }
 
 static void ramp_pattern_sandwich(u16 x) {
-    if (x > 64 && (counter & 0x1F) == 0) {
-	setup_rat(soldier.x - 48, 179);
-	setup_rat(soldier.x + 88, 179);
-    }
 }
 
-static void ramp_pattern_2(u16 x) {
+static void ramp_pattern_scissors(u16 x) {
 }
 
 static const Callback ramp_patterns[] = {
     &ramp_pattern_sandwich,
-    &ramp_pattern_2,
+    &ramp_pattern_scissors,
 };
 
 static void ramp_looper(u16 i) {
