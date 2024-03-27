@@ -74,8 +74,9 @@
   (reduce #'on-top (mapcar #'street-cell cells)))
 
 (defun shingles (n &key hang)
-  (let ((middle (multiply (stack-cells 144 168) n)))
-    (join (stack-cells 136 160) middle (stack-cells (if hang 248 152) 176))))
+  (let ((middle (multiply (stack-cells 144 168) n))
+	(ending (apply #'stack-cells (if hang '(248 256) '(152 176)))))
+    (join (stack-cells 136 160) middle ending)))
 
 (defun town-wall-top (w h)
   (s-push nil)
@@ -286,7 +287,9 @@
   (setf *seed* 1715)
   (s-push (town-walk 16))
   (s-place 10 2 (town-wall 1 3))
+  (s-place 7 10 (shingles 10 :hang t))
   (s-place 40 2 (town-wall 1 3))
+  (s-place 38 10 (shingles 10))
   (s-place 19 2 (town-wall 4 0))
   (s-place 21 6 (town-wall-top 3 1))
   (s-place 21 5 (wall-join 6))
