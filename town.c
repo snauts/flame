@@ -271,6 +271,26 @@ static void rat_in_air(Object *obj, u16 old_x) {
     }
 }
 
+static void animate_rat_run(Object *obj) {
+    if ((obj->life & 3) == 0) {
+	obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
+	if (is_rat_at_screen_edge(obj) && live_rats() < 4) {
+	    obj->direction = 1;
+	}
+    }
+}
+
+static void rat_death_follow_up(Object *obj) {
+    Rat *rat = RAT(obj);
+    if (rat->fn != NULL) {
+	rat->fn(rat->cookie);
+	rat->fn = NULL;
+    }
+    if (obj->place == -1) {
+	dead_rats++;
+    }
+}
+
 static void move_rat(Object *obj) {
     u16 land = 0, palette = 2;
     Sprite *sprite = obj->sprite;
@@ -283,23 +303,13 @@ static void move_rat(Object *obj) {
 	if (emerged && !land) {
 	    rat_in_air(obj, old_x);
 	}
-	else if ((obj->life & 3) == 0) {
-	    obj->frame = obj->frame == 8 ? 3 : obj->frame + 1;
-	    if (is_rat_at_screen_edge(obj) && live_rats() < 4) {
-		obj->direction = 1;
-	    }
+	else {
+	    animate_rat_run(obj);
 	}
 	palette = 3;
     }
     else {
-	Rat *rat = RAT(obj);
-	if (rat->fn != NULL) {
-	    rat->fn(rat->cookie);
-	    rat->fn = NULL;
-	}
-	if (obj->place == -1) {
-	    dead_rats++;
-	}
+	rat_death_follow_up(obj);
     }
 
     sprite->cfg = TILE(palette, RAT_TILES + 4 * obj->frame);
