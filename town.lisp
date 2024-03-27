@@ -30,7 +30,8 @@
     (s-join (bottom-boulder))))
 
 (defun wall-bottom-middle (w)
-  (on-top (multiply (street 1 1 5 2) w) (wall-bottom-top (* 2 w))))
+  (let ((bottom (if (= w 0) (street 3 1 5 2) (multiply (street 1 1 5 2) w))))
+    (on-top bottom (wall-bottom-top (max 1 (* 2 w))))))
 
 (defun wall-bottom (w)
   (join (street 0 1 1 3) (wall-bottom-middle w) (street 5 1 8 3)))
@@ -65,7 +66,7 @@
   (join (small-brick) (large-brick-row n) (small-brick)))
 
 (defun brick-row (n)
-  (on-top (brick-bottom-row (1- n)) (large-brick-row n)))
+  (on-top (brick-bottom-row (1- n)) (large-brick-row (max 1 n))))
 
 (defun wall-row (w)
   (join (street 0 3 1 5) (brick-row (* 2 w)) (street 5 3 7 5)))
@@ -82,7 +83,7 @@
   (s-push nil)
   (loop for y from 0 to (* 2 (1- h)) by 2 do
     (s-place 0 y (wall-row w)))
-  (s-place 0 (* 2 h) (shingles (1+ (* 4 w))))
+  (s-place 0 (* 2 h) (shingles (1+ (max 2 (* 4 w)))))
   (s-pop))
 
 (defun town-wall (w h)
