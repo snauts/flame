@@ -240,7 +240,7 @@ static u16 live_rats(void) {
 
 static u16 advance_rat(Object *obj) {
     obj->x += obj->direction;
-    if ((counter & 7) == 0) {
+    if ((obj->life & 7) == 0) {
 	obj->x += obj->direction;
     }
     return advance_obj(obj, 8, 8);
