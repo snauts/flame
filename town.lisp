@@ -258,10 +258,14 @@
   (let ((half (floor h 2)))
     (loop for x from 12 to 36 by 12 do
       (s-place x 0 (brick-column 1 half))
-      (unless (= h 4) (s-place (1+ x) (- h 5) (brick-window 2 2))))
+      (if (<= h 8)
+	  (s-place (+ x 1) h (town-wall-top 0 8))
+	  (s-place (1+ x) (- h 5) (brick-window 2 2))))
     (when next (s-place 50 0 (brick-column 1 (+ 2 half))))
     (s-place 48 0 (brick-column 2 half))
     (s-place 0 h (shingles 57))
+    (loop for x from 12 to 36 by 12 do
+      (when (<= h 8) (s-place (+ x 1) (1+ h) (wall-join 1))))
     (when next (s-place 50 (1+ h) (wall-join 2)))
     (s-place 2 (1+ h) (lamp-post :base-h 1 :post-h 0 :brick 240))
     (s-pop)))
