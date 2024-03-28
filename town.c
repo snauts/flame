@@ -561,7 +561,7 @@ void display_town(void) {
 static void ramp_pattern_sandwich(u16 time) {
     if ((time & 0x3F) == 0) {
 	setup_projectile(RAMP_OFFSET(0, 1), 219, 20);
-	setup_projectile(RAMP_OFFSET(0, 2), 115, 11);
+	setup_projectile(RAMP_OFFSET(0, 2), 115, 11)->gravity = 30;
     }
 }
 
