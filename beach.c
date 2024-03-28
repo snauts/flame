@@ -241,7 +241,7 @@ static void shoot_move(Object *obj) {
     if (++obj->velocity == this->len) {
 	obj->velocity = 0;
     }
-    if (obj->y > SCR_HEIGHT) {
+    if (obj->y > SCR_HEIGHT - (byte) obj->gravity) {
 	kill_mob_silently(obj);
     }
 }
