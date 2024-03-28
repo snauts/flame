@@ -253,19 +253,41 @@
 	(inject  (town-walk 12) "level_done_burn_mobs" 32)
 	(empty 48)))
 
+(defun brick-hole (type)
+  (case type
+    (1 (street 8 3 10 5))
+    (2 (on-top (street 10 1 12 2) (street  8 4 10 5)))
+    (3 (on-top (street  8 3 10 4) (street 10 2 12 3)))))
+
+(defvar *ramp-columns* nil)
+
+(defparameter *ramp-column-data*
+  '((4 3) (6 3) (8 0)
+    (0 3) (0 4) (0 5)
+    (0 0) (0 0) (0 0)
+    (0 0) (0 0) (0 0)
+    (0 0) (0 0) (0 0)))
+
+(defun ramp-pillar (x h)
+  (destructuring-bind (column bottom) (pop *ramp-columns*)
+    (when (> bottom 0)
+      (s-place (+ x 2) (- h bottom) (brick-hole (if (oddp bottom) 2 3))))
+    (when (> column 0)
+      (s-place (+ x 1) h (town-wall-top 0 column))
+      (s-place (+ x 2) (+ h (* 2 (1- column))) (brick-hole 1))
+      x)))
+
 (defun ramp-stage (h &key next)
   (s-push nil)
-  (let ((half (floor h 2)))
+  (let ((half (floor h 2)) (join nil))
     (loop for x from 12 to 36 by 12 do
       (s-place x 0 (brick-column 1 half))
-      (if (<= h 8)
-	  (s-place (+ x 1) h (town-wall-top 0 8))
-	  (s-place (1+ x) (- h 5) (brick-window 2 2))))
+      (push (ramp-pillar x h) join))
     (when next (s-place 50 0 (brick-column 1 (+ 2 half))))
     (s-place 48 0 (brick-column 2 half))
     (s-place 0 h (shingles 57))
-    (loop for x from 12 to 36 by 12 do
-      (when (<= h 8) (s-place (+ x 1) (1+ h) (wall-join 1))))
+    (dolist (x (remove nil join))
+      (s-place (+ x 1) (1+ h) (wall-join 1)))
     (when next (s-place 50 (1+ h) (wall-join 2)))
     (s-place 2 (1+ h) (lamp-post :base-h 1 :post-h 0 :brick 240))
     (s-pop)))
@@ -283,8 +305,9 @@
   (setf *seed* 1789)
   (s-push (town-walk 8))
   (s-place 24 2 (town-wall 1 0))
-  (loop for x from 24 by 50 for y from 4 to 20 by 4 do
-    (s-place x 0 (ramp-stage y :next (/= y 20))))
+  (let ((*ramp-columns* (copy-tree *ramp-column-data*)))
+    (loop for x from 24 by 50 for y from 4 to 20 by 4 do
+      (s-place x 0 (ramp-stage y :next (/= y 20)))))
   (s-join (inject (finish-ramp) "level_done_burn_mobs" 34))
   (s-join (empty 48))
   (s-pop))
