@@ -199,10 +199,12 @@ extern const Image spit_img;
 
 static void display_french(const Level *level) {
     /* load tiles */
+    extern u16 spit_tile;
     load_image(&town_img, 1, 0);
     load_image(&street_img, 129, 1);
     load_image(&rat_img, RAT_TILES, 3);
     load_tiles(&spit_img, SLIME_TILES);
+    spit_tile = TILE(0, SLIME_TILES);
 
     load_burn_tiles(BURN_TILES);
 
@@ -554,7 +556,13 @@ void display_town(void) {
     display_french(&town_level);
 }
 
-static void ramp_pattern_sandwich(u16 x) {
+#define RAMP_OFFSET(n, i) (24 * 8 + (400 * (n)) + (12 * 8 * (i)) + 19)
+
+static void ramp_pattern_sandwich(u16 time) {
+    if ((time & 0x3F) == 0) {
+	setup_projectile(RAMP_OFFSET(0, 1), 219, 20);
+	setup_projectile(RAMP_OFFSET(0, 2), 115, 11);
+    }
 }
 
 static void ramp_pattern_scissors(u16 x) {
@@ -565,12 +573,14 @@ static const Callback ramp_patterns[] = {
     &ramp_pattern_scissors,
 };
 
-static void ramp_looper(u16 i) {
+static void ramp_looper(u16 time) {
     short x = soldier.x - 24 * 8;
+    callback(&ramp_looper, 0, time + 1);
+
     if (x > 0) {
 	for (u16 i = 0; i < ARRAY_SIZE(ramp_patterns); i++) {
 	    if (x < 400) {
-		ramp_patterns[i](x);
+		ramp_patterns[i](time);
 		break;
 	    }
 	    else {
@@ -578,7 +588,6 @@ static void ramp_looper(u16 i) {
 	    }
 	}
     }
-    schedule(&ramp_looper, 0);
 }
 
 void display_ramp(void) {
