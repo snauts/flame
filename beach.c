@@ -193,52 +193,52 @@ static char edge_throw(Object *obj) {
 }
 
 struct Shoot {
-    byte mx, my;
-    char dir_x;
-    char dir_y;
-    byte len;
+    char mx;
+    char my;
+    u16 len;
 };
 
 static const struct Shoot shoot[] = {
-    { mx: 0x0, my: 0x7, dir_x: -1, dir_y:  1, len: 3 },
-    { mx: 0x1, my: 0x7, dir_x: -1, dir_y:  1, len: 3 },
-    { mx: 0x3, my: 0x7, dir_x: -1, dir_y:  1, len: 3 },
-    { mx: 0x7, my: 0x7, dir_x: -1, dir_y:  1, len: 3 },
-    { mx: 0x1, my: 0x7, dir_x:  1, dir_y:  1, len: 3 },
-    { mx: 0x7, my: 0x0, dir_x: -1, dir_y:  1, len: 3 },
-    { mx: 0x7, my: 0x1, dir_x: -1, dir_y: -1, len: 3 },
+    { mx:  0, my:  3, len: 3 },
+    { mx: -1, my:  3, len: 3 },
+    { mx: -2, my:  3, len: 3 },
+    { mx: -3, my:  3, len: 3 },
+    { mx:  1, my:  3, len: 3 },
+    { mx: -3, my:  0, len: 3 },
+    { mx: -3, my: -1, len: 3 },
 
-    /* 7 */
-    { mx: 0xAA, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
-    { mx: 0x94, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
-    { mx: 0x11, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
-    { mx: 0x01, my: 0xFF, dir_x: -1, dir_y: 1, len: 8 },
-    { mx: 0x00, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
-    { mx: 0x01, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
-    { mx: 0x11, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
-    { mx: 0x94, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
-    { mx: 0xAA, my: 0xFF, dir_x:  1, dir_y: 1, len: 8 },
+    { mx: -1, my:  2, len: 2 },
+    { mx: -3, my:  8, len: 8 },
+    { mx: -1, my:  4, len: 4 },
+    { mx: -1, my:  8, len: 8 },
+    { mx:  0, my:  8, len: 8 },
+    { mx:  1, my:  8, len: 8 },
+    { mx:  1, my:  4, len: 4 },
+    { mx:  3, my:  8, len: 8 },
+    { mx:  1, my:  2, len: 2 },
 
-    /* 16 */
-    { mx: 0xFF, my: 0x00, dir_x: 1, dir_y: -1, len: 8 },
-    { mx: 0xFF, my: 0xAA, dir_x: 1, dir_y: -1, len: 8 },
-    { mx: 0xFE, my: 0xEF, dir_x: 1, dir_y: -1, len: 8 },
-    { mx: 0xAA, my: 0xFF, dir_x: 1, dir_y: -1, len: 8 },
-    { mx: 0x00, my: 0xFF, dir_x: 1, dir_y: -1, len: 8 },
+    { mx:  8, my:  0, len: 8 },
+    { mx:  2, my: -1, len: 2 },
+    { mx:  7, my: -7, len: 8 },
+    { mx:  1, my: -2, len: 2 },
+    { mx:  0, my: -8, len: 8 },
 
-    /* 21 */
-    { mx: 0xFF, my: 0xAA, dir_x:-1, dir_y: -1, len: 8 },
-    { mx: 0xFE, my: 0xEF, dir_x:-1, dir_y: -1, len: 8 },
-    { mx: 0xAA, my: 0xFF, dir_x:-1, dir_y: -1, len: 8 },
+    { mx: -2, my: -1, len: 2 },
+    { mx: -7, my: -7, len: 8 },
+    { mx: -1, my: -2, len: 2 },
 };
+
+static char shoot_step(char setup, char offset) {
+    return abs(setup) <= offset ? 0 : (setup < 0 ? -1 : 1);
+}
 
 static void shoot_move(Object *obj) {
     const struct Shoot *this = shoot + obj->direction;
-    u16 dx = (this->mx >> obj->velocity) & 1;
-    u16 dy = (this->my >> obj->velocity) & 1;
-    obj->x = obj->x + (this->dir_x > 0 ? dx : -dx);
-    obj->y = obj->y + (this->dir_y > 0 ? dy : -dy);
-    if (++obj->velocity == this->len) {
+    obj->x = obj->x + shoot_step(this->mx, obj->velocity);
+    obj->y = obj->y + shoot_step(this->my, obj->velocity);
+
+    obj->velocity++;
+    if (obj->velocity == this->len) {
 	obj->velocity = 0;
     }
     if (obj->y > SCR_HEIGHT - (byte) obj->gravity) {
@@ -515,11 +515,11 @@ static void gunner_crab(Object *obj) {
 }
 
 static const char five[] = { 5, 1, 2, 3, 4, 0 };
-static const char cone[] = { 3, 1, 0, 4 };
-static const char even[] = { 1, 5 };
 static const char fast[] = { 3, -32, 0, 2 };
+static const char cone[] = { 3, 1, 0, 4 };
 static const char saw[] = { 2, 1, 3 };
 static const char ray[] = { 2, 5, 6 };
+static const char even[] = { 1, 5 };
 
 static const char rain[] = {
     18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14, -40,
