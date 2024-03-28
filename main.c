@@ -12,10 +12,6 @@ u16 strlen(const char *str) {
     return len;
 }
 
-short abs(short value) {
-    return value < 0 ? -value : value;
-}
-
 short clamp(short value, short max) {
     if (value > max) {
 	return max;
