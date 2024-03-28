@@ -195,7 +195,7 @@ int main(int argc, char **argv) {
     }
     dprintf(out, "};\n");
 
-    dprintf(out, "static const Image %s_img = {\n", str);
+    dprintf(out, "const Image %s_img = {\n", str);
     dprintf(out, ".palette = %s_palette,\n", str);
     dprintf(out, ".tiles = %s_tiles,\n", str);
     dprintf(out, ".size = %d,\n", output_size);

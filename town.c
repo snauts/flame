@@ -8,6 +8,7 @@
 
 #define RAT_TILES	257
 #define BURN_TILES	(RAT_TILES + 9 * 4)
+#define SLIME_TILES	(BURN_TILES + 8 * 4)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -194,11 +195,14 @@ static u16 dead_rats;
 
 #define RAT(obj) ((Rat *) (obj->private))
 
+extern const Image spit_img;
+
 static void display_french(const Level *level) {
     /* load tiles */
     load_image(&town_img, 1, 0);
     load_image(&street_img, 129, 1);
     load_image(&rat_img, RAT_TILES, 3);
+    load_tiles(&spit_img, SLIME_TILES);
 
     load_burn_tiles(BURN_TILES);
 
