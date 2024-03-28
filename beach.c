@@ -10,6 +10,8 @@
 
 #include "beach.inc"
 
+u16 spit_tile;
+
 static void trail_could(u16 x, u16 y, u16 l1, u16 l2) {
     for (u16 i = 0; i < 8; i++) {
 	u16 count = 1;
@@ -271,7 +273,7 @@ static void animate_spit(Object *obj, u16 is_growing) {
 	obj->frame = spittle_animation(obj->life, is_growing);
     }
 
-    obj->sprite->cfg = TILE(3, 313 + obj->frame);
+    obj->sprite->cfg = spit_tile + obj->frame;
 }
 
 static void move_spit(Object *obj) {
@@ -609,6 +611,7 @@ static void display_nippon(const Level *level) {
     load_burn_tiles(BURN_TILES);
 
     load_tiles(&spit_img, 313);
+    spit_tile = TILE(3, 313);
 
     /* load tiles */
     load_soldier_tiles(2);
@@ -640,7 +643,7 @@ void display_dunes(void) {
     display_nippon(&dunes_level);
 }
 
-static void move_boss_spit(Object *obj) {
+static void move_projectile(Object *obj) {
     u16 is_growing = (obj->life < 16);
     if (is_mob_alive(obj) && !is_growing) {
 	shoot_move(obj);
@@ -651,14 +654,17 @@ static void move_boss_spit(Object *obj) {
 
 static char is_hermit_alive(void);
 
+Object *setup_projectile(u16 x, u16 y, char pattern) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
+    mob_fn(obj, &move_projectile);
+    obj->flags |= O_PROJECTILE;
+    obj->direction = pattern;
+    obj->death = 8;
+    return obj;
+}
+
 static void setup_boss_spit(u16 x, u16 y, char pattern) {
-    if (is_hermit_alive()) {
-	Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
-	mob_fn(obj, &move_boss_spit);
-	obj->flags |= O_PROJECTILE;
-	obj->direction = pattern;
-	obj->death = 8;
-    }
+    if (is_hermit_alive()) setup_projectile(x, y, pattern);
 }
 
 static Object **hermit;
