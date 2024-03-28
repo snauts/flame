@@ -278,7 +278,9 @@ void display_title(void) {
 
 static void end_game_text(void) {
     display_text("GAME OVER", 16, 12);
+#if defined(VERBOSE)
     display_text("BEER FOREVER!", 14, 14);
+#endif
 }
 
 static const byte sing_intervals[] = {
