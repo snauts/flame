@@ -564,6 +564,18 @@ static void ramp_pattern_sandwich(u16 i) {
     callback(&ramp_pattern_sandwich, 24, i < 2 ? i + 1 : 0);
 }
 
+static void ramp_pattern_M_is_for_murder(u16 i) {
+    setup_projectile(RAMP_OFFSET(1, 1), 51,   7)->gravity = 62;
+    setup_projectile(RAMP_OFFSET(1, 1), 51,  11)->gravity = 62;
+    setup_projectile(RAMP_OFFSET(1, 1), 51,  15)->gravity = 62;
+    setup_projectile(RAMP_OFFSET(1, 2), 187, 19)->gravity = 0;
+    setup_projectile(RAMP_OFFSET(1, 2), 187, 23)->gravity = 0;
+    setup_projectile(RAMP_OFFSET(1, 3), 51,   7)->gravity = 62;
+    setup_projectile(RAMP_OFFSET(1, 3), 51,  11)->gravity = 62;
+    setup_projectile(RAMP_OFFSET(1, 3), 51,  15)->gravity = 62;
+    callback(&ramp_pattern_M_is_for_murder, 64, 0);
+}
+
 extern Callback generator;
 
 #define RAMP_NR(i) (400 * (i))
@@ -576,6 +588,7 @@ void emit_ramp(u16 x) {
 	generator = &ramp_pattern_sandwich;
 	break;
     case RAMP_NR(2):
+	generator = &ramp_pattern_M_is_for_murder;
 	break;
     case RAMP_NR(3):
 	break;
