@@ -566,12 +566,22 @@ static void ramp_pattern_sandwich(u16 i) {
 
 extern Callback generator;
 
+#define RAMP_NR(i) (400 * (i))
+
 void emit_ramp(u16 x) {
     if (generator) cancel_timer(generator);
     apply_to_all_mobs(&kill_mob_silently);
     switch (x) {
-    case 400:
+    case RAMP_NR(1):
 	generator = &ramp_pattern_sandwich;
+	break;
+    case RAMP_NR(2):
+	break;
+    case RAMP_NR(3):
+	break;
+    case RAMP_NR(4):
+	break;
+    case RAMP_NR(5):
 	break;
     default:
 	error("EMIT_RAMP x:%d\n", x);
