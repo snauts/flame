@@ -17,14 +17,14 @@
 #define VRAM_SCROLL_A	0xFC00
 #define VRAM_SCROLL_B	0xFC02
 
-#define HEAP_SIZE	4096
+#define HEAP_SIZE	8192
 #define VRAM_BUF_SIZE	128
 #define DMA_BUF_SIZE	4096
 #define DMA_CHUNKS	8
 #define ON_SCREEN	128
 #define SCR_WIDTH	320
 #define SCR_HEIGHT	224
-#define MAX_MOBS	32
+#define MAX_MOBS	64
 #define MAX_POSITION	496
 #define BAR_SIZE	24
 #define BAR_HEALTH	(8 * BAR_SIZE)
