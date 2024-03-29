@@ -313,8 +313,8 @@ void display_mountains(void) {
     display_alps(&mountain_level);
 }
 
+Callback generator;
 static Object *prev;
-static Callback generator;
 void display_plateau(void) {
     display_alps(&plateau_level);
     generator = NULL;

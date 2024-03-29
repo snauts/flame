@@ -301,6 +301,9 @@
     (s-place (+ x 2) 21 (lamp-post :base-h 1 :post-h 0 :brick 240)))
   (join (empty 2) (s-pop)))
 
+(defun ramp-inject-triggers ()
+  (dotimes (i 5) (s-inject "emit_ramp" (* 50 (1+ i)))))
+
 (defun ramp-level ()
   (setf *seed* 1789)
   (s-push (town-walk 8))
@@ -309,6 +312,7 @@
     (loop for x from 24 by 50 for y from 4 to 20 by 4 do
       (s-place x 0 (ramp-stage y :next (/= y 20)))))
   (s-join (inject (finish-ramp) "level_done_burn_mobs" 34))
+  (ramp-inject-triggers)
   (s-join (empty 48))
   (s-pop))
 

@@ -558,53 +558,31 @@ void display_town(void) {
 
 #define RAMP_OFFSET(n, i) (24 * 8 + (400 * (n)) + (12 * 8 * (i)) + 19)
 
-static void ramp_pattern_sandwich(u16 time) {
-    u16 i = 0;
-    switch (time & 0x3F) {
-    case 0:
-	i = 1;
-	break;
-    case 24:
-	i = 2;
-	break;
-    case 48:
-	i = 3;
-	break;
-    }
-    if (i > 0) {
-	setup_projectile(RAMP_OFFSET(0, i), 83,  7)->gravity = 30;
-	setup_projectile(RAMP_OFFSET(0, i), 83, 15)->gravity = 30;
-    }
+static void ramp_pattern_sandwich(u16 i) {
+    setup_projectile(RAMP_OFFSET(0, i + 1), 83,  7)->gravity = 30;
+    setup_projectile(RAMP_OFFSET(0, i + 1), 83, 15)->gravity = 30;
+    callback(&ramp_pattern_sandwich, 24, i < 2 ? i + 1 : 0);
 }
 
-static void ramp_pattern_scissors(u16 x) {
-}
+extern Callback generator;
 
-static const Callback ramp_patterns[] = {
-    &ramp_pattern_sandwich,
-    &ramp_pattern_scissors,
-};
-
-static void ramp_looper(u16 time) {
-    short x = soldier.x - 24 * 8;
-    callback(&ramp_looper, 0, time + 1);
-
-    if (x > 0) {
-	for (u16 i = 0; i < ARRAY_SIZE(ramp_patterns); i++) {
-	    if (x < 400) {
-		ramp_patterns[i](time);
-		break;
-	    }
-	    else {
-		x -= 400;
-	    }
-	}
+void emit_ramp(u16 x) {
+    if (generator) cancel_timer(generator);
+    apply_to_all_mobs(&kill_mob_silently);
+    switch (x) {
+    case 400:
+	generator = &ramp_pattern_sandwich;
+	break;
+    default:
+	error("EMIT_RAMP x:%d\n", x);
+	break;
     }
+    callback(generator, 16, 0);
 }
 
 void display_ramp(void) {
     display_french(&ramp_level);
-    ramp_looper(0);
+    generator = NULL;
 }
 
 void display_king(void) {
