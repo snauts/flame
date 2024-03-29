@@ -559,13 +559,21 @@ void display_town(void) {
 #define RAMP_OFFSET(n, i) (24 * 8 + (400 * (n)) + (12 * 8 * (i)) + 19)
 
 static void ramp_pattern_sandwich(u16 time) {
+    u16 i = 0;
     switch (time & 0x3F) {
     case 0:
-	setup_projectile(RAMP_OFFSET(0, 1), 219, 20);
+	i = 1;
 	break;
-    case 32:
-	setup_projectile(RAMP_OFFSET(0, 2), 115, 11)->gravity = 30;
+    case 24:
+	i = 2;
 	break;
+    case 48:
+	i = 3;
+	break;
+    }
+    if (i > 0) {
+	setup_projectile(RAMP_OFFSET(0, i), 83,  7)->gravity = 30;
+	setup_projectile(RAMP_OFFSET(0, i), 83, 15)->gravity = 30;
     }
 }
 

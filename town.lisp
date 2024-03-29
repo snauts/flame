@@ -262,7 +262,7 @@
 (defvar *ramp-columns* nil)
 
 (defparameter *ramp-column-data*
-  '((4 3) (6 3) (8 0)
+  '((8 0) (8 0) (8 0)
     (0 3) (0 4) (0 5)
     (0 0) (0 0) (0 0)
     (0 0) (0 0) (0 0)
