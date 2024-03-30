@@ -591,6 +591,32 @@ static void ramp_pattern_W_is_for_walrus(u16 i) {
     callback(&ramp_pattern_W_is_for_walrus, 32, !i);
 }
 
+static void ramp_pattern_D_is_for_daisies(u16 i) {
+    switch (i) {
+    case 0:
+	setup_projectile(RAMP_OFFSET(4, 1), 35, 16);
+	break;
+    case 4:
+	setup_projectile(RAMP_OFFSET(4, 3), 35, 5);
+	break;
+    case 1:
+    case 5:
+	setup_projectile(RAMP_OFFSET(4, 1), 91, 20);
+	break;
+    case 2:
+    case 6:
+	setup_projectile(RAMP_OFFSET(4, 2), 91, 20);
+	break;
+    case 3:
+    case 7:
+	setup_projectile(RAMP_OFFSET(4, 3), 91, 20);
+	break;
+    default:
+	break;
+    }
+    callback(&ramp_pattern_D_is_for_daisies, 25, i >= 7 ? 0 : i + 1);
+}
+
 extern Callback generator;
 
 #define RAMP_NR(i) (400 * (i))
@@ -611,6 +637,7 @@ void emit_ramp(u16 x) {
     case RAMP_NR(4):
 	break;
     case RAMP_NR(5):
+	generator = &ramp_pattern_D_is_for_daisies;
 	break;
     default:
 	error("EMIT_RAMP x:%d\n", x);

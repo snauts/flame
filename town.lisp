@@ -265,8 +265,8 @@
   '((8 0) (8 0) (8 0)
     (8 0) (0 3) (8 0)
     (0 3) (6 0) (0 3)
-    (0 0) (0 0) (0 0)
-    (0 0) (0 0) (0 0)))
+    (4 3) (4 3) (4 3)
+    (3 3) (0 3) (3 3)))
 
 (defun ramp-pillar (x h)
   (destructuring-bind (column bottom) (pop *ramp-columns*)
