@@ -576,6 +576,21 @@ static void ramp_pattern_M_is_for_murder(u16 i) {
     callback(&ramp_pattern_M_is_for_murder, 64, 0);
 }
 
+static void ramp_pattern_W_is_for_walrus(u16 i) {
+    if (i == 0) {
+	setup_projectile(RAMP_OFFSET(2, 1), 155, 19);
+	setup_projectile(RAMP_OFFSET(2, 3), 155, 23);
+	setup_projectile(RAMP_OFFSET(2, 2), 51,  11)->gravity = 94;
+    }
+    else {
+	setup_projectile(RAMP_OFFSET(2, 1), 155, 23);
+	setup_projectile(RAMP_OFFSET(2, 3), 155, 19);
+	setup_projectile(RAMP_OFFSET(2, 2), 51,   7)->gravity = 94;
+	setup_projectile(RAMP_OFFSET(2, 2), 51,  15)->gravity = 94;
+    }
+    callback(&ramp_pattern_W_is_for_walrus, 32, !i);
+}
+
 extern Callback generator;
 
 #define RAMP_NR(i) (400 * (i))
@@ -591,6 +606,7 @@ void emit_ramp(u16 x) {
 	generator = &ramp_pattern_M_is_for_murder;
 	break;
     case RAMP_NR(3):
+	generator = &ramp_pattern_W_is_for_walrus;
 	break;
     case RAMP_NR(4):
 	break;
