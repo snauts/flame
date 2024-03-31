@@ -144,7 +144,8 @@ typedef struct Layout {
     update_VDP_word(VDP_CTRL_VALUE(VDP_CRAM_WRITE, addr), data);
 
 #if !defined(DEBUG)
-#define BUG(condition, message)
+#define error(format...)
+#define BUG(condition, message...)
 #else
 int error(const char *format, ...)
     __attribute__ ((format (printf, 1, 2)));
