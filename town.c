@@ -558,6 +558,16 @@ void display_town(void) {
 
 #define RAMP_OFFSET(n, i) (24 * 8 + (400 * (n)) + (12 * 8 * (i)) + 19)
 
+static void ramp_pattern_group(const byte *data, byte n, byte size) {
+    u16 i = 0;
+    while (i < size) {
+	u16 x = RAMP_OFFSET(n, data[i]);
+	Object *obj = setup_projectile(x, data[i + 1],  data[i + 2]);
+	obj->gravity = data[i + 3];
+	i += 4;
+    }
+}
+
 static void ramp_pattern_sandwich(u16 i) {
     setup_projectile(RAMP_OFFSET(0, i + 1), 83,  7)->gravity = 30;
     setup_projectile(RAMP_OFFSET(0, i + 1), 83, 15)->gravity = 30;
@@ -565,28 +575,28 @@ static void ramp_pattern_sandwich(u16 i) {
 }
 
 static void ramp_pattern_M_is_for_murder(u16 i) {
-    setup_projectile(RAMP_OFFSET(1, 1), 51,   7)->gravity = 62;
-    setup_projectile(RAMP_OFFSET(1, 1), 51,  11)->gravity = 62;
-    setup_projectile(RAMP_OFFSET(1, 1), 51,  15)->gravity = 62;
-    setup_projectile(RAMP_OFFSET(1, 2), 187, 19)->gravity = 0;
-    setup_projectile(RAMP_OFFSET(1, 2), 187, 23)->gravity = 0;
-    setup_projectile(RAMP_OFFSET(1, 3), 51,   7)->gravity = 62;
-    setup_projectile(RAMP_OFFSET(1, 3), 51,  11)->gravity = 62;
-    setup_projectile(RAMP_OFFSET(1, 3), 51,  15)->gravity = 62;
+    static const byte data[] = {
+	1,  51,  7, 62, 1,  51, 11, 62,
+	1,  51, 15, 62, 2, 187, 19,  0,
+	2, 187, 23,  0, 3,  51,  7, 62,
+	3,  51, 11, 62, 3,  51, 15, 62,
+    };
+    ramp_pattern_group(data, 1, 32);
     callback(&ramp_pattern_M_is_for_murder, 64, 0);
 }
 
 static void ramp_pattern_W_is_for_walrus(u16 i) {
     if (i == 0) {
-	setup_projectile(RAMP_OFFSET(2, 1), 155, 19);
-	setup_projectile(RAMP_OFFSET(2, 3), 155, 23);
-	setup_projectile(RAMP_OFFSET(2, 2), 51,  11)->gravity = 94;
+	static const byte data[] = {
+	    1, 155, 19, 0, 3, 155, 23, 0, 2, 51, 11, 94
+	};
+	ramp_pattern_group(data, 2, 12);
     }
     else {
-	setup_projectile(RAMP_OFFSET(2, 1), 155, 23);
-	setup_projectile(RAMP_OFFSET(2, 3), 155, 19);
-	setup_projectile(RAMP_OFFSET(2, 2), 51,   7)->gravity = 94;
-	setup_projectile(RAMP_OFFSET(2, 2), 51,  15)->gravity = 94;
+	static const byte data[] = {
+	    1, 155, 23, 0, 3, 155, 19, 0, 2, 51, 7, 94, 2, 51, 15, 94
+	};
+	ramp_pattern_group(data, 2, 16);
     }
     callback(&ramp_pattern_W_is_for_walrus, 32, !i);
 }
