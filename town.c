@@ -601,6 +601,22 @@ static void ramp_pattern_W_is_for_walrus(u16 i) {
     callback(&ramp_pattern_W_is_for_walrus, 32, !i);
 }
 
+static void ramp_pattern_P_is_for_poison(u16 i) {
+    static const byte data[] = {
+	1, 51,  7, 126, 3, 123, 19, 0,
+	1, 51, 11, 126, 3, 123, 20, 0,
+	1, 51, 15, 126, 3, 123, 23, 0,
+	2, 51,  7, 126, 1, 123, 19, 0,
+	2, 51, 11, 126, 1, 123, 20, 0,
+	2, 51, 15, 126, 1, 123, 23, 0,
+	3, 51,  7, 126, 2, 123, 19, 0,
+	3, 51, 11, 126, 2, 123, 20, 0,
+	3, 51, 15, 126, 2, 123, 23, 0,
+    };
+    ramp_pattern_group(data + i, 3, 8);
+    callback(&ramp_pattern_P_is_for_poison, 20, i < 64 ? i + 8 : 0);
+}
+
 static void ramp_pattern_D_is_for_daisies(u16 i) {
     static const byte data[] = {
 	1, 35, 16, 1, 91, 20, 2, 91, 20, 3, 91, 20,
@@ -628,6 +644,7 @@ void emit_ramp(u16 x) {
 	generator = &ramp_pattern_W_is_for_walrus;
 	break;
     case RAMP_NR(4):
+	generator = &ramp_pattern_P_is_for_poison;
 	break;
     case RAMP_NR(5):
 	generator = &ramp_pattern_D_is_for_daisies;
