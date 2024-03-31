@@ -592,29 +592,12 @@ static void ramp_pattern_W_is_for_walrus(u16 i) {
 }
 
 static void ramp_pattern_D_is_for_daisies(u16 i) {
-    switch (i) {
-    case 0:
-	setup_projectile(RAMP_OFFSET(4, 1), 35, 16);
-	break;
-    case 4:
-	setup_projectile(RAMP_OFFSET(4, 3), 35, 5);
-	break;
-    case 1:
-    case 5:
-	setup_projectile(RAMP_OFFSET(4, 1), 91, 20);
-	break;
-    case 2:
-    case 6:
-	setup_projectile(RAMP_OFFSET(4, 2), 91, 20);
-	break;
-    case 3:
-    case 7:
-	setup_projectile(RAMP_OFFSET(4, 3), 91, 20);
-	break;
-    default:
-	break;
-    }
-    callback(&ramp_pattern_D_is_for_daisies, 25, i >= 7 ? 0 : i + 1);
+    static const byte data[] = {
+	1, 35, 16, 1, 91, 20, 2, 91, 20, 3, 91, 20,
+	3, 35,  5, 1, 91, 20, 2, 91, 20, 3, 91, 20,
+    };
+    setup_projectile(RAMP_OFFSET(4, data[i]), data[i + 1], data[i + 2]);
+    callback(&ramp_pattern_D_is_for_daisies, 25, i >= 21 ? 0 : i + 3);
 }
 
 extern Callback generator;
