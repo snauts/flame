@@ -664,6 +664,13 @@ void display_ramp(void) {
     generator = NULL;
 }
 
+static void setup_king(u16 i) {
+    Object *obj = setup_obj(200, 64, SPRITE_SIZE(4, 4));
+    obj->sprite->cfg = TILE(3, KING_TILES);
+    mob_fn(obj, NULL);
+    mob_move(obj, 0xffff);
+}
+
 void display_king(void) {
     display_french(&king_level);
 
@@ -671,4 +678,6 @@ void display_king(void) {
 
     display_progress_bar();
     lock_screen(1);
+
+    schedule(&setup_king, 0);
 }
