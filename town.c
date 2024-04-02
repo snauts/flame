@@ -3,6 +3,7 @@
 #include "images/rat.h"
 #include "images/town.h"
 #include "images/street.h"
+#include "images/crown.h"
 
 #include "images/king_head.h"
 
@@ -11,7 +12,8 @@
 #define RAT_TILES	257
 #define BURN_TILES	(RAT_TILES + 9 * 4)
 #define SLIME_TILES	(BURN_TILES + 8 * 4)
-#define KING_TILES	(SLIME_TILES + 12)
+#define CROWN_TILES	(SLIME_TILES + 12)
+#define KING_TILES	(CROWN_TILES + 2)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -665,7 +667,12 @@ void display_ramp(void) {
 }
 
 static void setup_king(u16 i) {
-    Object *obj = setup_obj(200, 64, SPRITE_SIZE(4, 4));
+    Object *obj = setup_obj(208, 64, SPRITE_SIZE(2, 1));
+    obj->sprite->cfg = TILE(2, CROWN_TILES);
+    mob_fn(obj, NULL);
+    mob_move(obj, 0xffff);
+
+    obj = setup_obj(200, 64, SPRITE_SIZE(4, 4));
     obj->sprite->cfg = TILE(3, KING_TILES);
     mob_fn(obj, NULL);
     mob_move(obj, 0xffff);
@@ -674,6 +681,7 @@ static void setup_king(u16 i) {
 void display_king(void) {
     display_french(&king_level);
 
+    load_tiles(&crown_img, CROWN_TILES);
     load_image(&king_head_img, KING_TILES, 3);
 
     display_progress_bar();
