@@ -4,11 +4,14 @@
 #include "images/town.h"
 #include "images/street.h"
 
+#include "images/king_head.h"
+
 #include "town.inc"
 
 #define RAT_TILES	257
 #define BURN_TILES	(RAT_TILES + 9 * 4)
 #define SLIME_TILES	(BURN_TILES + 8 * 4)
+#define KING_TILES	(SLIME_TILES + 12)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -663,6 +666,9 @@ void display_ramp(void) {
 
 void display_king(void) {
     display_french(&king_level);
+
+    load_image(&king_head_img, KING_TILES, 3);
+
     display_progress_bar();
     lock_screen(1);
 }
