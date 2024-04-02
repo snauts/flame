@@ -46,7 +46,7 @@ mame:	build
 
 release:
 	make clean
-	LTO=yes OPTIONS="-O3 -DVERSION='\"$(DATE) $(SHA)\"'" make build
+	LTO=yes OPTIONS="-O2 -DVERSION='\"$(DATE) $(SHA)\"'" make build
 
 debug:	build
 	rlwrap blastem -d $(NAME).bin
