@@ -690,8 +690,6 @@ static Object **hermit;
 #define ANGRY		BIT(2)
 #define DO_ARC		BIT(3)
 
-#define FLIP(p, i) (TILE(p, i) | BIT(11))
-
 static const Layout right[HERMIT_PARTS] = {
     { x: 56, y:  0, size:SPRITE_SIZE(1, 4), tile:FLIP(3, 325) },
     { x: 56, y: 32, size:SPRITE_SIZE(1, 2), tile:FLIP(3, 357) },

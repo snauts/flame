@@ -672,12 +672,23 @@ static Object **king;
 
 #define KING_HP		king[0]->life
 
-static const Layout layout[KING_PARTS] = {
+static void king_action(Object *obj) {
+    obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
+}
+
+static const Layout left[KING_PARTS] = {
     { x:  0, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, KING_TILES) },
 };
 
+static const Layout right[KING_PARTS] = {
+    { x: -1, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
+    { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, KING_TILES) },
+};
+
 static void king_animate(Object *obj) {
+    const Layout *layout = obj->direction < 0 ? left : right;
+
     for (u16 i = 0; i < KING_PARTS; i++) {
 	Object *part = king[i];
 	Sprite *sprite = part->sprite;
@@ -703,6 +714,7 @@ static void king_hitbox(Object *obj) {
 }
 
 static void king_update(Object *obj) {
+    king_action(obj);
     king_animate(obj);
     king_hitbox(obj);
 }
@@ -710,11 +722,12 @@ static void king_update(Object *obj) {
 static void setup_king(u16 i) {
     king = malloc(KING_PARTS * sizeof(Object*));
     for (u16 i = 0; i < KING_PARTS; i++) {
-	king[i] = setup_obj(0, 0, layout[i].size);
+	king[i] = setup_obj(0, 0, left[i].size);
     }
     setup_burns(4, BURN_TILES);
 
     Object *crown = king[0];
+    crown->direction = -1;
     crown->x = 272;
     crown->y = 176;
 

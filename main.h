@@ -129,6 +129,7 @@ typedef struct Layout {
 #define LONG(x) (* (volatile u32 *) (x))
 
 #define TILE(p, i) (((p) << 13) | (i))
+#define FLIP(p, i) (TILE(p, i) | BIT(11))
 #define TILE_ID(tile_cfg) ((tile_cfg) & 0x7FF)
 #define SPRITE_SIZE(x, y) ((((x) - 1) << 2) | ((y) - 1))
 
