@@ -682,13 +682,20 @@ static void king_set_state(u16 state) {
     KING_STATE = state;
 }
 
+static void king_head_frame(u16 frame) {
+    Object *head = king[1];
+    head->frame = frame;
+    head->life = 6;
+}
+
 static const byte L_arc[] = { 4,  5, 24, 25,  3 };
 static const byte R_arc[] = { 4, 16, 26, 27, 28 };
 static const byte *pattern;
 
 static void king_spits_sideways(u16 i) {
-    short x = king[0]->direction > 0 ? 222 : 202;
+    short x = king[0]->direction > 0 ? 220 : 204;
     setup_projectile(x, 86, pattern[i + 1])->gravity = 6;
+    callback(&king_head_frame, 6, 16);
     if (i < pattern[0] - 1) {
 	callback(&king_spits_sideways, 25, i + 1);
     }
@@ -718,6 +725,19 @@ static const Layout right[KING_PARTS] = {
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, KING_TILES) },
 };
 
+static void king_animate_head(Object *head) {
+    if (head->life > 0) {
+	head->life--;
+    }
+    else if (head->frame == 16) {
+	head->frame = 32;
+	head->life = 6;
+    }
+    else {
+	head->frame = 0;
+    }
+}
+
 static void king_animate(Object *obj) {
     const Layout *layout = obj->direction < 0 ? left : right;
 
@@ -726,7 +746,8 @@ static void king_animate(Object *obj) {
 	Sprite *sprite = part->sprite;
 	sprite->x = obj->x + layout[i].x;
 	sprite->y = obj->y + layout[i].y;
-	sprite->cfg = layout[i].tile;
+	if (i == 1) king_animate_head(part);
+	sprite->cfg = layout[i].tile + part->frame;
     }
 }
 
