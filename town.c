@@ -671,9 +671,30 @@ static Object **king;
 #define KING_PARTS	2
 
 #define KING_HP		king[0]->life
+#define KING_STATE	king[0]->flags
+
+enum {
+    K_WINDOW = 0,
+    K_SPITING,
+};
+
+static void king_spits_left(u16 i) {
+    static const byte dir[] = { 5, 24, 25, 3 };
+    setup_projectile(202, 86, dir[i])->gravity = 6;
+    if (i < ARRAY_SIZE(dir) - 1) {
+	callback(&king_spits_left, 25, i + 1);
+    }
+    else {
+	KING_STATE = K_WINDOW;
+    }
+}
 
 static void king_action(Object *obj) {
     obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
+    if (KING_STATE == K_WINDOW) {
+	callback(&king_spits_left, 100, 0);
+	KING_STATE = K_SPITING;
+    }
 }
 
 static const Layout left[KING_PARTS] = {
