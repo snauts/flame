@@ -201,33 +201,36 @@ struct Shoot {
 };
 
 static const struct Shoot shoot[] = {
-    { mx:  0, my:  3, len: 3 },
-    { mx: -1, my:  3, len: 3 },
-    { mx: -2, my:  3, len: 3 },
-    { mx: -3, my:  3, len: 3 },
-    { mx:  1, my:  3, len: 3 },
-    { mx: -3, my:  0, len: 3 },
-    { mx: -3, my: -1, len: 3 },
+    { mx:  0, my:  3, len: 3 }, //  0
+    { mx: -1, my:  3, len: 3 }, //  1
+    { mx: -2, my:  3, len: 3 }, //  2
+    { mx: -3, my:  3, len: 3 }, //  3
+    { mx:  1, my:  3, len: 3 }, //  4
+    { mx: -3, my:  0, len: 3 }, //  5 West
+    { mx: -3, my: -1, len: 3 }, //  6
 
-    { mx: -1, my:  2, len: 2 },
-    { mx: -3, my:  8, len: 8 },
-    { mx: -1, my:  4, len: 4 },
-    { mx: -1, my:  8, len: 8 },
-    { mx:  0, my:  8, len: 8 },
-    { mx:  1, my:  8, len: 8 },
-    { mx:  1, my:  4, len: 4 },
-    { mx:  3, my:  8, len: 8 },
-    { mx:  1, my:  2, len: 2 },
+    { mx: -1, my:  2, len: 2 }, //  7
+    { mx: -3, my:  8, len: 8 }, //  8
+    { mx: -1, my:  4, len: 4 }, //  9
+    { mx: -1, my:  8, len: 8 }, // 10
+    { mx:  0, my:  8, len: 8 }, // 11 South
+    { mx:  1, my:  8, len: 8 }, // 12
+    { mx:  1, my:  4, len: 4 }, // 13
+    { mx:  3, my:  8, len: 8 }, // 14
+    { mx:  1, my:  2, len: 2 }, // 15
 
-    { mx:  8, my:  0, len: 8 },
-    { mx:  2, my: -1, len: 2 },
-    { mx:  7, my: -7, len: 8 },
-    { mx:  1, my: -2, len: 2 },
-    { mx:  0, my: -8, len: 8 },
+    { mx:  8, my:  0, len: 8 }, // 16 East
 
-    { mx: -2, my: -1, len: 2 },
-    { mx: -7, my: -7, len: 8 },
-    { mx: -1, my: -2, len: 2 },
+    { mx:  2, my: -1, len: 2 }, // 17
+    { mx:  7, my: -7, len: 8 }, // 18
+    { mx:  1, my: -2, len: 2 }, // 19
+    { mx:  0, my: -8, len: 8 }, // 20 North
+    { mx: -2, my: -1, len: 2 }, // 21
+    { mx: -7, my: -7, len: 8 }, // 22
+    { mx: -1, my: -2, len: 2 }, // 23
+
+    { mx: -3, my:  1, len: 3 }, // 24
+    { mx: -3, my:  2, len: 3 }, // 25
 };
 
 static char shoot_step(char setup, char offset) {
