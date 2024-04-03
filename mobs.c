@@ -65,10 +65,13 @@ void purge_mobs(void) {
     }
 }
 
-byte mob_order;
+static signed char mob_order;
+void set_mob_order(signed char order) {
+    mob_order = order;
+}
 
 void reset_mobs(void) {
-    mob_order = 0;
+    set_mob_order(-1);
     available_mobs = MAX_MOBS;
     for (signed char i = 0; i < MAX_MOBS; i++) {
 	mobs[i].obj.sprite = get_sprite(MOB_OFFSET) + i;
@@ -101,19 +104,19 @@ static void link_mob_sprite(u16 i) {
     mob->obj.sprite->next = update_next_sprite(index + MOB_OFFSET);
 }
 
+static void mob_order_sprites(signed char order) {
+    signed char count = MAX_MOBS - available_mobs;
+    signed char i = order > 0 ? available_mobs : MAX_MOBS - 1;
+    while (count > 0) {
+	link_mob_sprite(i);
+	i += order;
+	count--;
+    }
+}
+
 void manage_mobs(void) {
     call_mob_functions();
-    if (mob_order == 0) {
-	signed char last_mob = available_mobs;
-	for (signed char i = MAX_MOBS - 1; i >= last_mob; i--) {
-	    link_mob_sprite(i);
-	}
-    }
-    else {
-	for (signed char i = available_mobs; i < MAX_MOBS; i++) {
-	    link_mob_sprite(i);
-	}
-    }
+    mob_order_sprites(mob_order);
 }
 
 void callback(Callback fn, u16 timeout, u16 cookie) {

@@ -767,7 +767,5 @@ void display_king(void) {
     lock_screen(1);
 
     schedule(&setup_king, 0);
-
-    extern byte mob_order;
-    mob_order = 1;
+    set_mob_order(1);
 }
