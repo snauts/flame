@@ -688,8 +688,8 @@ static void king_head_frame(u16 frame) {
     head->life = 6;
 }
 
-static const byte L_arc[] = { 4,  5, 24, 25,  3 };
-static const byte R_arc[] = { 4, 16, 26, 27, 28 };
+static const byte L_arc[] = { 4,  3, 25, 24,  5 };
+static const byte R_arc[] = { 4, 28, 27, 26, 16 };
 static const byte *pattern;
 
 static void king_spits_sideways(u16 i) {
@@ -697,10 +697,10 @@ static void king_spits_sideways(u16 i) {
     setup_projectile(x, 86, pattern[i + 1])->gravity = 6;
     callback(&king_head_frame, 6, 16);
     if (i < pattern[0] - 1) {
-	callback(&king_spits_sideways, 25, i + 1);
+	callback(&king_spits_sideways, 30, i + 1);
     }
     else {
-	callback(&king_set_state, 25, K_WINDOW);
+	callback(&king_set_state, 30, K_WINDOW);
     }
 }
 
@@ -709,7 +709,7 @@ static void king_action(Object *obj) {
     case K_WINDOW:
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
 	pattern = obj->direction < 0 ? L_arc : R_arc;
-	callback(&king_spits_sideways, 25, 0);
+	callback(&king_spits_sideways, 30, 0);
 	king_set_state(K_SPITING);
 	break;
     }
