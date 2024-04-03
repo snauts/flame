@@ -741,11 +741,12 @@ static void king_update(Object *obj) {
 }
 
 static void setup_king(u16 i) {
+    setup_burns(4, BURN_TILES);
+
     king = malloc(KING_PARTS * sizeof(Object*));
     for (u16 i = 0; i < KING_PARTS; i++) {
 	king[i] = setup_obj(0, 0, left[i].size);
     }
-    setup_burns(4, BURN_TILES);
 
     Object *crown = king[0];
     crown->direction = -1;
@@ -766,4 +767,7 @@ void display_king(void) {
     lock_screen(1);
 
     schedule(&setup_king, 0);
+
+    extern byte mob_order;
+    mob_order = 1;
 }
