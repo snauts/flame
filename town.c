@@ -709,7 +709,7 @@ static void king_action(Object *obj) {
     case K_WINDOW:
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
 	pattern = obj->direction < 0 ? L_arc : R_arc;
-	if (KING_HP < BAR_HEALTH) {
+	if (soldier.y < 152) {
 	    callback(&king_spits_sideways, 30, 0);
 	    king_set_state(K_SPITING);
 	}
