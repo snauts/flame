@@ -201,10 +201,10 @@ struct Shoot {
 };
 
 static const struct Shoot shoot[] = {
-    { mx:  0, my:  3, len: 3 }, //  0
+    { mx:  0, my:  3, len: 3 }, //  0 South
     { mx: -1, my:  3, len: 3 }, //  1
     { mx: -2, my:  3, len: 3 }, //  2
-    { mx: -3, my:  3, len: 3 }, //  3
+    { mx: -3, my:  3, len: 3 }, //  3 SW
     { mx:  1, my:  3, len: 3 }, //  4
     { mx: -3, my:  0, len: 3 }, //  5 West
     { mx: -3, my: -1, len: 3 }, //  6
@@ -231,6 +231,9 @@ static const struct Shoot shoot[] = {
 
     { mx: -3, my:  1, len: 3 }, // 24
     { mx: -3, my:  2, len: 3 }, // 25
+    { mx:  3, my:  1, len: 3 }, // 26
+    { mx:  3, my:  2, len: 3 }, // 27
+    { mx:  3, my:  3, len: 3 }, // 28 SE
 };
 
 static char shoot_step(char setup, char offset) {

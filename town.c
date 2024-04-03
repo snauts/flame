@@ -678,22 +678,33 @@ enum {
     K_SPITING,
 };
 
-static void king_spits_left(u16 i) {
-    static const byte dir[] = { 5, 24, 25, 3 };
-    setup_projectile(202, 86, dir[i])->gravity = 6;
-    if (i < ARRAY_SIZE(dir) - 1) {
-	callback(&king_spits_left, 25, i + 1);
+static void king_set_state(u16 state) {
+    KING_STATE = state;
+}
+
+static const byte L_arc[] = { 4,  5, 24, 25,  3 };
+static const byte R_arc[] = { 4, 16, 26, 27, 28 };
+static const byte *pattern;
+
+static void king_spits_sideways(u16 i) {
+    short x = king[0]->direction > 0 ? 222 : 202;
+    setup_projectile(x, 86, pattern[i + 1])->gravity = 6;
+    if (i < pattern[0] - 1) {
+	callback(&king_spits_sideways, 25, i + 1);
     }
     else {
-	KING_STATE = K_WINDOW;
+	callback(&king_set_state, 25, K_WINDOW);
     }
 }
 
 static void king_action(Object *obj) {
-    obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
-    if (KING_STATE == K_WINDOW) {
-	callback(&king_spits_left, 100, 0);
-	KING_STATE = K_SPITING;
+    switch (KING_STATE) {
+    case K_WINDOW:
+	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
+	pattern = obj->direction < 0 ? L_arc : R_arc;
+	callback(&king_spits_sideways, 25, 0);
+	king_set_state(K_SPITING);
+	break;
     }
 }
 
