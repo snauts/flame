@@ -687,8 +687,23 @@ static void king_animate(Object *obj) {
     }
 }
 
+const Rectangle head_box[] = {
+    { x1: 4, y1: 8, x2: 12, y2: 28 },
+};
+
+static void king_hitbox(Object *obj) {
+    u16 size = ARRAY_SIZE(head_box);
+    const Rectangle *box = head_box;
+    if (KING_HP > 0 && boss_hitbox(obj, box, size, size)) {
+	if (KING_HP == 0) {
+	    schedule(&finish_level, 128);
+	}
+    }
+}
+
 static void king_update(Object *obj) {
     king_animate(obj);
+    king_hitbox(obj);
 }
 
 static void setup_king(u16 i) {
