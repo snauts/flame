@@ -666,16 +666,44 @@ void display_ramp(void) {
     generator = NULL;
 }
 
-static void setup_king(u16 i) {
-    Object *obj = setup_obj(208, 64, SPRITE_SIZE(2, 1));
-    obj->sprite->cfg = TILE(2, CROWN_TILES);
-    mob_fn(obj, NULL);
-    mob_move(obj, 0xffff);
+static Object **king;
 
-    obj = setup_obj(200, 64, SPRITE_SIZE(4, 4));
-    obj->sprite->cfg = TILE(3, KING_TILES);
-    mob_fn(obj, NULL);
-    mob_move(obj, 0xffff);
+#define KING_PARTS	2
+
+#define KING_HP		king[0]->life
+
+static const Layout layout[KING_PARTS] = {
+    { x:  0, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
+    { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, KING_TILES) },
+};
+
+static void king_animate(Object *obj) {
+    for (u16 i = 0; i < KING_PARTS; i++) {
+	Object *part = king[i];
+	Sprite *sprite = part->sprite;
+	sprite->x = obj->x + layout[i].x;
+	sprite->y = obj->y + layout[i].y;
+	sprite->cfg = layout[i].tile;
+    }
+}
+
+static void king_update(Object *obj) {
+    king_animate(obj);
+}
+
+static void setup_king(u16 i) {
+    king = malloc(KING_PARTS * sizeof(Object*));
+    for (u16 i = 0; i < KING_PARTS; i++) {
+	king[i] = setup_obj(0, 0, layout[i].size);
+    }
+    setup_burns(4, BURN_TILES);
+
+    Object *crown = king[0];
+    crown->x = 272;
+    crown->y = 176;
+
+    KING_HP = BAR_HEALTH;
+    mob_fn(crown, &king_update);
 }
 
 void display_king(void) {
