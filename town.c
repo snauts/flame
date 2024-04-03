@@ -697,6 +697,7 @@ static void king_hitbox(Object *obj) {
     if (KING_HP > 0 && boss_hitbox(obj, box, size, size)) {
 	if (KING_HP == 0) {
 	    schedule(&finish_level, 128);
+	    soldier_fist_pump();
 	}
     }
 }
