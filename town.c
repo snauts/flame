@@ -685,7 +685,10 @@ static void king_set_state(u16 state) {
 static void king_head_frame(u16 frame) {
     Object *head = king[1];
     head->frame = frame;
-    head->life = 6;
+    if (frame != 0) {
+	frame = frame < 32 ? frame + 16 : 0;
+	callback(&king_head_frame, 6, frame);
+    }
 }
 
 static const byte L_arc[] = { 4,  3, 25, 24,  5 };
@@ -727,19 +730,6 @@ static const Layout right[KING_PARTS] = {
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, KING_TILES) },
 };
 
-static void king_animate_head(Object *head) {
-    if (head->life > 0) {
-	head->life--;
-    }
-    else if (head->frame == 16) {
-	head->frame = 32;
-	head->life = 6;
-    }
-    else {
-	head->frame = 0;
-    }
-}
-
 static void king_animate(Object *obj) {
     const Layout *layout = obj->direction < 0 ? left : right;
 
@@ -748,7 +738,6 @@ static void king_animate(Object *obj) {
 	Sprite *sprite = part->sprite;
 	sprite->x = obj->x + layout[i].x;
 	sprite->y = obj->y + layout[i].y;
-	if (i == 1) king_animate_head(part);
 	sprite->cfg = layout[i].tile + part->frame;
     }
 }
