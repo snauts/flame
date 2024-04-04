@@ -692,8 +692,11 @@ static void king_head_frame(u16 frame) {
     }
 }
 
-static const byte L_arc[] = { 5, 30,  3, 25, 24,  5 };
-static const byte R_arc[] = { 5, 30, 28, 27, 26, 16 };
+static const byte L_arc[] = {  5, 30,  3, 25, 24,  5 };
+static const byte R_arc[] = {  5, 30, 28, 27, 26, 16 };
+static const byte L_saw[] = { 10, 15, 15, 14, 13, 12, 11, 10,  9 , 8,  7 };
+static const byte R_saw[] = { 10, 15,  7,  8,  9, 10, 11, 12, 13, 14, 15 };
+
 static const byte *pattern;
 
 static short spit_x(void) {
@@ -712,6 +715,16 @@ static void king_spits(u16 i) {
     }
     else {
 	callback(&king_set_state, 30, K_WINDOW);
+	pattern = NULL;
+    }
+}
+
+static void select_window_pattern(Object *obj) {
+    if (soldier.y < 152) {
+	pattern = obj->direction < 0 ? L_arc : R_arc;
+    }
+    else if (KING_HP < BAR_HEALTH * 3 / 4) {
+	pattern = obj->direction < 0 ? L_saw : R_saw;
     }
 }
 
@@ -719,8 +732,8 @@ static void king_action(Object *obj) {
     switch (KING_STATE) {
     case K_WINDOW:
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
-	pattern = obj->direction < 0 ? L_arc : R_arc;
-	if (soldier.y < 152) {
+	select_window_pattern(obj);
+	if (pattern != NULL) {
 	    callback(&king_spits, 30, 2);
 	    king_set_state(K_SPITING);
 	}
@@ -784,6 +797,7 @@ static void setup_king(u16 i) {
     crown->y = 176;
     crown->direction = -1;
 
+    pattern = NULL;
     KING_HP = BAR_HEALTH;
     mob_fn(crown, &king_update);
 }
