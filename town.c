@@ -667,11 +667,12 @@ void display_ramp(void) {
 }
 
 static Object **king;
+static Object *crown;
 
 #define KING_PARTS	2
 
-#define KING_HP		king[0]->life
-#define KING_STATE	king[0]->flags
+#define KING_HP		crown->life
+#define KING_STATE	crown->flags
 
 enum {
     K_WINDOW = 0,
@@ -695,9 +696,16 @@ static const byte L_arc[] = { 5, 30,  3, 25, 24,  5 };
 static const byte R_arc[] = { 5, 30, 28, 27, 26, 16 };
 static const byte *pattern;
 
-static void king_spits_sideways(u16 i) {
-    short x = king[0]->direction > 0 ? 220 : 204;
-    setup_projectile(x, 86, pattern[i])->gravity = 6;
+static short spit_x(void) {
+    return crown->x - (crown->direction > 0 ? 52 : 68);
+}
+
+static short spit_y(void) {
+    return crown->y - 90;
+}
+
+static void king_spits(u16 i) {
+    setup_projectile(spit_x(), spit_y(), pattern[i])->gravity = 6;
     callback(&king_head_frame, 6, 16);
     if (i < pattern[0]) {
 	callback(&king_spits_sideways, pattern[1], i + 1);
@@ -713,7 +721,7 @@ static void king_action(Object *obj) {
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
 	pattern = obj->direction < 0 ? L_arc : R_arc;
 	if (soldier.y < 152) {
-	    callback(&king_spits_sideways, 30, 2);
+	    callback(&king_spits, 30, 2);
 	    king_set_state(K_SPITING);
 	}
 	break;
@@ -771,10 +779,10 @@ static void setup_king(u16 i) {
 	king[i] = setup_obj(0, 0, left[i].size);
     }
 
-    Object *crown = king[0];
-    crown->direction = -1;
+    crown = king[0];
     crown->x = 272;
     crown->y = 176;
+    crown->direction = -1;
 
     KING_HP = BAR_HEALTH;
     mob_fn(crown, &king_update);
