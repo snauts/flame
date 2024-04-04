@@ -694,8 +694,8 @@ static void king_head_frame(u16 frame) {
 
 static const byte L_arc[] = {  5, 30,  3, 25, 24,  5 };
 static const byte R_arc[] = {  5, 30, 28, 27, 26, 16 };
-static const byte L_saw[] = { 10, 15, 15, 14, 13, 12, 11, 10,  9 , 8,  7 };
-static const byte R_saw[] = { 10, 15,  7,  8,  9, 10, 11, 12, 13, 14, 15 };
+static const byte L_saw[] = { 10, 15,  7,  8,  9, 10, 11, 12, 13, 14, 15 };
+static const byte R_saw[] = { 10, 15, 15, 14, 13, 12, 11, 10,  9 , 8,  7 };
 
 static const byte *pattern;
 
@@ -720,11 +720,13 @@ static void king_spits(u16 i) {
 }
 
 static void select_window_pattern(Object *obj) {
-    if (soldier.y < 152) {
-	pattern = obj->direction < 0 ? L_arc : R_arc;
-    }
-    else if (KING_HP < BAR_HEALTH * 3 / 4) {
+    short three_quarters = KING_HP < BAR_HEALTH * 3 / 4;
+    short soldier_middle = 128 < soldier.x && soldier.x < 256;
+    if (three_quarters && soldier_middle) {
 	pattern = obj->direction < 0 ? L_saw : R_saw;
+    }
+    else if (three_quarters || soldier.y < 152) {
+	pattern = obj->direction < 0 ? L_arc : R_arc;
     }
 }
 
