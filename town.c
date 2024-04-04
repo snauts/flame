@@ -708,7 +708,7 @@ static void king_spits(u16 i) {
     setup_projectile(spit_x(), spit_y(), pattern[i])->gravity = 6;
     callback(&king_head_frame, 6, 16);
     if (i < pattern[0]) {
-	callback(&king_spits_sideways, pattern[1], i + 1);
+	callback(&king_spits, pattern[1], i + 1);
     }
     else {
 	callback(&king_set_state, 30, K_WINDOW);
