@@ -8,6 +8,7 @@
 #include "images/blood.h"
 #include "images/walk.h"
 #include "images/hans.h"
+#include "images/ivan.h"
 #include "images/gun.h"
 
 #define SOLDIER_TOP	1024
@@ -849,7 +850,7 @@ static void put_soldier(u16 x, u16 y) {
     soldier_sprite_update(0);
 }
 
-static const byte yell_map[] = { 0, 16, 17, 18 };
+static const byte yell_map[] = { 0, 16, 17, 18, 20 };
 static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
     switch (id) {
     case 0:
@@ -863,6 +864,9 @@ static void load_soldier_tiles_at_offset(u16 id, u16 offset) {
 	break;
     case 3:
 	load_image(&french_img, offset, 2);
+	break;
+    case 4:
+	load_image(&ivan_img, offset, 2);
 	break;
     }
 
