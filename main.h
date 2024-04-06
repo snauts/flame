@@ -246,6 +246,7 @@ void announce_johnny(void);
 void announce_hans(void);
 void announce_hiroshi(void);
 void announce_emile(void);
+void announce_ivan(void);
 
 u16 platform_bottom(void);
 void load_burn_tiles(u16 where);

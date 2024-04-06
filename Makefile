@@ -17,6 +17,10 @@ CFLAGS	+= -flto
 LDLAGS	+= -flto
 endif
 
+ifneq ($(JOKE),)
+CFLAGS	+= -DVERBOSE
+endif
+
 ifneq ($(OPTIONS),)
 CFLAGS	+= $(OPTIONS)
 else

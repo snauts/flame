@@ -203,7 +203,7 @@ static void clear_screen_to_black(void) {
     copy_to_VRAM(VRAM_PLANE_A, DMA_BUF_SIZE);
 }
 
-const char special[] = "-!:,";
+const char special[] = "-!:,èÜüú";
 
 static void display_text_plane(const char *text, u16 x, u16 y, u16 plane) {
     u16 i = 0, offset = (y << 7)  + (x << 1);
@@ -268,7 +268,7 @@ static void flammenwerfer_text(void) {
 #endif
     display_text("PRESS START", 15, 16);
 #if defined(VERBOSE)
-    display_text("SATIRICAL ODDITY IN FOUR PARTS", 5, 27);
+    display_text("SATIRICAL ODDITY IN FIVE PARTS", 5, 27);
 #endif
 }
 
@@ -368,6 +368,18 @@ static void emile_text(void) {
 
 void announce_emile(void) {
     announcement(&emile_text);
+}
+
+static void ivan_text(void) {
+    display_text("- PART 5 -", 15, 3);
+    display_text("IVAN", 18, 13);
+#if defined(VERBOSE)
+    display_text("OèA OèA OèüTú ÜOèA", 11, 24);
+#endif
+}
+
+void announce_ivan(void) {
+    announcement(&ivan_text);
 }
 
 #if defined(DEBUG)
