@@ -888,12 +888,16 @@ void load_soldier_tiles(u16 id) {
     reset_mobs();
 }
 
+#define END_FIGURES	4
+#define END_SPRITES	(3 * END_FIGURES)
+#define END_OFFSETS	(164 - 8 * END_FIGURES)
+
 static void march(u16 n) {
     Sprite *army = get_sprite(SOLDIER_BASE);
-    army[11].next = update_next_sprite(SOLDIER_BASE);
+    army[END_SPRITES - 1].next = update_next_sprite(SOLDIER_BASE);
 
     u16 id;
-    for (id = 2; id < 12; id += 3) {
+    for (id = 2; id < END_SPRITES; id += 3) {
 	u16 color = (army[id].cfg >> 13) & 3;
 	army[id].cfg = TILE(color, SOLDIER_LEG + (18 + n) * 6);
     }
@@ -904,16 +908,14 @@ static void march(u16 n) {
 
 void all_soldiers_march(void) {
     Sprite *sprite;
-    update_palette(soldier_palette, 16, ARRAY_SIZE(soldier_palette));
-
     u16 id, offset = SOLDIER_BASE;
-    for (id = 0; id < 4; id++) {
+    for (id = 0; id < END_FIGURES; id++) {
 	u16 top = 64 + (id << 6);
-	u16 color = 1 + (id & 1);
+	u16 color = 2 - (id & 1);
 	load_soldier_tiles_at_offset(id, top);
 
 	sprite = get_sprite(offset);
-	sprite->x = ON_SCREEN + 124 + 8 + id * 16;
+	sprite->x = ON_SCREEN + END_OFFSETS + id * 16;
 	sprite->y = ON_SCREEN + 128 + 8;
 	sprite->cfg = TILE(color, 0);
 	sprite->size = SPRITE_SIZE(1, 1);
@@ -933,11 +935,15 @@ void all_soldiers_march(void) {
 	sprite->size = SPRITE_SIZE(3, 2);
 	sprite->next = ++offset;
     }
+
+    update_palette(hans_palette, 16, ARRAY_SIZE(hans_palette));
+    update_palette(ivan_palette, 32, ARRAY_SIZE(ivan_palette));
+
     march(0);
 }
 
 void soldiers_sing(int sing) {
-    for (u16 id = 0; id < 4; id++) {
+    for (u16 id = 0; id < END_FIGURES; id++) {
 	Sprite *face = get_sprite(SOLDIER_BASE + id * 3);
 	face->cfg = (face->cfg & ~0x7FF) | (sing ? WEAPON + yell_map[id] : 0);
     }
