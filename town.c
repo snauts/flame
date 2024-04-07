@@ -748,11 +748,21 @@ static void king_action(Object *obj) {
 static const Layout left[KING_PARTS] = {
     { x:  0, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, KING_TILES) },
+    { x: 24, y: 16, size:SPRITE_SIZE(4, 2), tile:TILE(3, BODY_TILES) },
+    { x:  0, y: 32, size:SPRITE_SIZE(3, 2), tile:TILE(3, BODY_TILES + 8) },
+    { x: 24, y: 32, size:SPRITE_SIZE(4, 2), tile:TILE(3, BODY_TILES + 14) },
+    { x:  8, y: 48, size:SPRITE_SIZE(4, 2), tile:TILE(3, BODY_TILES + 22) },
+    { x: 40, y: 48, size:SPRITE_SIZE(2, 2), tile:TILE(3, BODY_TILES + 30) },
 };
 
 static const Layout right[KING_PARTS] = {
     { x: -1, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, KING_TILES) },
+    { x:-40, y: 16, size:SPRITE_SIZE(4, 2), tile:FLIP(3, BODY_TILES) },
+    { x: -8, y: 32, size:SPRITE_SIZE(3, 2), tile:FLIP(3, BODY_TILES + 8) },
+    { x:-40, y: 32, size:SPRITE_SIZE(4, 2), tile:FLIP(3, BODY_TILES + 14) },
+    { x:-24, y: 48, size:SPRITE_SIZE(4, 2), tile:FLIP(3, BODY_TILES + 22) },
+    { x:-40, y: 48, size:SPRITE_SIZE(2, 2), tile:FLIP(3, BODY_TILES + 30) },
 };
 
 static void king_animate(Object *obj) {
@@ -810,8 +820,8 @@ void display_king(void) {
     display_french(&king_level);
 
     load_tiles(&crown_img, CROWN_TILES);
-    load_tiles(&king_body_img, BODY_TILES);
-    load_image(&king_head_img, KING_TILES, 3);
+    load_tiles(&king_head_img, KING_TILES);
+    load_image(&king_body_img, BODY_TILES, 3);
 
     display_progress_bar();
     lock_screen(1);
