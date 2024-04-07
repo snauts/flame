@@ -670,8 +670,9 @@ void display_ramp(void) {
 
 static Object **king;
 static Object *crown;
+static byte show_parts;
 
-#define KING_PARTS	2
+#define KING_PARTS	7
 
 #define KING_HP		crown->life
 #define KING_STATE	crown->flags
@@ -679,6 +680,7 @@ static Object *crown;
 enum {
     K_WINDOW = 0,
     K_SPITING,
+    K_BREAK_OUT,
 };
 
 static void king_set_state(u16 state) {
@@ -732,10 +734,34 @@ static void select_window_pattern(Object *obj) {
     }
 }
 
+static void king_break_out(u16 stage) {
+    if (stage <= 2) {
+	callback(&king_break_out, 50, stage + 1);
+	if (stage == 0) {
+	    crown->x += crown->direction * 16;
+	    show_parts += 1;
+	}
+	else if (stage == 1) {
+	    crown->x += crown->direction * 8;
+	    crown->y -= 16;
+	    show_parts += 2;
+	}
+	else if (stage == 2) {
+	    crown->y -= 15;
+	    show_parts += 2;
+	}
+    }
+}
+
 static void king_action(Object *obj) {
     switch (KING_STATE) {
     case K_WINDOW:
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
+	if (KING_HP < BAR_HEALTH / 2) {
+	    king_set_state(K_BREAK_OUT);
+	    king_break_out(0);
+	    break;
+	}
 	select_window_pattern(obj);
 	if (pattern != NULL) {
 	    callback(&king_spits, 30, 2);
@@ -768,7 +794,7 @@ static const Layout right[] = {
 static void king_animate(Object *obj) {
     const Layout *layout = obj->direction < 0 ? left : right;
 
-    for (u16 i = 0; i < KING_PARTS; i++) {
+    for (u16 i = 0; i < show_parts; i++) {
 	Object *part = king[i];
 	Sprite *sprite = part->sprite;
 	sprite->x = obj->x + layout[i].x;
@@ -801,6 +827,7 @@ static void king_update(Object *obj) {
 static void setup_king(u16 i) {
     setup_burns(4, BURN_TILES);
 
+    show_parts = 2;
     king = malloc(KING_PARTS * sizeof(Object*));
     for (u16 i = 0; i < KING_PARTS; i++) {
 	king[i] = setup_obj(0, 0, left[i].size);
