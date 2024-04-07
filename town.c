@@ -6,6 +6,7 @@
 #include "images/crown.h"
 
 #include "images/king_head.h"
+#include "images/king_body.h"
 
 #include "town.inc"
 
@@ -14,6 +15,7 @@
 #define SLIME_TILES	(BURN_TILES + 8 * 4)
 #define CROWN_TILES	(SLIME_TILES + 12)
 #define KING_TILES	(CROWN_TILES + 2)
+#define BODY_TILES	(KING_TILES + 3 * 16)
 
 #define POS(x, y) ((0x80 * (y)) + ((x) << 1))
 
@@ -808,6 +810,7 @@ void display_king(void) {
     display_french(&king_level);
 
     load_tiles(&crown_img, CROWN_TILES);
+    load_tiles(&king_body_img, BODY_TILES);
     load_image(&king_head_img, KING_TILES, 3);
 
     display_progress_bar();
