@@ -745,7 +745,7 @@ static void king_action(Object *obj) {
     }
 }
 
-static const Layout left[KING_PARTS] = {
+static const Layout left[] = {
     { x:  0, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:TILE(3, KING_TILES) },
     { x: 24, y: 16, size:SPRITE_SIZE(4, 2), tile:TILE(3, BODY_TILES) },
@@ -755,7 +755,7 @@ static const Layout left[KING_PARTS] = {
     { x: 40, y: 48, size:SPRITE_SIZE(2, 2), tile:TILE(3, BODY_TILES + 30) },
 };
 
-static const Layout right[KING_PARTS] = {
+static const Layout right[] = {
     { x: -1, y:  0, size:SPRITE_SIZE(2, 1), tile:TILE(2, CROWN_TILES) },
     { x: -8, y:  0, size:SPRITE_SIZE(4, 4), tile:FLIP(3, KING_TILES) },
     { x:-40, y: 16, size:SPRITE_SIZE(4, 2), tile:FLIP(3, BODY_TILES) },
