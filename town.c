@@ -789,6 +789,7 @@ static void king_break_out(u16 stage) {
     if (stage <= 2) {
 	set_mob_order(-1);
 	play_sfx(SFX_PERISH);
+	king_set_state(K_BREAK_OUT);
 	callback(&king_break_out, 50, stage + 1);
 	if (stage == 0) {
 	    window_damage(crown->direction);
@@ -818,7 +819,6 @@ static void king_action(Object *obj) {
     case K_WINDOW:
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
 	if (KING_HP < BAR_HEALTH * 2 / 3) {
-	    king_set_state(K_BREAK_OUT);
 	    king_break_out(0);
 	    break;
 	}
