@@ -732,6 +732,7 @@ enum {
     K_SPITING,
     K_BREAK_OUT,
     K_JUMPING,
+    K_STANDING,
 };
 
 static void king_set_state(u16 state) {
@@ -785,6 +786,15 @@ static void select_window_pattern(Object *obj) {
     }
 }
 
+static void king_do_jump(short dst_x, short dst_y, char vel, char flip) {
+    Object *head = king[1];
+    king_set_state(K_JUMPING);
+    crown->velocity = vel;
+    head->direction = flip;
+    head->x = dst_x;
+    head->y = dst_y;
+}
+
 static void king_break_out(u16 stage) {
     if (stage <= 2) {
 	set_mob_order(-1);
@@ -809,24 +819,50 @@ static void king_break_out(u16 stage) {
 	}
     }
     else {
-	king_set_state(K_JUMPING);
+	king_do_jump(144, 202, 4, 1);
 	set_mob_order(1);
+    }
+}
+
+static void king_in_window(Object *obj) {
+    obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
+    if (KING_HP < BAR_HEALTH * 2 / 3) {
+	king_break_out(0);
+	return;
+    }
+    select_window_pattern(obj);
+    if (pattern != NULL) {
+	callback(&king_spits, 30, 2);
+	king_set_state(K_SPITING);
+    }
+}
+
+static void king_jumping(Object *obj) {
+    Object *head = king[1];
+    if (obj->y < head->y) {
+	advance_y(obj, 12);
+    }
+    if (obj->x != head->x) {
+	obj->x += obj->direction;
+    }
+    else if (obj->y >= head->y) {
+	king_set_state(K_STANDING);
+	obj->y = king[1]->y;
+	if (head->direction) {
+	    obj->direction = -obj->direction;
+	}
     }
 }
 
 static void king_action(Object *obj) {
     switch (KING_STATE) {
     case K_WINDOW:
-	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
-	if (KING_HP < BAR_HEALTH * 2 / 3) {
-	    king_break_out(0);
-	    break;
-	}
-	select_window_pattern(obj);
-	if (pattern != NULL) {
-	    callback(&king_spits, 30, 2);
-	    king_set_state(K_SPITING);
-	}
+	king_in_window(obj);
+	break;
+    case K_JUMPING:
+	king_jumping(obj);
+	break;
+    case K_STANDING:
 	break;
     }
 }
