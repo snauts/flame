@@ -693,18 +693,28 @@ static void setup_brick(short x, short y, char dir, char vel) {
     obj->velocity = vel;
 }
 
+static void put_tile(short x, short y, u16 tile) {
+    UPDATE_VRAM_WORD(VRAM_PLANE_A + (y << 7)  + (x << 1), tile);
+}
+
 static void window_damage(char type) {
     if (type == 0) {
-	setup_brick(268, 208, -1, 2);
-	setup_brick(272, 208,  1, 2);
+	setup_brick(266, 208, -1, 2);
+	setup_brick(270, 208,  1, 2);
+	put_tile(25, 10, TILE(1, 213));
+	put_tile(26, 10, TILE(1, 219));
     }
     else if (type < 0) {
-	setup_brick(256, 184, -1, 1);
-	setup_brick(256, 188, -1, 2);
+	setup_brick(256, 186, -1, 1);
+	setup_brick(256, 190, -1, 2);
+	put_tile(24, 7, TILE(1, 218));
+	put_tile(24, 8, TILE(1, 220));
     }
     else if (type > 0) {
-	setup_brick(296, 192,  1, 1);
-	setup_brick(296, 196,  1, 2);
+	setup_brick(296, 194,  1, 1);
+	setup_brick(296, 198,  1, 2);
+	put_tile(29, 8, TILE(1, 217));
+	put_tile(29, 9, TILE(1, 221));
     }
 }
 
