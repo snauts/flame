@@ -846,9 +846,9 @@ static void king_in_window(Object *obj) {
     }
 }
 
-static void king_flip(Object *obj) {
-    obj->direction = -obj->direction;
-    obj->x += (obj->direction < 0) ? -32 : 32;
+static void king_flip(u16 i) {
+    crown->direction = -crown->direction;
+    crown->x += (crown->direction < 0) ? -32 : 32;
 }
 
 static void king_jumping(Object *obj) {
@@ -862,8 +862,8 @@ static void king_jumping(Object *obj) {
     }
     else if (obj->y == head->y) {
 	king_set_state(K_RECOVER);
-	callback(&king_set_state, 25, K_STANDING);
-	if (head->direction) king_flip(obj);
+	callback(&king_set_state, 30, K_STANDING);
+	if (head->direction) schedule(&king_flip, 15);
     }
 }
 
