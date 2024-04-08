@@ -801,7 +801,7 @@ static void king_break_out(u16 stage) {
 	set_mob_order(-1);
 	play_sfx(SFX_PERISH);
 	king_set_state(K_BREAK_OUT);
-	callback(&king_break_out, 50, stage + 1);
+	callback(&king_break_out, 25, stage + 1);
 	if (stage == 0) {
 	    window_damage(crown->direction);
 	    crown->x += crown->direction * 16;
@@ -820,11 +820,12 @@ static void king_break_out(u16 stage) {
 	}
     }
     else {
+	crown->direction *= 2;
 	if (crown->direction < 0) {
-	    king_do_jump(144, 202, 4, 1, 13);
+	    king_do_jump(144, 202, 4, 1, 6);
 	}
 	else {
-	    king_do_jump(416, 202, 4, 1, 15);
+	    king_do_jump(416, 202, 4, 1, 7);
 	}
 	set_mob_order(1);
     }
