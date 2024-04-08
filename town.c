@@ -899,6 +899,7 @@ static void king_animate(Object *obj) {
 	if (i == 5 && KING_STATE == K_JUMPING) {
 	    sprite->cfg = TILE(3, LEGS_TILES);
 	    sprite->size = SPRITE_SIZE(4, 4);
+	    if (obj->direction > 0) sprite->cfg |= BIT(11);
 	}
 	else {
 	    sprite->cfg = place->tile + part->frame;
