@@ -771,7 +771,8 @@ static void king_spits(u16 i) {
 	callback(&king_spits, pattern[1], i + 1);
     }
     else {
-	callback(&king_set_state, 30, K_WINDOW);
+	u16 next = crown->y == 176 ? K_WINDOW : K_STANDING;
+	callback(&king_set_state, 30, next);
 	pattern = NULL;
     }
 }
