@@ -686,23 +686,34 @@ static void brick_fly(Object *obj) {
     }
 }
 
-static void setup_brick(short x, short y, char dir, char vel) {
+static Object *setup_brick(short x, short y, char dir, char vel) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
     mob_fn(obj, &brick_fly);
     obj->direction = dir;
     obj->velocity = vel;
+    return obj;
 }
 
 static void put_tile(short x, short y, u16 tile) {
     UPDATE_VRAM_WORD(VRAM_PLANE_A + (y << 7)  + (x << 1), tile);
 }
 
+static void bottom_bricks(u16 i) {
+    u16 x = 266 + i * 4;
+    u16 force = 2 + ((i >> 1) & 1);
+    u16 direction = (i & 1) ? -1 : 1;
+    Object *obj = setup_brick(x, 208, direction, force);
+    if (i < 5) callback(&bottom_bricks, 0, i + 1);
+    obj->frame = i & 3;
+}
+
 static void window_damage(char type) {
     if (type == 0) {
-	setup_brick(266, 208, -1, 2);
-	setup_brick(270, 208,  1, 2);
+	bottom_bricks(0);
 	put_tile(25, 10, TILE(1, 213));
-	put_tile(26, 10, TILE(1, 219));
+	put_tile(26, 10, TILE(0, 1));
+	put_tile(27, 10, TILE(0, 1));
+	put_tile(28, 10, TILE(1, 219));
     }
     else if (type < 0) {
 	setup_brick(256, 186, -1, 1);
@@ -811,13 +822,12 @@ static void king_break_out(u16 stage) {
 	}
 	else if (stage == 1) {
 	    window_damage(-crown->direction);
-	    crown->x += crown->direction * 8;
 	    crown->y -= 16;
 	    show_parts += 2;
 	}
 	else if (stage == 2) {
 	    window_damage(0);
-	    crown->y -= 15;
+	    crown->y -= 7;
 	    show_parts += 2;
 	}
     }
