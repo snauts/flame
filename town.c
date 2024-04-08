@@ -878,6 +878,10 @@ static void king_jumping(Object *obj) {
     }
 }
 
+static char is_king_in_middle(Object *obj) {
+    return obj->x == 256 || obj->x == 288;
+}
+
 static void king_next_jump(Object *obj) {
     switch (crown->x) {
     case 176:
