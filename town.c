@@ -787,6 +787,7 @@ static void select_window_pattern(Object *obj) {
 static void king_break_out(u16 stage) {
     if (stage <= 2) {
 	set_mob_order(-1);
+	play_sfx(SFX_PERISH);
 	callback(&king_break_out, 50, stage + 1);
 	if (stage == 0) {
 	    window_damage(crown->direction);
