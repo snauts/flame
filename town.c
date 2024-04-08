@@ -717,13 +717,13 @@ static void window_damage(char type) {
     }
     else if (type < 0) {
 	setup_brick(256, 186, -1, 1);
-	setup_brick(256, 190, -1, 2);
+	setup_brick(256, 190, -1, 2)->frame = 2;
 	put_tile(24, 7, TILE(1, 218));
 	put_tile(24, 8, TILE(1, 220));
     }
     else if (type > 0) {
 	setup_brick(296, 194,  1, 1);
-	setup_brick(296, 198,  1, 2);
+	setup_brick(296, 198,  1, 2)->frame = 2;
 	put_tile(29, 8, TILE(1, 217));
 	put_tile(29, 9, TILE(1, 221));
     }
@@ -846,13 +846,13 @@ static void king_break_out(u16 stage) {
 	}
     }
     else {
-	crown->gravity = 1;
+	crown->gravity = 3;
 	crown->direction *= 2;
 	if (crown->direction < 0) {
-	    king_do_jump(144, 202, 4, 1, 6);
+	    king_do_jump(140, 204, 4, 1, 6);
 	}
 	else {
-	    king_do_jump(416, 202, 4, 1, 7);
+	    king_do_jump(420, 204, 4, 1, 7);
 	}
 	set_mob_order(1);
     }
@@ -900,21 +900,21 @@ static char is_king_in_middle(Object *obj) {
 
 static void king_next_jump(Object *obj) {
     switch (crown->x) {
-    case 176:
+    case 172:
 	king_do_jump(288, 220, 4, 0, 7);
-	crown->gravity = 0;
+	crown->gravity = 3;
 	break;
     case 256:
-	king_do_jump(144, 202, 4, 1, 8);
-	crown->gravity = 2;
+	king_do_jump(140, 204, 4, 1, 8);
+	crown->gravity = 4;
 	break;
     case 288:
-	king_do_jump(416, 202, 4, 1, 8);
-	crown->gravity = 6;
+	king_do_jump(420, 204, 4, 1, 8);
+	crown->gravity = 7;
 	break;
-    case 384:
+    case 388:
 	king_do_jump(256, 220, 4, 0, 7);
-	crown->gravity = 5;
+	crown->gravity = 7;
 	break;
     }
 }
@@ -963,6 +963,10 @@ static const Layout right[] = {
     { x:-40, y: 48, size:SPRITE_SIZE(2, 2), tile:FLIP(3, BODY_TILES + 30) },
 };
 
+static char is_king_legs_back(Object *obj) {
+    return KING_STATE == K_JUMPING && obj->x != king[1]->x;
+}
+
 static void king_animate(Object *obj) {
     const Layout *layout = obj->direction < 0 ? left : right;
 
@@ -972,7 +976,7 @@ static void king_animate(Object *obj) {
 	const Layout *place = layout + i;
 	sprite->x = obj->x + place->x;
 	sprite->y = obj->y + place->y;
-	if (i == 5 && KING_STATE == K_JUMPING) {
+	if (i == 5 && is_king_legs_back(obj)) {
 	    sprite->cfg = TILE(3, LEGS_TILES);
 	    sprite->size = SPRITE_SIZE(4, 4);
 	    if (obj->direction > 0) sprite->cfg |= BIT(11);
