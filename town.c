@@ -832,6 +832,7 @@ static void king_break_out(u16 stage) {
 	}
     }
     else {
+	crown->gravity = 1;
 	crown->direction *= 2;
 	if (crown->direction < 0) {
 	    king_do_jump(144, 202, 4, 1, 6);
@@ -880,16 +881,20 @@ static void king_jumping(Object *obj) {
 static void king_next_jump(Object *obj) {
     switch (crown->x) {
     case 176:
-	king_do_jump(296, 220, 4, 0, 7);
+	king_do_jump(288, 220, 4, 0, 7);
+	crown->gravity = 0;
 	break;
-    case 248:
+    case 256:
 	king_do_jump(144, 202, 4, 1, 8);
+	crown->gravity = 2;
 	break;
-    case 296:
+    case 288:
 	king_do_jump(416, 202, 4, 1, 8);
+	crown->gravity = 6;
 	break;
     case 384:
-	king_do_jump(248, 220, 4, 0, 7);
+	king_do_jump(256, 220, 4, 0, 7);
+	crown->gravity = 5;
 	break;
     }
 }
