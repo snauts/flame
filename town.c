@@ -987,13 +987,13 @@ static void king_animate(Object *obj) {
 const Rectangle left_box[] = {
     { x1:  4, y1:  8, x2: 12, y2: 28 },
     { x1: 12, y1: 28, x2: 24, y2: 44 },
-    { x1: 20, y1: 44, x2: 32, y2: 60 },
+    { x1: 20, y1: 44, x2: 40, y2: 60 },
 };
 
 const Rectangle right_box[] = {
     { x1:  4, y1:  8, x2: 12, y2: 28 },
     { x1: -8, y1: 28, x2:  4, y2: 44 },
-    { x1:-16, y1: 44, x2: -4, y2: 60 },
+    { x1:-24, y1: 44, x2: -4, y2: 60 },
 };
 
 static void king_hitbox(Object *obj) {
