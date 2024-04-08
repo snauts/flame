@@ -733,6 +733,7 @@ enum {
     K_BREAK_OUT,
     K_JUMPING,
     K_STANDING,
+    K_RECOVER,
 };
 
 static void king_set_state(u16 state) {
@@ -851,9 +852,7 @@ static void king_flip(Object *obj) {
 
 static void king_jumping(Object *obj) {
     Object *head = king[1];
-    if (obj->y < head->y) {
-	advance_y(obj, head->gravity);
-    }
+    advance_y(obj, head->gravity);
     if (obj->y > head->y && obj->velocity < 0) {
 	obj->y = head->y;
     }
@@ -861,8 +860,26 @@ static void king_jumping(Object *obj) {
 	obj->x += obj->direction;
     }
     else if (obj->y == head->y) {
-	king_set_state(K_STANDING);
+	king_set_state(K_RECOVER);
+	callback(&king_set_state, 25, K_STANDING);
 	if (head->direction) king_flip(obj);
+    }
+}
+
+static void king_standing(Object *obj) {
+    switch (crown->x) {
+    case 176:
+	king_do_jump(296, 220, 4, 0, 7);
+	break;
+    case 248:
+	king_do_jump(144, 202, 4, 1, 8);
+	break;
+    case 296:
+	king_do_jump(416, 202, 4, 1, 8);
+	break;
+    case 384:
+	king_do_jump(248, 220, 4, 0, 7);
+	break;
     }
 }
 
@@ -875,6 +892,7 @@ static void king_action(Object *obj) {
 	king_jumping(obj);
 	break;
     case K_STANDING:
+	king_standing(obj);
 	break;
     }
 }
