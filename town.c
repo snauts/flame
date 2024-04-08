@@ -731,6 +731,7 @@ enum {
     K_WINDOW = 0,
     K_SPITING,
     K_BREAK_OUT,
+    K_JUMPING,
 };
 
 static void king_set_state(u16 state) {
@@ -807,6 +808,7 @@ static void king_break_out(u16 stage) {
 	}
     }
     else {
+	king_set_state(K_JUMPING);
 	set_mob_order(1);
     }
 }
@@ -855,9 +857,17 @@ static void king_animate(Object *obj) {
     for (u16 i = 0; i < show_parts; i++) {
 	Object *part = king[i];
 	Sprite *sprite = part->sprite;
-	sprite->x = obj->x + layout[i].x;
-	sprite->y = obj->y + layout[i].y;
-	sprite->cfg = layout[i].tile + part->frame;
+	const Layout *place = layout + i;
+	sprite->x = obj->x + place->x;
+	sprite->y = obj->y + place->y;
+	if (i == 5 && KING_STATE == K_JUMPING) {
+	    sprite->cfg = TILE(3, LEGS_TILES);
+	    sprite->size = SPRITE_SIZE(4, 4);
+	}
+	else {
+	    sprite->cfg = place->tile + part->frame;
+	    sprite->size = place->size;
+	}
     }
 }
 
