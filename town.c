@@ -775,7 +775,7 @@ static void king_spits(u16 i) {
 }
 
 static void select_window_pattern(Object *obj) {
-    short three_quarters = KING_HP < BAR_HEALTH * 3 / 4;
+    short three_quarters = KING_HP < BAR_HEALTH * 5 / 6;
     short soldier_middle = 128 < soldier.x && soldier.x < 256;
     if (three_quarters && soldier_middle) {
 	pattern = obj->direction < 0 ? L_saw : R_saw;
@@ -817,7 +817,7 @@ static void king_action(Object *obj) {
     switch (KING_STATE) {
     case K_WINDOW:
 	obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
-	if (KING_HP < BAR_HEALTH / 2) {
+	if (KING_HP < BAR_HEALTH * 2 / 3) {
 	    king_set_state(K_BREAK_OUT);
 	    king_break_out(0);
 	    break;
