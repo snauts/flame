@@ -807,12 +807,6 @@ static void start_spitting(u16 delay) {
     }
 }
 
-static void select_jump_pattern(Object *obj) {
-    pattern = obj->direction < 0 ? L_arc : R_arc;
-    start_spitting(30);
-    FORCE_JUMP = 1;
-}
-
 static void king_do_jump(short x, short y, char vel, char flip, char pull) {
     Object *head = king[1];
     king_set_state(K_JUMPING);
@@ -878,6 +872,22 @@ static void king_flip(u16 i) {
     crown->x += (crown->direction < 0) ? -32 : 32;
 }
 
+static char is_king_in_middle(Object *obj) {
+    return obj->x == 256 || obj->x == 288;
+}
+
+static void bottom_spit(Object *obj, char pattern) {
+    short x = obj->x - (obj->direction < 0 ? 32 : 88);
+    setup_projectile(x, obj->y - 56, pattern)->gravity = 6;
+}
+
+static void select_landing_pattern(Object *obj) {
+    if (is_king_in_middle(obj)) {
+	bottom_spit(obj, 3);
+	bottom_spit(obj, 28);
+    }
+}
+
 static void king_jumping(Object *obj) {
     Object *head = king[1];
     advance_y(obj, head->gravity);
@@ -889,13 +899,10 @@ static void king_jumping(Object *obj) {
     }
     else if (obj->y == head->y) {
 	king_set_state(K_RECOVER);
+	select_landing_pattern(obj);
 	callback(&king_set_state, 30, K_STANDING);
 	if (head->direction) schedule(&king_flip, 15);
     }
-}
-
-static char is_king_in_middle(Object *obj) {
-    return obj->x == 256 || obj->x == 288;
 }
 
 static void king_next_jump(Object *obj) {
@@ -920,13 +927,7 @@ static void king_next_jump(Object *obj) {
 }
 
 static void king_standing(Object *obj) {
-    if (is_king_in_middle(obj) || FORCE_JUMP) {
-	king_next_jump(obj);
-	FORCE_JUMP = 0;
-    }
-    else {
-	select_jump_pattern(obj);
-    }
+    king_next_jump(obj);
 }
 
 static void king_action(Object *obj) {
