@@ -883,8 +883,7 @@ static void bottom_spit(Object *obj, char pattern) {
 
 static void select_landing_pattern(Object *obj) {
     if (is_king_in_middle(obj)) {
-	bottom_spit(obj, 3);
-	bottom_spit(obj, 28);
+	bottom_spit(obj, 0);
     }
 }
 
@@ -905,9 +904,19 @@ static void king_jumping(Object *obj) {
     }
 }
 
+static void leave_spit_trail(u16 x) {
+    short n = (x & 0xff) - 1;
+    if (n < 5) {
+	bottom_spit(crown, 11 + ((x & BIT(8)) ? -n : n));
+	callback(&leave_spit_trail, 4 + n, x + 1);
+    }
+}
+
+
 static void king_next_jump(Object *obj) {
     switch (crown->x) {
     case 172:
+	callback(&leave_spit_trail, 0, 0);
 	king_do_jump(288, 220, 4, 0, 7);
 	crown->gravity = 3;
 	break;
@@ -920,6 +929,7 @@ static void king_next_jump(Object *obj) {
 	crown->gravity = 7;
 	break;
     case 388:
+	callback(&leave_spit_trail, 0, 0 | BIT(8));
 	king_do_jump(256, 220, 4, 0, 7);
 	crown->gravity = 7;
 	break;
