@@ -737,6 +737,7 @@ static byte show_parts;
 
 #define KING_HP		crown->life
 #define KING_STATE	crown->flags
+#define FORCE_JUMP	king[5]->velocity
 
 enum {
     K_WINDOW = 0,
@@ -809,6 +810,7 @@ static void start_spitting(u16 delay) {
 static void select_jump_pattern(Object *obj) {
     pattern = obj->direction < 0 ? L_arc : R_arc;
     start_spitting(30);
+    FORCE_JUMP = 1;
 }
 
 static void king_do_jump(short x, short y, char vel, char flip, char pull) {
@@ -918,7 +920,13 @@ static void king_next_jump(Object *obj) {
 }
 
 static void king_standing(Object *obj) {
-    king_next_jump(obj);
+    if (is_king_in_middle(obj) || FORCE_JUMP) {
+	king_next_jump(obj);
+	FORCE_JUMP = 0;
+    }
+    else {
+	select_jump_pattern(obj);
+    }
 }
 
 static void king_action(Object *obj) {
