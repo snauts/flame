@@ -786,13 +786,14 @@ static void select_window_pattern(Object *obj) {
     }
 }
 
-static void king_do_jump(short dst_x, short dst_y, char vel, char flip) {
+static void king_do_jump(short x, short y, char vel, char flip, char pull) {
     Object *head = king[1];
     king_set_state(K_JUMPING);
     crown->velocity = vel;
     head->direction = flip;
-    head->x = dst_x;
-    head->y = dst_y;
+    head->gravity = pull;
+    head->x = x;
+    head->y = y;
 }
 
 static void king_break_out(u16 stage) {
@@ -819,7 +820,12 @@ static void king_break_out(u16 stage) {
 	}
     }
     else {
-	king_do_jump(144, 202, 4, 1);
+	if (crown->direction < 0) {
+	    king_do_jump(144, 202, 4, 1, 13);
+	}
+	else {
+	    king_do_jump(416, 202, 4, 1, 15);
+	}
 	set_mob_order(1);
     }
 }
@@ -837,20 +843,25 @@ static void king_in_window(Object *obj) {
     }
 }
 
+static void king_flip(Object *obj) {
+    obj->direction = -obj->direction;
+    obj->x += (obj->direction < 0) ? -32 : 32;
+}
+
 static void king_jumping(Object *obj) {
     Object *head = king[1];
     if (obj->y < head->y) {
-	advance_y(obj, 12);
+	advance_y(obj, head->gravity);
+    }
+    if (obj->y > head->y && obj->velocity < 0) {
+	obj->y = head->y;
     }
     if (obj->x != head->x) {
 	obj->x += obj->direction;
     }
-    else if (obj->y >= head->y) {
+    else if (obj->y == head->y) {
 	king_set_state(K_STANDING);
-	obj->y = king[1]->y;
-	if (head->direction) {
-	    obj->direction = -obj->direction;
-	}
+	if (head->direction) king_flip(obj);
     }
 }
 
