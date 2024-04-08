@@ -845,7 +845,12 @@ static void king_break_out(u16 stage) {
 }
 
 static void king_in_window(Object *obj) {
-    obj->direction = (soldier.sprite->x < obj->x) ? -1 : 1;
+    if (soldier.sprite->x < 260) {
+	obj->direction = -1;
+    }
+    if (soldier.sprite->x > 276) {
+	obj->direction = 1;
+    }
     if (KING_HP < BAR_HEALTH * 2 / 3) {
 	king_break_out(0);
 	return;
