@@ -670,6 +670,29 @@ void display_ramp(void) {
     generator = NULL;
 }
 
+static void brick_fly(Object *obj) {
+    if (obj->y > ON_SCREEN + SCR_HEIGHT) {
+	free_mob(obj);
+    }
+    else {
+	obj->sprite->x = obj->x;
+	obj->sprite->y = obj->y;
+	obj->x += obj->direction;
+	advance_y(obj, 10);
+	obj->sprite->cfg = TILE(1, 209 + obj->frame);
+	if ((obj->life++ & 3) == 0) {
+	    obj->frame = (obj->frame + obj->direction) & 3;
+	}
+    }
+}
+
+static void setup_brick(short x, short y, char dir, char vel) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
+    mob_fn(obj, &brick_fly);
+    obj->direction = dir;
+    obj->velocity = vel;
+}
+
 static Object **king;
 static Object *crown;
 static byte show_parts;
