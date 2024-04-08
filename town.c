@@ -799,6 +799,18 @@ static void select_window_pattern(Object *obj) {
     }
 }
 
+static void start_spitting(u16 delay) {
+    if (pattern != NULL) {
+	callback(&king_spits, delay, 2);
+	king_set_state(K_SPITING);
+    }
+}
+
+static void select_jump_pattern(Object *obj) {
+    pattern = obj->direction < 0 ? L_arc : R_arc;
+    start_spitting(30);
+}
+
 static void king_do_jump(short x, short y, char vel, char flip, char pull) {
     Object *head = king[1];
     king_set_state(K_JUMPING);
@@ -856,10 +868,7 @@ static void king_in_window(Object *obj) {
 	return;
     }
     select_window_pattern(obj);
-    if (pattern != NULL) {
-	callback(&king_spits, 30, 2);
-	king_set_state(K_SPITING);
-    }
+    start_spitting(30);
 }
 
 static void king_flip(u16 i) {
