@@ -866,7 +866,7 @@ static void king_jumping(Object *obj) {
     }
 }
 
-static void king_standing(Object *obj) {
+static void king_next_jump(Object *obj) {
     switch (crown->x) {
     case 176:
 	king_do_jump(296, 220, 4, 0, 7);
@@ -881,6 +881,10 @@ static void king_standing(Object *obj) {
 	king_do_jump(248, 220, 4, 0, 7);
 	break;
     }
+}
+
+static void king_standing(Object *obj) {
+    king_next_jump(obj);
 }
 
 static void king_action(Object *obj) {
@@ -938,13 +942,21 @@ static void king_animate(Object *obj) {
     }
 }
 
-const Rectangle head_box[] = {
-    { x1: 4, y1: 8, x2: 12, y2: 28 },
+const Rectangle left_box[] = {
+    { x1:  4, y1:  8, x2: 12, y2: 28 },
+    { x1: 12, y1: 28, x2: 24, y2: 44 },
+    { x1: 20, y1: 44, x2: 32, y2: 60 },
+};
+
+const Rectangle right_box[] = {
+    { x1:  4, y1:  8, x2: 12, y2: 28 },
+    { x1: -8, y1: 28, x2:  4, y2: 44 },
+    { x1:-16, y1: 44, x2: -4, y2: 60 },
 };
 
 static void king_hitbox(Object *obj) {
-    u16 size = ARRAY_SIZE(head_box);
-    const Rectangle *box = head_box;
+    u16 size = show_parts >> 1;
+    const Rectangle *box = obj->direction < 0 ? left_box : right_box;
     if (KING_HP > 0 && boss_hitbox(obj, box, size, size)) {
 	if (KING_HP == 0) {
 	    schedule(&finish_level, 128);
