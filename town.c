@@ -814,7 +814,7 @@ static void king_break_out(u16 stage) {
 	set_mob_order(-1);
 	play_sfx(SFX_PERISH);
 	king_set_state(K_BREAK_OUT);
-	callback(&king_break_out, 25, stage + 1);
+	callback(&king_break_out, 30, stage + 1);
 	if (stage == 0) {
 	    window_damage(crown->direction);
 	    crown->x += crown->direction * 16;
