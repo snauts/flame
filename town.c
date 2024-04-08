@@ -693,6 +693,21 @@ static void setup_brick(short x, short y, char dir, char vel) {
     obj->velocity = vel;
 }
 
+static void window_damage(char type) {
+    if (type == 0) {
+	setup_brick(268, 208, -1, 2);
+	setup_brick(272, 208,  1, 2);
+    }
+    else if (type < 0) {
+	setup_brick(256, 184, -1, 1);
+	setup_brick(256, 188, -1, 2);
+    }
+    else if (type > 0) {
+	setup_brick(296, 192,  1, 1);
+	setup_brick(296, 196,  1, 2);
+    }
+}
+
 static Object **king;
 static Object *crown;
 static byte show_parts;
@@ -763,15 +778,19 @@ static void king_break_out(u16 stage) {
     if (stage <= 2) {
 	callback(&king_break_out, 50, stage + 1);
 	if (stage == 0) {
+	    set_mob_order(-1);
+	    window_damage(crown->direction);
 	    crown->x += crown->direction * 16;
 	    show_parts += 1;
 	}
 	else if (stage == 1) {
+	    window_damage(-crown->direction);
 	    crown->x += crown->direction * 8;
 	    crown->y -= 16;
 	    show_parts += 2;
 	}
 	else if (stage == 2) {
+	    window_damage(0);
 	    crown->y -= 15;
 	    show_parts += 2;
 	}
