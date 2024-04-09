@@ -326,7 +326,7 @@
 
 (defun king-level ()
   (setf *seed* 1715)
-  (s-push (town-walk 16))
+  (s-push (town-walk 12))
   (s-place 9 2 (king-side-pillar -1))
   (s-place 37 2 (king-side-pillar -2))
   (s-place 18 2 (town-wall 4 0))
@@ -335,6 +335,7 @@
   (s-place 22 10 (town-wall-top 2 7))
   (s-place 22 9 (wall-join 4))
   (s-place 24 17 (brick-window 4 4))
+  (s-join (empty 16))
   (s-pop))
 
 (defun commit-save ()
