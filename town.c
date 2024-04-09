@@ -738,7 +738,6 @@ static byte show_parts;
 
 #define KING_HP		crown->life
 #define KING_STATE	crown->flags
-#define FORCE_JUMP	king[5]->velocity
 
 enum {
     K_WINDOW = 0,
@@ -914,6 +913,12 @@ static void leave_spit_trail(u16 x) {
     }
 }
 
+static void small_rat_help(void) {
+    if (KING_HP < BAR_HEALTH / 5 && live_rats() < 1) {
+	setup_rat(208, 88);
+    }
+}
+
 static void king_next_jump(Object *obj) {
     switch (crown->x) {
     case 172:
@@ -924,10 +929,12 @@ static void king_next_jump(Object *obj) {
     case 256:
 	king_do_jump(140, 204, 4, 1, 8);
 	crown->gravity = 4;
+	small_rat_help();
 	break;
     case 288:
 	king_do_jump(420, 204, 4, 1, 8);
 	crown->gravity = 7;
+	small_rat_help();
 	break;
     case 388:
 	callback(&leave_spit_trail, 0, 0 | BIT(8));
