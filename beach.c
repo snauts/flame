@@ -477,19 +477,25 @@ static void gunner_crab(Object *obj) {
     }
 }
 
-static const char five[] = { 5, 1, 2, 3, 4, 0 };
-static const char fast[] = { 3, -32, 0, 2 };
-static const char cone[] = { 3, 1, 0, 4 };
-static const char saw[] = { 2, 1, 3 };
-static const char ray[] = { 2, 5, 6 };
-static const char even[] = { 1, 5 };
+static const char five[] = { 5, A(250), A(235), A(225), A(290), A(270) };
+static const char cone[] = { 3, A(250), A(270), A(290) };
+static const char fast[] = { 3,    -32, A(270), A(235) };
+static const char saw[] =  { 2, A(250), A(225) };
+static const char ray[] =  { 2, A(180), A(160) };
+static const char even[] = { 1, A(180) };
 
 static const char rain[] = {
-    18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 7, 8, 9, 10, 11, 12, 13, 14, -40,
+    18,
+    A(295), A(290), A(285), A(275), A(270), A(265),
+    A(255), A(250), A(245), A(245), A(250), A(255),
+    A(265), A(270), A(275), A(285), A(290),    -40
 };
 
 static const char pain[] = {
-    18, 15, 14, 13, 12, 11, 10, 9, 8, 7, 8, 9, 10, 11, 12, 13, 14, -40, 15,
+    18,
+    A(295), A(290), A(285), A(275), A(270), A(265),
+    A(255), A(250), A(245), A(250), A(255), A(265),
+    A(270), A(275), A(285), A(290),    -40, A(295),
 };
 
 static const char *patterns[] = {
