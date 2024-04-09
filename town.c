@@ -747,6 +747,7 @@ enum {
     K_JUMPING,
     K_STANDING,
     K_RECOVER,
+    K_WIGGLE,
 };
 
 static void king_set_state(u16 state) {
@@ -889,12 +890,6 @@ static void bottom_spit(Object *obj, char pattern) {
     setup_projectile(x, obj->y - 56, pattern)->gravity = 6;
 }
 
-static void select_landing_pattern(Object *obj) {
-    if (is_king_in_middle(obj)) {
-	// bottom_spit(obj, A(270));
-    }
-}
-
 static void king_jumping(Object *obj) {
     Object *head = king[1];
     advance_y(obj, head->gravity);
@@ -906,7 +901,6 @@ static void king_jumping(Object *obj) {
     }
     else if (obj->y == head->y) {
 	king_set_state(K_RECOVER);
-	select_landing_pattern(obj);
 	callback(&king_set_state, 30, K_STANDING);
 	if (head->direction) schedule(&king_flip, 15);
     }
@@ -943,8 +937,34 @@ static void king_next_jump(Object *obj) {
     }
 }
 
+static void king_shoot_arc(Object *obj) {
+    static const byte right[] = { A(-30), A(0), A(30) };
+    static const byte left[]  = { A(210), A(180), A(150) };
+    const byte *ptr = (obj->direction > 0 ? left : right);
+    for (u16 i = 0; i < ARRAY_SIZE(right); i++) {
+	bottom_spit(obj, ptr[i]);
+    }
+}
+
+static void king_wiggle(u16 i) {
+    if (i == 0) {
+	king_next_jump(crown);
+    }
+    else {
+	king_shoot_arc(crown);
+	schedule(&king_flip, 30);
+	callback(&king_wiggle, 60, i - 1);
+    }
+}
+
 static void king_standing(Object *obj) {
-    king_next_jump(obj);
+    if (is_king_in_middle(obj) && KING_HP < 2 * BAR_HEALTH / 5) {
+	king_set_state(K_WIGGLE);
+	king_wiggle(2);
+    }
+    else {
+	king_next_jump(obj);
+    }
 }
 
 static void king_action(Object *obj) {
