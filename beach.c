@@ -194,10 +194,6 @@ static char edge_throw(Object *obj) {
     return 0;
 }
 
-static char shoot_step(char setup, char offset) {
-    return abs(setup) <= offset ? 0 : (setup < 0 ? -1 : 1);
-}
-
 extern const Ray rays[];
 static void shoot_move(Object *obj) {
     const struct Ray *this = rays + obj->direction;
