@@ -1157,15 +1157,37 @@
   (format nil "ray_~A_~A" axis angle))
 
 (defun save-steps (out angle steps)
-  (save-char-array out (ray-name angle "X") (mapcar #'first steps))
-  (save-char-array out (ray-name angle "Y") (mapcar #'second steps)))
+  (let ((x-axis (mapcar #'first steps))
+	(y-axis (mapcar #'second steps)))
+    (save-char-array out (ray-name angle "pX") x-axis)
+    (save-char-array out (ray-name angle "pY") y-axis)
+    (save-char-array out (ray-name angle "mX") (mapcar #'- x-axis))
+    (save-char-array out (ray-name angle "mY") (mapcar #'- y-axis))))
+
+(defun sub-angle (angle)
+  (let ((beta (mod angle 90)))
+    (if (<= beta 45) beta (- 90 beta))))
+
+(defun get-x-prefix (angle)
+  (elt '("pX" "pY" "mY" "mX" "mX" "mY" "pY" "pX") (floor angle 45)))
+
+(defun get-y-prefix (angle)
+  (elt '("pY" "pX" "pX" "pY" "mY" "mX" "mX" "mY") (floor angle 45)))
 
 (defun generate-ray-table (out &optional (step 5))
   (let ((table nil))
     (loop for angle from 0 to 45 by step do
       (let ((ray (generate-single-ray angle)))
-	(push (list angle ray) table)
-	(save-steps out angle ray)))))
+	(push (list angle (length ray)) table)
+	(save-steps out angle ray)))
+    (format out "const Ray rays[] = {~%")
+    (loop for angle from 0 to 359 by step do
+      (let ((beta (sub-angle angle)))
+	(format out "{ dx:~A, dy:~A, len:~A },~%"
+		(ray-name beta (get-x-prefix angle))
+		(ray-name beta (get-y-prefix angle))
+		(second (assoc beta table)))))
+    (format out "};~%")))
 
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)

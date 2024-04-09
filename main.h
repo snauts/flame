@@ -103,6 +103,12 @@ typedef struct Trigger {
     Callback fn;
 } Trigger;
 
+typedef struct Ray {
+    const char *dx;
+    const char *dy;
+    u16 len;
+} Ray;
+
 typedef struct Level {
     const void *triggers;
     const void *height;
