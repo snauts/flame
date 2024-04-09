@@ -784,8 +784,12 @@ static short spit_y(void) {
     return crown->y - 90;
 }
 
+static void king_projectile(short x, short y, char pattern) {
+    if (KING_HP > 0) setup_projectile(x, y, pattern)->gravity = 6;
+}
+
 static void king_spits(u16 i) {
-    setup_projectile(spit_x(), spit_y(), pattern[i])->gravity = 6;
+    king_projectile(spit_x(), spit_y(), pattern[i]);
     callback(&king_head_frame, 6, 16);
     if (i < pattern[0]) {
 	callback(&king_spits, pattern[1], i + 1);
@@ -886,7 +890,7 @@ static char is_king_in_middle(Object *obj) {
 
 static void bottom_spit(Object *obj, char pattern) {
     short x = obj->x - (obj->direction < 0 ? 32 : 88);
-    setup_projectile(x, obj->y - 56, pattern)->gravity = 6;
+    king_projectile(x, obj->y - 56, pattern);
 }
 
 static void king_jumping(Object *obj) {
@@ -914,7 +918,7 @@ static void leave_spit_trail(u16 x) {
 }
 
 static void small_rat_help(void) {
-    if (KING_HP < BAR_HEALTH / 5 && live_rats() < 1) {
+    if (KING_HP < BAR_HEALTH / 5 && live_rats() < 1 && KING_HP > 0) {
 	setup_rat(208, 88);
     }
 }
@@ -1045,11 +1049,18 @@ const Rectangle right_box[] = {
     { x1:-24, y1: 44, x2: -4, y2: 60 },
 };
 
+static void remove_rat_or_spit(Object *obj) {
+    if (obj->private || (obj->flags & O_PROJECTILE)) {
+	kill_mob_silently(obj);
+    }
+}
+
 static void king_hitbox(Object *obj) {
     u16 size = show_parts >> 1;
     const Rectangle *box = obj->direction < 0 ? left_box : right_box;
     if (KING_HP > 0 && boss_hitbox(obj, box, size, size)) {
 	if (KING_HP == 0) {
+	    apply_to_all_mobs(&remove_rat_or_spit);
 	    schedule(&finish_level, 128);
 	    soldier_fist_pump();
 	}
