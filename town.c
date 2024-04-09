@@ -578,17 +578,17 @@ static void ramp_pattern_group(const byte *data, byte n, byte size) {
 }
 
 static void ramp_pattern_sandwich(u16 i) {
-    setup_projectile(RAMP_OFFSET(0, i + 1), 83,  7)->gravity = 30;
-    setup_projectile(RAMP_OFFSET(0, i + 1), 83, 15)->gravity = 30;
+    setup_projectile(RAMP_OFFSET(0, i + 1), 83, A(245))->gravity = 30;
+    setup_projectile(RAMP_OFFSET(0, i + 1), 83, A(285))->gravity = 30;
     callback(&ramp_pattern_sandwich, 24, i < 2 ? i + 1 : 0);
 }
 
 static void ramp_pattern_M_is_for_murder(u16 i) {
     static const byte data[] = {
-	1,  51,  7, 62, 1,  51, 11, 62,
-	1,  51, 15, 62, 2, 187, 19,  0,
-	2, 187, 23,  0, 3,  51,  7, 62,
-	3,  51, 11, 62, 3,  51, 15, 62,
+	1,  51, A(245), 62, 1,  51, A(270), 62,
+	1,  51, A(295), 62, 2, 187, A(65),   0,
+	2, 187, A(115),  0, 3,  51, A(245), 62,
+	3,  51, A(270), 62, 3,  51, A(295), 62,
     };
     ramp_pattern_group(data, 1, 32);
     callback(&ramp_pattern_M_is_for_murder, 64, 0);
@@ -597,13 +597,14 @@ static void ramp_pattern_M_is_for_murder(u16 i) {
 static void ramp_pattern_W_is_for_walrus(u16 i) {
     if (i == 0) {
 	static const byte data[] = {
-	    1, 155, 19, 0, 3, 155, 23, 0, 2, 51, 11, 94
+	    1, 155, A(65), 0, 3, 155, A(115), 0, 2, 51, A(270), 94
 	};
 	ramp_pattern_group(data, 2, 12);
     }
     else {
 	static const byte data[] = {
-	    1, 155, 23, 0, 3, 155, 19, 0, 2, 51, 7, 94, 2, 51, 15, 94
+	    1, 155, A(115),  0, 3, 155,  A(65), 0,
+	    2,  51, A(245), 94, 2,  51, A(295), 94
 	};
 	ramp_pattern_group(data, 2, 16);
     }
@@ -612,15 +613,15 @@ static void ramp_pattern_W_is_for_walrus(u16 i) {
 
 static void ramp_pattern_P_is_for_poison(u16 i) {
     static const byte data[] = {
-	1, 51,  7, 126, 3, 123, 19, 0,
-	1, 51, 11, 126, 3, 123, 20, 0,
-	1, 51, 15, 126, 3, 123, 23, 0,
-	2, 51,  7, 126, 1, 123, 19, 0,
-	2, 51, 11, 126, 1, 123, 20, 0,
-	2, 51, 15, 126, 1, 123, 23, 0,
-	3, 51,  7, 126, 2, 123, 19, 0,
-	3, 51, 11, 126, 2, 123, 20, 0,
-	3, 51, 15, 126, 2, 123, 23, 0,
+	1, 51, A(245), 126, 3, 123, A(65),  0,
+	1, 51, A(270), 126, 3, 123, A(90),  0,
+	1, 51, A(295), 126, 3, 123, A(115), 0,
+	2, 51, A(245), 126, 1, 123, A(65),  0,
+	2, 51, A(270), 126, 1, 123, A(90),  0,
+	2, 51, A(295), 126, 1, 123, A(115), 0,
+	3, 51, A(245), 126, 2, 123, A(65),  0,
+	3, 51, A(270), 126, 2, 123, A(90),  0,
+	3, 51, A(295), 126, 2, 123, A(115), 0,
     };
     ramp_pattern_group(data + i, 3, 8);
     callback(&ramp_pattern_P_is_for_poison, 20, i < 64 ? i + 8 : 0);
@@ -628,8 +629,8 @@ static void ramp_pattern_P_is_for_poison(u16 i) {
 
 static void ramp_pattern_D_is_for_daisies(u16 i) {
     static const byte data[] = {
-	1, 35, 16, 1, 91, 20, 2, 91, 20, 3, 91, 20,
-	3, 35,  5, 1, 91, 20, 2, 91, 20, 3, 91, 20,
+	1, 35, A(0),   1, 91, A(90), 2, 91, A(90), 3, 91, A(90),
+	3, 35, A(180), 1, 91, A(90), 2, 91, A(90), 3, 91, A(90),
     };
     setup_projectile(RAMP_OFFSET(4, data[i]), data[i + 1], data[i + 2]);
     callback(&ramp_pattern_D_is_for_daisies, 25, i >= 21 ? 0 : i + 3);
