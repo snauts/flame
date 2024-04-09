@@ -765,11 +765,13 @@ static void king_head_frame(u16 frame) {
 static const byte L_arc[] = {  5, 40, A(225), A(215), A(200), A(180) };
 static const byte R_arc[] = {  5, 40, A(315), A(325), A(340), A(0) };
 
-static const byte L_saw[] = { 10, 15,
-    A(245), A(250), A(255), A(265), A(270), A(275), A(285), A(290), A(295)
+static const byte L_saw[] = { 13, 15,
+    A(240), A(245), A(250), A(255), A(265), A(270),
+    A(275), A(285), A(290), A(295), A(300), A(305)
 };
-static const byte R_saw[] = { 10, 15,
-    A(295), A(290), A(285), A(275), A(270), A(265), A(255), A(250), A(245)
+static const byte R_saw[] = { 13, 15,
+    A(305), A(300), A(295), A(290), A(285), A(275),
+    A(270), A(265), A(255), A(250), A(245), A(240),
 };
 
 static const byte *pattern;
