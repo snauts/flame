@@ -701,10 +701,10 @@ struct BossSpit {
 };
 
 static const struct BossSpit spit_fan_L = {
-    .x = 96, .count = 5, .ids = { 20, 19, 18, 17, 16 },
+    .x = 96, .count = 5, .ids = { A(90), A(65), A(45), A(25), A(0) },
 };
 static const struct BossSpit spit_fan_R = {
-    .x = 342, .count = 5, .ids = { 20, 23, 22, 21, 5 },
+    .x = 342, .count = 5, .ids = { A(90), A(115), A(135), A(155), A(180) },
 };
 static const struct BossSpit *spit_data[] = {
     &spit_fan_L, &spit_fan_R,
@@ -759,7 +759,7 @@ static void hermit_idle(u16 x) {
 
 static void spit_arc(u16 y) {
     static const byte type[] = {
-	5, 21, 22, 23, 20, 19, 18, 17, 16
+	A(180), A(155), A(135), A(115), A(90), A(65), A(45), A(25), A(0)
     };
     static const byte height[] = {
 	0, 4, 6, 8, 10, 8, 6, 4, 0
@@ -785,7 +785,7 @@ static void spit_storm(u16 i) {
     static const byte height[] = { 220, 190, 220, 205, 190, 205, 220, 190 };
     char dir = hermit[BASE]->direction > 0;
     u16 x = dir ? spit_fan_L.x : spit_fan_R.x;
-    setup_boss_spit(x, height[i], dir ? 16 : 5);
+    setup_boss_spit(x, height[i], dir ? A(0) : A(180));
 
     if (is_state(ANGRY)) {
 	callback(&hermit_idle, 96, 0);
@@ -833,7 +833,7 @@ static void produce_spit_fan(Object *obj, char right, char stop) {
 	if (arc_position(obj)) perform_jump_and_arc();
     }
     else if (!at_edge(obj) && lay_position(obj)) {
-	setup_boss_spit(obj->x - (right ? 0 : 72), 220, 20);
+	setup_boss_spit(obj->x - (right ? 0 : 72), 220, A(90));
     }
 }
 
