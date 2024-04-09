@@ -1049,8 +1049,21 @@ const Rectangle right_box[] = {
     { x1:-24, y1: 44, x2: -4, y2: 60 },
 };
 
+static short tile_in_range(Object *obj, u16 from, u16 range) {
+    u16 tile = TILE_ID(obj->sprite->cfg);
+    return from <= tile && tile < from + range;
+}
+
+static short is_small_rat(Object *obj) {
+    return tile_in_range(obj, RAT_TILES, 9 * 4);
+}
+
+static short is_spittle(Object *obj) {
+    return tile_in_range(obj, SLIME_TILES, 12);
+}
+
 static void remove_rat_or_spit(Object *obj) {
-    if (obj->private || (obj->flags & O_PROJECTILE)) {
+    if (is_small_rat(obj) || is_spittle(obj)) {
 	kill_mob_silently(obj);
     }
 }
