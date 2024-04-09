@@ -1133,14 +1133,6 @@
 (defun get-ray-step (alpha &optional (len 1.1))
   (list (* len (cos alpha)) (* len (sin alpha))))
 
-(defun pow-2 (x) (expt x 2))
-
-(defun distance-error (line done)
-  (sqrt (reduce #'+ (mapcar #'pow-2 (mapcar #'- line done)))))
-
-(defun good-precision (line done)
-  (and (> (length done) 1) (< (distance-error line (first done)) 0.1)))
-
 (defun pos-to-diff (pos)
   (unless (null (rest pos))
     (cons (mapcar #'- (second pos) (first pos)) (pos-to-diff (rest pos)))))
@@ -1150,7 +1142,7 @@
 	 (step (get-ray-step alpha))
 	 (done (list (list 0 0)))
 	 (line (list 0.0 0.0)))
-    (loop while (not (good-precision line done)) do
+    (loop for counter from 1 to 32 do
       (setf line (mapcar #'+ line step))
       (push (mapcar #'round line) done))
     (pos-to-diff (reverse done))))
@@ -1177,19 +1169,15 @@
   (elt '("mY" "mX" "mX" "mY" "pY" "pX" "pX" "pY") (floor angle 45)))
 
 (defun generate-ray-table (out &optional (step 5))
-  (let ((table nil))
-    (loop for angle from 0 to 45 by step do
-      (let ((ray (generate-single-ray angle)))
-	(push (list angle (length ray)) table)
-	(save-steps out angle ray)))
-    (format out "const Ray rays[] = {~%")
-    (loop for angle from 0 to 359 by step do
-      (let ((beta (sub-angle angle)))
-	(format out "{ dx:~A, dy:~A, len:~A },~%"
-		(ray-name beta (get-x-prefix angle))
-		(ray-name beta (get-y-prefix angle))
-		(second (assoc beta table)))))
-    (format out "};~%")))
+  (loop for angle from 0 to 45 by step do
+    (save-steps out angle (generate-single-ray angle)))
+  (format out "const Ray rays[] = {~%")
+  (loop for angle from 0 to 359 by step do
+    (let ((beta (sub-angle angle)))
+      (format out "{ dx:~A, dy:~A },~%"
+	      (ray-name beta (get-x-prefix angle))
+	      (ray-name beta (get-y-prefix angle)))))
+  (format out "};~%"))
 
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)

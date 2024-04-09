@@ -106,7 +106,6 @@ typedef struct Trigger {
 typedef struct Ray {
     const char *dx;
     const char *dy;
-    u16 len;
 } Ray;
 
 typedef struct Level {
