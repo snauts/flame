@@ -591,7 +591,7 @@ static void ramp_pattern_M_is_for_murder(u16 i) {
 	3,  51, A(270), 62, 3,  51, A(295), 62,
     };
     ramp_pattern_group(data, 1, 32);
-    callback(&ramp_pattern_M_is_for_murder, 64, 0);
+    callback(&ramp_pattern_M_is_for_murder, 72, 0);
 }
 
 static void ramp_pattern_W_is_for_walrus(u16 i) {
@@ -604,7 +604,7 @@ static void ramp_pattern_W_is_for_walrus(u16 i) {
     else {
 	static const byte data[] = {
 	    1, 155, A(115),  0, 3, 155,  A(65), 0,
-	    2,  51, A(245), 94, 2,  51, A(295), 94
+	    2,  51, A(240), 94, 2,  51, A(300), 94
 	};
 	ramp_pattern_group(data, 2, 16);
     }
@@ -762,8 +762,8 @@ static void king_head_frame(u16 frame) {
     }
 }
 
-static const byte L_arc[] = {  5, 30, A(225), A(215), A(200), A(180) };
-static const byte R_arc[] = {  5, 30, A(315), A(325), A(340), A(0) };
+static const byte L_arc[] = {  5, 40, A(225), A(215), A(200), A(180) };
+static const byte R_arc[] = {  5, 40, A(315), A(325), A(340), A(0) };
 
 static const byte L_saw[] = { 10, 15,
     A(245), A(250), A(255), A(265), A(270), A(275), A(285), A(290), A(295)

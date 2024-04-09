@@ -474,7 +474,7 @@ static void gunner_crab(Object *obj) {
 }
 
 static const char five[] = { 5, A(250), A(235), A(225), A(290), A(270) };
-static const char cone[] = { 3, A(255), A(270), A(290) };
+static const char cone[] = { 3, A(250), A(270), A(290) };
 static const char fast[] = { 3,    -32, A(270), A(235) };
 static const char saw[] =  { 2, A(250), A(225) };
 static const char ray[] =  { 2, A(180), A(160) };
@@ -553,8 +553,8 @@ void emit_crossfire(u16 x) {
 }
 
 void emit_grenadiers(u16 x) {
-    create_gunner_crab(x, 1, 28, 28);
-    create_gunner_crab(x + 56, 1, 28, -28);
+    create_gunner_crab(x, 1, 32, 32);
+    create_gunner_crab(x + 56, 1, 32, -28);
 }
 
 void emit_highway(u16 x) {
