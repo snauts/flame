@@ -161,6 +161,9 @@ int error(const char *format, ...)
 
 #define SCREEN_X(x) ((x) - window + ON_SCREEN)
 
+/* calculate index into ray table from angle in degrees */
+#define A(angle) ((angle % 360) / 5)
+
 void poke_VRAM(u16 addr, u16 data);
 void fill_VRAM(u16 addr, u16 data, u16 count);
 
