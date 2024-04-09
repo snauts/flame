@@ -1133,11 +1133,13 @@
 (defun get-ray-step (alpha &optional (len 1.1))
   (list (* len (cos alpha)) (* len (sin alpha))))
 
-(defun angle-error (alpha done)
-  (abs (- alpha (atan (second done) (first done)))))
+(defun pow-2 (x) (expt x 2))
 
-(defun good-precision (alpha done)
-  (and (> (length done) 1) (< (angle-error alpha (first done)) 0.005)))
+(defun distance-error (line done)
+  (sqrt (reduce #'+ (mapcar #'pow-2 (mapcar #'- line done)))))
+
+(defun good-precision (line done)
+  (and (> (length done) 1) (< (distance-error line (first done)) 0.1)))
 
 (defun pos-to-diff (pos)
   (unless (null (rest pos))
@@ -1148,7 +1150,7 @@
 	 (step (get-ray-step alpha))
 	 (done (list (list 0 0)))
 	 (line (list 0.0 0.0)))
-    (loop while (not (good-precision alpha done)) do
+    (loop while (not (good-precision line done)) do
       (setf line (mapcar #'+ line step))
       (push (mapcar #'round line) done))
     (pos-to-diff (reverse done))))
@@ -1172,7 +1174,7 @@
   (elt '("pX" "pY" "mY" "mX" "mX" "mY" "pY" "pX") (floor angle 45)))
 
 (defun get-y-prefix (angle)
-  (elt '("pY" "pX" "pX" "pY" "mY" "mX" "mX" "mY") (floor angle 45)))
+  (elt '("mY" "mX" "mX" "mY" "pY" "pX" "pX" "pY") (floor angle 45)))
 
 (defun generate-ray-table (out &optional (step 5))
   (let ((table nil))
