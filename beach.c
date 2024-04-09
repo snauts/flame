@@ -619,6 +619,7 @@ static char is_hermit_alive(void);
 
 Object *setup_projectile(u16 x, u16 y, char pattern) {
     Object *obj = setup_obj(x, y, SPRITE_SIZE(1, 1));
+    BUG(pattern >= 72, "BAD-PATTERN %d", pattern);
     mob_fn(obj, &move_projectile);
     obj->flags |= O_PROJECTILE;
     obj->direction = pattern;
