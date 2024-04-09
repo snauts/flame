@@ -762,10 +762,15 @@ static void king_head_frame(u16 frame) {
     }
 }
 
-static const byte L_arc[] = {  5, 30,  3, 25, 24,  5 };
-static const byte R_arc[] = {  5, 30, 28, 27, 26, 16 };
-static const byte L_saw[] = { 10, 15,  7,  8,  9, 10, 11, 12, 13, 14, 15 };
-static const byte R_saw[] = { 10, 15, 15, 14, 13, 12, 11, 10,  9 , 8,  7 };
+static const byte L_arc[] = {  5, 30, A(225), A(215), A(200), A(180) };
+static const byte R_arc[] = {  5, 30, A(315), A(325), A(340), A(0) };
+
+static const byte L_saw[] = { 10, 15,
+    A(245), A(250), A(255), A(265), A(270), A(275), A(285), A(290), A(295)
+};
+static const byte R_saw[] = { 10, 15,
+    A(295), A(290), A(285), A(275), A(270), A(265), A(255), A(250), A(245)
+};
 
 static const byte *pattern;
 
@@ -884,7 +889,7 @@ static void bottom_spit(Object *obj, char pattern) {
 
 static void select_landing_pattern(Object *obj) {
     if (is_king_in_middle(obj)) {
-	bottom_spit(obj, 0);
+	bottom_spit(obj, A(270));
     }
 }
 
@@ -908,11 +913,10 @@ static void king_jumping(Object *obj) {
 static void leave_spit_trail(u16 x) {
     short n = (x & 0xff) - 1;
     if (n < 5) {
-	bottom_spit(crown, 11 + ((x & BIT(8)) ? -n : n));
+	bottom_spit(crown, A(270) + ((x & BIT(8)) ? -n : n));
 	callback(&leave_spit_trail, 4 + n, x + 1);
     }
 }
-
 
 static void king_next_jump(Object *obj) {
     switch (crown->x) {
