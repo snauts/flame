@@ -1130,6 +1130,43 @@
 	(push (* ratio (sin angle)) result)
 	(push (cos angle) result)))))
 
+(defun get-ray-step (alpha &optional (len 1.1))
+  (list (* len (cos alpha)) (* len (sin alpha))))
+
+(defun angle-error (alpha done)
+  (abs (- alpha (atan (second done) (first done)))))
+
+(defun good-precision (alpha done)
+  (and (> (length done) 1) (< (angle-error alpha (first done)) 0.005)))
+
+(defun pos-to-diff (pos)
+  (unless (null (rest pos))
+    (cons (mapcar #'- (second pos) (first pos)) (pos-to-diff (rest pos)))))
+
+(defun generate-single-ray (angle)
+  (let* ((alpha (* (/ pi 180) angle))
+	 (step (get-ray-step alpha))
+	 (done (list (list 0 0)))
+	 (line (list 0.0 0.0)))
+    (loop while (not (good-precision alpha done)) do
+      (setf line (mapcar #'+ line step))
+      (push (mapcar #'round line) done))
+    (pos-to-diff (reverse done))))
+
+(defun ray-name (angle axis)
+  (format nil "ray_~A_~A" axis angle))
+
+(defun save-steps (out angle steps)
+  (save-char-array out (ray-name angle "X") (mapcar #'first steps))
+  (save-char-array out (ray-name angle "Y") (mapcar #'second steps)))
+
+(defun generate-ray-table (out &optional (step 5))
+  (let ((table nil))
+    (loop for angle from 0 to 45 by step do
+      (let ((ray (generate-single-ray angle)))
+	(push (list angle ray) table)
+	(save-steps out angle ray)))))
+
 (defun save-music ()
   (with-open-file (out "music.inc" :if-exists :supersede :direction :output)
     (save-array out "johnny_score" (save-score (johnny-score)))
@@ -1142,7 +1179,8 @@
     (save-char-array out "larger_circle" (generate-circle-table 256 52 1.8))
     (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
     (save-sfx out "wiggle" (convert-sfx 20 #'wiggle #'wiggle-volume))
-    (save-sfx out "slash" (convert-sfx 32 #'slash #'linear-fade))))
+    (save-sfx out "slash" (convert-sfx 32 #'slash #'linear-fade))
+    (generate-ray-table out)))
 
 (defun save-and-quit ()
   (handler-case (save-music)
