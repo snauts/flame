@@ -968,11 +968,31 @@ static void king_wiggle(u16 i) {
     }
 }
 
+static u16 sprite_w(Object *obj) {
+    return ((obj->sprite->size & 0xc) + 4) * 2;
+}
+
 static u16 sprite_h(Object *obj) {
     return ((obj->sprite->size & 0x3) + 1) * 8;
 }
 
 static void blow_off_part(u16 i);
+static void assign_burns_to_parts(u16 i);
+
+static void disintegrate_part(Object *obj) {
+    u16 cfg = obj->sprite->cfg;
+    u16 w = sprite_w(obj), h = sprite_h(obj);
+    assign_burns_to_parts(obj->frame + 1);
+    for (short x = w - 8; x >= 0; x -= 8) {
+	for (u16 y = 0; y < h; y += 8) {
+	    Object *frag = setup_obj(obj->x + x, obj->y + y, SPRITE_SIZE(1, 1));
+	    frag->sprite->x = obj->sprite->x + x;
+	    frag->sprite->y = obj->sprite->y + y;
+	    frag->sprite->cfg = cfg;
+	    cfg = cfg + 1;
+	}
+    }
+}
 
 static void move_part(Object *obj) {
     u16 y = 336 - sprite_h(obj);
@@ -980,14 +1000,15 @@ static void move_part(Object *obj) {
     if (obj->y < y) {
 	advance_y(obj, 8);
 	obj->x += obj->direction;
+	obj->sprite->x = obj->x;
+	obj->sprite->y = obj->y;
     }
     else {
 	obj->y = y;
 	mob_fn(obj, NULL);
-	blow_off_part(obj->frame + 1);
+	disintegrate_part(obj);
+	free_mob(obj);
     }
-    obj->sprite->x = obj->x;
-    obj->sprite->y = obj->y;
 }
 
 #define FINAL_BURNS 8
@@ -1042,7 +1063,6 @@ static void blow_off_part(u16 i) {
     else {
 	/* follow up */
     }
-    assign_burns_to_parts(i);
 }
 
 static void crown_flies_away(u16 i) {
@@ -1058,6 +1078,7 @@ static void king_death(Object *obj) {
     setup_burns(FINAL_BURNS, BURN_TILES);
     if (obj->direction < 0) king_flip(0);
     callback(&blow_off_part, 0, 1);
+    assign_burns_to_parts(1);
     mob_fn(crown, NULL);
     crown_flies_away(0);
     king_burns(0);
