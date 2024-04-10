@@ -968,8 +968,14 @@ static void king_wiggle(u16 i) {
     }
 }
 
+static u16 sprite_h(Object *obj) {
+    return ((obj->sprite->size & 0x3) + 1) * 8;
+}
+
+static void blow_off_part(u16 i);
+
 static void move_part(Object *obj) {
-    u16 y = 272 + ((obj->sprite->size & 3) + 1) * 8;
+    u16 y = 336 - sprite_h(obj);
 
     if (obj->y < y) {
 	advance_y(obj, 8);
@@ -977,24 +983,75 @@ static void move_part(Object *obj) {
     }
     else {
 	obj->y = y;
+	mob_fn(obj, NULL);
+	blow_off_part(obj->frame + 1);
     }
     obj->sprite->x = obj->x;
     obj->sprite->y = obj->y;
 }
 
+#define FINAL_BURNS 8
+static void king_burns(u16 i) {
+    extern Object **burns;
+    for (i = 0; i < FINAL_BURNS; i++) {
+	Object *burn = burns[i];
+	if (burn->private != NULL && burn->frame >= 8) {
+	    u16 rnd = random();
+	    burn->x = (rnd & 0x1f) - 8;
+	    burn->y = sprite_h(burn->private) - 8;
+	    burn->direction = (rnd & 2) - 1;
+	    if (i < 2) play_sfx(SFX_PERISH);
+	    init_burn(burn);
+	}
+	if (burn->frame < 8) {
+	    Sprite *sprite = burn->sprite;
+	    Object *parent = (Object *) burn->private;
+	    sprite->x = parent->sprite->x + burn->x;
+	    sprite->y = parent->sprite->y + burn->y;
+	    burn->y = burn->y - 1;
+	}
+    }
+    schedule(&king_burns, 0);
+}
+
 static void blow_off_part(u16 i) {
-    Object *part = king[i];
+    if (i < KING_PARTS) {
+	Object *part = king[i];
+	part->frame = i;
+	part->gravity = 0;
+	part->velocity = 2;
+	part->x = part->sprite->x;
+	part->y = part->sprite->y;
+	part->direction = (i & 1) ? 1 : -1;
+	mob_fn(part, &move_part);
+    }
+    else {
+	/* follow up */
+    }
 
-    part->gravity = 0;
-    part->velocity = 2;
-    part->x = part->sprite->x;
-    part->y = part->sprite->y;
-    part->direction = (i & 1) ? 1 : -1;
-
-    mob_fn(part, &move_part);
+    extern Object **burns;
+    for (u16 n = 0; n < FINAL_BURNS; n++) {
+	Object *burn = burns[n];
+	u16 index = i + (n >> 1);
+	burn->private = index < KING_PARTS ? king[index] : NULL;
+	if (burn->private != NULL) {
+	    burn->frame = (((n & 1) ? 3 : 0) + n) & 7;
+	}
+	else {
+	    hide_sprite(burn->sprite);
+	    burn->frame = 8;
+	}
+    }
 }
 
 static void king_death(Object *obj) {
+    free_burns();
+    set_mob_order(-1);
+    setup_burns(FINAL_BURNS, BURN_TILES);
+    if (obj->direction < 0) king_flip(0);
+    callback(&blow_off_part, 0, 1);
+    mob_fn(crown, NULL);
+    king_burns(0);
 }
 
 static void king_standing(Object *obj) {
@@ -1004,9 +1061,7 @@ static void king_standing(Object *obj) {
 	    king_wiggle(2);
 	}
 	else {
-	    if (obj->direction < 0) king_flip(0);
-	    callback(&blow_off_part, 0, 1);
-	    mob_fn(crown, &king_death);
+	    king_death(obj);
 	}
     }
     else {
@@ -1141,6 +1196,7 @@ static void setup_king(u16 i) {
 }
 
 void display_king(void) {
+    set_seed(8008);
     display_french(&king_level);
 
     load_tiles(&crown_img, CROWN_TILES);
