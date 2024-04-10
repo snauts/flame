@@ -1026,6 +1026,7 @@ static void move_part(Object *obj) {
     else {
 	obj->y = y;
 	mob_fn(obj, NULL);
+	play_sfx(SFX_PERISH);
 	disintegrate_part(obj);
 	free_mob(obj);
     }
