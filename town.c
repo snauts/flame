@@ -1094,7 +1094,8 @@ static void blow_off_part(u16 i) {
 	play_sfx(SFX_PERISH);
     }
     else {
-	crown->sprite->x = soldier.sprite->x + 4;
+	u16 offset = soldier.direction > 0 ? 4 : 3;
+	crown->sprite->x = soldier.sprite->x + offset;
 	crown_lands(0);
     }
 }
