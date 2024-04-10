@@ -991,45 +991,28 @@ static void move_part(Object *obj) {
 }
 
 #define FINAL_BURNS 8
+extern Object **burns;
 static void king_burns(u16 i) {
-    extern Object **burns;
     for (i = 0; i < FINAL_BURNS; i++) {
 	Object *burn = burns[i];
-	if (burn->private != NULL && burn->frame >= 8) {
+	Sprite *sprite = burn->sprite;
+	Object *parent = (Object *) burn->private;
+	if (parent != NULL && burn->frame >= 8) {
 	    u16 rnd = random();
 	    burn->x = (rnd & 0x1f) - 8;
 	    burn->y = sprite_h(burn->private) - 8;
+	    sprite->x = parent->sprite->x + burn->x;
+	    sprite->y = parent->sprite->y + burn->y;
 	    burn->direction = (rnd & 2) - 1;
 	    if (i < 2) play_sfx(SFX_PERISH);
 	    init_burn(burn);
 	}
-	if (burn->frame < 8) {
-	    Sprite *sprite = burn->sprite;
-	    Object *parent = (Object *) burn->private;
-	    sprite->x = parent->sprite->x + burn->x;
-	    sprite->y = parent->sprite->y + burn->y;
-	    burn->y = burn->y - 1;
-	}
+	burn->y = burn->y - 1;
     }
     schedule(&king_burns, 0);
 }
 
-static void blow_off_part(u16 i) {
-    if (i < KING_PARTS) {
-	Object *part = king[i];
-	part->frame = i;
-	part->gravity = 0;
-	part->velocity = 2;
-	part->x = part->sprite->x;
-	part->y = part->sprite->y;
-	part->direction = (i & 1) ? 1 : -1;
-	mob_fn(part, &move_part);
-    }
-    else {
-	/* follow up */
-    }
-
-    extern Object **burns;
+static void assign_burns_to_parts(u16 i) {
     for (u16 n = 0; n < FINAL_BURNS; n++) {
 	Object *burn = burns[n];
 	u16 index = i + (n >> 1);
@@ -1042,6 +1025,24 @@ static void blow_off_part(u16 i) {
 	    burn->frame = 8;
 	}
     }
+}
+
+static void blow_off_part(u16 i) {
+    if (i < KING_PARTS) {
+	Object *part = king[i];
+	part->frame = i;
+	part->gravity = 0;
+	part->velocity = 2;
+	part->x = part->sprite->x;
+	part->y = part->sprite->y;
+	part->direction = (i & 1) ? 1 : -1;
+	mob_fn(part, &move_part);
+	play_sfx(SFX_PERISH);
+    }
+    else {
+	/* follow up */
+    }
+    assign_burns_to_parts(i);
 }
 
 static void king_death(Object *obj) {
