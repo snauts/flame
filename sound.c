@@ -235,7 +235,7 @@ static void setup_onions(void) {
 
 static void setup_katyusha(void) {
     setup_ym2612_channel(0, strings);
-    setup_ym2612_channel(1, tuba);
+    setup_ym2612_channel(1, horn);
     setup_ym2612_channel(2, hi_hat);
     setup_ym2612_channel(4, drums);
     setup_ym2612_channel(5, drums);
