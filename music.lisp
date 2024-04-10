@@ -1061,23 +1061,21 @@
 (defun onions-score ()
   (append (onion-score-1) (onion-score-2)))
 
-(defparameter *chord-B* '((4 1 Ds) (5 1 Fs) (6 1 B)))
+(defparameter *chord-A* '((4 1 A) (5 2 Cs) (6 2 E)))
+(defparameter *chord-B* '((4 1 B) (5 1 Ds) (6 1 Fs)))
 (defparameter *chord-C* '((4 1 C) (5 1 E) (6 1 G)))
+(defparameter *chord-D* '((4 1 D) (5 1 Fs) (6 1 A)))
 (defparameter *chord-E* '((4 1 E) (5 1 Gs) (6 1 B)))
 (defparameter *chord-F* '((4 1 F) (5 1 A) (6 2 C)))
 (defparameter *chord-G* '((4 1 G) (5 1 B) (6 2 D)))
 
 (defparameter *chord-Am* '((4 1 A) (5 2 C) (6 2 E)))
+(defparameter *chord-Bm* '((4 1 B) (5 1 D) (6 1 Fs)))
 (defparameter *chord-Cm* '((4 1 C) (5 1 Ds) (6 1 G)))
 (defparameter *chord-Dm* '((4 1 D) (5 1 F) (6 1 A)))
 (defparameter *chord-Em* '((4 1 E) (5 1 G) (6 1 B)))
+(defparameter *chord-Fm* '((4 1 F) (5 1 Gs) (6 2 C)))
 (defparameter *chord-Gm* '((4 1 G) (5 1 As) (6 2 D)))
-
-(defparameter *chord-A7* '((4 1 A) (5 2 Cs) (6 2 E) (2 2 G)))
-(defparameter *chord-B7* '((4 1 Ds) (5 1 Fs) (6 1 B) (2 0 A)))
-(defparameter *chord-D7* '((4 1 D) (5 1 Fs) (6 1 A) (2 2 C)))
-(defparameter *chord-E7* '((4 1 E) (5 1 Gs) (6 1 B) (2 2 D)))
-(defparameter *chord-G7* '((4 1 G) (5 1 B) (6 2 D) (2 2 F)))
 
 (defparameter *katyusha-1a*
   `((3 (0 1 A) ,@*chord-Am*)
@@ -1089,8 +1087,8 @@
     (1 (0 2 C))
     (1 (0 1 B))
     (1 (0 1 A))
-    (2 (0 1 B) ,@*chord-E7*)
-    (2 (0 1 E))
+    (2 (0 1 B) ,@*chord-E*)
+    (2 (0 1 E) ,@*chord-Em*)
 
     (3 (0 1 B))
     (1 (0 2 C))
@@ -1107,7 +1105,7 @@
   `((2 (0 2 E) ,@*chord-Am*)
     (2 (0 2 A) ,@*chord-F*)
     (2 (0 2 G) ,@*chord-C*)
-    (1 (0 2 A) ,@*chord-A7*)
+    (1 (0 2 A) ,@*chord-A*)
     (1 (0 2 G))
 
     (1 (0 2 F) ,@*chord-Dm*)
@@ -1123,9 +1121,9 @@
     (3 (0 2 E) ,@*chord-Am*)
     (1 (0 2 C))
 
-    (1 (0 1 B) ,@*chord-E7*)
+    (1 (0 1 B) ,@*chord-E*)
     (1 (0 1 E))
-    (1 (0 2 C))
+    (1 (0 2 C) ,@*chord-Em*)
     (1 (0 1 B))
     (4 (0 1 A) ,@*chord-Am*)))
 
@@ -1139,8 +1137,8 @@
     (1 (0 1 G))
     (1 (0 1 Fs))
     (1 (0 1 E))
-    (2 (0 1 Fs) ,@*chord-B7*)
-    (2 (0 0 B))
+    (2 (0 1 Fs) ,@*chord-B*)
+    (2 (0 0 B) ,@*chord-Bm*)
 
     (3 (0 1 Fs))
     (1 (0 1 G))
@@ -1157,7 +1155,7 @@
   `((2 (0 1 B) ,@*chord-Em*)
     (2 (0 2 E) ,@*chord-C*)
     (2 (0 2 D) ,@*chord-G*)
-    (1 (0 2 E) ,@*chord-E7*)
+    (1 (0 2 E) ,@*chord-E*)
     (1 (0 2 D))
 
     (1 (0 2 C) ,@*chord-Am*)
@@ -1173,9 +1171,9 @@
     (3 (0 1 B) ,@*chord-Em*)
     (1 (0 1 G))
 
-    (1 (0 1 Fs) ,@*chord-B7*)
+    (1 (0 1 Fs) ,@*chord-B*)
     (1 (0 0 B))
-    (1 (0 1 G))
+    (1 (0 1 G) ,@*chord-Bm*)
     (1 (0 1 Fs))
     (4 (0 1 E) ,@*chord-Em*)))
 
@@ -1189,8 +1187,8 @@
     (1 (0 1 As))
     (1 (0 1 A))
     (1 (0 1 G))
-    (2 (0 1 A) ,@*chord-D7*)
-    (2 (0 1 D))
+    (2 (0 1 A) ,@*chord-D*)
+    (2 (0 1 D) ,@*chord-Dm*)
 
     (3 (0 1 A))
     (1 (0 1 As))
@@ -1207,7 +1205,7 @@
   `((2 (0 2 D) ,@*chord-Gm*)
     (2 (0 2 G) ,@*chord-E*)
     (2 (0 2 F) ,@*chord-B*)
-    (1 (0 2 G) ,@*chord-G7*)
+    (1 (0 2 G) ,@*chord-G*)
     (1 (0 2 F))
 
     (1 (0 2 Ds) ,@*chord-Cm*)
@@ -1223,9 +1221,9 @@
     (3 (0 2 D) ,@*chord-Gm*)
     (1 (0 1 As))
 
-    (1 (0 1 A) ,@*chord-D7*)
+    (1 (0 1 A) ,@*chord-D*)
     (1 (0 1 D))
-    (1 (0 1 As))
+    (1 (0 1 As) ,@*chord-Dm*)
     (1 (0 1 A))
     (4 (0 1 G) ,@*chord-Gm*)))
 
@@ -1239,8 +1237,8 @@
     (1 (0 1 F))
     (1 (0 1 E))
     (1 (0 1 D))
-    (2 (0 1 E) ,@*chord-A7*)
-    (2 (0 0 A))
+    (2 (0 1 E) ,@*chord-A*)
+    (2 (0 0 A) ,@*chord-Am*)
 
     (3 (0 1 E))
     (1 (0 1 F))
@@ -1257,7 +1255,7 @@
   `((2 (0 1 A) ,@*chord-Dm*)
     (2 (0 2 D) ,@*chord-B*)
     (2 (0 2 C) ,@*chord-F*)
-    (1 (0 2 D) ,@*chord-D7*)
+    (1 (0 2 D) ,@*chord-D*)
     (1 (0 2 C))
 
     (1 (0 1 As) ,@*chord-Gm*)
@@ -1273,9 +1271,9 @@
     (3 (0 1 A) ,@*chord-Dm*)
     (1 (0 1 F))
 
-    (1 (0 1 E) ,@*chord-A7*)
+    (1 (0 1 E) ,@*chord-A*)
     (1 (0 0 A))
-    (1 (0 1 F))
+    (1 (0 1 F) ,@*chord-Am*)
     (1 (0 1 E))
     (4 (0 1 D) ,@*chord-Dm*)))
 
