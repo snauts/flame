@@ -968,6 +968,32 @@ static void king_wiggle(u16 i) {
     }
 }
 
+static void move_part(Object *obj) {
+    u16 y = 272 + ((obj->sprite->size & 3) + 1) * 8;
+
+    if (obj->y < y) {
+	advance_y(obj, 8);
+	obj->x += obj->direction;
+    }
+    else {
+	obj->y = y;
+    }
+    obj->sprite->x = obj->x;
+    obj->sprite->y = obj->y;
+}
+
+static void blow_off_part(u16 i) {
+    Object *part = king[i];
+
+    part->gravity = 0;
+    part->velocity = 2;
+    part->x = part->sprite->x;
+    part->y = part->sprite->y;
+    part->direction = (i & 1) ? 1 : -1;
+
+    mob_fn(part, &move_part);
+}
+
 static void king_death(Object *obj) {
 }
 
@@ -979,6 +1005,7 @@ static void king_standing(Object *obj) {
 	}
 	else {
 	    if (obj->direction < 0) king_flip(0);
+	    callback(&blow_off_part, 0, 1);
 	    mob_fn(crown, &king_death);
 	}
     }
