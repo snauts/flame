@@ -186,60 +186,59 @@ static void load_score(const byte *ptr, u16 size) {
 #define LOAD_SCORE(x) \
     load_score((x), ARRAY_SIZE(x));
 
-static void setup_johnny(void) {
-    setup_ym2612_channel(0, guitar);
-    setup_ym2612_channel(1, flute);
-    setup_ym2612_channel(2, hi_hat);
-    for (byte i = 4; i <= 6; i++) {
-	setup_ym2612_channel(i, bong);
+static void load_instruments(const void **instruments) {
+    for (u16 i = 0; i < 6; i++) {
+	if (instruments[i] != NULL) {
+	    setup_ym2612_channel(i < 3 ? i : i + 1, instruments[i]);
+	}
     }
+}
+
+static void setup_johnny(void) {
+    static const void *instruments[] = {
+	guitar, flute, hi_hat, bong, bong, bong
+    };
+    load_instruments(instruments);
     LOAD_SCORE(johnny_score);
 }
 
 static void setup_erika(void) {
-    setup_ym2612_channel(0, flute);
-    setup_ym2612_channel(1, tuba);
-    setup_ym2612_channel(2, drums);
-    setup_ym2612_channel(4, hi_hat);
-    setup_ym2612_channel(5, bong);
-    setup_ym2612_channel(6, horn);
+    static const void *instruments[] = {
+	flute, tuba, drums, hi_hat, bong, horn
+    };
+    load_instruments(instruments);
     LOAD_SCORE(erika_score);
 }
 
 static void setup_doves(void) {
-    setup_ym2612_channel(0, flute);
-    setup_ym2612_channel(1, hi_hat);
-    setup_ym2612_channel(2, tuba);
+    static const void *instruments[] = {
+	flute, hi_hat, tuba, NULL, NULL, NULL
+    };
+    load_instruments(instruments);
     LOAD_SCORE(doves_score);
 }
 
 static void setup_battotai(void) {
-    setup_ym2612_channel(0, flute);
-    setup_ym2612_channel(1, hi_hat);
-    setup_ym2612_channel(2, tuba);
-    setup_ym2612_channel(4, horn);
-    setup_ym2612_channel(5, tuba);
-    setup_ym2612_channel(6, bong);
+    static const void *instruments[] = {
+	flute, hi_hat, tuba, horn, tuba, bong
+    };
+    load_instruments(instruments);
     LOAD_SCORE(battotai_score);
 }
 
 static void setup_onions(void) {
-    setup_ym2612_channel(0, flute);
-    setup_ym2612_channel(1, horn);
-    setup_ym2612_channel(2, tuba);
-    setup_ym2612_channel(4, bong);
-    setup_ym2612_channel(5, bong);
-    setup_ym2612_channel(6, hi_hat);
+    static const void *instruments[] = {
+	flute, horn, tuba, bong, bong, hi_hat
+    };
+    load_instruments(instruments);
     LOAD_SCORE(onions_score);
 }
 
 static void setup_katyusha(void) {
-    setup_ym2612_channel(0, strings);
-    setup_ym2612_channel(1, horn);
-    setup_ym2612_channel(2, hi_hat);
-    setup_ym2612_channel(4, drums);
-    setup_ym2612_channel(5, drums);
-    setup_ym2612_channel(6, drums);
+    static const void *instruments[] = {
+	strings, horn, hi_hat, drums, drums, drums
+    };
+    load_instruments(instruments);
     LOAD_SCORE(katyusha_score);
 }
 
