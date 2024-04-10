@@ -1068,6 +1068,19 @@ static void assign_burns_to_parts(u16 i) {
     }
 }
 
+static void crown_lands(u16 i) {
+    short y = soldier.sprite->y - 3;
+    crown->sprite->y += 4;
+    if (crown->sprite->y < y) {
+	schedule(&crown_lands, 0);
+    }
+    else {
+	schedule(&finish_level, 128);
+	crown->sprite->y = y;
+	fade_music(0);
+    }
+}
+
 static void blow_off_part(u16 i) {
     if (i < KING_PARTS) {
 	Object *part = king[i];
@@ -1081,7 +1094,8 @@ static void blow_off_part(u16 i) {
 	play_sfx(SFX_PERISH);
     }
     else {
-	/* follow up */
+	crown->sprite->x = soldier.sprite->x + 4;
+	crown_lands(0);
     }
 }
 
