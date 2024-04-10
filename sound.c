@@ -235,11 +235,11 @@ static void setup_onions(void) {
 
 static void setup_katyusha(void) {
     setup_ym2612_channel(0, strings);
-    setup_ym2612_channel(1, flute);
+    setup_ym2612_channel(1, tuba);
     setup_ym2612_channel(2, hi_hat);
-    setup_ym2612_channel(4, guitar);
-    setup_ym2612_channel(5, guitar);
-    setup_ym2612_channel(6, guitar);
+    setup_ym2612_channel(4, drums);
+    setup_ym2612_channel(5, drums);
+    setup_ym2612_channel(6, drums);
     LOAD_SCORE(katyusha_score);
 }
 
