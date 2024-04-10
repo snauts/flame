@@ -979,15 +979,35 @@ static u16 sprite_h(Object *obj) {
 static void blow_off_part(u16 i);
 static void assign_burns_to_parts(u16 i);
 
+static void move_fragment(Object *obj) {
+    advance_y(obj, 8);
+    obj->x += obj->direction;
+    obj->sprite->x = obj->x;
+    obj->sprite->y = obj->y;
+    if (obj->y > ON_SCREEN + SCR_HEIGHT) {
+	free_mob(obj);
+    }
+}
+
 static void disintegrate_part(Object *obj) {
+    u16 w = sprite_w(obj);
+    u16 h = sprite_h(obj);
+    u16 next = obj->frame + 1;
     u16 cfg = obj->sprite->cfg;
-    u16 w = sprite_w(obj), h = sprite_h(obj);
-    assign_burns_to_parts(obj->frame + 1);
+    assign_burns_to_parts(next);
+    callback(&blow_off_part, 20, next);
     for (short x = w - 8; x >= 0; x -= 8) {
 	for (u16 y = 0; y < h; y += 8) {
-	    Object *frag = setup_obj(obj->x + x, obj->y + y, SPRITE_SIZE(1, 1));
-	    frag->sprite->x = obj->sprite->x + x;
-	    frag->sprite->y = obj->sprite->y + y;
+	    u16 rnd = random();
+	    u16 frag_x = obj->sprite->x + x;
+	    u16 frag_y = obj->sprite->y + y;
+	    Object *frag = setup_obj(frag_x, frag_y, SPRITE_SIZE(1, 1));
+	    frag->sprite->x = frag_x;
+	    frag->sprite->y = frag_y;
+	    frag->direction = (rnd & 2) - 1;
+	    frag->velocity = 1 + (rnd & 1);
+	    frag->gravity = (rnd >> 2) & 7;
+	    mob_fn(frag, &move_fragment);
 	    frag->sprite->cfg = cfg;
 	    cfg = cfg + 1;
 	}
