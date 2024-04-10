@@ -1079,7 +1079,7 @@
 (defparameter *chord-E7* '((4 1 E) (5 1 Gs) (6 1 B) (2 2 D)))
 (defparameter *chord-G7* '((4 1 G) (5 1 B) (6 2 D) (2 2 F)))
 
-(defparameter *katyusha*
+(defparameter *katyusha-1a*
   `((3 (0 1 A) ,@*chord-Am*)
     (1 (0 1 B))
     (3 (0 2 C))
@@ -1101,9 +1101,10 @@
     (1 (0 2 D))
     (1 (0 2 C))
     (1 (0 1 B))
-    (4 (0 1 A) ,@*chord-Am*)
-;--------------
-    (2 (0 2 E) ,@*chord-Am*)
+    (4 (0 1 A) ,@*chord-Am*)))
+
+(defparameter *katyusha-1b*
+  `((2 (0 2 E) ,@*chord-Am*)
     (2 (0 2 A) ,@*chord-F*)
     (2 (0 2 G) ,@*chord-C*)
     (1 (0 2 A) ,@*chord-A7*)
@@ -1126,9 +1127,10 @@
     (1 (0 1 E))
     (1 (0 2 C))
     (1 (0 1 B))
-    (4 (0 1 A) ,@*chord-Am*)
-;--------------
-    (3 (0 1 E) ,@*chord-Em*)
+    (4 (0 1 A) ,@*chord-Am*)))
+
+(defparameter *katyusha-2a*
+  `((3 (0 1 E) ,@*chord-Em*)
     (1 (0 1 Fs))
     (3 (0 1 G))
     (1 (0 1 E))
@@ -1149,9 +1151,10 @@
     (1 (0 1 A))
     (1 (0 1 G))
     (1 (0 1 Fs))
-    (4 (0 1 E) ,@*chord-Em*)
-;--------------
-    (2 (0 1 B) ,@*chord-Em*)
+    (4 (0 1 E) ,@*chord-Em*)))
+
+(defparameter *katyusha-2b*
+  `((2 (0 1 B) ,@*chord-Em*)
     (2 (0 2 E) ,@*chord-C*)
     (2 (0 2 D) ,@*chord-G*)
     (1 (0 2 E) ,@*chord-E7*)
@@ -1174,9 +1177,10 @@
     (1 (0 0 B))
     (1 (0 1 G))
     (1 (0 1 Fs))
-    (4 (0 1 E) ,@*chord-Em*)
-;--------------
-    (3 (0 1 G) ,@*chord-Gm*)
+    (4 (0 1 E) ,@*chord-Em*)))
+
+(defparameter *katyusha-3a*
+  `((3 (0 1 G) ,@*chord-Gm*)
     (1 (0 1 A))
     (3 (0 1 As))
     (1 (0 1 G))
@@ -1197,9 +1201,10 @@
     (1 (0 2 C))
     (1 (0 1 As))
     (1 (0 1 A))
-    (4 (0 1 G) ,@*chord-Gm*)
-;--------------
-    (2 (0 2 D) ,@*chord-Gm*)
+    (4 (0 1 G) ,@*chord-Gm*)))
+
+(defparameter *katyusha-3b*
+  `((2 (0 2 D) ,@*chord-Gm*)
     (2 (0 2 G) ,@*chord-E*)
     (2 (0 2 F) ,@*chord-B*)
     (1 (0 2 G) ,@*chord-G7*)
@@ -1222,9 +1227,10 @@
     (1 (0 1 D))
     (1 (0 1 As))
     (1 (0 1 A))
-    (4 (0 1 G) ,@*chord-Gm*)
-;--------------
-    (3 (0 1 D) ,@*chord-Dm*)
+    (4 (0 1 G) ,@*chord-Gm*)))
+
+(defparameter *katyusha-4a*
+  `((3 (0 1 D) ,@*chord-Dm*)
     (1 (0 1 E))
     (3 (0 1 F))
     (1 (0 1 D))
@@ -1245,9 +1251,10 @@
     (1 (0 1 G))
     (1 (0 1 F))
     (1 (0 1 E))
-    (4 (0 1 D) ,@*chord-Dm*)
-;--------------
-    (2 (0 1 A) ,@*chord-Dm*)
+    (4 (0 1 D) ,@*chord-Dm*)))
+
+(defparameter *katyusha-4b*
+  `((2 (0 1 A) ,@*chord-Dm*)
     (2 (0 2 D) ,@*chord-B*)
     (2 (0 2 C) ,@*chord-F*)
     (1 (0 2 D) ,@*chord-D7*)
@@ -1270,12 +1277,18 @@
     (1 (0 0 A))
     (1 (0 1 F))
     (1 (0 1 E))
-    (4 (0 1 D) ,@*chord-Dm*)
-;--------------
-    ))
+    (4 (0 1 D) ,@*chord-Dm*)))
+
+(defun katyusha-notes ()
+  (copy-score
+   (append
+    *katyusha-1a* *katyusha-1b* *katyusha-1b*
+    *katyusha-2a* *katyusha-2b* *katyusha-2b*
+    *katyusha-3a* *katyusha-3b* *katyusha-3b*
+    *katyusha-4a* *katyusha-4b* *katyusha-4b*)))
 
 (defun katyusha-score ()
-  (let ((score (copy-score *katyusha*)))
+  (let ((score (katyusha-notes)))
     (adjust-octaves score '(4 0 4 x 4 4 4))
     (scale-tempo score 12)
     (channel-key-off score 0 2/3)
