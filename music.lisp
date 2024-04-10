@@ -1277,6 +1277,56 @@
     (1 (0 1 E))
     (4 (0 1 D) ,@*chord-Dm*)))
 
+(defun katyusha-drums-prefix ()
+  (copy-score
+   '((4  (2 0 C))
+     (4  (2 0 C))
+     (28 (2 0 C))
+     (12 (2 0 C))
+
+     (4  (2 0 C))
+     (4  (2 0 C))
+     (28 (2 0 C))
+     (12 (2 0 C))
+
+     (12 (2 0 C))
+     (12 (2 0 C))
+     (12 (2 0 C))
+     (12 (2 0 C)))))
+
+(defun katyusha-drums-a ()
+  (append (katyusha-drums-prefix) '((24 (2 0 C)) (24 (2 0 C)))))
+
+(defun katyusha-drums-c ()
+  (append (katyusha-drums-prefix) '((48 (2 0 C)))))
+
+(defun katyusha-drums-b ()
+  (copy-score
+   '((4  (2 0 C))
+     (4  (2 0 C))
+     (16 (2 0 C))
+     (4  (2 0 C))
+     (4  (2 0 C))
+     (16 (2 0 C))
+     (4  (2 0 C))
+     (4  (2 0 C))
+     (16 (2 0 C))
+     (12 (2 0 C))
+     (12 (2 0 C))
+
+     (12 (2 0 C))
+     (12 (2 0 C))
+     (12 (2 0 C))
+     (12 (2 0 C))
+
+     (24  (2 0 C))
+     (24  (2 0 C)))))
+
+(defun katyusha-drums ()
+  (append (katyusha-drums-a) (katyusha-drums-c)
+	  (katyusha-drums-b) (katyusha-drums-c)
+	  (katyusha-drums-b) (katyusha-drums-c)))
+
 (defun katyusha-notes ()
   (copy-score
    (append
@@ -1289,6 +1339,7 @@
   (let ((score (katyusha-notes)))
     (scale-tempo score 12)
     (copy-channel score 0 1)
+    (merge-into score (multiply (katyusha-drums) 4))
     (adjust-octaves score '(4 1 5 x 3 3 3))
     (channel-key-off score 0 2/3)
     (channel-key-off score 1 1/3)
