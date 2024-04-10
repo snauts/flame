@@ -261,11 +261,11 @@ static u16 burn_tiles;
 static u16 burn_index;
 Object **burns;
 
-static void update_burns(u16 i) {
-    for (i = 0; i < burn_count; i++) {
+static void update_burns(u16 n) {
+    for (u16 i = 0; i < burn_count; i++) {
 	Object *burn = burns[i];
-	Object *parent = (Object *) burn->private;
 	Sprite *sprite = burn->sprite;
+	Object *parent = (Object *) burn->private;
 	if (burn->frame >= 8) {
 	    hide_sprite(sprite);
 	    continue;
@@ -273,18 +273,18 @@ static void update_burns(u16 i) {
 	else {
 	    u16 tile = TILE(2, burn_tiles + 4 * burn->frame);
 	    if (burn->direction < 0) tile |= BIT(11);
+	    if (n == 2) burn->frame++;
 	    sprite->cfg = tile;
-	    burn->frame++;
 	}
 	if (parent != NULL) {
 	    sprite->x = parent->sprite->x + burn->x;
 	    sprite->y = parent->sprite->y + burn->y;
 	}
 	else {
-	    sprite->y -= 2;
+	    sprite->y--;
 	}
     }
-    schedule(&update_burns, 2);
+    callback(&update_burns, 0, n < 2 ? n + 1 : 0);
 }
 
 void setup_burns(u16 count, u16 tiles) {
