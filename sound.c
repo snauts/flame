@@ -9,6 +9,7 @@ enum Music {
     MUSIC_ERIKA,
     MUSIC_BATTOTAI,
     MUSIC_ONIONS,
+    MUSIC_KATYUSHA,
     MUSIC_DOVES,
 };
 
@@ -221,6 +222,12 @@ static void setup_onions(void) {
     LOAD_SCORE(onions_score);
 }
 
+static void setup_katyusha(void) {
+    setup_ym2612_channel(0, guitar);
+    setup_ym2612_channel(6, hi_hat);
+    LOAD_SCORE(katyusha_score);
+}
+
 #define PSG_SFX_CH0	0x18
 #define PSG_SFX_CH1	0x1A
 #define PSG_SFX_CH2	0x1C
@@ -320,6 +327,10 @@ void music_battotai(void) {
 
 void music_onions(void) {
     setup_music(MUSIC_ONIONS, &setup_onions);
+}
+
+void music_katyusha(void) {
+    setup_music(MUSIC_KATYUSHA, &setup_katyusha);
 }
 
 void music_none(void) {

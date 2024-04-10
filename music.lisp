@@ -1061,6 +1061,15 @@
 (defun onions-score ()
   (append (onion-score-1) (onion-score-2)))
 
+(defparameter *katyusha*
+  '((1 (0 5 C))
+    (1 (0 2 D))))
+
+(defun katyusha-score ()
+  (let ((score (copy-score *katyusha*)))
+    (scale-tempo score 24)
+    score))
+
 (defun psg-value (frequency volume)
   (logior (- 15 volume) (ash (floor 3579545 (* 32 frequency)) 4)))
 
@@ -1186,6 +1195,7 @@
     (save-array out "doves_score" (save-score (doves-score)))
     (save-array out "battotai_score" (save-score (battotai-score)))
     (save-array out "onions_score" (save-score (onions-score)))
+    (save-array out "katyusha_score" (save-score (katyusha-score)))
     (save-array out "decople_table" (generate-decople-table))
     (save-char-array out "small_circle" (generate-circle-table))
     (save-char-array out "larger_circle" (generate-circle-table 256 52 1.8))
