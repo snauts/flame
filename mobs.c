@@ -280,7 +280,7 @@ static void update_burns(u16 n) {
 	    sprite->x = parent->sprite->x + burn->x;
 	    sprite->y = parent->sprite->y + burn->y;
 	}
-	else {
+	else if (n != 0) {
 	    sprite->y--;
 	}
     }
