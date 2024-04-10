@@ -1003,7 +1003,7 @@ static void king_burns(u16 i) {
 	    burn->y = sprite_h(burn->private) - 8;
 	    sprite->x = parent->sprite->x + burn->x;
 	    sprite->y = parent->sprite->y + burn->y;
-	    burn->direction = (rnd & 2) - 1;
+	    burn->direction = (rnd & 16) - 8;
 	    if (i < 2) play_sfx(SFX_PERISH);
 	    init_burn(burn);
 	}
