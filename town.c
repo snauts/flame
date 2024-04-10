@@ -1045,6 +1045,13 @@ static void blow_off_part(u16 i) {
     assign_burns_to_parts(i);
 }
 
+static void crown_flies_away(u16 i) {
+    if (crown->sprite->y > 120) {
+	crown->sprite->y -= 4;
+	schedule(&crown_flies_away, 0);
+    }
+}
+
 static void king_death(Object *obj) {
     free_burns();
     set_mob_order(-1);
@@ -1052,6 +1059,7 @@ static void king_death(Object *obj) {
     if (obj->direction < 0) king_flip(0);
     callback(&blow_off_part, 0, 1);
     mob_fn(crown, NULL);
+    crown_flies_away(0);
     king_burns(0);
 }
 
