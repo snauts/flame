@@ -1164,6 +1164,8 @@
   (let ((score (copy-score *katyusha*)))
     (adjust-octaves score '(4 0 0 x 0 0 0))
     (scale-tempo score 12)
+    (channel-key-off score 0 1/2)
+    (clean-up-score score)
     score))
 
 (defun psg-value (frequency volume)
