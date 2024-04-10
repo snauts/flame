@@ -968,10 +968,19 @@ static void king_wiggle(u16 i) {
     }
 }
 
+static void king_death(Object *obj) {
+}
+
 static void king_standing(Object *obj) {
     if (is_king_in_middle(obj) && KING_HP < 2 * BAR_HEALTH / 5) {
-	king_set_state(K_WIGGLE);
-	king_wiggle(2);
+	if (KING_HP > 0) {
+	    king_set_state(K_WIGGLE);
+	    king_wiggle(2);
+	}
+	else {
+	    if (obj->direction < 0) king_flip(0);
+	    mob_fn(crown, &king_death);
+	}
     }
     else {
 	king_next_jump(obj);
@@ -1074,7 +1083,6 @@ static void king_hitbox(Object *obj) {
     if (KING_HP > 0 && boss_hitbox(obj, box, size, size)) {
 	if (KING_HP == 0) {
 	    apply_to_all_mobs(&remove_rat_or_spit);
-	    schedule(&finish_level, 128);
 	    soldier_fist_pump();
 	}
     }
