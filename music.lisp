@@ -1061,12 +1061,23 @@
 (defun onions-score ()
   (append (onion-score-1) (onion-score-2)))
 
-(defparameter *chord-F* '((4 1 F) (5 1 A) (6 2 C)))
+(defparameter *chord-B* '((4 1 Ds) (5 1 Fs) (6 1 B)))
 (defparameter *chord-C* '((4 1 C) (5 1 E) (6 1 G)))
+(defparameter *chord-E* '((4 1 E) (5 1 Gs) (6 1 B)))
+(defparameter *chord-F* '((4 1 F) (5 1 A) (6 2 C)))
+(defparameter *chord-G* '((4 1 G) (5 1 B) (6 2 D)))
+
 (defparameter *chord-Am* '((4 1 A) (5 2 C) (6 2 E)))
+(defparameter *chord-Cm* '((4 1 C) (5 1 Ds) (6 1 G)))
 (defparameter *chord-Dm* '((4 1 D) (5 1 F) (6 1 A)))
-(defparameter *chord-E7* '((4 1 E) (5 1 Gs) (6 1 B) (2 2 D)))
+(defparameter *chord-Em* '((4 1 E) (5 1 G) (6 1 B)))
+(defparameter *chord-Gm* '((4 1 G) (5 1 As) (6 2 D)))
+
 (defparameter *chord-A7* '((4 1 A) (5 2 Cs) (6 2 E) (2 2 G)))
+(defparameter *chord-B7* '((4 1 Ds) (5 1 Fs) (6 1 B) (2 0 A)))
+(defparameter *chord-D7* '((4 1 D) (5 1 Fs) (6 1 A) (2 2 C)))
+(defparameter *chord-E7* '((4 1 E) (5 1 Gs) (6 1 B) (2 2 D)))
+(defparameter *chord-G7* '((4 1 G) (5 1 B) (6 2 D) (2 2 F)))
 
 (defparameter *katyusha*
   `((3 (0 1 A) ,@*chord-Am*)
