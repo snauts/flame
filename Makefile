@@ -6,7 +6,7 @@ CWARN	= -Wextra -Wall -Wno-unused-parameter
 CFLAGS  = $(CWARN) -fomit-frame-pointer -fno-builtin
 IFLAGS	= --noinform --no-sysinit --no-userinit --disable-debugger
 CSRC	= main.c level.c sound.c mobs.c soldier.c \
-	  canyon.c alps.c beach.c town.c
+	  canyon.c alps.c beach.c town.c forest.c
 OBJS	= rom_header.O $(subst .c,.o,$(CSRC))
 SED	= 's/lisp:/inc:/;s/(load "/ /;s/")//'
 SHA	= $(shell git show --format="%h" --no-patch)
