@@ -236,7 +236,7 @@ static void setup_onions(void) {
 
 static void setup_katyusha(void) {
     static const void *instruments[] = {
-	strings, horn, hi_hat, drums, drums, drums
+	strings, horn, hi_hat, guitar, guitar, guitar
     };
     load_instruments(instruments);
     LOAD_SCORE(katyusha_score);

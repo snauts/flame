@@ -1340,7 +1340,7 @@
     (scale-tempo score 12)
     (copy-channel score 0 1)
     (merge-into score (multiply (katyusha-drums) 4))
-    (adjust-octaves score '(4 1 5 x 3 3 3))
+    (adjust-octaves score '(4 1 5 x 1 1 1))
     (channel-key-off score 0 5/6)
     (channel-key-off score 1 1/3)
     (clean-up-score score)
