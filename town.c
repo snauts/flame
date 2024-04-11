@@ -1114,9 +1114,9 @@ static void king_death(Object *obj) {
     setup_burns(FINAL_BURNS, BURN_TILES);
     if (obj->direction < 0) king_flip(0);
     callback(&blow_off_part, 0, 1);
+    schedule(&crown_flies_away, 0);
     assign_burns_to_parts(1);
     mob_fn(crown, NULL);
-    crown_flies_away(0);
     king_burns(0);
 }
 
