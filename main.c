@@ -399,11 +399,13 @@ static void panic_on_draw(void) {
 }
 
 static void transfer_to_VRAM(void) {
-    while (next_write > vram_write) {
-	next_write--;
-	LONG(VDP_CTRL) = next_write->addr;
-	WORD(VDP_DATA) = next_write->data;
+    VRAM_Write *ptr = vram_write;
+    while (ptr < next_write) {
+	LONG(VDP_CTRL) = ptr->addr;
+	WORD(VDP_DATA) = ptr->data;
+	ptr++;
     }
+    next_write = vram_write;
 }
 
 void vblank_interrupt(void) {
