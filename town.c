@@ -1118,8 +1118,8 @@ static void king_starts_to_burn(void) {
 
 static void king_death(Object *obj) {
     if (obj->direction < 0) king_flip(0);
-    callback(&blow_off_part, 50, 1);
-    schedule(&crown_flies_away, 20);
+    callback(&blow_off_part, 60, 1);
+    schedule(&crown_flies_away, 30);
     mob_fn(crown, NULL);
 }
 
