@@ -1108,16 +1108,19 @@ static void crown_flies_away(u16 i) {
     }
 }
 
-static void king_death(Object *obj) {
+static void king_starts_to_burn(void) {
     free_burns();
     set_mob_order(-1);
     setup_burns(FINAL_BURNS, BURN_TILES);
-    if (obj->direction < 0) king_flip(0);
-    callback(&blow_off_part, 0, 1);
-    schedule(&crown_flies_away, 0);
     assign_burns_to_parts(1);
-    mob_fn(crown, NULL);
     king_burns(0);
+}
+
+static void king_death(Object *obj) {
+    if (obj->direction < 0) king_flip(0);
+    callback(&blow_off_part, 50, 1);
+    schedule(&crown_flies_away, 20);
+    mob_fn(crown, NULL);
 }
 
 static void king_standing(Object *obj) {
@@ -1231,6 +1234,7 @@ static void king_hitbox(Object *obj) {
     if (KING_HP > 0 && boss_hitbox(obj, box, size, size)) {
 	if (KING_HP == 0) {
 	    apply_to_all_mobs(&remove_rat_or_spit);
+	    king_starts_to_burn();
 	    soldier_fist_pump();
 	}
     }
