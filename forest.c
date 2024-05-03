@@ -1,9 +1,13 @@
 #include "main.h"
 
+#include "images/rain.h"
+
 #include "forest.inc"
 
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
+
+    load_image(&rain_img, 1, 0);
 
     /* background */
     fill_VRAM(0, 0, 0x800);
