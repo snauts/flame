@@ -163,8 +163,14 @@ static void draw_houses(void) {
 
 static u16 *scroll_buf = NULL;
 
-static void update_scroll_buffer(void) {
+void update_scroll_buffer(void) {
     copy_to_VRAM_ptr(VRAM_SCROLL_A, 0x380, scroll_buf);
+}
+
+void init_scrolling(Function update) {
+    scroll_type(0x02);
+    scroll_buf = malloc(0x380);
+    switch_frame(&update);
 }
 
 static void update_town(void) {
@@ -232,9 +238,7 @@ static void display_french(const Level *level) {
     void music_onions(void);
     music_onions();
 
-    scroll_type(0x02);
-    scroll_buf = malloc(0x380);
-    switch_frame(&update_town);
+    init_scrolling(&update_town);
 
     r_obj = malloc(sizeof(Rat) * MAX_MOBS);
     rat_counter = 0;
