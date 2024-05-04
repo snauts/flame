@@ -161,7 +161,7 @@ static void draw_houses(void) {
     draw_bottom_houses();
 }
 
-static u16 *scroll_buf = NULL;
+u16 *scroll_buf;
 
 void update_scroll_buffer(void) {
     copy_to_VRAM_ptr(VRAM_SCROLL_A, 0x380, scroll_buf);
@@ -170,7 +170,7 @@ void update_scroll_buffer(void) {
 void init_scrolling(Function update) {
     scroll_type(0x02);
     scroll_buf = malloc(0x380);
-    switch_frame(&update);
+    switch_frame(update);
 }
 
 static void update_town(void) {

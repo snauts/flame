@@ -221,6 +221,8 @@ void all_soldiers_march(void);
 void load_soldier_tiles(u16 id);
 void reset_sprite_table(void);
 void setup_soldier_sprites(void);
+void update_scroll_buffer(void);
+void init_scrolling(Function update);
 byte update_next_sprite(byte new_value);
 void advance_y(Object *obj, char gravity);
 void set_sprite_tile(Sprite *sprite, u16 tile);
@@ -304,4 +306,5 @@ void free_burns(void);
 
 extern u16 window;
 extern u16 counter;
+extern u16 *scroll_buf;
 extern Object soldier;

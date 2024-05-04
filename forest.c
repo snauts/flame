@@ -16,10 +16,33 @@ static void draw_sky(void) {
     for (u16 y = 0; y < ARRAY_SIZE(sky_layers); y++) {
 	u16 i = y;
 	set_seed(2077);
-	for (u16 x = 0; x < 64; x += 2) {
+	for (u16 x = 0; x <= 64; x += 2) {
 	    sky_piece(x, y, i, sky_layers[y]);
 	    i = (i + (random() % 3) + 1) & 3;
 	}
+    }
+}
+
+static void update_forest(void) {
+    if (update_frame()) {
+	u16 *ptr = scroll_buf;
+	u16 invert = -window;
+	u16 third = -(window / 3);
+	u16 shift = third << 1;
+	for (u16 row = 0; row < 28; row++) {
+	    switch (row) {
+	    case 5:
+		shift = invert >> 1;
+		break;
+	    case 8:
+		shift = third;
+		break;
+	    }
+	    ptr[0] = invert;
+	    ptr[1] = shift;
+	    ptr += 16;
+	}
+	update_scroll_buffer();
     }
 }
 
@@ -38,6 +61,8 @@ static void display_soviet(const Level *level) {
 
     void music_katyusha(void);
     music_katyusha();
+
+    init_scrolling(&update_forest);
 }
 
 void display_forest(void) {
