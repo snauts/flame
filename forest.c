@@ -46,6 +46,16 @@ static void update_forest(void) {
     }
 }
 
+static const u16 rain_colors[][3] = {
+    { 0x0886, 0x0aa8, 0x0cca },
+    { 0x0884, 0x0aa6, 0x0cc8 },
+};
+
+static void rain_palette_rotate(u16 i) {
+    update_palette(rain_colors[i], 1, ARRAY_SIZE(rain_colors[i]));
+    callback(&rain_palette_rotate, 4, !i);
+}
+
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
@@ -63,6 +73,7 @@ static void display_soviet(const Level *level) {
     music_katyusha();
 
     init_scrolling(&update_forest);
+    rain_palette_rotate(0);
 }
 
 void display_forest(void) {
