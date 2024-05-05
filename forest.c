@@ -5,11 +5,11 @@
 #include "forest.inc"
 
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
-    paint_background(x, y, 2, 1, dx * 14 + dy + 1, 6);
+    paint_background(x, y, 2, 1, dx * 12 + dy + 1, 5);
 }
 
 static const byte sky_layers[] = {
-    0, 0, 1, 2, 2, 3, 4, 4, 5, 6, 6, 6
+    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5
 };
 
 static void draw_sky(void) {
@@ -31,7 +31,7 @@ static void update_forest(void) {
 	u16 shift = third << 1;
 	for (u16 row = 0; row < 28; row++) {
 	    switch (row) {
-	    case 5:
+	    case 4:
 		shift = invert >> 1;
 		break;
 	    case 8:
