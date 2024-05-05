@@ -46,14 +46,29 @@ static void update_forest(void) {
     }
 }
 
-static const u16 rain_colors[][3] = {
-    { 0x0886, 0x0aa8, 0x0cca },
-    { 0x0884, 0x0aa6, 0x0cc8 },
+static const u16 rain_colors[] = {
+    1, 0x3, 0xaaa,
+    1, 0x2, 0x888,
+    1, 0x1, 0x666,
+    2, 0x3, 0xcca, 0xa, 0xaaa,
+    2, 0x2, 0xaa8, 0x9, 0x888,
+    2, 0x1, 0x886, 0x8, 0x666,
+    1, 0xa, 0xcca,
+    1, 0x9, 0xaa8,
+    1, 0x8, 0x886,
+    0,
 };
 
+static const u16 *rain_ptr;
 static void rain_palette_rotate(u16 i) {
-    update_palette(rain_colors[i], 1, ARRAY_SIZE(rain_colors[i]));
-    callback(&rain_palette_rotate, 4, !i);
+    u16 count = *(rain_ptr++);
+    for (u16 i = 0; i < count; i++) {
+	u16 index = *(rain_ptr++);
+	u16 color = *(rain_ptr++);
+	update_color(index, color);
+    }
+    if (*rain_ptr == 0) rain_ptr = rain_colors;
+    schedule(&rain_palette_rotate, 0);
 }
 
 static void display_soviet(const Level *level) {
@@ -73,6 +88,7 @@ static void display_soviet(const Level *level) {
     music_katyusha();
 
     init_scrolling(&update_forest);
+    rain_ptr = rain_colors;
     rain_palette_rotate(0);
 }
 
