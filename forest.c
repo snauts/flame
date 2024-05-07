@@ -5,11 +5,11 @@
 #include "forest.inc"
 
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
-    paint_background(x, y, 2, 1, dx * 14 + dy + 1, 6);
+    paint_background(x, y, 2, 1, dx * 16 + dy + 1, 7);
 }
 
 static const byte sky_layers[] = {
-    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6
+    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7
 };
 
 static void draw_sky(void) {
