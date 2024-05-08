@@ -100,7 +100,7 @@ static void rain_palette_rotate(u16 i) {
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
-    load_image(&rain_img, 1, 0);
+    load_tiles(&rain_img, 1);
     load_image(&forest_img, 65, 0);
 
     /* background */
