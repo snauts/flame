@@ -8,7 +8,7 @@
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
     if (dy == 8) {
 	static const byte middle_map[] = { 65, 67, 81, 83 };
-	paint_background(x, y, 2, 2, middle_map[dx], 6);
+	paint_background(x, y + 1, 2, 2, middle_map[dx], 6);
     }
     else {
 	paint_background(x, y, 2, 1, dx * 16 + dy + 1, 7);
@@ -30,6 +30,21 @@ static void draw_sky(void) {
     }
 }
 
+static void draw_forest(void) {
+    u16 i = 0, x = 0;
+    while (x < 64) {
+	if (x == 62) i = 0;
+	u16 w = (i & 2) + 2;
+	static const byte bottom_map[] = { 97, 113, 69, 101 };
+	paint_background(x, 18, w, 4, bottom_map[i], 4);
+	i = (i + (random() % 3) + 1) & 3;
+	x += w;
+    }
+    fill_VRAM(0x700, 65, 0x40);
+    fill_VRAM(0x880, 69, 0x40);
+    fill_VRAM(0xB00, 80, 0x180);
+}
+
 static void update_forest(void) {
     if (update_frame()) {
 	u16 *ptr = scroll_buf;
@@ -45,7 +60,7 @@ static void update_forest(void) {
 	    case 8:
 		shift = third;
 		break;
-	    case 16:
+	    case 17:
 		shift = third << 1;
 		break;
 	    }
@@ -91,6 +106,7 @@ static void display_soviet(const Level *level) {
     /* background */
     fill_VRAM(0, 0, 0x800);
     draw_sky();
+    draw_forest();
     copy_to_VRAM(VRAM_PLANE_B, DMA_BUF_SIZE);
 
     /* foreground */
