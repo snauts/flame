@@ -1,15 +1,22 @@
 #include "main.h"
 
 #include "images/rain.h"
+#include "images/forest.h"
 
 #include "forest.inc"
 
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
-    paint_background(x, y, 2, 1, dx * 16 + dy + 1, 7);
+    if (dy == 8) {
+	static const byte middle_map[] = { 65, 67, 81, 83 };
+	paint_background(x, y, 2, 2, middle_map[dx], 6);
+    }
+    else {
+	paint_background(x, y, 2, 1, dx * 16 + dy + 1, 7);
+    }
 }
 
 static const byte sky_layers[] = {
-    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7
+    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 8
 };
 
 static void draw_sky(void) {
@@ -32,10 +39,14 @@ static void update_forest(void) {
 	for (u16 row = 0; row < 28; row++) {
 	    switch (row) {
 	    case 4:
+	    case 14:
 		shift = invert >> 1;
 		break;
 	    case 8:
 		shift = third;
+		break;
+	    case 16:
+		shift = third << 1;
 		break;
 	    }
 	    ptr[0] = invert;
@@ -75,6 +86,7 @@ static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
     load_image(&rain_img, 1, 0);
+    load_image(&forest_img, 65, 0);
 
     /* background */
     fill_VRAM(0, 0, 0x800);
