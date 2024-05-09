@@ -19,15 +19,20 @@ static const byte sky_layers[] = {
     0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 8
 };
 
+static void fill_line(u16 y, u16 dy) {
+    u16 i = y;
+    set_seed(2077);
+    for (u16 x = 0; x <= 64; x += 2) {
+	sky_piece(x, y, i, dy);
+	i = (i + (random() % 3) + 1) & 3;
+    }
+}
+
 static void draw_sky(void) {
     for (u16 y = 0; y < ARRAY_SIZE(sky_layers); y++) {
-	u16 i = y;
-	set_seed(2077);
-	for (u16 x = 0; x <= 64; x += 2) {
-	    sky_piece(x, y, i, sky_layers[y]);
-	    i = (i + (random() % 3) + 1) & 3;
-	}
+	fill_line(y, sky_layers[y]);
     }
+    fill_line(17, 7);
 }
 
 static void draw_forest(void) {
@@ -36,13 +41,13 @@ static void draw_forest(void) {
 	if (x == 62) i = 0;
 	u16 w = (i & 2) + 2;
 	static const byte bottom_map[] = { 97, 113, 69, 101 };
-	paint_background(x, 18, w, 4, bottom_map[i], 4);
+	paint_background(x, 19, w, 4, bottom_map[i], 4);
 	i = (i + (random() % 3) + 1) & 3;
 	x += w;
     }
     fill_VRAM(0x700, 65, 0x40);
-    fill_VRAM(0x880, 69, 0x40);
-    fill_VRAM(0xB00, 80, 0x180);
+    fill_VRAM(0x900, 65, 0x40);
+    fill_VRAM(0xB80, 80, 0x140);
 }
 
 static void update_forest(void) {
@@ -60,7 +65,7 @@ static void update_forest(void) {
 	    case 8:
 		shift = third;
 		break;
-	    case 17:
+	    case 19:
 		shift = third << 1;
 		break;
 	    }
@@ -75,12 +80,12 @@ static void update_forest(void) {
 static const u16 rain_colors[] = {
     1, 0x3, 0xaaa,
     2, 0x2, 0x888, 0xb, 0x242,
-    2, 0x1, 0x666, 0x7, 0x684,
+    1, 0x1, 0x666,
     2, 0x3, 0xcca, 0xa, 0xaaa,
     2, 0x2, 0xaa8, 0x9, 0x888,
     2, 0x1, 0x886, 0x8, 0x666,
     2, 0xa, 0xcca, 0xb, 0x462,
-    2, 0x9, 0xaa8, 0x7, 0x264,
+    1, 0x9, 0xaa8,
     1, 0x8, 0x886,
     0,
 };
