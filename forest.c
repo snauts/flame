@@ -6,22 +6,22 @@
 #include "forest.inc"
 
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
-    if (dy == 8) {
-	static const byte middle_map[] = { 65, 67, 81, 83 };
-	paint_background(x, y + 1, 2, 2, middle_map[dx], 6);
+    if (dy == 9) {
+	static const byte middle_map[] = { 73, 75, 89, 91 };
+	paint_background(x, y, 2, 2, middle_map[dx], 6);
     }
     else {
-	paint_background(x, y, 2, 1, dx * 16 + dy + 1, 7);
+	paint_background(x, y, 2, 1, dx * 18 + dy + 1, 8);
     }
 }
 
 static const byte sky_layers[] = {
-    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 8
+    0, 1, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 6, 7, 8, 9
 };
 
 static void fill_line(u16 y, u16 dy) {
     u16 i = y;
-    set_seed(2077);
+    if (dy < 6) set_seed(2077);
     for (u16 x = 0; x <= 64; x += 2) {
 	sky_piece(x, y, i, dy);
 	i = (i + (random() % 3) + 1) & 3;
@@ -33,6 +33,9 @@ static void draw_sky(void) {
 	fill_line(y, sky_layers[y]);
     }
     fill_line(17, 7);
+    fill_line(18, 8);
+    fill_line(23, 7);
+    fill_line(24, 8);
 }
 
 static void draw_forest(void) {
@@ -40,14 +43,12 @@ static void draw_forest(void) {
     while (x < 64) {
 	if (x == 62) i = 0;
 	u16 w = (i & 2) + 2;
-	static const byte bottom_map[] = { 97, 113, 69, 101 };
+	static const byte bottom_map[] = { 105, 121, 77, 109 };
 	paint_background(x, 19, w, 4, bottom_map[i], 4);
 	i = (i + (random() % 3) + 1) & 3;
 	x += w;
     }
-    fill_VRAM(0x700, 65, 0x40);
-    fill_VRAM(0x900, 65, 0x40);
-    fill_VRAM(0xB80, 80, 0x140);
+    fill_VRAM(0xC80, 73, 0xC0);
 }
 
 static void update_forest(void) {
@@ -59,7 +60,7 @@ static void update_forest(void) {
 	for (u16 row = 0; row < 28; row++) {
 	    switch (row) {
 	    case 4:
-	    case 14:
+	    case 15:
 		shift = invert >> 1;
 		break;
 	    case 8:
@@ -106,7 +107,7 @@ static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
     load_tiles(&rain_img, 1);
-    load_image(&forest_img, 65, 0);
+    load_image(&forest_img, 73, 0);
 
     /* background */
     fill_VRAM(0, 0, 0x800);
