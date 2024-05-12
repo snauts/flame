@@ -41,12 +41,21 @@
 (defun platform-end-R ()
   (mud 9 4 10 8))
 
+(defun log-segment (n)
+  (forest-cell (+ 218 (mod n 3))))
+
+(defun forest-log (n)
+  (cond ((= n 1) (forest-cell 217))
+	((> n 1) (on-top (log-segment n) (forest-log (1- n))))))
+
 (defun forest-level ()
   (join (forest-walk 2)
 	(forest-puddle)
 	(forest-walk)
 	(platform-end-L)
-	(empty 3)
+	(empty 1)
+	(forest-log 10)
+	(empty 1)
 	(platform-end-R)
 	(forest-walk-config :top-L 2 :top-R 1 :body 0)
 	(forest-walk-config :top-L 0 :top-R 3 :body 0)
