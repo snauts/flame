@@ -1,7 +1,7 @@
 (load "level.lisp")
 
 (defparameter *forest-walkable*
-  '(139 147 155 163 171 179 187 195
+  '(139 147 155 163 171 179 187 195 203 211
     143 151 159 167 175 183 191 199))
 
 (defun forest-tile (id &key (v 0) (h 0) (pr 0))
@@ -35,13 +35,23 @@
 (defun forest-puddle ()
   (forest-walk-config :top-L 2 :top-R 3 :body 1))
 
+(defun platform-end-L ()
+  (mud 8 4 9 8))
+
+(defun platform-end-R ()
+  (mud 9 4 10 8))
+
 (defun forest-level ()
   (join (forest-walk 2)
 	(forest-puddle)
 	(forest-walk)
+	(platform-end-L)
+	(empty 3)
+	(platform-end-R)
 	(forest-walk-config :top-L 2 :top-R 1 :body 0)
 	(forest-walk-config :top-L 0 :top-R 3 :body 0)
 	(forest-walk-config :body 1)
+	(platform-end-L)
 	(empty 64)))
 
 (defun commit-save ()
