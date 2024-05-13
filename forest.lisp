@@ -64,20 +64,34 @@
     (s-place w 0 (bridge-front h))
     (s-pop)))
 
-(defun forest-level ()
+(defun forest-start ()
   (join (forest-walk 2)
 	(forest-puddle)
 	(forest-walk)
-	(platform-end-L)
-	(empty 3)
-	(trigger "emit_mosquito")
-	(platform-end-R)
+	(platform-end-L)))
+
+(defun puddle-walk ()
+  (join (platform-end-R)
 	(forest-walk-config :top-L 2 :top-R 1 :body 0)
 	(forest-walk-config :top-L 0 :top-R 3 :body 0)
 	(forest-walk-config :body 1)
-	(platform-end-L)
+	(platform-end-L)))
+
+(defun forest-level ()
+  (join ;; START
+        (forest-start)
+	(trigger "emit_mosquito")
+	(empty 3)
+
+	;; PART1
+	(puddle-walk)
 	(empty 2)
+
+	;; PART2
 	(forest-bridge 8 2)
+	(empty 2)
+
+	;; ENDING
 	(empty 64)))
 
 (defun commit-save ()
