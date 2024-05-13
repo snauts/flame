@@ -3,6 +3,7 @@
 #include "images/mud.h"
 #include "images/rain.h"
 #include "images/forest.h"
+#include "images/mosquito.h"
 
 #include "forest.inc"
 
@@ -107,8 +108,9 @@ static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
     load_tiles(&rain_img, 1);
-    load_image(&forest_img, 73, 0);
     load_image(&mud_img, 137, 1);
+    load_image(&forest_img, 73, 0);
+    load_image(&mosquito_img, 265, 3);
 
     /* background */
     fill_VRAM(0, 0, 0x800);
