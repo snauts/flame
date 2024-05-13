@@ -7,13 +7,19 @@
 
 #include "forest.inc"
 
+#define SKY	1
+#define TREE	(SKY + 72)
+#define MUD	(TREE + 64)
+#define GNAT	(MUD + 128)
+#define BURN	(GNAT + 16)
+
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
     if (dy == 9) {
-	static const byte middle_map[] = { 73, 75, 89, 91 };
-	paint_background(x, y, 2, 2, middle_map[dx], 6);
+	static const byte middle_map[] = { 0, 2, 16, 18 };
+	paint_background(x, y, 2, 2, TREE + middle_map[dx], 6);
     }
     else {
-	paint_background(x, y, 2, 1, dx * 18 + dy + 1, 8);
+	paint_background(x, y, 2, 1, SKY + dx * 18 + dy, 8);
     }
 }
 
@@ -45,8 +51,8 @@ static void draw_forest(void) {
     while (x < 64) {
 	if (x == 62) i = 0;
 	u16 w = (i & 2) + 2;
-	static const byte bottom_map[] = { 105, 121, 77, 109 };
-	paint_background(x, 19, w, 4, bottom_map[i], 4);
+	static const byte bottom_map[] = { 32, 48, 4, 36 };
+	paint_background(x, 19, w, 4, TREE + bottom_map[i], 4);
 	i = (i + (random() % 3) + 1) & 3;
 	x += w;
     }
@@ -124,7 +130,7 @@ static void move_mosquito(Object *obj) {
 	palette = 3;
     }
 
-    sprite->cfg = TILE(palette, 265 + 4 * obj->frame);
+    sprite->cfg = TILE(palette, GNAT + 4 * obj->frame);
 
     mob_adjust_sprite_dir(obj);
 }
@@ -150,10 +156,11 @@ void emit_mosquito(u16 i) {
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
-    load_tiles(&rain_img, 1);
-    load_image(&mud_img, 137, 1);
-    load_image(&forest_img, 73, 0);
-    load_image(&mosquito_img, 265, 3);
+    load_tiles(&rain_img, SKY);
+    load_image(&mud_img, MUD, 1);
+    load_image(&forest_img, TREE, 0);
+    load_image(&mosquito_img, GNAT, 3);
+    load_burn_tiles(BURN);
 
     /* background */
     fill_VRAM(0, 0, 0x800);
