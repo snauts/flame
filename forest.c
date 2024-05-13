@@ -12,6 +12,7 @@
 #define MUD	(TREE + 64)
 #define GNAT	(MUD + 128)
 #define BURN	(GNAT + 16)
+#define DROP	(BURN + 32)
 
 static void sky_piece(u16 x, u16 y, u16 dx, u16 dy) {
     if (dy == 9) {
@@ -153,6 +154,8 @@ void emit_mosquito(u16 i) {
     MOSQUITO(obj)->v_dir = 1;
 }
 
+extern const Image spit_img;
+
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
@@ -160,6 +163,7 @@ static void display_soviet(const Level *level) {
     load_image(&mud_img, MUD, 1);
     load_image(&forest_img, TREE, 0);
     load_image(&mosquito_img, GNAT, 3);
+    load_tiles(&spit_img, DROP);
     load_burn_tiles(BURN);
 
     /* background */
