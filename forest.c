@@ -104,6 +104,49 @@ static void rain_palette_rotate(u16 i) {
     schedule(&rain_palette_rotate, 0);
 }
 
+typedef struct Mosquito {
+    char v_dir;
+} Mosquito;
+
+static Mosquito *m_obj;
+
+#define MOSQUITO(obj) ((Mosquito *) (obj->private))
+
+static void move_mosquito(Object *obj) {
+    u16 palette = 2;
+    Sprite *sprite = obj->sprite;
+
+    obj->x += obj->direction;
+    obj->y += MOSQUITO(obj)->v_dir;
+
+    if (mob_move(obj, 10)) {
+	obj->frame = obj->life & 3;
+	palette = 3;
+    }
+
+    sprite->cfg = TILE(palette, 265 + 4 * obj->frame);
+
+    mob_adjust_sprite_dir(obj);
+}
+
+static Object *setup_mosquito(short x, short y) {
+    Object *obj = setup_obj(x, y, SPRITE_SIZE(2, 2));
+    mob_fn(obj, &move_mosquito);
+
+    obj->private = m_obj + mob_index(obj);
+    obj->flags |= O_PERSISTENT;
+    obj->death = 4;
+
+    MOSQUITO(obj)->v_dir = 0;
+
+    return obj;
+}
+
+void emit_mosquito(u16 i) {
+    setup_mosquito(soldier.x + 256, 160);
+    schedule(&emit_mosquito, 50);
+}
+
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
 
@@ -127,6 +170,8 @@ static void display_soviet(const Level *level) {
     init_scrolling(&update_forest);
     rain_ptr = rain_colors;
     rain_palette_rotate(0);
+
+    m_obj = malloc(sizeof(Mosquito) * MAX_MOBS);
 }
 
 void display_forest(void) {

@@ -70,6 +70,7 @@
 	(forest-walk)
 	(platform-end-L)
 	(empty 3)
+	(trigger "emit_mosquito")
 	(platform-end-R)
 	(forest-walk-config :top-L 2 :top-R 1 :body 0)
 	(forest-walk-config :top-L 0 :top-R 3 :body 0)
