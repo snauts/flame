@@ -595,7 +595,7 @@ static void ramp_pattern_M_is_for_murder(u16 i) {
 	3,  51, A(270), 62, 3,  51, A(295), 62,
     };
     ramp_pattern_group(data, 1, 32);
-    callback(&ramp_pattern_M_is_for_murder, 72, 0);
+    callback(&ramp_pattern_M_is_for_murder, 80, 0);
 }
 
 static void ramp_pattern_W_is_for_walrus(u16 i) {
@@ -612,7 +612,7 @@ static void ramp_pattern_W_is_for_walrus(u16 i) {
 	};
 	ramp_pattern_group(data, 2, 16);
     }
-    callback(&ramp_pattern_W_is_for_walrus, 32, !i);
+    callback(&ramp_pattern_W_is_for_walrus, 40, !i);
 }
 
 static void ramp_pattern_P_is_for_poison(u16 i) {
