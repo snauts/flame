@@ -608,8 +608,15 @@ void display_dunes(void) {
 
 static void move_projectile(Object *obj) {
     u16 is_growing = (obj->life < 16);
-    if (is_mob_alive(obj) && !is_growing) {
-	shoot_move(obj);
+    if (is_mob_alive(obj)) {
+	Object *parent = obj->private;
+	if (parent != NULL) {
+	    obj->x = parent->x + 4;
+	    obj->y = parent->y - 4;
+	}
+	else if (!is_growing) {
+	    shoot_move(obj);
+	}
     }
 
     animate_spit(obj, is_growing);
