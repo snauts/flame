@@ -149,8 +149,8 @@ static Object *setup_mosquito(short x, short y) {
 }
 
 void emit_mosquito(u16 i) {
-    setup_mosquito(soldier.x + 256, 160);
-    schedule(&emit_mosquito, 50);
+    Object *obj = setup_mosquito(window + 320, 96);
+    MOSQUITO(obj)->v_dir = 1;
 }
 
 static void display_soviet(const Level *level) {
