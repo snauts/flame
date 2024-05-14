@@ -155,6 +155,7 @@ void emit_mosquito(u16 i) {
 }
 
 extern const Image spit_img;
+extern u16 spit_tile;
 
 static void display_soviet(const Level *level) {
     load_soldier_tiles(4);
@@ -164,6 +165,7 @@ static void display_soviet(const Level *level) {
     load_image(&forest_img, TREE, 0);
     load_image(&mosquito_img, GNAT, 3);
     load_tiles(&spit_img, DROP);
+    spit_tile = TILE(3, DROP);
     load_burn_tiles(BURN);
 
     /* background */
