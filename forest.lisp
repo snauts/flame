@@ -19,7 +19,9 @@
     (0 (mud 0 7 4 8))
     (1 (mud 4 7 8 8))
     (2 (mud 0 3 4 4))
-    (3 (mud 4 3 8 4))))
+    (3 (mud 4 3 8 4))
+    (4 (mud 0 0 4 1))
+    (5 (mud 4 0 8 1))))
 
 (defun forest-walk-body (type)
   (case type
@@ -96,6 +98,27 @@
   (s-join (platform-end-L))
   (s-pop))
 
+(defparameter *wall-config*
+  '((5  4  6 225) (6  4  5 225) (7  4  7 225) (8  4 8 225) (9 4 6 225)
+    (10 4  7 225) (11 4  9 225) (15 4  8 225) (16 4 6 225)
+    (12 4  3 217) (13 4  3 217) (14 4  3 217)
+    (12 10 3 225) (13 10 4 225) (14 10 3 225)
+    (19 0  7 225) (20 0  9 225) (21 0  8 225)))
+
+(defun broken-wall ()
+  (s-push (platform-end-R))
+  (s-join (forest-walk-config :body 0 :top-L 2 :top-R 5))
+  (s-join (forest-walk-config :body 1 :top-L 4 :top-R 5))
+  (s-join (forest-walk-config :body 0 :top-L 0 :top-R 3))
+  (dolist (config *wall-config*)
+    (destructuring-bind (x y height top) config
+      (let* ((walk (if (> x 16) 1 -1))
+	     (base (when (= y 10) 228))
+	     (tile (forest-log height :top top :base base :walk walk)))
+	(s-place x y (if (< walk 0) tile (forward tile))))))
+  (s-join (platform-end-L))
+  (s-pop))
+
 (defun forest-level ()
   (join ;; START
         (forest-start)
@@ -106,12 +129,16 @@
 	(puddle-walk)
 	(empty 3)
 
-	;; PART3
+	;; PART2
 	(sticky-walk)
 	(empty 3)
 
-	;; PART2
+	;; PART3
 	(forest-bridge 8 2)
+	(empty 3)
+
+	;; PART4
+	(broken-wall)
 	(empty 3)
 
 	;; ENDING
