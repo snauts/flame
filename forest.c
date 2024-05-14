@@ -121,14 +121,29 @@ static Mosquito *m_obj;
 
 #define MOSQUITO(obj) ((Mosquito *) (obj->private))
 
+static void release_drop(Mosquito *private) {
+    Object *drop = private->drop;
+    if (drop != NULL) {
+	drop->private = NULL;
+	private->drop = NULL;
+    }
+}
+
 static void move_mosquito(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
+    Mosquito *private = MOSQUITO(obj);
 
     obj->x += obj->direction;
     obj->y += MOSQUITO(obj)->v_dir;
 
-    if (mob_move(obj, 10)) {
+    char is_alive = mob_move(obj, 10);
+
+    if (!is_alive || obj->life == private->release) {
+	release_drop(private);
+    }
+
+    if (is_alive) {
 	obj->frame = obj->life & 3;
 	palette = 3;
     }
