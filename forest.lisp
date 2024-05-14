@@ -3,7 +3,7 @@
 (defparameter *forest-walkable*
   '(139 147 155 163 171 179 187 195 203 211
     143 151 159 167 175 183 191 199
-    214 222 230 238 144))
+    214 222 230 238 206))
 
 (defun forest-tile (id &key (v 0) (h 0) (pr 0))
   (tile id :pl 1 :v v :h h :pr pr))
@@ -51,11 +51,14 @@
 	((> n 1) (on-top (log-segment n walk) (forest-log (1- n) :walk walk)))
 	((= n 1) (forest-cell 217))))
 
+(defun platform-front ()
+  (poke (mud 8 2 10 4) 0 0 0))
+
 (defun forest-platform (n)
-  (join (mud 8 2 10 4) (multiply (mud 10 2 12 4) n) (mud 12 2 14 4)))
+  (join (platform-front) (multiply (mud 10 2 12 4) n) (mud 12 2 14 4)))
 
 (defun bridge-front (h)
-  (place 0 h (forward (forest-log (+ h 4))) (forest-cell 144)))
+  (place 0 h (forward (forest-log (+ h 4))) (forest-cell 206)))
 
 (defun forest-bridge (n h)
   (let ((w (* 2 n)))
