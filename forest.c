@@ -183,6 +183,8 @@ static void display_soviet(const Level *level) {
     rain_palette_rotate(0);
 
     m_obj = malloc(sizeof(Mosquito) * MAX_MOBS);
+
+    set_projectile_offset(-2, 12);
 }
 
 void display_forest(void) {

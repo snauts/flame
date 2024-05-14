@@ -606,13 +606,19 @@ void display_dunes(void) {
     display_nippon(&dunes_level);
 }
 
+static signed char projectile_dx, projectile_dy;
+void set_projectile_offset(signed char dx, signed char dy) {
+    projectile_dx = dx;
+    projectile_dy = dy;
+}
+
 static void move_projectile(Object *obj) {
     u16 is_growing = (obj->life < 16);
     if (is_mob_alive(obj)) {
 	Object *parent = obj->private;
 	if (parent != NULL) {
-	    obj->x = parent->x + 4;
-	    obj->y = parent->y - 4;
+	    obj->x = parent->x + projectile_dx;
+	    obj->y = parent->y + projectile_dy;
 	}
 	else if (!is_growing) {
 	    shoot_move(obj);

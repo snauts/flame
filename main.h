@@ -290,6 +290,7 @@ Object *get_mob(u16 index);
 
 Object *setup_obj(short x, short y, byte size);
 Object *setup_projectile(u16 x, u16 y, char pattern);
+void set_projectile_offset(signed char dx, signed char dy);
 void update_hitbox(Object *obj, Rectangle *dst, const Rectangle *src, u16 n);
 u16 boss_hitbox(Object *obj, const Rectangle *base, u16 size, u16 skip);
 char mob_cycle(Object *obj, u16 last_frame);
