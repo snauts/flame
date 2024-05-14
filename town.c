@@ -471,34 +471,34 @@ static void emit_arch_window_wave(u16 x) {
 
 void emit_arch_alpha_wave(u16 x) {
     emit_arch_window_wave(x);
-    setup_rat(x - 72, 164);
+    // setup_rat(x - 72, 164);
 }
 
 void emit_arch_bravo_wave(u16 x) {
     emit_arch_window_wave(x);
-    setup_rat(x - 168, 112);
+    // setup_rat(x - 168, 112);
     setup_rat(x - 232, 176);
 }
 
 static void arch_final(u16 x) {
     setup_rat(x - 120, 51);
-    setup_rat(x - 120, 164);
+    // setup_rat(x - 120, 164);
 }
 
 static void arch_charlie_follow_up(u16 x) {
     setup_rat(x - 40, 176);
-    setup_rat(x - 120, 51);
+    // setup_rat(x - 120, 51);
     callback(&arch_final, 100, x);
 }
 
 void emit_arch_charlie_wave(u16 x) {
     emit_arch_window_wave(x);
-    setup_rat(x - 168, 112);
+    // setup_rat(x - 168, 112);
     callback(&arch_charlie_follow_up, 150, x);
 }
 
 static void pillar_back_stab(u16 x) {
-    setup_rat(x - 252, 176);
+    // setup_rat(x - 252, 176);
 }
 
 void emit_pillar_alpha(u16 x) {
@@ -522,7 +522,7 @@ void emit_pillar_bravo(u16 x) {
 }
 
 static void emit_pillar_middle(u16 x) {
-    setup_rat(x - 230, 163);
+    // setup_rat(x - 230, 163);
 }
 
 void emit_bridge_alpha(u16 x) {
@@ -560,7 +560,7 @@ static void town_last_rat(u16 x) {
 }
 
 void emit_bridge_delta(u16 x) {
-    Rat *rat = setup_rat(x - 88, 131);
+    Rat *rat = setup_rat(x - 58, 163);
     rat->fn = town_last_rat;
     rat->cookie = x;
 }
