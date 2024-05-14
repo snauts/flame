@@ -131,11 +131,11 @@
 
 	;; PART2
 	(sticky-walk)
-	(empty 3)
+	(empty 2)
 
 	;; PART3
 	(forest-bridge 8 2)
-	(empty 3)
+	(empty 2)
 
 	;; PART4
 	(broken-wall)
