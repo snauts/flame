@@ -182,8 +182,10 @@ static Object *setup_gnat(short x, short y, char angle, byte release) {
 }
 
 void emit_mosquito(u16 i) {
-    Object *obj = setup_mosquito(window + 320, 96, NULL);
+    Object *obj = setup_mosquito(window + 320, 96);
     MOSQUITO(obj)->v_dir = 1;
+
+    setup_gnat(window + 320, 80, 45, 50);
 }
 
 extern const Image spit_img;
