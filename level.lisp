@@ -154,8 +154,10 @@
 (defun on-top (box1 box2)
   (place 0 (height box1) box1 box2))
 
-(defun set-walkable (n)
-  (logior n *walkable-bit*))
+(defun set-walkable (n &optional (enable-walking t))
+  (if enable-walking
+      (logior n *walkable-bit*)
+      (logand n (lognot *walkable-bit*))))
 
 (defvar *stack* nil)
 

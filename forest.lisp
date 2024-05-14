@@ -42,12 +42,14 @@
 (defun platform-end-R ()
   (mud 9 4 10 8))
 
-(defun log-segment (n)
-  (forest-cell (+ 218 (mod n 3))))
+(defun log-segment (n walk)
+  (forest-cell (set-walkable (+ 218 (mod n 3)) (= 0 walk))))
 
-(defun forest-log (n)
-  (cond ((= n 1) (forest-cell 217))
-	((> n 1) (on-top (log-segment n) (forest-log (1- n))))))
+(defun forest-log (n &key base (walk -1))
+  (decf walk)
+  (cond ((numberp base) (on-top (forest-cell base) (forest-log n :walk walk)))
+	((> n 1) (on-top (log-segment n walk) (forest-log (1- n) :walk walk)))
+	((= n 1) (forest-cell 217))))
 
 (defun forest-platform (n)
   (join (mud 8 2 10 4) (multiply (mud 10 2 12 4) n) (mud 12 2 14 4)))
@@ -77,6 +79,20 @@
 	(forest-walk-config :body 1)
 	(platform-end-L)))
 
+(defun sticky-walk ()
+  (s-push (platform-end-R))
+  (s-join (forest-walk-config :body 1 :top-L 2))
+  (s-join (forest-walk-config :body 0 :top-L 2 :top-R 3))
+  (s-join (forest-walk-config :body 1 :top-L 2 :top-R 1))
+  (s-join (forest-walk-config :body 0 :top-L 0 :top-R 3))
+  (s-place 26 0 (forward (forest-log 7 :walk 2)))
+  (s-place 16 0 (forward (forest-log 6 :walk 2)))
+  (s-place 24 3 (forest-log 5 :base 200))
+  (s-place 8 3 (forest-log 4 :base 200))
+  (s-place 6 3 (forest-log 3 :base 184))
+  (s-join (platform-end-L))
+  (s-pop))
+
 (defun forest-level ()
   (join ;; START
         (forest-start)
@@ -85,11 +101,15 @@
 
 	;; PART1
 	(puddle-walk)
-	(empty 2)
+	(empty 3)
+
+	;; PART3
+	(sticky-walk)
+	(empty 3)
 
 	;; PART2
 	(forest-bridge 8 2)
-	(empty 2)
+	(empty 3)
 
 	;; ENDING
 	(empty 64)))
