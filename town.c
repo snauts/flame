@@ -409,7 +409,9 @@ static void house_charlie_follow_up(u16 x) {
 }
 
 static void house_charlie_front_follow_up(u16 x) {
-    // callback(&bottom_window_rat, 100, x - 206);
+#ifdef HARDER
+    callback(&bottom_window_rat, 100, x - 206);
+#endif
     top_window_rat(x - 16);
 }
 
@@ -461,7 +463,9 @@ static void reverse_wave(u16 x) {
 void emit_reverse_wave(u16 x) {
     reverse_wave(x - 224);
     setup_rat(x - 52, 176);
-    // setup_rat(x - 72, 51);
+#ifdef HARDER
+    setup_rat(x - 72, 51);
+#endif
 }
 
 static void emit_arch_window_wave(u16 x) {
@@ -471,34 +475,46 @@ static void emit_arch_window_wave(u16 x) {
 
 void emit_arch_alpha_wave(u16 x) {
     emit_arch_window_wave(x);
-    // setup_rat(x - 72, 164);
+#ifdef HARDER
+    setup_rat(x - 72, 164);
+#endif
 }
 
 void emit_arch_bravo_wave(u16 x) {
     emit_arch_window_wave(x);
-    // setup_rat(x - 168, 112);
+#ifdef HARDER
+    setup_rat(x - 168, 112);
+#endif
     setup_rat(x - 232, 176);
 }
 
 static void arch_final(u16 x) {
     setup_rat(x - 120, 51);
-    // setup_rat(x - 120, 164);
+#ifdef HARDER
+    setup_rat(x - 120, 164);
+#endif
 }
 
 static void arch_charlie_follow_up(u16 x) {
     setup_rat(x - 40, 176);
-    // setup_rat(x - 120, 51);
+#ifdef HARDER
+    setup_rat(x - 120, 51);
+#endif
     callback(&arch_final, 100, x);
 }
 
 void emit_arch_charlie_wave(u16 x) {
     emit_arch_window_wave(x);
-    // setup_rat(x - 168, 112);
+#ifdef HARDER
+    setup_rat(x - 168, 112);
+#endif
     callback(&arch_charlie_follow_up, 150, x);
 }
 
 static void pillar_back_stab(u16 x) {
-    // setup_rat(x - 252, 176);
+#ifdef HARDER
+    setup_rat(x - 252, 176);
+#endif
 }
 
 void emit_pillar_alpha(u16 x) {
@@ -522,7 +538,9 @@ void emit_pillar_bravo(u16 x) {
 }
 
 static void emit_pillar_middle(u16 x) {
-    // setup_rat(x - 230, 163);
+#ifdef HARDER
+    setup_rat(x - 230, 163);
+#endif
 }
 
 void emit_bridge_alpha(u16 x) {
