@@ -112,6 +112,8 @@ static void rain_palette_rotate(u16 i) {
 }
 
 typedef struct Mosquito {
+    Object *drop;
+    byte release;
     char v_dir;
 } Mosquito;
 
@@ -144,13 +146,28 @@ static Object *setup_mosquito(short x, short y) {
     obj->flags |= O_PERSISTENT;
     obj->death = 4;
 
-    MOSQUITO(obj)->v_dir = 0;
+    Mosquito *private = MOSQUITO(obj);
+    private->drop = NULL;
+    private->v_dir = 0;
 
     return obj;
 }
 
+static Object *setup_gnat(short x, short y, char angle, byte release) {
+    Object *drop = setup_projectile(0, 0, angle);
+    Object *gnat = setup_mosquito(x, y);
+    drop->private = gnat;
+    drop->gravity = 8;
+
+    Mosquito *private = MOSQUITO(gnat);
+    private->release = release;
+    private->drop = drop;
+
+    return gnat;
+}
+
 void emit_mosquito(u16 i) {
-    Object *obj = setup_mosquito(window + 320, 96);
+    Object *obj = setup_mosquito(window + 320, 96, NULL);
     MOSQUITO(obj)->v_dir = 1;
 }
 
