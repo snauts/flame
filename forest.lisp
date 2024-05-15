@@ -53,6 +53,14 @@
 	  ((> n 1) (on-top (log-segment n walk) (next)))
 	  ((= n 1) (forest-cell top)))))
 
+(defun horizontal-log-middle (n)
+  (s-push (multiply (mud 10 2 12 3) (floor n 2)))
+  (when (oddp n) (s-join (forest-cell 222)))
+  (s-pop))
+
+(defun horizontal-log (n)
+  (join (forest-cell 227) (horizontal-log-middle n) (forest-cell 238)))
+
 (defun platform-front ()
   (poke (mud 8 2 10 4) 0 0 0))
 
@@ -114,13 +122,23 @@
       (let ((tile (forest-log h :top top :base base :walk walk)))
 	(s-place x y (if (< walk 0) tile (forward tile)))))))
 
+(defun draw-fence ()
+  (s-place 25 5 (horizontal-log 20))
+  (loop for x from 28 to 44 by 8 do
+    (s-place x 3 (forest-log 5 :top 226 :base 168))
+    (s-place x 5 (forest-cell 206))))
+
 (defun broken-wall ()
   (s-push (platform-end-R))
   (s-join (forest-walk-config :body 0 :top-L 2 :top-R 5))
   (s-join (forest-walk-config :body 1 :top-L 4 :top-R 5))
   (s-join (forest-walk-config :body 0 :top-L 0 :top-R 3))
+  (s-join (forest-walk-config :body 0 :top-L 0 :top-R 1))
+  (s-join (forest-walk-config :body 0 :top-L 2 :top-R 3))
+  (s-join (forest-walk-config :body 1 :top-L 0 :top-R 1))
   (draw-wall *wall-config*)
   (s-join (platform-end-L))
+  (draw-fence)
   (s-pop))
 
 (defun forest-level ()
