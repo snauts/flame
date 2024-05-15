@@ -99,23 +99,27 @@
   (s-pop))
 
 (defparameter *wall-config*
-  '((5  4  6 225) (6  4  5 225) (7  4  7 225) (8  4 8 225) (9 4 6 225)
-    (10 4  7 225) (11 4  9 225) (15 4  8 225) (16 4 6 225)
-    (12 4  3 217) (13 4  3 217) (14 4  3 217)
-    (12 10 3 225) (13 10 4 225) (14 10 3 225)
-    (19 0  7 225) (20 0  9 225) (21 0  8 225)))
+  '((5  4 6 225) (6  4 5 225) (7  4 7 225) (8  4 8 225) (9 4 6 225)
+    (10 4 7 225) (11 4 9 225) (15 4 8 225) (16 4 6 225)
+    (12 4 3 217) (12 10 3 225 :base 228)
+    (13 4 3 217) (13 10 4 225 :base 228)
+    (14 4 3 217) (14 10 3 225 :base 228)
+    (19 0 7 225 :walk 1)
+    (20 0 9 225 :walk 1)
+    (21 0 8 225 :walk 1)))
+
+(defun draw-wall (wall-config)
+  (dolist (config wall-config)
+    (destructuring-bind (x y h top &key base (walk -1)) config
+      (let ((tile (forest-log h :top top :base base :walk walk)))
+	(s-place x y (if (< walk 0) tile (forward tile)))))))
 
 (defun broken-wall ()
   (s-push (platform-end-R))
   (s-join (forest-walk-config :body 0 :top-L 2 :top-R 5))
   (s-join (forest-walk-config :body 1 :top-L 4 :top-R 5))
   (s-join (forest-walk-config :body 0 :top-L 0 :top-R 3))
-  (dolist (config *wall-config*)
-    (destructuring-bind (x y height top) config
-      (let* ((walk (if (> x 16) 1 -1))
-	     (base (when (= y 10) 228))
-	     (tile (forest-log height :top top :base base :walk walk)))
-	(s-place x y (if (< walk 0) tile (forward tile))))))
+  (draw-wall *wall-config*)
   (s-join (platform-end-L))
   (s-pop))
 
