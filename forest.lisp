@@ -150,6 +150,7 @@
 	;; PART1
 	(puddle-walk)
 	(empty 3)
+	(trigger "hole_emergers")
 
 	;; PART2
 	(sticky-walk)

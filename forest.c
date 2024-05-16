@@ -188,6 +188,29 @@ void emit_mosquito(u16 i) {
     setup_gnat(window + 320, 80, 45, 50);
 }
 
+static void move_emerger(Object *obj) {
+    move_mosquito(obj);
+    if (obj->life >= obj->gravity) {
+	Mosquito *private = MOSQUITO(obj);
+	obj->direction = -3;
+	private->v_dir = 0;
+    }
+}
+
+void hole_emergers(u16 x) {
+    static const byte height[] = { 28, 24, 32, 20 };
+    Object *obj = setup_mosquito(x - 22, 240);
+    Mosquito *private = MOSQUITO(obj);
+    mob_fn(obj, &move_emerger);
+    obj->gravity = height[x & 3];
+    obj->direction = 0;
+    private->v_dir = -2;
+    if (x - soldier.x > 96) {
+	x = (x & ~3) + ((x + 1) & 3);
+	callback(&hole_emergers, 20, x);
+    }
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 
