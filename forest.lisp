@@ -153,7 +153,7 @@
 	(trigger "hole_emergers")
 
 	;; PART2
-	(sticky-walk)
+	(inject (sticky-walk) "emit_bombers" 24)
 	(empty 2)
 
 	;; PART3

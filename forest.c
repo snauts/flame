@@ -211,6 +211,35 @@ void hole_emergers(u16 x) {
     }
 }
 
+static void move_bomber(Object *obj) {
+    move_mosquito(obj);
+    Mosquito *private = MOSQUITO(obj);
+    if (private->drop == NULL) {
+	obj->direction = -2;
+	private->v_dir = 0;
+    }
+}
+
+void emit_bombers(u16 x) {
+    u16 pos = x & ~7;
+    Object *obj = setup_gnat(window + 320, 64, 42 + (x & 7), 30);
+    Mosquito *private = MOSQUITO(obj);
+    mob_fn(obj, &move_bomber);
+    if (x & 1) {
+	obj->direction = -1;
+	private->v_dir = 2;
+    }
+    else {
+	obj->direction = -2;
+	private->v_dir = 1;
+    }
+
+    if (soldier.x < pos) {
+	x = pos + ((x + 1) & 7);
+	callback(&emit_bombers, 20, x);
+    }
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 
