@@ -253,7 +253,7 @@ static void move_jerker(Object *obj) {
 	    private->v_dir = dy;
 	}
 	byte rnd = random() & 3;
-	if (rnd < 2 && obj->x > window + 32 && obj->x < window + 288) {
+	if (rnd < 2 && obj->x > window + 64 && obj->x < window + 256) {
 	    obj->direction = -obj->direction;
 	}
 	if (rnd == 3) {
