@@ -234,7 +234,7 @@ void emit_bombers(u16 x) {
 	private->v_dir = 1;
     }
 
-    if (soldier.x < pos) {
+    if (soldier.x < pos - 32) {
 	x = pos + ((x + 1) & 7);
 	callback(&emit_bombers, 20, x);
     }
