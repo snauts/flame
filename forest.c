@@ -272,6 +272,7 @@ static void setup_jerker(short x, short y) {
 }
 
 void emit_jerkers(u16 x) {
+    set_seed(1240);
     static const short pos[] = {
 	-16, 64, -16, 64, 320, 64, 320, 128,
 	64, -16, 128, -16, 192, -16, 256, -16
