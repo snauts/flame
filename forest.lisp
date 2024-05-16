@@ -159,6 +159,7 @@
 	;; PART3
 	(forest-bridge 8 2)
 	(empty 2)
+	(trigger "emit_jerkers")
 
 	;; PART4
 	(broken-wall)

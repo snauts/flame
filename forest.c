@@ -240,6 +240,47 @@ void emit_bombers(u16 x) {
     }
 }
 
+static void move_jerker(Object *obj) {
+    move_mosquito(obj);
+    if ((obj->life & 0xf) == 0) {
+	Mosquito *private = MOSQUITO(obj);
+	signed char dx = clamp(soldier.x - obj->x + 12, 1);
+	signed char dy = clamp(soldier.y - obj->y - 20, 1);
+	if (dx != obj->direction) {
+	    obj->direction = dx;
+	}
+	if (dy != private->v_dir) {
+	    private->v_dir = dy;
+	}
+	byte rnd = random() & 3;
+	if (rnd < 2 && obj->x > window + 32 && obj->x < window + 288) {
+	    obj->direction = -obj->direction;
+	}
+	if (rnd == 3) {
+	    private->v_dir = -private->v_dir;
+	}
+    }
+}
+
+static void setup_jerker(short x, short y) {
+    Object *obj = setup_mosquito(x, y);
+    obj->direction = clamp(soldier.x - x, 1);
+    mob_fn(obj, &move_jerker);
+
+    Mosquito *private = MOSQUITO(obj);
+    private->v_dir = 1;
+}
+
+void emit_jerkers(u16 x) {
+    static const short pos[] = {
+	-16, 64, -16, 64, 320, 64, 320, 128,
+	64, -16, 128, -16, 192, -16, 256, -16
+    };
+    for (u16 i = 0; i < ARRAY_SIZE(pos); i += 2) {
+	setup_jerker(window + pos[i], pos[i + 1]);
+    }
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 
