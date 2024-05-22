@@ -128,6 +128,9 @@
     (s-place x 3 (forest-log 5 :top 226 :base 168))
     (s-place x 5 (forest-cell 206))))
 
+(defun skull ()
+  (poke (palette 0 (mud 8 0 11 2)) 0 1 0))
+
 (defun broken-wall ()
   (s-push (platform-end-R))
   (s-join (forest-walk-config :body 0 :top-L 2 :top-R 5))
