@@ -131,6 +131,23 @@
 (defun skull ()
   (poke (palette 0 (mud 8 0 11 2)) 0 1 0))
 
+(defun skull-on-pole (h &rest stick-args)
+  (s-push (apply #'forest-log (cons h stick-args)))
+  (s-place -1 (1- h) (skull))
+  (s-pop))
+
+(defun skulls-on-sticks ()
+  (s-push (platform-end-R))
+  (s-join (forest-walk-config :body 0 :top-L 0 :top-R 3))
+  (s-join (forest-walk-config :body 1 :top-L 2 :top-R 1))
+  (s-join (forest-walk-config :body 1 :top-L 2 :top-R 3))
+  (s-join (forest-walk-config :body 0 :top-L 0 :top-R 1))
+  (s-place 8 3 (skull-on-pole 9 :base 200))
+  (s-place 16 0 (forward (skull-on-pole 13 :walk 1)))
+  (s-place 24 3 (flip (skull-on-pole 8 :base 200)))
+  (s-join (platform-end-L))
+  (s-pop))
+
 (defun broken-wall ()
   (s-push (platform-end-R))
   (s-join (forest-walk-config :body 0 :top-L 2 :top-R 5))
@@ -166,6 +183,10 @@
 
 	;; PART4
 	(inject (broken-wall) "emit_divers" 19)
+	(empty 3)
+
+	;; PART5
+	(skulls-on-sticks)
 	(empty 3)
 
 	;; ENDING
