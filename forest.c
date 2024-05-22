@@ -282,6 +282,35 @@ void emit_jerkers(u16 x) {
     }
 }
 
+static void move_diver(Object *obj) {
+    move_mosquito(obj);
+    byte i = obj->x & 7;
+    Mosquito *private = MOSQUITO(obj);
+    if (private->v_dir == -2 && obj->y <= 96 + (i << 3)) {
+	if (i & 1) {
+	    obj->direction = -2;
+	    private->v_dir = 1;
+	}
+	else {
+	    obj->direction = -1;
+	    private->v_dir = 2;
+	}
+    }
+}
+
+void emit_divers(u16 x) {
+    Object *obj = setup_mosquito(x, 200);
+    mob_fn(obj, &move_diver);
+    obj->direction = 0;
+
+    Mosquito *private = MOSQUITO(obj);
+    private->v_dir = -2;
+    if (soldier.x < x - 64) {
+	x = (x & ~7) + ((x + 1) & 7);
+	callback(&emit_divers, 25, x);
+    }
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 

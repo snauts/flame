@@ -162,7 +162,7 @@
 	(trigger "emit_jerkers")
 
 	;; PART4
-	(broken-wall)
+	(inject (broken-wall) "emit_divers" 19)
 	(empty 3)
 
 	;; ENDING
