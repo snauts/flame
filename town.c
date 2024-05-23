@@ -91,6 +91,7 @@ static u16 draw_bottom_object(u16 x, u16 id) {
 	break;
     case 113:
 	dx = 2;
+	/* falls through */
     case 94:
 	dy = 3;
 	break;
@@ -106,6 +107,7 @@ static u16 draw_bottom_object(u16 x, u16 id) {
 	break;
     case 116:
 	dx = 2;
+	/* falls through */
     case 108:
 	dy = 2;
 	break;
