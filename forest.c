@@ -113,7 +113,7 @@ static void rain_palette_rotate(u16 i) {
 
 typedef struct Mosquito {
     Object *drop;
-    byte release;
+    u16 release;
     char v_dir;
 } Mosquito;
 
@@ -129,7 +129,7 @@ static void release_drop(Mosquito *private) {
     }
 }
 
-static void move_mosquito(Object *obj) {
+static char move_mosquito_alive(Object *obj) {
     u16 palette = 2;
     Sprite *sprite = obj->sprite;
     Mosquito *private = MOSQUITO(obj);
@@ -151,6 +151,12 @@ static void move_mosquito(Object *obj) {
     sprite->cfg = TILE(palette, GNAT + 4 * obj->frame);
 
     mob_adjust_sprite_dir(obj);
+
+    return is_alive;
+}
+
+static void move_mosquito(Object *obj) {
+    move_mosquito_alive(obj);
 }
 
 static Object *setup_mosquito(short x, short y) {
@@ -313,19 +319,29 @@ void emit_divers(u16 x) {
 
 extern const char tiny_circle[128];
 static void rotate_mosquito(Object *obj) {
-    u16 index = (obj->life << 1) & 0x7f;
-    char dx = tiny_circle[index + 0];
-    char dy = tiny_circle[index + 1];
-    obj->x += dx;
-    obj->y += dy;
-    move_mosquito(obj);
-    obj->x -= dx;
-    obj->y -= dy;
+    u16 index = obj->life << 1;
+    obj->x -= tiny_circle[(index - 2) & 0x7f];
+    obj->y -= tiny_circle[(index - 1) & 0x7f];
+    obj->x += tiny_circle[(index + 0) & 0x7f];
+    obj->y += tiny_circle[(index + 1) & 0x7f];
+
+    Mosquito *private = MOSQUITO(obj);
+    if (move_mosquito_alive(obj) && private->drop == NULL) {
+	Object *drop = setup_projectile(0, 0, 40);
+	drop->private = obj;
+	drop->gravity = 8;
+
+	private->release = obj->life + 32;
+	private->drop = drop;
+    }
 }
 
 static void setup_rotor(short x, short y, byte offset) {
+    u16 index = offset << 1;
     Object *obj = setup_mosquito(x, y);
     mob_fn(obj, &rotate_mosquito);
+    obj->x += tiny_circle[(index + 0) & 0x7f];
+    obj->y += tiny_circle[(index + 1) & 0x7f];
     obj->direction = 0;
     obj->life = offset;
 }
