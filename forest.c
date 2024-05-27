@@ -326,12 +326,15 @@ static void rotate_mosquito(Object *obj) {
     obj->y += tiny_circle[(index + 1) & 0x7f];
 
     Mosquito *private = MOSQUITO(obj);
-    if (move_mosquito_alive(obj) && private->drop == NULL) {
-	Object *drop = setup_projectile(0, 0, 40);
+    if (move_mosquito_alive(obj)
+	&& private->drop == NULL
+	&& (obj->life & 0x3f) == 24) {
+
+	Object *drop = setup_projectile(0, 0, 46);
 	drop->private = obj;
 	drop->gravity = 8;
 
-	private->release = obj->life + 32;
+	private->release = obj->life + 8;
 	private->drop = drop;
     }
 }
@@ -347,9 +350,9 @@ static void setup_rotor(short x, short y, byte offset) {
 }
 
 void emit_rotors(u16 x) {
-    setup_rotor(x + 36, 140, 0);
-    setup_rotor(x + 100, 132, 32);
-    setup_rotor(x + 164, 148, 16);
+    setup_rotor(x + 36, 140, 48);
+    setup_rotor(x + 100, 132, 16);
+    setup_rotor(x + 164, 148, 32);
 }
 
 extern const Image spit_img;
