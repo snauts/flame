@@ -311,6 +311,31 @@ void emit_divers(u16 x) {
     }
 }
 
+extern const char tiny_circle[128];
+static void rotate_mosquito(Object *obj) {
+    u16 index = (obj->life << 1) & 0x7f;
+    char dx = tiny_circle[index + 0];
+    char dy = tiny_circle[index + 1];
+    obj->x += dx;
+    obj->y += dy;
+    move_mosquito(obj);
+    obj->x -= dx;
+    obj->y -= dy;
+}
+
+static void setup_rotor(short x, short y, byte offset) {
+    Object *obj = setup_mosquito(x, y);
+    mob_fn(obj, &rotate_mosquito);
+    obj->direction = 0;
+    obj->life = offset;
+}
+
+void emit_rotors(u16 x) {
+    setup_rotor(x + 36, 140, 0);
+    setup_rotor(x + 100, 132, 32);
+    setup_rotor(x + 164, 148, 16);
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 

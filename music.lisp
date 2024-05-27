@@ -1474,6 +1474,7 @@
     (save-array out "katyusha_score" (save-score (katyusha-score)))
     (save-array out "decople_table" (generate-decople-table))
     (save-char-array out "small_circle" (generate-circle-table))
+    (save-char-array out "tiny_circle" (generate-circle-table 64 16))
     (save-char-array out "larger_circle" (generate-circle-table 256 52 1.8))
     (save-sfx out "perish" (convert-sfx 16 #'perish #'quadratic-fade))
     (save-sfx out "wiggle" (convert-sfx 20 #'wiggle #'wiggle-volume))

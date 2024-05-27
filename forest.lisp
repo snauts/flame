@@ -186,7 +186,7 @@
 	(empty 3)
 
 	;; PART5
-	(skulls-on-sticks)
+	(inject (skulls-on-sticks) "emit_rotors" 4)
 	(empty 3)
 
 	;; ENDING
