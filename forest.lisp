@@ -70,14 +70,20 @@
 (defun bridge-front (h)
   (place 0 h (forward (forest-log (+ h 4))) (forest-cell 206)))
 
-(defun forest-bridge (n h)
+(defun forest-bridge (n h &key seam)
   (let ((w (* 2 n)))
     (s-push (forest-log (+ h 5)))
     (s-place (- w 4) 0 (forest-log (+ h 5)))
     (s-place -2 h (forest-platform n))
+    (when seam (s-place 0 h (mud 10 2 12 4)))
     (s-place 4 0 (bridge-front h))
     (s-place w 0 (bridge-front h))
     (s-pop)))
+
+(defun forest-bridge-repeat (n h x)
+  (s-push nil)
+  (dotimes (i x (s-pop))
+    (s-place (* 2 i (- n 2)) 0 (forest-bridge n h :seam (> i 0)))))
 
 (defun forest-start ()
   (join (forest-walk 2)
@@ -216,7 +222,7 @@
 	(forest-ramp '(3 6 9 12))
 
 	;; ENDING
-	(inject (forest-end) "level_done_burn_mobs" 38)
+	(inject (forest-bridge-repeat 8 12 4) "level_done_burn_mobs" 36)
 	(empty 32)))
 
 (defun commit-save ()
