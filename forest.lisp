@@ -161,6 +161,18 @@
   (draw-fence)
   (s-pop))
 
+(defun forest-ramp ()
+  (s-push nil)
+  (dolist (h '(4 8 12 8 4))
+    (s-join (forest-bridge 4 h)))
+  (s-pop))
+
+(defun forest-end ()
+  (join (platform-end-R)
+	(forest-walk)
+	(forest-puddle)
+	(forest-walk 4)))
+
 (defun forest-level ()
   (join ;; START
         (forest-start)
@@ -187,10 +199,15 @@
 
 	;; PART5
 	(inject (skulls-on-sticks) "emit_rotors" 4)
-	(empty 3)
+	(empty 2)
+
+	;; PART6
+	(forest-ramp)
+	(empty 2)
 
 	;; ENDING
-	(empty 64)))
+	(inject (forest-end) "level_done_burn_mobs" 38)
+	(empty 32)))
 
 (defun commit-save ()
   (push-level "forest_level" (forest-level))
