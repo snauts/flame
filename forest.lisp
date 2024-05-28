@@ -161,9 +161,9 @@
   (draw-fence)
   (s-pop))
 
-(defun forest-ramp ()
+(defun forest-ramp (height-map)
   (s-push nil)
-  (dolist (h '(4 8 12 8 4))
+  (dolist (h height-map)
     (s-join (forest-bridge 4 h)))
   (s-pop))
 
@@ -202,13 +202,24 @@
 	(empty 2)
 
 	;; PART6
-	(forest-ramp)
+	(forest-ramp '(4 8 12 8 4))
 	(empty 2)
 
 	;; ENDING
 	(inject (forest-end) "level_done_burn_mobs" 38)
 	(empty 32)))
 
+(defun swamp-level ()
+  (join ;; START
+	(forest-walk 2)
+	(platform-end-L)
+	(forest-ramp '(3 6 9 12))
+
+	;; ENDING
+	(inject (forest-end) "level_done_burn_mobs" 38)
+	(empty 32)))
+
 (defun commit-save ()
+  (push-level "swamp_level" (swamp-level))
   (push-level "forest_level" (forest-level))
   (save-level "forest.inc" *forest-walkable*))

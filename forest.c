@@ -393,3 +393,7 @@ static void display_soviet(const Level *level) {
 void display_forest(void) {
     display_soviet(&forest_level);
 }
+
+void display_swamp(void) {
+    display_soviet(&swamp_level);
+}

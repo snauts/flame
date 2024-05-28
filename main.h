@@ -253,6 +253,7 @@ void display_town(void);
 void display_ramp(void);
 void display_king(void);
 void display_forest(void);
+void display_swamp(void);
 void announce_johnny(void);
 void announce_hans(void);
 void announce_hiroshi(void);
