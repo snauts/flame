@@ -367,19 +367,20 @@ void emit_blanket(u16 x) {
     }
 }
 
+
+static void move_hidder(Object *obj) {
+    move_mosquito(obj);
+    if (obj->x - soldier.x < 128) {
+	obj->direction = -1;
+    }
+}
+
 void emit_hidder(short x, short y) {
     Object *obj = setup_mosquito(x, y);
     Mosquito *private = MOSQUITO(obj);
+    mob_fn(obj, &move_hidder);
     obj->direction = 0;
     private->v_dir = 0;
-}
-
-static void set_release_speed(Object *obj) {
-    obj->direction = -1;
-}
-
-void release_hidders(u16 x) {
-    apply_to_all_mobs(&set_release_speed);
 }
 
 extern const Image spit_img;
