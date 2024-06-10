@@ -355,6 +355,18 @@ void emit_rotors(u16 x) {
     setup_rotor(x + 164, 148, 32);
 }
 
+void emit_blanket(u16 x) {
+    for (u16 i = 256; i > 0; i -= 32) {
+	Object *obj = setup_mosquito(x - i - 32, 0);
+	Mosquito *private = MOSQUITO(obj);
+	obj->direction = 0;
+	private->v_dir = 1;
+    }
+    if ((x & 1) == 0) {
+	callback(&emit_blanket, 16, (x + 16) | 1);
+    }
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 
