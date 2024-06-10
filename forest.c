@@ -367,6 +367,21 @@ void emit_blanket(u16 x) {
     }
 }
 
+void emit_hidder(short x, short y) {
+    Object *obj = setup_mosquito(x, y);
+    Mosquito *private = MOSQUITO(obj);
+    obj->direction = 0;
+    private->v_dir = 0;
+}
+
+static void set_release_speed(Object *obj) {
+    obj->direction = -1;
+}
+
+void release_hidders(u16 x) {
+    apply_to_all_mobs(&set_release_speed);
+}
+
 extern const Image spit_img;
 extern u16 spit_tile;
 
@@ -408,4 +423,13 @@ void display_forest(void) {
 
 void display_swamp(void) {
     display_soviet(&swamp_level);
+
+    emit_hidder(256, 192);
+    emit_hidder(288, 192);
+
+    emit_hidder(352, 168);
+    emit_hidder(384, 168);
+
+    emit_hidder(448, 144);
+    emit_hidder(480, 144);
 }

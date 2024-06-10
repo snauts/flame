@@ -219,6 +219,7 @@
   (join ;; START
 	(forest-walk 2)
 	(platform-end-L)
+	(trigger "release_hidders")
 	(forest-ramp '(3 6 9 12))
 
 	(empty 1)
