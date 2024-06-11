@@ -357,7 +357,7 @@ void emit_rotors(u16 x) {
 
 void emit_blanket(u16 x) {
     for (u16 i = 256; i > 0; i -= 32) {
-	Object *obj = setup_mosquito(x - i - 32, 0);
+	Object *obj = setup_mosquito(x - i - 24, 0);
 	Mosquito *private = MOSQUITO(obj);
 	obj->direction = 0;
 	private->v_dir = 1;
@@ -369,7 +369,7 @@ void emit_blanket(u16 x) {
 
 void emit_impalers(u16 x) {
     for (u16 i = 256; i > 0; i -= 32) {
-	Object *obj = setup_mosquito(x - i - 32, 224);
+	Object *obj = setup_mosquito(x - i - 16, 224);
 	Mosquito *private = MOSQUITO(obj);
 	obj->direction = 0;
 	private->v_dir = -1;

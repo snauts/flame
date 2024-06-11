@@ -222,15 +222,15 @@
 	(forest-ramp '(3 6 9 12))
 
 	(empty 1)
-	(forest-bridge-repeat 10 12 2)
+	(forest-bridge-repeat 9 12 2)
 	(trigger "emit_impalers")
 
 	(empty 1)
-	(forest-bridge-repeat 10 12 2)
+	(forest-bridge-repeat 9 12 2)
 	(trigger "emit_blanket")
 
 	(empty 1)
-	(forest-bridge-repeat 10 12 2)
+	(forest-bridge-repeat 9 12 2)
 	(trigger "emit_compactors")
 
 	;; ENDING
