@@ -222,11 +222,15 @@
 	(forest-ramp '(3 6 9 12))
 
 	(empty 1)
-	(forest-bridge-repeat 10 11 2)
-	(trigger "emit_blanket")
+	(forest-bridge-repeat 10 12 2)
+	(trigger "emit_impalers")
+
 	(empty 1)
+	(forest-bridge-repeat 10 12 2)
+	(trigger "emit_blanket")
 
 	;; ENDING
+	(empty 1)
 	(inject (forest-bridge-repeat 8 12 4) "level_done_burn_mobs" 36)
 	(empty 32)))
 

@@ -367,6 +367,14 @@ void emit_blanket(u16 x) {
     }
 }
 
+void emit_impalers(u16 x) {
+    for (u16 i = 256; i > 0; i -= 32) {
+	Object *obj = setup_mosquito(x - i - 32, 224);
+	Mosquito *private = MOSQUITO(obj);
+	obj->direction = 0;
+	private->v_dir = -1;
+    }
+}
 
 static void move_hidder(Object *obj) {
     move_mosquito(obj);
