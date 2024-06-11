@@ -496,7 +496,7 @@ static const byte fall_order[] = {
     2, 3, 7, 6, 15, 0, 11, 10, 1, 4, 14, 9, 5, 8, 13, 12
 };
 
-static char cinder_dance[] = {
+char cinder_dance[] = {
      0,  1,  0,  1,  1,  0,  1,  0,
      0, -1,  0, -1, -1,  0, -1,  0,
 };

@@ -376,6 +376,33 @@ void emit_impalers(u16 x) {
     }
 }
 
+extern char cinder_dance[];
+
+static void move_faster(Object *obj) {
+    if ((obj->life & 1) == 0) {
+	obj->x += obj->direction;
+    }
+    obj->y += cinder_dance[obj->life & 0xf];
+    move_mosquito(obj);
+}
+
+static void emit_compactor(short x, short y, char dir) {
+    Object *obj = setup_mosquito(x, y);
+    mob_fn(obj, &move_faster);
+    obj->life = random() & 0xf;
+    obj->flags &= ~O_PERSISTENT;
+    obj->direction = dir;
+    Mosquito *private = MOSQUITO(obj);
+    private->v_dir = 0;
+}
+
+void emit_compactors(u16 x) {
+    for (u16 y = 32; y < 176; y += 24) {
+	emit_compactor(x, y, -1);
+	emit_compactor(x - 320, y + 12, 1);
+    }
+}
+
 static void move_hidder(Object *obj) {
     move_mosquito(obj);
     if (obj->x - soldier.x < 128) {

@@ -229,6 +229,10 @@
 	(forest-bridge-repeat 10 12 2)
 	(trigger "emit_blanket")
 
+	(empty 1)
+	(forest-bridge-repeat 10 12 2)
+	(trigger "emit_compactors")
+
 	;; ENDING
 	(empty 1)
 	(inject (forest-bridge-repeat 8 12 4) "level_done_burn_mobs" 36)
